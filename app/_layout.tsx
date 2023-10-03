@@ -1,56 +1,77 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
-import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
-
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
-  });
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
+import React from 'react';
+import { ThemeProvider, createTheme } from '@rneui/themed';
+import { Slot, Stack } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import { Header, Icon } from '@rneui/themed';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+export default function HomeLayout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+    <ThemeProvider theme={theme}>
+      <Header
+        leftComponent={{
+          icon: 'menu',
+          color: '#fff',
+        }}
+        rightComponent={
+          <View style={styles.headerRight}>
+            {/* <TouchableOpacity
+              style={{ marginLeft: 10 }}
+              onPress={() => {}}
+            >
+              <Icon
+                type='antdesign'
+                name='find'
+                color='white'
+              />
+            </TouchableOpacity> */}
+          </View>
+        }
+        centerComponent={{ text: 'Login', style: styles.heading }}
+      />
+      <Slot />
     </ThemeProvider>
   );
 }
+
+const theme = createTheme({
+  lightColors: {
+    primary: '#3d5afe',
+  },
+  darkColors: {
+    primary: '#3d5afe',
+  },
+  mode: 'dark',
+  components: {
+    Text: {
+      h1Style: {
+        fontSize: 80,
+      },
+    },
+  },
+});
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#397af8',
+    marginBottom: 20,
+    width: '100%',
+    paddingVertical: 15,
+  },
+  heading: {
+    color: 'white',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  headerRight: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  subheaderText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
