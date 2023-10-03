@@ -12,11 +12,9 @@ Proudly powered by
 
 ## NPM Scripts
 
-`npm run start` - starts expo dev server
+`yarn start` - starts expo dev server, can pass `--android`, `--ios`, `--web` to build for single environment
 
-`expo start` - starts expo dev server, can pass `--android`, `--ios`, `--web` to build for single environment
-
-`npm run test` - runs Jest unit tests
+`yarn test` - runs Jest unit tests
 
 
 

@@ -8,10 +8,12 @@ export default function HomeLayout() {
   return (
     <ThemeProvider theme={theme}>
       <Header
-        leftComponent={{
-          icon: 'menu',
-          color: '#fff',
-        }}
+        leftComponent={
+          {
+            // icon: 'menu',
+            // color: '#fff',
+          }
+        }
         rightComponent={
           <View style={styles.headerRight}>
             {/* <TouchableOpacity
@@ -40,7 +42,7 @@ const theme = createTheme({
   darkColors: {
     primary: '#3d5afe',
   },
-  mode: 'dark',
+  mode: 'light',
   components: {
     Text: {
       h1Style: {
