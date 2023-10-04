@@ -1,256 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
-import { Text } from '@rneui/themed';
+import { View, StyleSheet, ScrollView, TextInput } from 'react-native';
+import { Text, Skeleton, Card, Chip, Button, Icon } from '@rneui/themed';
 import { useLocalSearchParams } from 'expo-router';
 import api from '../../utils/api';
-import { Stack } from 'expo-router';
-import { BaseEntity, Job } from '../../utils/types';
+import { formatDateTime, formatRelative } from '../../utils/dates';
+import { CardTitle } from '@rneui/base/dist/Card/Card.Title';
+import { ListItem } from '@rneui/base';
 
-interface Job extends BaseEntity {
-
-  status?: string;
-}
-
-// {
-//  
-//   
-//   "paymentStatus": "pending-invoice",
-//   "linkCode": null,
-//   "arrivalTime": "2023-10-04T04:48:28.483Z",
-//   "completedAt": null,
-//   "canceledAt": null,
-//   "createdAt": "2023-10-04T04:18:44.513Z",
-//   "updatedAt": "2023-10-04T04:18:44.513Z",
-//   "deletedAt": null,
-//   "CarId": 8,
-//   "CustomerId": 9,
-//   "FormSubmissionId": null,
-//   "dispatcherId": 190,
-//   "assignedTechnicianId": 190,
-//   "AddressId": 6350,
-//   "Address": {
-//       "short": "1300 E 4th St, Austin, TX 78702",
-//       "id": 6350,
-//       "address_1": "1300 E 4th St",
-//       "address_2": "",
-//       "city": "Austin",
-//       "state": "TX",
-//       "zipcode": 78702,
-//       "lat": null,
-//       "lng": null,
-//       "createdAt": "2023-10-04T04:18:44.515Z",
-//       "updatedAt": "2023-10-04T04:18:44.515Z"
-//   },
-//   "JobFiles": [],
-//   "Car": {
-//       "concat": "2023 grey Honda Accord ",
-//       "id": 8,
-//       "make": "Honda",
-//       "model": "Accord",
-//       "year": 2023,
-//       "color": "grey",
-//       "plate": "",
-//       "vin": null,
-//       "CustomerId": 9,
-//       "createdAt": "2023-03-10T02:58:39.881Z",
-//       "updatedAt": "2023-03-10T02:58:39.881Z"
-//   },
-//   "Payments": [],
-//   "Invoices": [],
-//   "Discounts": [],
-//   "Payouts": [],
-//   "JobComments": [],
-//   "dispatcher": {
-//       "fullName": "Tech Test",
-//       "id": 190,
-//       "firstName": "Tech",
-//       "lastName": "Test",
-//       "email": "tech@ax.bx",
-//       "phone": "+17379324565",
-//       "roles": [
-//           "tech"
-//       ],
-//       "otp": null,
-//       "otpExpiration": null,
-//       "banned": false,
-//       "isOnline": false,
-//       "latitude": null,
-//       "longitude": null,
-//       "lastGeolocationUpdate": null,
-//       "darkMode": false,
-//       "createdAt": "2023-10-04T04:02:51.805Z",
-//       "updatedAt": "2023-10-04T04:02:51.805Z",
-//       "deletedAt": null
-//   },
-//   "assignedTechnician": {
-//       "fullName": "Tech Test",
-//       "id": 190,
-//       "firstName": "Tech",
-//       "lastName": "Test",
-//       "email": "tech@ax.bx",
-//       "phone": "+17379324565",
-//       "roles": [
-//           "tech"
-//       ],
-//       "otp": null,
-//       "otpExpiration": null,
-//       "banned": false,
-//       "isOnline": false,
-//       "latitude": null,
-//       "longitude": null,
-//       "lastGeolocationUpdate": null,
-//       "darkMode": false,
-//       "createdAt": "2023-10-04T04:02:51.805Z",
-//       "updatedAt": "2023-10-04T04:02:51.805Z",
-//       "deletedAt": null
-//   },
-//   "Customer": {
-//       "fullName": "Robert Ramirez",
-//       "concat": "Robert Ramirez",
-//       "id": 9,
-//       "firstName": "Robert",
-//       "lastName": "Ramirez",
-//       "email": "",
-//       "createdAt": "2023-03-05T18:32:52.165Z",
-//       "updatedAt": "2023-03-05T18:32:52.178Z",
-//       "defaultPhoneId": 1,
-//       "CustomerPhones": [
-//           {
-//               "id": 1,
-//               "number": "+17373446380",
-//               "note": null,
-//               "createdAt": "2023-03-05T18:32:52.170Z",
-//               "updatedAt": "2023-03-05T18:32:52.170Z",
-//               "CustomerId": 9
-//           },
-//           {
-//               "id": 9,
-//               "number": "+17814394277",
-//               "note": "",
-//               "createdAt": "2023-03-10T03:04:25.274Z",
-//               "updatedAt": "2023-03-10T03:04:25.274Z",
-//               "CustomerId": 9
-//           }
-//       ],
-//       "defaultPhone": {
-//           "id": 1,
-//           "number": "+17373446380",
-//           "note": null,
-//           "createdAt": "2023-03-05T18:32:52.170Z",
-//           "updatedAt": "2023-03-05T18:32:52.170Z",
-//           "CustomerId": 9
-//       }
-//   },
-//   "JobLineItems": [
-//       {
-//           "id": 28765,
-//           "price": 3495,
-//           "createdAt": "2023-10-04T04:18:44.535Z",
-//           "updatedAt": "2023-10-04T04:18:44.535Z",
-//           "JobId": 6350,
-//           "ServiceId": 2,
-//           "Service": {
-//               "id": 2,
-//               "name": " Standard Service Call Fee",
-//               "description": "Basic Standard fee associated with dispatching a Technician to assist with any service we provide. ",
-//               "payoutRate": 38,
-//               "payoutMinimum": 0,
-//               "price": 3495,
-//               "isDefault": true,
-//               "isInternal": false,
-//               "createdAt": "2022-09-08T00:40:02.801Z",
-//               "updatedAt": "2023-06-24T00:24:33.596Z",
-//               "deletedAt": null
-//           }
-//       }
-//   ],
-//   "JobActions": [
-//       {
-//           "id": 41594,
-//           "action": "Created job and assigned to themself",
-//           "createdAt": "2023-10-04T04:18:45.053Z",
-//           "updatedAt": "2023-10-04T04:18:45.053Z",
-//           "JobId": 6350,
-//           "UserId": 190,
-//           "User": {
-//               "fullName": "Tech Test",
-//               "id": 190,
-//               "firstName": "Tech",
-//               "lastName": "Test",
-//               "email": "tech@ax.bx",
-//               "phone": "+17379324565",
-//               "roles": [
-//                   "tech"
-//               ],
-//               "otp": null,
-//               "otpExpiration": null,
-//               "banned": false,
-//               "isOnline": false,
-//               "latitude": null,
-//               "longitude": null,
-//               "lastGeolocationUpdate": null,
-//               "darkMode": false,
-//               "createdAt": "2023-10-04T04:02:51.805Z",
-//               "updatedAt": "2023-10-04T04:02:51.805Z",
-//               "deletedAt": null
-//           }
-//       }
-//   ],
-//   "proxy": {
-//       "id": 6859,
-//       "active": true,
-//       "createdAt": "2023-10-04T04:18:44.558Z",
-//       "updatedAt": "2023-10-04T04:18:44.558Z",
-//       "JobId": 6350,
-//       "UserId": 190,
-//       "CustomerId": 9,
-//       "ProxyNumberId": 1,
-//       "CustomerPhoneId": 1,
-//       "ProxyNumber": {
-//           "id": 1,
-//           "inUse": true,
-//           "sid": "PNf7a367cfd27460e2b9617a137e483037",
-//           "number": "+15126686340",
-//           "createdAt": "2023-02-11T18:24:45.175Z",
-//           "updatedAt": "2023-10-04T04:18:44.567Z",
-//           "ProxySessionId": 6859
-//       },
-//       "CustomerPhone": {
-//           "id": 1,
-//           "number": "+17373446380",
-//           "note": null,
-//           "createdAt": "2023-03-05T18:32:52.170Z",
-//           "updatedAt": "2023-03-05T18:32:52.170Z",
-//           "CustomerId": 9
-//       },
-//       "User": {
-//           "fullName": "Tech Test",
-//           "id": 190,
-//           "firstName": "Tech",
-//           "lastName": "Test",
-//           "email": "tech@ax.bx",
-//           "phone": "+17379324565",
-//           "roles": [
-//               "tech"
-//           ],
-//           "otp": null,
-//           "otpExpiration": null,
-//           "banned": false,
-//           "isOnline": false,
-//           "latitude": null,
-//           "longitude": null,
-//           "lastGeolocationUpdate": null,
-//           "darkMode": false,
-//           "createdAt": "2023-10-04T04:02:51.805Z",
-//           "updatedAt": "2023-10-04T04:02:51.805Z",
-//           "deletedAt": null
-//       }
-//   }
-// }
-
-export default function Job() {
+export default function JobPage() {
   const { id } = useLocalSearchParams();
-  const [job, setJob] = useState<{} | null>(null);
+  const [job, setJob] = useState<Job | null>(null);
 
   const fetchJob = () => {
     console.log('id', id);
@@ -286,11 +45,138 @@ export default function Job() {
     fetchJob();
   }, [id]);
 
+  function formatCentsToDollarsAndCents(priceInCents: number): string {
+    const priceInDollars = (priceInCents / 100).toFixed(2); // Convert cents to dollars and format with two decimal places
+    return `$${priceInDollars}`;
+  }
+
+  // ["id", "status", "paymentStatus", "linkCode", "arrivalTime", "completedAt", "canceledAt", "createdAt", "updatedAt", "deletedAt", "CarId", "CustomerId", "FormSubmissionId", "dispatcherId", "assignedTechnicianId", "AddressId", "Address", "JobFiles", "Car", "Payments", "Invoices", "Discounts", "Payouts", "JobComments", "dispatcher", "assignedTechnician", "Customer", "JobLineItems", "JobActions", "proxy"]
+
   return (
-    <>
-      <View>
-        <Text h3>Job {id}</Text>
-      </View>
-    </>
+    <ScrollView contentContainerStyle={styles.containerStyles}>
+      {job ? (
+        <>
+          {/* {console.log()} */}
+          <Text style={styles.topLeft}>
+            {job?.arrivalTime && formatDateTime(job.arrivalTime)}
+          </Text>
+
+          <Text h3 style={{ textAlign: 'right' }}>
+            #{id}
+          </Text>
+
+          <View style={styles.statusContainer}>
+            <Chip> {job.status.toUpperCase()}</Chip>
+            <Chip> {job.paymentStatus.toUpperCase()}</Chip>
+          </View>
+
+          <Card>
+            <Card.Title>Job Actions</Card.Title>
+            <Button type="outline" size="lg" style={styles.button}>
+              ON MY WAY
+            </Button>
+            <Button color="warning" style={styles.button}>
+              QUIT JOB
+            </Button>
+            <Button color="error" style={styles.button}>
+              CANCEL JOB
+            </Button>
+          </Card>
+
+          <Card>
+            <Card.Title>Job Details</Card.Title>
+            <TextInput
+              readOnly
+              value={job.Customer?.fullName}
+              style={styles.input}
+            />
+            <TextInput
+              readOnly
+              value={job.Customer?.email}
+              style={styles.input}
+            />
+            <TextInput
+              readOnly
+              value={job.Address?.short}
+              style={styles.input}
+            />
+            <TextInput
+              readOnly
+              value={(() => {
+                const lastFour = job.proxy?.CustomerPhone?.number;
+                return 'XXX-XXX-' + (lastFour ? lastFour.slice(-4) : '');
+              })()}
+              style={styles.input}
+            />
+          </Card>
+          <Card>
+            <Card.Title>Job Activity</Card.Title>
+            {job.JobActions?.map((a) => (
+              <ListItem key={a.id}>
+                <Icon name="minus" type="material-community" />
+                <ListItem.Content>
+                  <ListItem.Title>{a.action}</ListItem.Title>
+                </ListItem.Content>
+              </ListItem>
+            ))}
+          </Card>
+          <Card>
+            <Card.Title>Line Items</Card.Title>
+            {job.JobLineItems?.map((item) => (
+              <ListItem key={item.id}>
+                <Icon name="cash-plus" type="material-community" />
+
+                <ListItem.Content>
+                  <Text>{item.Service.name}</Text>
+                  <Text style={{ textAlign: 'right' }}>
+                    {formatCentsToDollarsAndCents(item.Service.price)}
+                  </Text>
+                </ListItem.Content>
+              </ListItem>
+            ))}
+          </Card>
+        </>
+      ) : (
+        <>
+          <Skeleton height={50} animation="wave" style={styles.gap} />
+          <Skeleton height={250} animation="wave" style={styles.gap} />
+          <Skeleton height={50} animation="wave" style={styles.gap} />
+        </>
+      )}
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  containerStyles: {
+    flex: 1,
+    padding: 10,
+  },
+  topLeft: {
+    padding: 10,
+    position: 'absolute',
+    top: 4,
+    left: 0,
+    fontSize: 24,
+  },
+  gap: {
+    marginVertical: 5,
+  },
+  statusContainer: {
+    paddingVertical: 10,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'space-between',
+  },
+  button: {
+    marginVertical: 5,
+  },
+  input: {
+    padding: 10,
+    marginVertical: 5,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+});

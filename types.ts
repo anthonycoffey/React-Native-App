@@ -123,11 +123,12 @@ export interface Proxy extends BaseEntity {
   active?: boolean;
   JobId?: number;
   UserId?: number;
-
   CustomerId?: number;
   ProxyNumberId?: number;
   CustomerPhoneId?: number;
   ProxyNumber?: ProxyNumber;
+  CustomerPhone?: CustomerPhone;
+  User?: User;
 }
 
 export interface User extends BaseEntity {
