@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { ThemeProvider, createTheme } from '@rneui/themed';
-import { Slot, Stack, router } from 'expo-router';
+import { Slot, Stack, router, Tabs } from 'expo-router';
+import Head from 'expo-router/head';
 import { StyleSheet, View } from 'react-native';
 import { Header, Icon } from '@rneui/themed';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -25,8 +26,8 @@ export default function Layout() {
 
   const Menu = () => {
     return (
-      <TouchableOpacity onPress={() => {}}>
-        <View className="">
+      <TouchableOpacity>
+        <View>
           <Icon name="menu" color="#fff" />
         </View>
       </TouchableOpacity>
@@ -51,6 +52,12 @@ export default function Layout() {
 
   return (
     <ThemeProvider theme={theme}>
+      <Head>
+        <title>Phoenix Mobile</title>
+        <meta name="description" content="Pheonix CRM mobile app"></meta>
+        <meta property="expo:handoff" content="true" />
+        <meta property="expo:spotlight" content="true" />
+      </Head>
       <Header leftComponent={<Menu />} rightComponent={<Logout />} />
       <Slot />
     </ThemeProvider>
@@ -62,13 +69,13 @@ const theme = createTheme({
     primary: '#050512',
   },
   darkColors: {
-    primary: '#3d5afe',
+    primary: '#222222',
   },
   mode: 'light',
   components: {
     Text: {
       h1Style: {
-        fontSize: 80,
+        fontSize: 32,
       },
     },
   },

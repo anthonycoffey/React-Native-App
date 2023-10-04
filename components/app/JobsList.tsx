@@ -2,14 +2,13 @@ import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Card, ListItem, Text, Chip } from '@rneui/themed';
 import { formatDateTime, formatRelative } from '../../utils/dates';
 import { Job } from '../../types';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 
 type JobsListProps = {
   jobs: Job[] | null;
 };
 
 export default function JobsList({ jobs }: JobsListProps) {
-  const router = useRouter();
   return (
     <ScrollView>
       <Text h3 style={styles.heading}>
@@ -57,7 +56,6 @@ export default function JobsList({ jobs }: JobsListProps) {
                 </ListItem.Content>
               </ListItem>
             </TouchableOpacity>
-            {/* </Link> */}
           </Card>
         ))}
     </ScrollView>
