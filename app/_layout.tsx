@@ -26,11 +26,8 @@ export default function Layout() {
   const Menu = () => {
     return (
       <TouchableOpacity onPress={() => {}}>
-        <View className=''>
-          <Icon
-            name='menu'
-            color='#fff'
-          />
+        <View className="">
+          <Icon name="menu" color="#fff" />
         </View>
       </TouchableOpacity>
     );
@@ -45,11 +42,8 @@ export default function Layout() {
           router.replace('/');
         }}
       >
-        <View className=''>
-          <Icon
-            name='logout'
-            color='#fff'
-          />
+        <View className="">
+          <Icon name="logout" color="#fff" />
         </View>
       </TouchableOpacity>
     );
@@ -57,14 +51,7 @@ export default function Layout() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Header
-        leftComponent={<Menu />}
-        centerComponent={
-          !token ? { text: 'Login', style: styles.heading } : null
-        }
-        rightComponent={<Logout />}
-      />
-
+      <Header leftComponent={<Menu />} rightComponent={<Logout />} />
       <Slot />
     </ThemeProvider>
   );

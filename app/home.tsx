@@ -6,10 +6,11 @@ import {
   ListItem,
   Button,
   Icon,
+  Text,
 } from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme, Text, View, Image } from 'react-native';
+import { View } from 'react-native';
 import api from '../utils/api';
 import JobsList from '../components/app/JobsList';
 
