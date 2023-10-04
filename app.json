@@ -7,6 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "phoenix-mobile",
     "userInterfaceStyle": "automatic",
+    "owner": "phoenix-crm",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",

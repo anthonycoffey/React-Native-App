@@ -8,16 +8,19 @@ Proudly powered by
 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 
-![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![Yarn](https://img.shields.io/badge/yarn-%232C8EBB.svg?style=for-the-badge&logo=yarn&logoColor=white)
 
 ## NPM Scripts
 
-`yarn start` - starts expo dev server, can pass `--android`, `--ios`, `--web` to build for single environment
+`yarn start` - starts expo dev server, can pass `--android`, `--ios`, `--web` to build for single environment or simply run `yarn android` etc.
 
 `yarn test` - runs Jest unit tests
 
 
 
 
+### Troubleshooting Tips
 
+- Windows Users: if Axios requests aren't working, use ngrok tunnel for `phoenix` repo api because there may be networking issues without it.
 
+- Sometimes issues can be caused by cache, to clear cache with expo running the following command `yarn start --clear`

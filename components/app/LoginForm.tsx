@@ -1,48 +1,67 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Input, useTheme } from '@rneui/themed';
-import axios from 'axios';
-const API_URL = process.env['EXPO_PUBLIC_KEY_API_URL'];
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../../utils/api';
+import { router } from 'expo-router';
 
 export default function LoginForm() {
   const { theme } = useTheme();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  console.log(API_URL);
+  const [email, setEmail] = useState('tech@ax.bx');
+  const [password, setPassword] = useState('test1234');
   const submit = () => {
-    axios({
-      method: 'post',
-      url: `${API_URL}/api/login`,
-      data: {
+    api
+      .post(`/users/login`, {
         email: email,
         password: password,
-      },
-    })
-      .then(function (response) {
+      })
+      .then(async function (response) {
+        const { token } = response.data;
         console.log(response);
+        console.log({ token });
+        await AsyncStorage.setItem('token', token);
+        // Add a request interceptor
+        api.interceptors.request.use(
+          config => {
+            // Do something before request is sent
+            if (token) {
+              config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+          },
+          error => {
+            // Do something with request error
+            return Promise.reject(error);
+          }
+        );
+        router.replace('/home');
       })
       .catch(function (error) {
+        //todo: add error handling
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          // console.log(error.response.data);
+          // console.log(error.response.status);
+          // console.log(error.response.headers);
         } else if (error.request) {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          console.log(error.request);
+          // console.log(error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message);
+          // console.log('Error', error.message);
         }
         console.log(error.config);
       });
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      className='bg-black'
+    >
       <Input
         placeholder='Email'
         leftIcon={{ type: 'font-awesome', name: 'envelope' }}
@@ -62,6 +81,7 @@ export default function LoginForm() {
           submit();
         }}
       />
+      <View></View>
     </View>
   );
 }
