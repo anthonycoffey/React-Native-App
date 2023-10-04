@@ -11,7 +11,7 @@ type Token = string | null;
 
 SplashScreen.preventAutoHideAsync();
 
-export default function () {
+export default function App() {
   const [token, setToken] = React.useState<Token | null>(null);
 
   useEffect(() => {

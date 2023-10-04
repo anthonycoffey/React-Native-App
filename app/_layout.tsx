@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Token = string | null;
 
-export default function HomeLayout() {
+export default function Layout() {
   const [token, setToken] = React.useState<Token | null>(null);
 
   useEffect(() => {
