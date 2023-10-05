@@ -1,11 +1,29 @@
-import axios from 'axios';
-console.log(process.env);
-const API_URL =
-  process.env['EXPO_PUBLIC_KEY_API_URL'] ||
-  'https://afa8-2605-a601-aa7f-9300-752a-dc37-c5f8-e8aa.ngrok-free.app';
-console.log(API_URL);
+import axios from "axios";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+// create axios instance
 const api = axios.create({
   baseURL: API_URL,
 });
-
 export default api;
+
+/*
+ *  Request Debug
+ * @param {any} error
+ * @returns {void}
+ * @description
+ * This function is used to debug the axios response
+ */
+export function requestDebug(error: any) {
+  //todo: add error handling
+  if (error?.response) {
+    console.log(error.response.data);
+    console.log(error.response.status);
+    console.log(error.response.headers);
+  } else if (error?.request) {
+    console.log(error.request);
+  } else {
+    console.log("Error", error?.message);
+  }
+  console.log(error?.config);
+}

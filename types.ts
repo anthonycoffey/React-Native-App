@@ -34,8 +34,9 @@ export interface Address extends BaseEntity {
 
 export interface Job extends BaseEntity {
   AddressId?: number;
-  Adddress?: Address;
+  Address?: Address;
   CarId?: number;
+  Car?: Car;
   Customer?: Customer;
   CustomerId?: number;
   FormSubmissionId?: number;
@@ -46,8 +47,19 @@ export interface Job extends BaseEntity {
   completedAt?: string;
   dispatcherId?: number;
   linkCode?: string;
-  paymentStatus?: string;
-  status?: string;
+  paymentStatus: string;
+  status: string;
+  proxy?: Proxy;
+  JobLineItems?: JobLineItems[];
+  JobActions?: JobActions[];
+  Discounts?: Discount[];
+}
+
+export interface Discount extends BaseEntity {
+  reason?: string;
+  amount: number;
+  JobId?: number;
+  DiscountCodeId?: number;
 }
 
 export interface JobLineItems extends BaseEntity {
@@ -58,7 +70,7 @@ export interface JobLineItems extends BaseEntity {
 }
 
 export interface Service extends BaseEntity {
-  name?: string;
+  name: string;
   description?: string;
   payoutRate?: number;
   payoutMinimum?: number;

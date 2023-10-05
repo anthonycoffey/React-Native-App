@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
   },
   heading: {
     textAlign: 'center',
-    textDecorationLine: 'underline',
     marginBottom: 20,
     marginTop: 10,
   },

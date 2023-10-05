@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { ThemeProvider, createTheme } from '@rneui/themed';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme, Text } from 'react-native';
-import { Stack, Link } from 'expo-router';
-import LoginForm from '../components/app/LoginForm';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import {
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
+  View,
+} from "react-native";
+import LoginForm from "../components/app/LoginForm";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 type Token = string | null;
 
@@ -15,21 +19,35 @@ export default function App() {
   const [token, setToken] = React.useState<Token | null>(null);
 
   useEffect(() => {
-    const getData = async () => {
+    (async () => {
       try {
-        const value = await AsyncStorage.getItem('token');
+        const value = await AsyncStorage.getItem("token");
         setToken(value);
       } catch (e) {
         // error reading value
         console.log(e);
       }
-    };
-    getData();
+    })();
   }, []);
 
+  useEffect(() => {
+    // redirect to home page if already signed in
+    if (token) router.push("/home");
+    return () => {
+      // todo: add cleanups to useEffect functions
+    };
+  }, [token]);
+
   return (
-    <SafeAreaProvider>
-      <LoginForm />
-    </SafeAreaProvider>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <View style={{ flex: 1 }}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <LoginForm />
+        </TouchableWithoutFeedback>
+      </View>
+    </KeyboardAvoidingView>
   );
 }

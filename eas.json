@@ -1,0 +1,30 @@
+{
+  "cli": {
+    "version": ">= 3.17.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://phoenix-staging-data-3d6054f8c3ef.herokuapp.com/"
+      }
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://phoenix-staging-data-3d6054f8c3ef.herokuapp.com/"
+      }
+    },
+    "test": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://phoenix-staging-data-3d6054f8c3ef.herokuapp.com/"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

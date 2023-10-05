@@ -24,3 +24,5 @@ Proudly powered by
 - Windows Users: if Axios requests aren't working, use ngrok tunnel for `phoenix` repo api because there may be networking issues without it.
 
 - Sometimes issues can be caused by cache, to clear cache with expo running the following command `yarn start --clear`
+
+- An .env file is required with a single property `API_URL` that points to Phoenix backend 
