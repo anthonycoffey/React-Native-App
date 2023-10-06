@@ -1,16 +1,35 @@
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Card, ListItem, Text, Chip } from '@rneui/themed';
-import { formatDateTime, formatRelative } from '../../utils/dates';
-import { Job } from '../../types';
-import { router } from 'expo-router';
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+} from "react-native";
+import { Card, ListItem, Text, Chip } from "@rneui/themed";
+import { formatDateTime, formatRelative } from "../../utils/dates";
+import { Job } from "../../types";
+import { router } from "expo-router";
 
 type JobsListProps = {
   jobs: Job[] | null;
+  fetchJobs: () => Promise<void>;
 };
 
-export default function JobsList({ jobs }: JobsListProps) {
+export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    console.log("refreshing");
+    fetchJobs().finally(() => setRefreshing(false));
+  }, []);
+
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <Text h3 style={styles.heading}>
         My Jobs
       </Text>
@@ -20,7 +39,7 @@ export default function JobsList({ jobs }: JobsListProps) {
             <TouchableOpacity
               onPress={() => {
                 router.push({
-                  pathname: '/job/[id]',
+                  pathname: "/job/[id]",
                   params: {
                     id: job.id,
                   },
@@ -45,7 +64,7 @@ export default function JobsList({ jobs }: JobsListProps) {
                   <View style={styles.chipContainer}>
                     {job?.paymentStatus && (
                       <Chip
-                        title={job.paymentStatus.replace('-', ' ')}
+                        title={job.paymentStatus.replace("-", " ")}
                         containerStyle={styles.chip}
                       />
                     )}
@@ -65,19 +84,19 @@ export default function JobsList({ jobs }: JobsListProps) {
 const styles = StyleSheet.create({
   chipContainer: {
     paddingTop: 10,
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
   },
   chip: {
     paddingHorizontal: 2,
   },
   heading: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
     marginTop: 10,
   },
   jobTitle: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   details: {
     paddingTop: 5,

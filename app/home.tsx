@@ -41,26 +41,27 @@ export default function Home() {
   ];
 
   const fetchJobs = () => {
-    if (scope === "active") setSort("=arrivalTime");
+    console.log({ sort, page, scope });
+    if (scope === "active") setSort("-arrivalTime");
 
-    api
+    // returning a promise here so that we can use .finally() within <JobsList> component
+    return api
       .get(`/jobs/mine?sortBy=${sort}&page=${page}&scope=${scope}`)
       .then(function (response) {
         const { data, meta } = response.data; // todo: meta is returned here but not used currently
         setJobs(data);
-      })
-      .catch(function (error) {
-        //todo: add error handling
       });
   };
 
   useEffect(() => {
-    fetchJobs();
+    fetchJobs().catch(function (error) {
+      //todo: add error handling
+    });
   }, []);
 
   return (
     <SafeAreaProvider>
-      <View>{jobs && <JobsList jobs={jobs} />}</View>
+      <View>{jobs && <JobsList jobs={jobs} fetchJobs={fetchJobs} />}</View>
     </SafeAreaProvider>
   );
 }
