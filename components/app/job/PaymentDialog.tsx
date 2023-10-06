@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, TextInput } from "react-native";
-import { Dialog, Text, Card, Button } from "@rneui/themed";
+import { TextInput } from "react-native";
+import { Text, Card, Button } from "@rneui/themed";
 import { formatPrice } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
 
@@ -10,8 +10,8 @@ type Props = {
 
 export default function PaymentDialog({ paymentType }: Props) {
   const [takePaymentDialog, setTakePaymentDialog] = useState<boolean>(false);
-  const [amountToPay, setAmountToPay] = useState<number>(0);
-  const [tipAmount, setTipAmount] = useState<number>(0);
+  const [amountToPay, setAmountToPay] = useState<string>(0);
+  const [tipAmount, setTipAmount] = useState<string>(0);
 
   const payJobWithCC = () => {
     // todo: Implement the logic for payment with credit card
@@ -22,17 +22,20 @@ export default function PaymentDialog({ paymentType }: Props) {
   };
 
   return (
-    <Card>
+    <>
       <Text style={globalStyles.label}>Amount</Text>
       <TextInput
+        style={globalStyles.input}
         keyboardType={"numeric"}
         value={amountToPay}
-        onChangeText={(value: number) => setAmountToPay(value)}
+        onChangeText={(value) => setAmountToPay(value)}
       />
-      {/* Assuming TipInput is a custom component */}
+      <Text style={globalStyles.label}>Tip</Text>
       <TextInput
+        style={globalStyles.input}
+        keyboardType={"numeric"}
         value={tipAmount}
-        onChangeText={(value: number) => setTipAmount(value)}
+        onChangeText={(value) => setTipAmount(value)}
       />
 
       {/*convert this to react native*/}
@@ -47,10 +50,10 @@ export default function PaymentDialog({ paymentType }: Props) {
       {/*)}*/}
 
       {paymentType === "cash" && (
-        <Button onPress={payJobWithCash} disabled={props.loading}>
-          Collect ${formatPrice(amountToPay + tipAmount)} in cash
+        <Button onPress={payJobWithCash}>
+          Collect ${formatPrice(+amountToPay + +tipAmount)} in cash
         </Button>
       )}
-    </Card>
+    </>
   );
 }

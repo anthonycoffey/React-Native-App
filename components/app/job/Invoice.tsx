@@ -1,10 +1,20 @@
 import React, { useState } from "react";
 import { Alert } from "react-native";
 import { Job } from "../../../types";
-import { Button, Card, Chip, ListItem, Text, Divider } from "@rneui/themed";
+import {
+  Button,
+  Card,
+  Chip,
+  ListItem,
+  Text,
+  Divider,
+  Dialog,
+} from "@rneui/themed";
+import PaymentDialog from "./PaymentDialog";
 import { centsToDollars } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
 import api from "../../../utils/api";
+import { showcase } from "@react-native-community/cli-tools/build/doclink";
 interface Props {
   job: Job;
   fetchJob: () => void;
@@ -12,7 +22,7 @@ interface Props {
 
 export default function Invoice({ job, fetchJob }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [regenerateInvoiceDialog, setRegenerateInvoiceDialog] = useState(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const hasActiveInvoice = job.Invoices?.some((invoice) =>
     ["pending", "partially-paid", "sent"].includes(invoice.status),
   );
@@ -95,10 +105,23 @@ export default function Invoice({ job, fetchJob }: Props) {
           containerStyle={globalStyles.buttonContainer}
           title="Collect Payment"
           onPress={() => {
-            // todo: show payment modal
+            setShowModal(true);
           }}
         />
       )}
+
+      <Dialog
+        isVisible={showModal}
+        onBackdropPress={() => {
+          setShowModal(false);
+        }}
+      >
+        <Dialog.Title
+          title="Take Payment"
+          titleStyle={{ textAlign: "center", fontSize: 24 }}
+        />
+        <PaymentDialog paymentType="card" />
+      </Dialog>
     </Card>
   );
 }

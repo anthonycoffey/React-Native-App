@@ -96,27 +96,30 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
         </Button>
       )}
 
-      <Button
-        onPress={() => {
-          // todo: show dialog
-          quitJob();
-        }}
-        color="warning"
-        containerStyle={styles.buttonContainer}
-      >
-        Quit Job
-      </Button>
-
-      <Button
-        onPress={() => {
-          // todo: show cancel dialog
-          setShowCancelDialog(true);
-        }}
-        color="error"
-        containerStyle={styles.buttonContainer}
-      >
-        Cancel Job
-      </Button>
+      {!cannotCancel && (
+        <>
+          <Button
+            onPress={() => {
+              // todo: show dialog
+              quitJob();
+            }}
+            color="warning"
+            containerStyle={styles.buttonContainer}
+          >
+            Quit Job
+          </Button>
+          <Button
+            onPress={() => {
+              // todo: show cancel dialog
+              setShowCancelDialog(true);
+            }}
+            color="error"
+            containerStyle={styles.buttonContainer}
+          >
+            Cancel Job
+          </Button>
+        </>
+      )}
 
       <Dialog
         isVisible={showCancelDialog}
