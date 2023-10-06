@@ -6,15 +6,16 @@ import globalStyles from "../../../styles/globalStyles";
 import { router } from "expo-router";
 import { TextInput } from "react-native";
 
-type JobActionsProps = {
+type Props = {
   id: number;
   status: string;
   fetchJob: () => void;
 };
-export default function JobStatus({ id, status, fetchJob }: JobActionsProps) {
+export default function JobStatus({ id, status, fetchJob }: Props) {
   const [cancelComment, setCancelComment] = React.useState<string>("");
   const [showCancelDialog, setShowCancelDialog] =
     React.useState<boolean>(false);
+  const [cannotCancel, setCannotCancel] = React.useState<boolean>(false);
   const updateJobStatus = (event: string) => {
     api
       .post(`/jobs/${id}/${event}`, { event })
@@ -84,7 +85,8 @@ export default function JobStatus({ id, status, fetchJob }: JobActionsProps) {
         <Button
           onPress={() => {
             updateJobStatus("complete");
-            router.back();
+            setCannotCancel(true);
+            // router.back();
           }}
           color="green"
           size="lg"
