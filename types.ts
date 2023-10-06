@@ -53,6 +53,14 @@ export interface Job extends BaseEntity {
   JobLineItems?: JobLineItems[];
   JobActions?: JobActions[];
   Discounts?: Discount[];
+  Invoices?: Invoice[];
+}
+
+export interface Invoice extends BaseEntity {
+  jobId: number;
+  linkCode?: string;
+  status: string;
+  total: number;
 }
 
 export interface Discount extends BaseEntity {

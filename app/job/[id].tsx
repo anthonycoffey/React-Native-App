@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  StyleSheet,
   ScrollView,
   TextInput,
   Pressable,
@@ -10,16 +9,17 @@ import {
 } from "react-native";
 import { Text, Skeleton, Card, Chip, Button, Icon } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
-import JobActions from "../../components/app/job/JobActions";
-import api from "../../utils/api";
-import { Job } from "../../types";
-import { formatCentsToDollarsAndCents } from "../../utils/money";
-import { formatDateTime, formatRelative } from "../../utils/dates";
-import geocodeAddress from "../../utils/geocode";
+import JobStatus from "../../components/app/job/JobStatus";
 import { ListItem } from "@rneui/base";
+import { Job } from "../../types";
+import geocodeAddress from "../../utils/geocode";
 import { getApps, GetAppResult } from "react-native-map-link";
 import ArrivalTime from "../../components/app/job/ArrivalTime";
+import Invoice from "../../components/app/job/Invoice";
+import { centsToDollars } from "../../utils/money";
+import { formatDateTime, formatRelative } from "../../utils/dates";
 import globalStyles from "../../styles/globalStyles";
+import api from "../../utils/api";
 
 type location = {
   lat: number;
@@ -136,7 +136,7 @@ export default function JobPage() {
             <Chip> {job.paymentStatus.toUpperCase().replace("-", " ")}</Chip>
           </View>
           {/*actions*/}
-          <JobActions id={job.id} status={job.status} fetchJob={fetchJob} />
+          <JobStatus id={job.id} status={job.status} fetchJob={fetchJob} />
           {/*details*/}
           <Card>
             <Card.Title>Job Details</Card.Title>
@@ -210,7 +210,7 @@ export default function JobPage() {
                 <ListItem.Content>
                   <Text>{item.Service.name}</Text>
                   <Text style={{ textAlign: "right" }}>
-                    {formatCentsToDollarsAndCents(item.Service.price)}
+                    {centsToDollars(item.Service.price)}
                   </Text>
                 </ListItem.Content>
               </ListItem>
@@ -220,7 +220,7 @@ export default function JobPage() {
           <Card>
             <Card.Title>Discounts</Card.Title>
             <Text style={{ textAlign: "right" }}>
-              Total: {formatCentsToDollarsAndCents(discountsTotal)}
+              Total: {centsToDollars(discountsTotal)}
             </Text>
             <View>
               {job.Discounts?.map((item) => (
@@ -233,6 +233,10 @@ export default function JobPage() {
               ))}
             </View>
           </Card>
+          {/*payments*/}
+
+          {/* invoice */}
+          <Invoice job={job} fetchJob={fetchJob} />
         </>
       ) : (
         <>
