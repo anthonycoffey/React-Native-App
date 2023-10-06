@@ -2,28 +2,83 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import React from "react";
 import { View, Text } from "react-native";
 import { Button } from "@rneui/themed";
+import api, { requestDebug } from "../../../utils/api";
 
-interface ArrivalTimeProps {
+type ArrivalTimeProps = {
   timestamp?: string;
-}
+  jobId: number;
+  fetchJob: () => void;
+};
 
-export default function ArrivalTime({ timestamp }: ArrivalTimeProps) {
-  const [date, setDate] = React.useState<string | null>(null);
-  const [time, setTime] = React.useState<string | null>(null);
+export default function ArrivalTime({
+  timestamp,
+  jobId,
+  fetchJob,
+}: ArrivalTimeProps) {
+  const [date, setDate] = React.useState<string>("");
+  const [time, setTime] = React.useState<string>("");
+  const [updated, setUpdated] = React.useState<boolean>(false);
 
   if (!timestamp) {
     return null; // If time is not provided, don't render anything
   }
 
   const onChangeDate = (event: any, selectedDate: any) => {
-    setDate(selectedDate);
+    const {
+      type,
+      nativeEvent: { timestamp, utcOffset },
+    } = event;
+    if (type === "set") {
+      setUpdated(false);
+      setDate(selectedDate.toISOString());
+    }
   };
 
   const onChangeTime = (event: any, selectedTime: any) => {
-    setTime(selectedTime);
+    const {
+      type,
+      nativeEvent: { timestamp, utcOffset },
+    } = event;
+    if (type === "set") {
+      setUpdated(false);
+      setTime(selectedTime.toISOString());
+    }
   };
 
-  console.log({ date, time });
+  const updateArrivalTime = () => {
+    console.log({ date, time, timestamp });
+    let arrivalTime = ``;
+    if (date && time) {
+      console.log("both date and time change");
+      arrivalTime = `${date.split("T")[0]}T${time.split("T")[1]}`;
+    } else if (time === "" && date) {
+      console.log("only date change");
+      let selectedTime = timestamp.split("T")[1];
+      arrivalTime = `${date.split("T")[0]}T${selectedTime}`;
+    } else if (date === "" && time) {
+      console.log("only time change");
+      arrivalTime = `${timestamp.split("T")[0]}T${time.split("T")[1]}`;
+    }
+
+    console.log({ arrivalTime });
+    if (arrivalTime) {
+      api
+        .patch(`/jobs/${jobId}`, {
+          arrivalTime: arrivalTime,
+        })
+        .then(function (response) {
+          const { data } = response;
+          console.log({ data });
+          setUpdated(true);
+        })
+        .catch(function (error) {
+          setUpdated(false);
+          requestDebug(error);
+        });
+    } else {
+      // throw new Error("Invalid date or time");
+    }
+  };
 
   return (
     <View
@@ -63,7 +118,7 @@ export default function ArrivalTime({ timestamp }: ArrivalTimeProps) {
         />
       </View>
       <View>
-        {(date || time) && (
+        {(date || time) && !updated && (
           <>
             <Button
               buttonStyle={{
@@ -73,8 +128,7 @@ export default function ArrivalTime({ timestamp }: ArrivalTimeProps) {
               }}
               color={"blue"}
               onPress={() => {
-                console.log({ date, time });
-                // todo: update the arrival time
+                updateArrivalTime();
               }}
             >
               Save
@@ -86,8 +140,9 @@ export default function ArrivalTime({ timestamp }: ArrivalTimeProps) {
               }}
               type={"outline"}
               onPress={() => {
-                setDate(null);
-                setTime(null);
+                setDate("");
+                setTime("");
+                setUpdated(false);
               }}
             >
               Cancel

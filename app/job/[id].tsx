@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Text, Skeleton, Card, Chip, Button, Icon } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
+import JobActions from "../../components/app/job/JobActions";
 import api from "../../utils/api";
 import { Job } from "../../types";
 import { formatCentsToDollarsAndCents } from "../../utils/money";
@@ -18,6 +19,7 @@ import geocodeAddress from "../../utils/geocode";
 import { ListItem } from "@rneui/base";
 import { getApps, GetAppResult } from "react-native-map-link";
 import ArrivalTime from "../../components/app/job/ArrivalTime";
+import globalStyles from "../../styles/globalStyles";
 
 type location = {
   lat: number;
@@ -106,11 +108,11 @@ export default function JobPage() {
   }, [location]);
 
   return (
-    <ScrollView contentContainerStyle={styles.containerStyles}>
-      {job ? (
+    <ScrollView contentContainerStyle={globalStyles.containerStyles}>
+      {job?.id ? (
         <>
           <View style={{ marginBottom: 20 }}>
-            <View style={styles.topLeft}>
+            <View style={globalStyles.topLeft}>
               <Icon name="calendar-clock" type="material-community" size={36} />
               <Text
                 style={{
@@ -129,45 +131,30 @@ export default function JobPage() {
             </Text>
           </View>
 
-          <View style={styles.statusContainer}>
+          <View style={globalStyles.statusContainer}>
             <Chip> {job.status.toUpperCase()}</Chip>
             <Chip> {job.paymentStatus.toUpperCase().replace("-", " ")}</Chip>
           </View>
           {/*actions*/}
-          <Card>
-            <Card.Title>Job Actions</Card.Title>
-            <Button
-              color="green"
-              size="lg"
-              containerStyle={styles.buttonContainer}
-            >
-              On My Way
-            </Button>
-            <Button color="warning" containerStyle={styles.buttonContainer}>
-              Quit Job
-            </Button>
-            <Button color="error" containerStyle={styles.buttonContainer}>
-              Cancel Job
-            </Button>
-          </Card>
+          <JobActions id={job.id} status={job.status} fetchJob={fetchJob} />
           {/*details*/}
           <Card>
             <Card.Title>Job Details</Card.Title>
-            <Text style={styles.label}>Customer</Text>
+            <Text style={globalStyles.label}>Customer</Text>
             <TextInput
               //  @ts-ignore
               readOnly={true}
               value={job.Customer?.fullName}
-              style={styles.input}
+              style={globalStyles.input}
             />
-            <Text style={styles.label}>Address</Text>
+            <Text style={globalStyles.label}>Address</Text>
             <TextInput
               //  @ts-ignore
               readOnly={true}
               value={location?.formatted_address || job.Address?.short}
-              style={styles.input}
+              style={globalStyles.input}
             />
-            <Text style={styles.label}>Phone</Text>
+            <Text style={globalStyles.label}>Phone</Text>
             <TextInput
               //  @ts-ignore
               readOnly={true}
@@ -175,24 +162,28 @@ export default function JobPage() {
                 const lastFour = job.proxy?.CustomerPhone?.number;
                 return "XXX-XXX-" + (lastFour ? lastFour.slice(-4) : "");
               })()}
-              style={styles.input}
+              style={globalStyles.input}
             />
-            <Text style={styles.label}>Car</Text>
+            <Text style={globalStyles.label}>Car</Text>
 
             <TextInput
               //  @ts-ignore
               readOnly={true}
               value={job?.Car?.concat}
-              style={styles.input}
+              style={globalStyles.input}
             />
 
             {Platform.OS === "ios" && (
-              <ArrivalTime timestamp={job.arrivalTime} />
+              <ArrivalTime
+                timestamp={job.arrivalTime}
+                jobId={job.id}
+                fetchJob={fetchJob}
+              />
             )}
 
-            <Text style={styles.openInMaps}>Open in Maps</Text>
+            <Text style={globalStyles.openInMaps}>Open in Maps</Text>
             {availableApps.map(({ icon, name, id, open }) => (
-              <Pressable key={id} onPress={open} style={styles.mapButton}>
+              <Pressable key={id} onPress={open} style={globalStyles.mapButton}>
                 <Image source={icon} style={{ width: 60, height: 60 }} />
               </Pressable>
             ))}
@@ -245,78 +236,11 @@ export default function JobPage() {
         </>
       ) : (
         <>
-          <Skeleton height={50} animation="wave" style={styles.gap} />
-          <Skeleton height={250} animation="wave" style={styles.gap} />
-          <Skeleton height={50} animation="wave" style={styles.gap} />
+          <Skeleton height={50} animation="wave" style={globalStyles.gap} />
+          <Skeleton height={250} animation="wave" style={globalStyles.gap} />
+          <Skeleton height={50} animation="wave" style={globalStyles.gap} />
         </>
       )}
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  containerStyles: {
-    flexGrow: 1,
-    padding: 10,
-  },
-  topLeft: {
-    position: "absolute",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    alignContent: "center",
-    top: 0,
-    left: 0,
-  },
-  gap: {
-    marginVertical: 5,
-  },
-  statusContainer: {
-    flexWrap: "wrap",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  buttonContainer: {
-    fontWeight: "bold",
-    marginVertical: 5,
-    borderRadius: 5,
-    dropShadow: {
-      shadowColor: "black",
-      shadowOpacity: 0.1,
-      shadowRadius: 5,
-      shadowOffset: {
-        width: 0,
-        height: 0,
-      },
-    },
-  },
-  input: {
-    padding: 10,
-    marginVertical: 5,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  lastCard: {
-    paddingBottom: 500,
-  },
-  label: {
-    fontWeight: "bold",
-    fontSize: 12,
-    color: "#424242",
-  },
-  openInMaps: {
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  mapButton: {
-    display: "flex",
-    flexDirection: "column",
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
