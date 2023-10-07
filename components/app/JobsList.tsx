@@ -64,12 +64,15 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
                   <View style={styles.chipContainer}>
                     {job?.paymentStatus && (
                       <Chip
-                        title={job.paymentStatus.replace("-", " ")}
+                        title={job.paymentStatus.toUpperCase()}
                         containerStyle={styles.chip}
                       />
                     )}
                     {job?.status && (
-                      <Chip title={job?.status} containerStyle={styles.chip} />
+                      <Chip
+                        title={job?.status.toUpperCase()}
+                        containerStyle={styles.chip}
+                      />
                     )}
                   </View>
                 </ListItem.Content>

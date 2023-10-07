@@ -150,7 +150,7 @@ export default function JobPage() {
 
             <View style={globalStyles.statusContainer}>
               <Chip> {job.status.toUpperCase()}</Chip>
-              <Chip> {job.paymentStatus.toUpperCase().replace("-", " ")}</Chip>
+              <Chip> {job.paymentStatus.toUpperCase()}</Chip>
             </View>
             {/*actions*/}
             <JobStatus id={job.id} status={job.status} fetchJob={fetchJob} />
@@ -268,7 +268,10 @@ export default function JobPage() {
             {/*payments*/}
 
             {/* invoice */}
-            <Invoice job={job} fetchJob={fetchJob} />
+
+            {job.paymentStatus != "paid" && (
+              <Invoice job={job} fetchJob={fetchJob} />
+            )}
           </>
         ) : (
           <>

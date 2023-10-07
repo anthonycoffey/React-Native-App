@@ -64,7 +64,7 @@ export default function Invoice({ job, fetchJob }: Props) {
 
   const regenerateInvoice = () => {
     Alert.alert(
-      "Regnerate Invoice?",
+      "Regenerate Invoice?",
       "Please note, previous invoice will be voided and a new invoice will be generated.",
       [
         {
@@ -75,6 +75,10 @@ export default function Invoice({ job, fetchJob }: Props) {
         { text: "OK", onPress: () => generateInvoice() },
       ],
     );
+  };
+
+  const hidePaymentDialog = () => {
+    setShowModal(false);
   };
 
   return (
@@ -116,33 +120,35 @@ export default function Invoice({ job, fetchJob }: Props) {
         ),
       )}
 
-      <Divider style={{ marginVertical: 20 }} />
-      <Card.Title
-        style={{
-          textAlign: "center",
-        }}
-      >
-        Take Payment
-      </Card.Title>
+      {job.status != "paid" && hasActiveInvoice && (
+        <>
+          <Divider style={{ marginVertical: 20 }} />
+          <Card.Title
+            style={{
+              textAlign: "center",
+            }}
+          >
+            Take Payment
+          </Card.Title>
 
-      <>
-        <Text style={globalStyles.label}>Amount</Text>
-        <TextInput
-          style={globalStyles.input}
-          keyboardType={"numeric"}
-          value={amountToPay}
-          onChangeText={(value) => setAmountToPay(value)}
-        />
-        <Text style={globalStyles.label}>Tip</Text>
-        <TextInput
-          style={globalStyles.input}
-          keyboardType={"numeric"}
-          value={tipAmount}
-          onChangeText={(value) => setTipAmount(value)}
-        />
-      </>
+          <Text style={globalStyles.label}>Amount</Text>
+          <TextInput
+            style={globalStyles.input}
+            keyboardType={"numeric"}
+            value={amountToPay}
+            onChangeText={(value) => setAmountToPay(value)}
+          />
+          <Text style={globalStyles.label}>Tip</Text>
+          <TextInput
+            style={globalStyles.input}
+            keyboardType={"numeric"}
+            value={tipAmount}
+            onChangeText={(value) => setTipAmount(value)}
+          />
+        </>
+      )}
 
-      {hasActiveInvoice && amountToPay && (
+      {job.status != "paid" && hasActiveInvoice && amountToPay && (
         <View
           style={{
             flexDirection: "row",
@@ -186,9 +192,12 @@ export default function Invoice({ job, fetchJob }: Props) {
         />
 
         <PaymentDialog
+          jobId={job.id}
           paymentType={paymentType}
           amountToPay={+amountToPay}
           tipAmount={+tipAmount}
+          fetchJob={fetchJob}
+          hidePaymentDialog={hidePaymentDialog}
         />
       </Dialog>
     </Card>

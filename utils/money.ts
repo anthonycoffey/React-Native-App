@@ -6,6 +6,10 @@ export function centsToDollars(
   return type === "numeric" ? `${priceInDollars}` : `$${priceInDollars}`;
 }
 
+export function dollarsToCents(priceInDollars: number): number {
+  return Math.floor(priceInDollars * 100);
+}
+
 export function formatPrice(price: number) {
   // Implement the logic to format the price
   return price.toFixed(2);

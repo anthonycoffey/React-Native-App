@@ -7,11 +7,13 @@ import globalStyles from "../../../styles/globalStyles";
 interface PaymentFormProps {
   buttonText: string;
   paymentType: "card" | "cash";
+  onSuccess: () => void;
 }
 
 export default function PaymentForm({
   buttonText,
   paymentType,
+  onSuccess,
 }: PaymentFormProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [cardNumber, setCardNumber] = useState<string>("4111111111111111");
@@ -45,6 +47,7 @@ export default function PaymentForm({
     setCardErrors(newCardErrors);
   };
 
+  // todo: needs to get tokenized cc and bubble up to onSuccess
   const submitPaymentDetails = async () => {
     validate();
     if (Object.keys(cardErrors).length) {
@@ -62,8 +65,16 @@ export default function PaymentForm({
         zip,
       };
 
-      // const response = await dispatchData({ cardData });
-      // console.log("Received response:", response);
+      api
+        .post("/api/payment", { cardData })
+        .then((response) => {
+          console.log("Received response:", { response });
+          const { data } = response;
+          console.log({ data });
+        })
+        .catch((error) => {
+          responseDebug(error);
+        });
     } catch (error: any) {
       // Handle error here
       console.log("handle error here");
@@ -137,7 +148,11 @@ export default function PaymentForm({
         </>
       )}
 
-      <Button onPress={submitPaymentDetails} color="green" disabled={loading}>
+      <Button
+        onPress={paymentType === "cash" ? onSuccess : submitPaymentDetails}
+        color="green"
+        disabled={loading}
+      >
         {buttonText}
       </Button>
       <Divider />
