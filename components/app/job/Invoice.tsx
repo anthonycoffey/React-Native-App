@@ -15,7 +15,8 @@ import PaymentDialog from "./PaymentDialog";
 import { centsToDollars, formatPrice } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
 import api, { responseDebug } from "../../../utils/api";
-import RNAuthorizeNet from "react-native-reliantid-authorize-net";
+import { NativeModules } from 'react-native';
+const { RNAuthorizeNet } = NativeModules;
 interface Props {
   job: Job;
   fetchJob: () => void;
@@ -159,40 +160,26 @@ export default function Invoice({ job, fetchJob }: Props) {
           <Button
             containerStyle={globalStyles.buttonContainer}
             onPress={() => {
-              // setPaymentType("card");
-              // setShowModal(true);
-
-              // EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY=3rNp5nRnWbZZ36mTF2m35Neh66U676n7zLYpjqJANmctA7G7jA3rh53CNwQ7GCjQ
-              // EXPO_PUBLIC_AUTHORIZE_NET_ENV=dev
-              // EXPO_PUBLIC_AUTHORIZE_LOGIN_ID=96pXg6YA
 
               try {
                 const isProduction = process.env.NODE_ENV === "production";
                 const cardValues = {
-                  LOGIN_ID: process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID,
-                  CLIENT_KEY: process.env.EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY,
                   CARD_NO: "4111111111111111",
+                  CLIENT_KEY: process.env.EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY,
                   CVV_NO: "000",
                   EXPIRATION_MONTH: "11",
                   EXPIRATION_YEAR: "23",
+                  LOGIN_ID: process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID,
                 };
 
-                console.log({ isProduction, cardValues });
+                RNAuthorizeNet.getTokenWithRequestForCard(cardValues, isProduction)
+                    .then(response => {
+                      console.log('Success:', response);
+                    })
+                    .catch(error => {
+                      console.error('Error:', error);
+                    });
 
-                RNAuthorizeNet.getTokenWithRequestForCard(
-                  cardValues,
-                  isProduction,
-                  function (response: any) {
-                    const { success, data, error } = response;
-                    if (success) {
-                      console.log("Success:", data);
-                      // Access individual properties in data as needed
-                    } else {
-                      console.log("Error:", error);
-                      // Access error properties in error as needed
-                    }
-                  },
-                );
               } catch (error: any) {
                 // Handle error here
                 console.log("handle error here");
