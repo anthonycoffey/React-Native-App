@@ -10,7 +10,8 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://phoenix-staging-data-3d6054f8c3ef.herokuapp.com/"
+        "EXPO_PUBLIC_API_URL": "https://phoenix-staging-data-3d6054f8c3ef.herokuapp.com/",
+        "EXPO_PUBLIC_GEOCODING_API_KEY": "AIzaSyDxT3T4ruESnDUp-VPjaKcMs6JTNCR9pP8"
       }
     },
     "production": {

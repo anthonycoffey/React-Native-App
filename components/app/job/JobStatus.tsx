@@ -4,7 +4,7 @@ import styles from "../../../styles/globalStyles";
 import api, { responseDebug } from "../../../utils/api";
 import globalStyles from "../../../styles/globalStyles";
 import { router } from "expo-router";
-import { TextInput } from "react-native";
+import { TextInput, Alert } from "react-native";
 
 type Props = {
   id: number;
@@ -92,7 +92,7 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
           size="lg"
           containerStyle={styles.buttonContainer}
         >
-          Complete Job
+          Finish Job
         </Button>
       )}
 
@@ -100,8 +100,18 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
         <>
           <Button
             onPress={() => {
-              // todo: show dialog
-              quitJob();
+              Alert.alert(
+                "Cancel Job?",
+                "Please note, this action cannot be undone.",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel",
+                  },
+                  { text: "OK", onPress: () => quitJob() },
+                ],
+              );
             }}
             color="warning"
             containerStyle={styles.buttonContainer}
@@ -110,7 +120,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
           </Button>
           <Button
             onPress={() => {
-              // todo: show cancel dialog
               setShowCancelDialog(true);
             }}
             color="error"
