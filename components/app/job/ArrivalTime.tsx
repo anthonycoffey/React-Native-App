@@ -2,7 +2,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import React from "react";
 import { View, Text } from "react-native";
 import { Button } from "@rneui/themed";
-import api, { requestDebug } from "../../../utils/api";
+import api, { responseDebug } from "../../../utils/api";
 
 type ArrivalTimeProps = {
   timestamp?: string;
@@ -73,7 +73,7 @@ export default function ArrivalTime({
         })
         .catch(function (error) {
           setUpdated(false);
-          requestDebug(error);
+          responseDebug(error);
         });
     } else {
       // throw new Error("Invalid date or time");

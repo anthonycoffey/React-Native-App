@@ -57,7 +57,7 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
                     </Text>
                   </ListItem.Subtitle>
                   <View style={styles.details}>
-                    <Text>Address: {job.Address.short} </Text>
+                    <Text>Address: {job.Address?.short} </Text>
                     <Text>Arrival Time: {formatDateTime(job.arrivalTime)}</Text>
                     <Text>Created At: {formatDateTime(job.createdAt)}</Text>
                   </View>

@@ -50,7 +50,7 @@ export interface Job extends BaseEntity {
   paymentStatus: string;
   status: string;
   proxy?: Proxy;
-  JobLineItems?: JobLineItems[];
+  JobLineItems: JobLineItems[];
   JobActions?: JobActions[];
   Discounts?: Discount[];
   Invoices?: Invoice[];
@@ -71,10 +71,10 @@ export interface Discount extends BaseEntity {
 }
 
 export interface JobLineItems extends BaseEntity {
-  price?: number;
-  JobId?: number;
-  ServiceId?: number;
-  Service?: Service;
+  price: number;
+  JobId: number;
+  ServiceId: number;
+  Service: Service;
 }
 
 export interface Service extends BaseEntity {
@@ -82,7 +82,7 @@ export interface Service extends BaseEntity {
   description?: string;
   payoutRate?: number;
   payoutMinimum?: number;
-  price?: number;
+  price: number;
   isDefault?: boolean;
   isInternal?: boolean;
 }

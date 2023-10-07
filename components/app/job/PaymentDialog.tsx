@@ -3,16 +3,19 @@ import { TextInput } from "react-native";
 import { Text, Card, Button } from "@rneui/themed";
 import { formatPrice } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
+import PaymentForm from "./PaymentForm";
 
 type Props = {
-  paymentType: string;
+  paymentType: "cash" | "card";
+  amountToPay: number;
+  tipAmount: number;
 };
 
-export default function PaymentDialog({ paymentType }: Props) {
-  const [takePaymentDialog, setTakePaymentDialog] = useState<boolean>(false);
-  const [amountToPay, setAmountToPay] = useState<string>(0);
-  const [tipAmount, setTipAmount] = useState<string>(0);
-
+export default function PaymentDialog({
+  paymentType,
+  amountToPay,
+  tipAmount,
+}: Props) {
   const payJobWithCC = () => {
     // todo: Implement the logic for payment with credit card
   };
@@ -23,36 +26,20 @@ export default function PaymentDialog({ paymentType }: Props) {
 
   return (
     <>
-      <Text style={globalStyles.label}>Amount</Text>
-      <TextInput
-        style={globalStyles.input}
-        keyboardType={"numeric"}
-        value={amountToPay}
-        onChangeText={(value) => setAmountToPay(value)}
-      />
-      <Text style={globalStyles.label}>Tip</Text>
-      <TextInput
-        style={globalStyles.input}
-        keyboardType={"numeric"}
-        value={tipAmount}
-        onChangeText={(value) => setTipAmount(value)}
-      />
+      {paymentType == "card" && (
+        <PaymentForm
+          paymentType={paymentType}
+          buttonText={`Charge $${amountToPay + tipAmount}`}
+          onSuccess={payJobWithCC}
+        />
+      )}
 
-      {/*convert this to react native*/}
-      {/*{paymentType === "card" && (*/}
-      {/*  <PaymentForm*/}
-      {/*    loading={props.loading}*/}
-      {/*    onSuccess={payJobWithCC}*/}
-      {/*    buttonText={`Charge $${formatPrice(*/}
-      {/*      parseFloat(amountToPay) + parseFloat(tipAmount),*/}
-      {/*    )}`}*/}
-      {/*  />*/}
-      {/*)}*/}
-
-      {paymentType === "cash" && (
-        <Button onPress={payJobWithCash}>
-          Collect ${formatPrice(+amountToPay + +tipAmount)} in cash
-        </Button>
+      {paymentType == "cash" && (
+        <PaymentForm
+          paymentType={paymentType}
+          buttonText={`Collect $${amountToPay + tipAmount}`}
+          onSuccess={payJobWithCash}
+        ></PaymentForm>
       )}
     </>
   );

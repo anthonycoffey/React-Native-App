@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Input, useTheme } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api, { requestDebug } from "../../utils/api";
+import api, { responseDebug } from "../../utils/api";
 import { router } from "expo-router";
 
 export default function LoginForm() {
@@ -37,7 +37,7 @@ export default function LoginForm() {
         router.push("/home");
       })
       .catch(function (error) {
-        requestDebug(error);
+        responseDebug(error);
       });
   };
 

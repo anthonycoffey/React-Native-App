@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Card, Text, Dialog, Divider } from "@rneui/themed";
 import styles from "../../../styles/globalStyles";
-import api, { requestDebug } from "../../../utils/api";
+import api, { responseDebug } from "../../../utils/api";
 import globalStyles from "../../../styles/globalStyles";
 import { router } from "expo-router";
 import { TextInput } from "react-native";
@@ -23,7 +23,7 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
         fetchJob();
       })
       .catch((error) => {
-        requestDebug(error);
+        responseDebug(error);
       });
   };
 

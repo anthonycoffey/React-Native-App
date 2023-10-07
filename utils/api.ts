@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 // create axios instance
@@ -14,8 +14,7 @@ export default api;
  * @description
  * This function is used to debug the axios response
  */
-export function requestDebug(error: any) {
-  //todo: add error handling
+export function responseDebug(error: AxiosError) {
   if (error?.response) {
     console.log(error.response.data);
     console.log(error.response.status);

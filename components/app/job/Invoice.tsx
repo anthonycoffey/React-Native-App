@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, TextInput, View } from "react-native";
 import { Job } from "../../../types";
 import {
   Button,
@@ -9,12 +9,12 @@ import {
   Text,
   Divider,
   Dialog,
+  Icon,
 } from "@rneui/themed";
 import PaymentDialog from "./PaymentDialog";
-import { centsToDollars } from "../../../utils/money";
+import { centsToDollars, formatPrice } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
 import api from "../../../utils/api";
-import { showcase } from "@react-native-community/cli-tools/build/doclink";
 interface Props {
   job: Job;
   fetchJob: () => void;
@@ -23,9 +23,28 @@ interface Props {
 export default function Invoice({ job, fetchJob }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [paymentType, setPaymentType] = useState<"cash" | "card">("card");
   const hasActiveInvoice = job.Invoices?.some((invoice) =>
     ["pending", "partially-paid", "sent"].includes(invoice.status),
   );
+  const [amountToPay, setAmountToPay] = useState<string>("");
+  const [tipAmount, setTipAmount] = useState<string>("");
+
+  useEffect(() => {
+    const pendingInvoice = job.Invoices?.find(
+      (invoice) => invoice.status === "pending",
+    );
+
+    const amount = pendingInvoice
+      ? centsToDollars(pendingInvoice.total, "numeric")
+      : 0;
+
+    setAmountToPay(amount.toString());
+
+    return () => {
+      setAmountToPay("");
+    };
+  }, [job]);
 
   const generateInvoice = async () => {
     setLoading(true);
@@ -66,11 +85,17 @@ export default function Invoice({ job, fetchJob }: Props) {
         <Button title="Generate Invoice" onPress={generateInvoice} />
       )}
 
-      {loading && (
-        <>
-          <Text>Generating Invoice...</Text>
-          <Button title="Solid" type="solid" loading />
-        </>
+      {loading && <Button title="Solid" type="solid" loading />}
+
+      {!loading && hasActiveInvoice && (
+        <Button
+          containerStyle={globalStyles.buttonContainer}
+          color="warning"
+          onPress={regenerateInvoice}
+        >
+          <Icon name="file-refresh" type="material-community" color="white" />
+          Regenerate
+        </Button>
       )}
 
       {job.Invoices?.filter((invoice) => invoice.status === "pending").map(
@@ -91,23 +116,60 @@ export default function Invoice({ job, fetchJob }: Props) {
         ),
       )}
 
-      {hasActiveInvoice && (
-        <Button
-          containerStyle={globalStyles.buttonContainer}
-          title="Regenerate"
-          color="warning"
-          onPress={regenerateInvoice}
-        />
-      )}
+      <Divider style={{ marginVertical: 20 }} />
+      <Card.Title
+        style={{
+          textAlign: "center",
+        }}
+      >
+        Take Payment
+      </Card.Title>
 
-      {hasActiveInvoice && (
-        <Button
-          containerStyle={globalStyles.buttonContainer}
-          title="Collect Payment"
-          onPress={() => {
-            setShowModal(true);
-          }}
+      <>
+        <Text style={globalStyles.label}>Amount</Text>
+        <TextInput
+          style={globalStyles.input}
+          keyboardType={"numeric"}
+          value={amountToPay}
+          onChangeText={(value) => setAmountToPay(value)}
         />
+        <Text style={globalStyles.label}>Tip</Text>
+        <TextInput
+          style={globalStyles.input}
+          keyboardType={"numeric"}
+          value={tipAmount}
+          onChangeText={(value) => setTipAmount(value)}
+        />
+      </>
+
+      {hasActiveInvoice && amountToPay && (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Button
+            containerStyle={globalStyles.buttonContainer}
+            onPress={() => {
+              setPaymentType("card");
+              setShowModal(true);
+            }}
+          >
+            <Icon name="credit-card" type="material-community" color="white" />
+            Credit Card
+          </Button>
+          <Button
+            containerStyle={globalStyles.buttonContainer}
+            onPress={() => {
+              setPaymentType("cash");
+              setShowModal(true);
+            }}
+          >
+            <Icon name="cash" type="material-community" color="white" />
+            Cash
+          </Button>
+        </View>
       )}
 
       <Dialog
@@ -117,10 +179,17 @@ export default function Invoice({ job, fetchJob }: Props) {
         }}
       >
         <Dialog.Title
-          title="Take Payment"
-          titleStyle={{ textAlign: "center", fontSize: 24 }}
+          title={`${paymentType == "card" ? "Charge" : "Collect"} $${
+            +amountToPay + +tipAmount
+          }`}
+          titleStyle={{ textAlign: "center", fontSize: 18 }}
         />
-        <PaymentDialog paymentType="card" />
+
+        <PaymentDialog
+          paymentType={paymentType}
+          amountToPay={+amountToPay}
+          tipAmount={+tipAmount}
+        />
       </Dialog>
     </Card>
   );
