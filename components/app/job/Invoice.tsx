@@ -15,8 +15,8 @@ import PaymentDialog from "./PaymentDialog";
 import { centsToDollars } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
 import api, { responseDebug } from "../../../utils/api";
-// import { NativeModules } from 'react-native'
-// const { RNAuthorizeNet } = NativeModules;
+import { NativeModules } from 'react-native'
+const { RNAuthorizeNet } = NativeModules;
 
 interface Props {
   job: Job;
@@ -174,13 +174,10 @@ export default function Invoice({ job, fetchJob }: Props) {
                 };
 
 
-                // RNAuthorizeNet.getTokenWithRequestForCard(cardValues, isProduction)
-                //     .then(response => {
-                //       console.log('Success:', response);
-                //     })
-                //     .catch(error => {
-                //       console.error('Error:', error);
-                //     });
+                RNAuthorizeNet.getTokenWithRequestForCard(cardValues, isProduction).then((response: any) => {
+                  console.log(response)
+                })
+
 
               } catch (error: any) {
                 // Handle error here
