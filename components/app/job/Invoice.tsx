@@ -12,9 +12,12 @@ import {
   Icon,
 } from "@rneui/themed";
 import PaymentDialog from "./PaymentDialog";
-import { centsToDollars, formatPrice } from "../../../utils/money";
+import { centsToDollars } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
-import api from "../../../utils/api";
+import api, { responseDebug } from "../../../utils/api";
+// import { NativeModules } from 'react-native'
+// const { RNAuthorizeNet } = NativeModules;
+
 interface Props {
   job: Job;
   fetchJob: () => void;
@@ -120,7 +123,7 @@ export default function Invoice({ job, fetchJob }: Props) {
         ),
       )}
 
-      {job.status != "paid" && hasActiveInvoice && (
+      {job.status != "paid" && hasActiveInvoice ? (
         <>
           <Divider style={{ marginVertical: 20 }} />
           <Card.Title
@@ -146,7 +149,7 @@ export default function Invoice({ job, fetchJob }: Props) {
             onChangeText={(value) => setTipAmount(value)}
           />
         </>
-      )}
+      ) : null}
 
       {job.status != "paid" && hasActiveInvoice && amountToPay && (
         <View
@@ -158,8 +161,32 @@ export default function Invoice({ job, fetchJob }: Props) {
           <Button
             containerStyle={globalStyles.buttonContainer}
             onPress={() => {
-              setPaymentType("card");
-              setShowModal(true);
+
+              try {
+                const isProduction = process.env.NODE_ENV === "production";
+                const cardValues = {
+                  CARD_NO: "4111111111111111",
+                  CLIENT_KEY: process.env.EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY,
+                  CVV_NO: "000",
+                  EXPIRATION_MONTH: "11",
+                  EXPIRATION_YEAR: "23",
+                  LOGIN_ID: process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID,
+                };
+
+
+                // RNAuthorizeNet.getTokenWithRequestForCard(cardValues, isProduction)
+                //     .then(response => {
+                //       console.log('Success:', response);
+                //     })
+                //     .catch(error => {
+                //       console.error('Error:', error);
+                //     });
+
+              } catch (error: any) {
+                // Handle error here
+                console.log("handle error here");
+                responseDebug(error);
+              }
             }}
           >
             <Icon name="credit-card" type="material-community" color="white" />

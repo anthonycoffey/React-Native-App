@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { View, TextInput, Platform } from "react-native";
 import api, { responseDebug } from "../../../utils/api";
+// @ts-ignore
+import RNAuthorizeNet from "react-native-reliantid-authorize-net";
+
 import { Button, Divider, Text } from "@rneui/themed";
 import globalStyles from "../../../styles/globalStyles";
 
@@ -57,24 +60,17 @@ export default function PaymentForm({
 
     try {
       const [month, year] = cardExpiry.split("/");
-      const cardData = {
-        cardNumber: cardNumber.replace(/\s/g, ""),
-        month: month.replace(/\s/g, ""),
-        year: year.replace(/\s/g, ""),
-        cardCode: cardCvc,
-        zip,
+      const isProduction = process.env.NODE_ENV === "production";
+      const cardValues = {
+        LOGIN_ID: process.env.EXPO_PUBLIC_AUTHORIZE_NET_LOGIN_ID,
+        CLIENT_KEY: process.env.EXPO_PUBLIC_AUTHORIZE_NET_CLIENT_KEY,
+        CARD_NO: cardNumber,
+        CVV_NO: cardCvc,
+        EXPIRATION_MONTH: month,
+        EXPIRATION_YEAR: year,
       };
 
-      api
-        .post("/api/payment", { cardData })
-        .then((response) => {
-          console.log("Received response:", { response });
-          const { data } = response;
-          console.log({ data });
-        })
-        .catch((error) => {
-          responseDebug(error);
-        });
+      RNAuthorizeNet.getTokenWithRequestForCard(cardValues, isProduction);
     } catch (error: any) {
       // Handle error here
       console.log("handle error here");

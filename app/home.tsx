@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  ThemeProvider,
-  createTheme,
-  Card,
-  ListItem,
-  Button,
-  Icon,
-  Text,
-} from "@rneui/themed";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";
-import api from "../utils/api";
+import api, { responseDebug } from "../utils/api";
 import JobsList from "../components/app/JobsList";
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -54,8 +47,12 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchJobs().catch(function (error) {
-      //todo: add error handling
+    fetchJobs().catch(async function (error) {
+      if (error.response.status === 401) {
+        await AsyncStorage.removeItem("token");
+        router.push("/");
+      }
+      responseDebug(error);
     });
   }, []);
 
