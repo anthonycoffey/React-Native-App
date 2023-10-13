@@ -7,8 +7,8 @@ import { router } from "expo-router";
 
 export default function LoginForm() {
   const { theme } = useTheme();
-  const [email, setEmail] = useState("tech@ax.bx");
-  const [password, setPassword] = useState("test1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const submit = () => {
     api
       .post(`/users/login`, {
