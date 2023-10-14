@@ -18,7 +18,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.phoenixcrm.phoenixmobile",
+      "bundleIdentifier": "com.phoenix-mobile",
       "infoPlist": {
         "LSApplicationQueriesSchemes": [
           "comgooglemaps",
