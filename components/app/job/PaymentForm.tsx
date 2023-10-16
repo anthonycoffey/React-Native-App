@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { View, TextInput, Platform } from "react-native";
 import api, { responseDebug } from "../../../utils/api";
+// @ts-ignore
+import RNAuthorizeNet from "react-native-reliantid-authorize-net";
+
 import { Button, Divider, Text } from "@rneui/themed";
 import globalStyles from "../../../styles/globalStyles";
 
