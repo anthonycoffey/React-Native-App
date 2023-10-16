@@ -10,9 +10,15 @@ Proudly powered by
 
 ![Yarn](https://img.shields.io/badge/yarn-%232C8EBB.svg?style=for-the-badge&logo=yarn&logoColor=white)
 
+[![runs with Expo Go](https://img.shields.io/badge/Runs%20with%20Expo%20Go-4630EB.svg?style=flat-square&logo=EXPO&labelColor=f3f3f3&logoColor=000)](https://expo.dev/client)
+
 ## NPM Scripts
 
-`yarn start` - starts expo dev server, can pass `--android`, `--ios`, `--web` to build for single environment or simply run `yarn android` etc.
+`yarn start` - starts expo dev server, can pass `--android`, `--ios`, `--web` to build for single environment
+
+`expo run:android` - test app outside of expo managed service on Android platform
+
+`expo run:ios` - test app outside of expo managed service on iOS platform
 
 `yarn ios` - starts local development build for iOS
 
@@ -32,9 +38,13 @@ Proudly powered by
 
 ### Troubleshooting Tips
 
-- Windows Users: if Axios requests aren't working, use ngrok tunnel for `phoenix` repo api because there may be networking issues without it.
+- Windows Users: if Axios requests aren't working, use ngrok tunnel for `phoenix` backend API because there may be networking issues without it.
 
-  - Sometimes issues can be caused by cache, to clear cache with expo running the following command `yarn start --clear`
+- Sometimes issues can be caused by cache, to clear cache with expo: `yarn start --clear`
+
+- An .env file is required with a single property `API_URL` that points to Phoenix backend 
+
+- Sometimes issues can be caused by cache, to clear cache with expo running the following command `yarn start --clear`
   
     Note: Refer to Expo documentation on clearing cache for your development environment:
 
