@@ -176,13 +176,6 @@ export default function Invoice({ job, fetchJob }: Props) {
 
                 RNAuthorizeNet.getTokenWithRequestForCard(cardValues, isProduction).then((response: any) => {
                   console.log(response)
-
-                  /* example response
-                  {
-                    "DATA_DESCRIPTOR": "COMMON.ACCEPT.INAPP.PAYMENT",
-                    "DATA_VALUE": "eyJjb2RlIjoiNTBfMl8wNjAwMDUzMjkzNDU1QzZGMzVDNDI5MDEzRjE5QTZFRUQ1RDhEMzRCMDdDNjgxNUFDQTk0ODMxOTQzREQ3NkRDQTdGQUFBMjgxQkFCOUM5QkM1RTI3QkREMTAzMDQ3QzJFQTAzMzk2IiwidG9rZW4iOiI5Njk2NzU4MjQ2MTM4ODU1MTAzNjAyIiwidiI6IjEuMSJ9"
-                    }
-                   */
                 })
 
 
