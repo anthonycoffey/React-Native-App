@@ -1,13 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  ThemeProvider,
-  createTheme,
-  Card,
-  ListItem,
-  Button,
-  Icon,
-  Text,
-} from "@rneui/themed";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";

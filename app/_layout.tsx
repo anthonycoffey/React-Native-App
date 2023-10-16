@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { ThemeProvider, createTheme, Text } from "@rneui/themed";
 import { Slot, router, usePathname } from "expo-router";
-// import Head from "expo-router/head";
 import { StyleSheet, View } from "react-native";
 import { Header, Icon } from "@rneui/themed";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -96,11 +95,6 @@ export default function Layout() {
   return (
     <ThemeProvider theme={theme}>
       <SafeAreaProvider>
-        {/*<Head>*/}
-        {/*  <title>Phoenix Mobile</title>*/}
-        {/*  <meta name="description" content="Pheonix CRM mobile app"></meta>*/}
-        {/*  <meta property="expo:spotlight" content="true" />*/}
-        {/*</Head>*/}
         <Header
           leftComponent={path.includes("job") ? <GoBack /> : <Menu />}
           rightComponent={<Logout />}

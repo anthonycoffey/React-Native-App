@@ -12,11 +12,12 @@ import {
   Icon,
 } from "@rneui/themed";
 import PaymentDialog from "./PaymentDialog";
-import { centsToDollars, formatPrice } from "../../../utils/money";
+import { centsToDollars } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
 import api, { responseDebug } from "../../../utils/api";
-import { NativeModules } from 'react-native';
+import { NativeModules } from 'react-native'
 const { RNAuthorizeNet } = NativeModules;
+
 interface Props {
   job: Job;
   fetchJob: () => void;
@@ -172,13 +173,11 @@ export default function Invoice({ job, fetchJob }: Props) {
                   LOGIN_ID: process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID,
                 };
 
-                RNAuthorizeNet.getTokenWithRequestForCard(cardValues, isProduction)
-                    .then(response => {
-                      console.log('Success:', response);
-                    })
-                    .catch(error => {
-                      console.error('Error:', error);
-                    });
+
+                RNAuthorizeNet.getTokenWithRequestForCard(cardValues, isProduction).then((response: any) => {
+                  console.log(response)
+                })
+
 
               } catch (error: any) {
                 // Handle error here

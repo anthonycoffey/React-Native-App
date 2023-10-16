@@ -7,6 +7,8 @@ node_modules/
 .expo/
 dist/
 web-build/
+ios/
+android/
 
 # Native
 *.orig.*
@@ -45,3 +47,8 @@ expo-env.d.ts
 /.idea/phoenix-mobile.iml
 /.idea/modules.xml
 /coffeywebdev-d0487-06581ec12d25.json
+.idea
+.yarn
+.editorconfig
+.yarnrc.yml
+

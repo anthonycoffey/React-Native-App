@@ -18,7 +18,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.phoenixcrm.phoenixmobile",
+      "bundleIdentifier": "com.phoenix-mobile",
       "infoPlist": {
         "LSApplicationQueriesSchemes": [
           "comgooglemaps",
@@ -56,8 +56,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
-      "./plugins/android-manifest.plugin.js"
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
