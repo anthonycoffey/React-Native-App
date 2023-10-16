@@ -20,9 +20,20 @@ Proudly powered by
 
 `expo run:ios` - test app outside of expo managed service on iOS platform
 
+`yarn ios` - starts local development build for iOS
+
+`yarn android` - starts local development build for Android
+
 `yarn test` - runs Jest unit tests
 
+## .env config
+`EXPO_PUBLIC_API_URL` - URL of Phoenix backend
 
+`EXPO_PUBLIC_GEOCODING_API_KEY` - Google Maps API key
+
+`EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY` - Authorize.net public key
+
+`EXPO_PUBLIC_AUTHORIZE_LOGIN_ID` - Authorize.net login ID
 
 
 ### Troubleshooting Tips
@@ -33,6 +44,13 @@ Proudly powered by
 
 - An .env file is required with a single property `API_URL` that points to Phoenix backend 
 
-- Auth.net is dependent on .env file
+- Sometimes issues can be caused by cache, to clear cache with expo running the following command `yarn start --clear`
+  
+    Note: Refer to Expo documentation on clearing cache for your development environment:
 
-- Google Maps Geocoding is dependent on .env file
+    https://docs.expo.dev/troubleshooting/clear-cache-macos-linux/
+
+    https://docs.expo.dev/troubleshooting/clear-cache-windows/
+
+- **ANDROID**: For local development builds to work you need JDK 11 installed and `JAVA_HOME` environment variable set to JDK 11 path
+- **IOS**: For local development builds to work you need XCode installed

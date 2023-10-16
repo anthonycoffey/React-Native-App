@@ -267,8 +267,6 @@ export default function JobPage() {
             </Card>
             {/*payments*/}
 
-            {/* invoice */}
-
             {job.paymentStatus != "paid" && (
               <Invoice job={job} fetchJob={fetchJob} />
             )}
