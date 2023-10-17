@@ -18,9 +18,22 @@ import api, { responseDebug } from "../../../utils/api";
 import { NativeModules } from 'react-native'
 const { RNAuthorizeNet } = NativeModules;
 
+
+const LOGIN_ID = process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID || "";
+const CLIENT_KEY = process.env.EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY || "";
+
+
 interface Props {
   job: Job;
   fetchJob: () => void;
+}
+
+
+interface CreditCardDetails {
+    CARD_NO: string;
+    CVV_NO: string;
+    EXPIRATION_MONTH: string;
+    EXPIRATION_YEAR: string;
 }
 
 export default function Invoice({ job, fetchJob }: Props) {
@@ -32,6 +45,12 @@ export default function Invoice({ job, fetchJob }: Props) {
   );
   const [amountToPay, setAmountToPay] = useState<string>("");
   const [tipAmount, setTipAmount] = useState<string>("");
+    const [creditCardDetails, setCreditCardDetails] = useState<CreditCardDetails>({
+        CARD_NO: "4111111111111111",
+        CVV_NO: "000",
+        EXPIRATION_MONTH: "11",
+        EXPIRATION_YEAR: "23",
+    });
 
   useEffect(() => {
     const pendingInvoice = job.Invoices?.find(
@@ -152,54 +171,115 @@ export default function Invoice({ job, fetchJob }: Props) {
       ) : null}
 
       {job.status != "paid" && hasActiveInvoice && amountToPay && (
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            containerStyle={globalStyles.buttonContainer}
-            onPress={() => {
+          <>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Button
+                containerStyle={globalStyles.buttonContainer}
+                onPress={() => {
 
-              try {
-                const isProduction = process.env.NODE_ENV === "production";
-                const cardValues = {
-                  CARD_NO: "4111111111111111",
-                  CLIENT_KEY: process.env.EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY,
-                  CVV_NO: "000",
-                  EXPIRATION_MONTH: "11",
-                  EXPIRATION_YEAR: "23",
-                  LOGIN_ID: process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID,
-                };
-
-
-                RNAuthorizeNet.getTokenWithRequestForCard(cardValues, isProduction).then((response: any) => {
-                  console.log(response)
-                })
+                  try {
+                    const isProduction = process.env.NODE_ENV === "production";
+                    RNAuthorizeNet.getTokenWithRequestForCard({
+                        CLIENT_KEY,
+                        LOGIN_ID,
+                        ...creditCardDetails
+                    }, isProduction).then((response: any) => {
+                      console.log(response)
+                    }).catch((error)=>{
+                        console.log(error);
+                    })
 
 
-              } catch (error: any) {
-                // Handle error here
-                console.log("handle error here");
-                responseDebug(error);
-              }
-            }}
-          >
-            <Icon name="credit-card" type="material-community" color="white" />
-            Credit Card
-          </Button>
-          <Button
-            containerStyle={globalStyles.buttonContainer}
-            onPress={() => {
-              setPaymentType("cash");
-              setShowModal(true);
-            }}
-          >
-            <Icon name="cash" type="material-community" color="white" />
-            Cash
-          </Button>
-        </View>
+                  } catch (error: any) {
+                    // Handle error here
+                    console.log("handle error here");
+                    responseDebug(error);
+                  }
+                }}
+              >
+                <Icon name="credit-card" type="material-community" color="white" />
+                Credit Card
+              </Button>
+              <Button
+                containerStyle={globalStyles.buttonContainer}
+                onPress={() => {
+                  setPaymentType("cash");
+                  setShowModal(true);
+                }}
+              >
+                <Icon name="cash" type="material-community" color="white" />
+                Cash
+              </Button>
+            </View>
+            <View style={{flexDirection: 'column'}}>
+                  {/* Input field for CARD_NO */}
+                  <TextInput
+                      style={globalStyles.input}
+                      placeholder="Card Number"
+                      keyboardType="numeric"
+                      value={creditCardDetails.CARD_NO}
+                      onChangeText={(text) =>
+                          setCreditCardDetails({
+                              ...creditCardDetails,
+                              CARD_NO: text,
+                          })
+                      }
+                  />
+
+
+
+
+                  <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <TextInput
+                          style={globalStyles.input}
+                          placeholder="CVV"
+                          keyboardType="numeric"
+                          maxLength={3}
+                          value={creditCardDetails.CVV_NO}
+                          onChangeText={(text) =>
+                              setCreditCardDetails({
+                                  ...creditCardDetails,
+                                  CVV_NO: text,
+                              })
+                          }
+                      />
+                      <TextInput
+                          maxLength={2}
+                          style={globalStyles.input}
+                          placeholder="Expiration Month"
+                          keyboardType="numeric"
+                          value={creditCardDetails.EXPIRATION_MONTH}
+                          onChangeText={(text) =>
+                              setCreditCardDetails({
+                                  ...creditCardDetails,
+                                  EXPIRATION_MONTH: text,
+                              })
+                          }
+                      />
+                      {/* Input field for EXPIRATION_YEAR */}
+                      <TextInput
+                          maxLength={2}
+                          style={globalStyles.input}
+                          placeholder="Expiration Year"
+                          keyboardType="numeric"
+                          value={creditCardDetails.EXPIRATION_YEAR}
+                          onChangeText={(text) =>
+                              setCreditCardDetails({
+                                  ...creditCardDetails,
+                                  EXPIRATION_YEAR: text,
+                              })
+                          }
+                      />
+                  </View>
+
+
+      </View>
+          </>
       )}
 
       <Dialog
