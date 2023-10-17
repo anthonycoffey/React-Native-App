@@ -27,7 +27,7 @@ interface Props {
 export default function Invoice({ job, fetchJob }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [payWithCard, setPayWithCard] = useState<boolean>(false);
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [payWithCash, setPayWithCash] = useState<boolean>(false);
   const [paymentType, setPaymentType] = useState<"cash" | "card">("card");
   const hasActiveInvoice = job.Invoices?.some((invoice) =>
     ["pending", "partially-paid", "sent"].includes(invoice.status),
@@ -83,7 +83,8 @@ export default function Invoice({ job, fetchJob }: Props) {
   };
 
   const hidePaymentDialog = () => {
-    setShowModal(false);
+    setPayWithCard(false);
+    setPayWithCash(false);
   };
 
   return (
@@ -137,30 +138,15 @@ export default function Invoice({ job, fetchJob }: Props) {
             Take Payment
           </Text>
           <View style={{ flexDirection: "row", paddingTop: 20 }}>
-            {/*<Input*/}
-            {/*  inputContainerStyle={{ borderBottomWidth: 0 }}*/}
-            {/*  containerStyle={{*/}
-            {/*    width: "48%",*/}
-            {/*  }}*/}
-            {/*  label={"Amount"}*/}
-            {/*  style={globalStyles.input}*/}
-            {/*  keyboardType={"numeric"}*/}
-            {/*  value={amountToPay}*/}
-            {/*  onChangeText={(value) => setAmountToPay(value)}*/}
-            {/*/>*/}
             <CurrencyInput
               label={"Amount"}
-              // value={amountToPay}
+              value={amountToPay}
+              readOnly={true}
+              editable={false}
               onChangeText={(value) => setAmountToPay(value)}
             />
-            <Input
-              inputContainerStyle={{ borderBottomWidth: 0 }}
-              containerStyle={{
-                width: "48%",
-              }}
+            <CurrencyInput
               label={"Tip"}
-              style={globalStyles.input}
-              keyboardType={"numeric"}
               value={tipAmount}
               onChangeText={(value) => setTipAmount(value)}
             />
@@ -181,6 +167,7 @@ export default function Invoice({ job, fetchJob }: Props) {
               checked={payWithCard}
               onPress={() => {
                 setPayWithCard(!payWithCard);
+                setPaymentType("card");
               }}
             >
               <Icon
@@ -192,10 +179,10 @@ export default function Invoice({ job, fetchJob }: Props) {
             </CheckBox>
             <CheckBox
               title={"Pay with Cash"}
-              checked={showModal}
+              checked={payWithCash}
               onPress={() => {
                 setPaymentType("cash");
-                setShowModal(!showModal);
+                setPayWithCash(!payWithCash);
               }}
             >
               Pay with Cash
@@ -212,97 +199,9 @@ export default function Invoice({ job, fetchJob }: Props) {
         }}
       >
         <Dialog.Title
-          title={`${paymentType == "card" ? "Charge" : "Collect"} $${
-            +amountToPay + +tipAmount
-          }`}
+          title={"Enter Card Details"}
           titleStyle={{ textAlign: "center", fontSize: 18 }}
         />
-
-        {/*<View style={{ flexDirection: "column", marginTop: 20 }}>*/}
-        {/*  <Input*/}
-        {/*    inputContainerStyle={{ borderBottomWidth: 0 }}*/}
-        {/*    style={globalStyles.input}*/}
-        {/*    placeholder="Card Number"*/}
-        {/*    label="Card Number"*/}
-        {/*    keyboardType="numeric"*/}
-        {/*    value={creditCardDetails.CARD_NO}*/}
-        {/*    onChangeText={(text) =>*/}
-        {/*      setCreditCardDetails({*/}
-        {/*        ...creditCardDetails,*/}
-        {/*        CARD_NO: text,*/}
-        {/*      })*/}
-        {/*    }*/}
-        {/*  />*/}
-
-        {/*  <View*/}
-        {/*    style={{*/}
-        {/*      flexDirection: "row",*/}
-        {/*      flexWrap: "wrap",*/}
-        {/*      justifyContent: "space-between",*/}
-        {/*    }}*/}
-        {/*  >*/}
-        {/*    <Input*/}
-        {/*      inputContainerStyle={{ borderBottomWidth: 0 }}*/}
-        {/*      containerStyle={{*/}
-        {/*        width: "33%",*/}
-        {/*      }}*/}
-        {/*      style={globalStyles.input}*/}
-        {/*      placeholder="CVV"*/}
-        {/*      label="CVV"*/}
-        {/*      keyboardType="numeric"*/}
-        {/*      maxLength={3}*/}
-        {/*      value={creditCardDetails.CVV_NO}*/}
-        {/*      onChangeText={(text) =>*/}
-        {/*        setCreditCardDetails({*/}
-        {/*          ...creditCardDetails,*/}
-        {/*          CVV_NO: text,*/}
-        {/*        })*/}
-        {/*      }*/}
-        {/*    />*/}
-        {/*    <Input*/}
-        {/*      maxLength={2}*/}
-        {/*      inputContainerStyle={{ borderBottomWidth: 0 }}*/}
-        {/*      containerStyle={{*/}
-        {/*        width: "33%",*/}
-        {/*      }}*/}
-        {/*      style={globalStyles.input}*/}
-        {/*      placeholder="Month"*/}
-        {/*      label="Month"*/}
-        {/*      keyboardType="numeric"*/}
-        {/*      value={creditCardDetails.EXPIRATION_MONTH}*/}
-        {/*      onChangeText={(text) =>*/}
-        {/*        setCreditCardDetails({*/}
-        {/*          ...creditCardDetails,*/}
-        {/*          EXPIRATION_MONTH: text,*/}
-        {/*        })*/}
-        {/*      }*/}
-        {/*    />*/}
-        {/*    <Input*/}
-        {/*      maxLength={2}*/}
-        {/*      inputContainerStyle={{ borderBottomWidth: 0 }}*/}
-        {/*      containerStyle={{*/}
-        {/*        width: "33%",*/}
-        {/*      }}*/}
-        {/*      style={globalStyles.input}*/}
-        {/*      placeholder="Year"*/}
-        {/*      label="Year"*/}
-        {/*      keyboardType="numeric"*/}
-        {/*      value={creditCardDetails.EXPIRATION_YEAR}*/}
-        {/*      onChangeText={(text) =>*/}
-        {/*        setCreditCardDetails({*/}
-        {/*          ...creditCardDetails,*/}
-        {/*          EXPIRATION_YEAR: text,*/}
-        {/*        })*/}
-        {/*      }*/}
-        {/*    />*/}
-        {/*  </View>*/}
-        {/*  <Button*/}
-        {/*    containerStyle={globalStyles.buttonContainer}*/}
-        {/*    onPress={tokenizeCard}*/}
-        {/*  >*/}
-        {/*    Pay*/}
-        {/*  </Button>*/}
-        {/*</View>*/}
         <PaymentDialog
           jobId={job.id}
           paymentType={paymentType}
@@ -312,20 +211,19 @@ export default function Invoice({ job, fetchJob }: Props) {
           hidePaymentDialog={hidePaymentDialog}
         />
       </Dialog>
-
       <Dialog
-        isVisible={showModal}
+        isVisible={payWithCash}
         onBackdropPress={() => {
-          setShowModal(false);
+          setPayWithCash(false);
         }}
       >
         <Dialog.Title
-          title={`${paymentType == "card" ? "Charge" : "Collect"} $${
-            +amountToPay + +tipAmount
-          }`}
+          title={"Collect Cash"}
           titleStyle={{ textAlign: "center", fontSize: 18 }}
         />
-
+        <Text style={{ padding: 10, textAlign: "center", marginBottom: 10 }}>
+          Please collect ${amountToPay} from the customer.
+        </Text>
         <PaymentDialog
           jobId={job.id}
           paymentType={paymentType}

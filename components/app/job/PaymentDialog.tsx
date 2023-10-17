@@ -1,8 +1,4 @@
-import React, { useState } from "react";
-import { Alert, TextInput } from "react-native";
-import { Text, Card, Button } from "@rneui/themed";
-import { formatPrice } from "../../../utils/money";
-import globalStyles from "../../../styles/globalStyles";
+import React from "react";
 import api, { responseDebug } from "../../../utils/api";
 import PaymentForm from "./PaymentForm";
 import { dollarsToCents } from "../../../utils/money";
@@ -16,12 +12,10 @@ type Props = {
   hidePaymentDialog: () => void;
 };
 
-interface CreditCardDetails {
-  CARD_NO: string;
-  CVV_NO: string;
-  EXPIRATION_MONTH: string;
-  EXPIRATION_YEAR: string;
-}
+type OpaqueData = {
+  dataDescriptor: string;
+  dataValue: string;
+};
 
 export default function PaymentDialog({
   jobId,
@@ -31,20 +25,41 @@ export default function PaymentDialog({
   fetchJob,
   hidePaymentDialog,
 }: Props) {
-  const payJobWithCC = (response: {
-    DATA_VALUE: string;
-    DATA_DESCRIPTOR: string;
-  }) => {
+  const payJobWithCC = (response: any) => {
     console.log({ response });
+    const { DATA_VALUE, DATA_DESCRIPTOR } = response;
+    const opaqueData: OpaqueData = {
+      dataDescriptor: DATA_DESCRIPTOR,
+      dataValue: DATA_VALUE,
+    };
+    // communicate with phoenix backend with token
+
+    try {
+      api
+        .post(`/jobs/${jobId}/payments`, {
+          type: "card",
+          amount: amountToPay,
+          tip: tipAmount,
+          opaqueData,
+        })
+        .then((response) => {
+          const { data } = response;
+          console.log({ data });
+          fetchJob();
+          hidePaymentDialog();
+        })
+        .catch((error) => {
+          responseDebug(error);
+        });
+    } catch (error) {
+      console.log({ error });
+      console.log("Failed to create payment");
+    }
   };
 
-  const payJobWithCash = (response: {
-    DATA_VALUE: string;
-    DATA_DESCRIPTOR: string;
-  }) => {
+  const payJobWithCash = (response: any) => {
     console.log({ response });
     try {
-      // this.loading = true;
       api
         .post(`/jobs/${jobId}/payments`, {
           type: "cash",
@@ -60,12 +75,9 @@ export default function PaymentDialog({
         .catch((error) => {
           responseDebug(error);
         });
-
-      // this.takePaymentDialog = false;
     } catch {
       console.log("Failed to create payment");
     } finally {
-      // this.loading = false;
     }
   };
 
