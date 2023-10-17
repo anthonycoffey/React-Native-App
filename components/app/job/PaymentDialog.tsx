@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextInput } from "react-native";
+import { Alert, TextInput } from "react-native";
 import { Text, Card, Button } from "@rneui/themed";
 import { formatPrice } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
@@ -16,6 +16,13 @@ type Props = {
   hidePaymentDialog: () => void;
 };
 
+interface CreditCardDetails {
+  CARD_NO: string;
+  CVV_NO: string;
+  EXPIRATION_MONTH: string;
+  EXPIRATION_YEAR: string;
+}
+
 export default function PaymentDialog({
   jobId,
   paymentType,
@@ -24,11 +31,18 @@ export default function PaymentDialog({
   fetchJob,
   hidePaymentDialog,
 }: Props) {
-  const payJobWithCC = () => {
-    // todo: Implement the logic for payment with credit card
+  const payJobWithCC = (response: {
+    DATA_VALUE: string;
+    DATA_DESCRIPTOR: string;
+  }) => {
+    console.log({ response });
   };
 
-  const payJobWithCash = () => {
+  const payJobWithCash = (response: {
+    DATA_VALUE: string;
+    DATA_DESCRIPTOR: string;
+  }) => {
+    console.log({ response });
     try {
       // this.loading = true;
       api

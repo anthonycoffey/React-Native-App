@@ -1,13 +1,28 @@
-import React, { useState } from "react";
-import { View, TextInput, Platform } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, TextInput, Platform, Alert } from "react-native";
 import api, { responseDebug } from "../../../utils/api";
 import { Button, Divider, Text } from "@rneui/themed";
 import globalStyles from "../../../styles/globalStyles";
+import { NativeModules } from "react-native";
+const { RNAuthorizeNet } = NativeModules;
+
+const LOGIN_ID = process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID || "";
+const CLIENT_KEY = process.env.EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY || "";
 
 interface PaymentFormProps {
   buttonText: string;
   paymentType: "card" | "cash";
-  onSuccess: () => void;
+  onSuccess: (response?: {
+    DATA_VALUE: string;
+    DATA_DESCRIPTOR: string;
+  }) => void;
+}
+
+interface CreditCardDetails {
+  CARD_NO: string;
+  CVV_NO: string;
+  EXPIRATION_MONTH: string;
+  EXPIRATION_YEAR: string;
 }
 
 export default function PaymentForm({
@@ -16,62 +31,44 @@ export default function PaymentForm({
   onSuccess,
 }: PaymentFormProps) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [cardNumber, setCardNumber] = useState<string>("4111111111111111");
   const [cardExpiry, setCardExpiry] = useState<string>("12/23");
-  const [cardCvc, setCardCvc] = useState<string>("123");
-  const [zip, setZip] = useState<string>("78745");
-  const [cardErrors, setCardErrors] = useState<{ [key: string]: string }>({});
-  const validate = () => {
-    const newCardErrors: { [key: string]: string } = {};
+  const [creditCardDetails, setCreditCardDetails] = useState<CreditCardDetails>(
+    {
+      CARD_NO: "4111111111111111",
+      CVV_NO: "000",
+      EXPIRATION_MONTH: "11",
+      EXPIRATION_YEAR: "23",
+    },
+  );
 
-    // Validate card number
-    if (!/^\d{16}$/.test(cardNumber)) {
-      newCardErrors.cardNumber = "Invalid Credit Card Number.";
-    }
-
-    // Validate card expiry (you may need to adjust this validation)
-    if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) {
-      newCardErrors.cardExpiry = "Invalid Expiration Date.";
-    }
-
-    // Validate card CVC
-    if (!/^\d{3,4}$/.test(cardCvc)) {
-      newCardErrors.cardCvc = "Invalid CVC.";
-    }
-
-    // Validate zip code (you may need to adjust this validation)
-    if (!/^\d{5,}$/.test(zip)) {
-      newCardErrors.zip = "Invalid Zip Code.";
-    }
-
-    setCardErrors(newCardErrors);
+  const submitCardPayment = async () => {
+    const isProduction = process.env.NODE_ENV === "production";
+    RNAuthorizeNet.getTokenWithRequestForCard(
+      {
+        CLIENT_KEY,
+        LOGIN_ID,
+        ...creditCardDetails,
+      },
+      isProduction,
+    )
+      .then((response: any) => {
+        console.log(response);
+        onSuccess(response);
+      })
+      .catch((error: any) => {
+        const { code, message } = error;
+        const alertMsg: string = `${message}\n\nError Code: ${code}`;
+        Alert.alert("Error", alertMsg, [{ text: "OK" }], {
+          cancelable: false,
+        });
+      });
   };
 
-  // todo: needs to get tokenized cc and bubble up to onSuccess
-  const submitPaymentDetails = async () => {
-    validate();
-    if (Object.keys(cardErrors).length) {
-      // Handle validation errors here
-      return;
-    }
-
-    try {
-      const [month, year] = cardExpiry.split("/");
-      const isProduction = process.env.NODE_ENV === "production";
-      const cardValues = {
-        LOGIN_ID: process.env.EXPO_PUBLIC_AUTHORIZE_NET_LOGIN_ID,
-        CLIENT_KEY: process.env.EXPO_PUBLIC_AUTHORIZE_NET_CLIENT_KEY,
-        CARD_NO: cardNumber,
-        CVV_NO: cardCvc,
-        EXPIRATION_MONTH: month,
-        EXPIRATION_YEAR: year,
-      };
-
-    } catch (error: any) {
-      // Handle error here
-      console.log("handle error here");
-      responseDebug(error);
-    }
+  const submitCashPayment = () => {
+    onSuccess({
+      DATA_VALUE: "cash",
+      DATA_DESCRIPTOR: "cash",
+    });
   };
 
   const handleCardExpiryChange = (expDate: string) => {
@@ -93,6 +90,20 @@ export default function PaymentForm({
     }
   };
 
+  useEffect(() => {
+    const [month, year] = cardExpiry.split("/");
+    console.log({ month, year });
+    setCreditCardDetails({
+      ...creditCardDetails,
+      EXPIRATION_MONTH: month,
+      EXPIRATION_YEAR: year,
+    });
+
+    return () => {};
+  }, [cardExpiry]);
+
+  console.log(paymentType);
+
   return (
     <View>
       {paymentType === "card" && (
@@ -103,8 +114,13 @@ export default function PaymentForm({
             placeholderTextColor={"#000"}
             placeholder="Card Number"
             maxLength={16}
-            value={cardNumber}
-            onChangeText={(text) => setCardNumber(text)}
+            value={creditCardDetails.CARD_NO}
+            onChangeText={(text) =>
+              setCreditCardDetails({
+                ...creditCardDetails,
+                CARD_NO: text,
+              })
+            }
           />
           <TextInput
             autoComplete={Platform.OS === "android" ? "cc-csc" : "cc-number"}
@@ -112,8 +128,13 @@ export default function PaymentForm({
             placeholderTextColor={"#000"}
             maxLength={4}
             placeholder="CVC"
-            value={cardCvc}
-            onChangeText={(text) => setCardCvc(text)}
+            value={creditCardDetails.CVV_NO}
+            onChangeText={(text) =>
+              setCreditCardDetails({
+                ...creditCardDetails,
+                CVV_NO: text,
+              })
+            }
           />
 
           <TextInput
@@ -123,40 +144,18 @@ export default function PaymentForm({
             maxLength={5}
             placeholder="(MM/YY)"
             value={cardExpiry}
-            // onChangeText={(text) => setCardExpiry(text)}
             onChangeText={handleCardExpiryChange}
-          />
-
-          <TextInput
-            autoComplete={"off"}
-            keyboardType={"numeric"}
-            maxLength={5}
-            style={globalStyles.input}
-            placeholderTextColor={"#000"}
-            placeholder="Zip Code"
-            value={zip}
-            onChangeText={(text) => setZip(text)}
           />
         </>
       )}
 
       <Button
-        onPress={paymentType === "cash" ? onSuccess : submitPaymentDetails}
+        onPress={paymentType === "cash" ? submitCashPayment : submitCardPayment}
         color="green"
         disabled={loading}
       >
         {buttonText}
       </Button>
-      <Divider />
-      {Object.keys(cardErrors).length > 0 && (
-        <div className="error-messages">
-          {Object.entries(cardErrors).map(([key, value]) => (
-            <div key={key} className="error-message">
-              {value}
-            </div>
-          ))}
-        </div>
-      )}
     </View>
   );
 }

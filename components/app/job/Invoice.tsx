@@ -10,34 +10,23 @@ import {
   Divider,
   Dialog,
   Icon,
+  Input,
+  CheckBox,
 } from "@rneui/themed";
 import PaymentDialog from "./PaymentDialog";
 import { centsToDollars } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
 import api, { responseDebug } from "../../../utils/api";
-import { NativeModules } from 'react-native'
-const { RNAuthorizeNet } = NativeModules;
-
-
-const LOGIN_ID = process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID || "";
-const CLIENT_KEY = process.env.EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY || "";
-
+import CurrencyInput from "../invoice/CurrencyInput";
 
 interface Props {
   job: Job;
   fetchJob: () => void;
 }
 
-
-interface CreditCardDetails {
-    CARD_NO: string;
-    CVV_NO: string;
-    EXPIRATION_MONTH: string;
-    EXPIRATION_YEAR: string;
-}
-
 export default function Invoice({ job, fetchJob }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
+  const [payWithCard, setPayWithCard] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [paymentType, setPaymentType] = useState<"cash" | "card">("card");
   const hasActiveInvoice = job.Invoices?.some((invoice) =>
@@ -45,12 +34,6 @@ export default function Invoice({ job, fetchJob }: Props) {
   );
   const [amountToPay, setAmountToPay] = useState<string>("");
   const [tipAmount, setTipAmount] = useState<string>("");
-    const [creditCardDetails, setCreditCardDetails] = useState<CreditCardDetails>({
-        CARD_NO: "4111111111111111",
-        CVV_NO: "000",
-        EXPIRATION_MONTH: "11",
-        EXPIRATION_YEAR: "23",
-    });
 
   useEffect(() => {
     const pendingInvoice = job.Invoices?.find(
@@ -145,142 +128,190 @@ export default function Invoice({ job, fetchJob }: Props) {
       {job.status != "paid" && hasActiveInvoice ? (
         <>
           <Divider style={{ marginVertical: 20 }} />
-          <Card.Title
+          <Text
+            h4
             style={{
               textAlign: "center",
             }}
           >
             Take Payment
-          </Card.Title>
-
-          <Text style={globalStyles.label}>Amount</Text>
-          <TextInput
-            style={globalStyles.input}
-            keyboardType={"numeric"}
-            value={amountToPay}
-            onChangeText={(value) => setAmountToPay(value)}
-          />
-          <Text style={globalStyles.label}>Tip</Text>
-          <TextInput
-            style={globalStyles.input}
-            keyboardType={"numeric"}
-            value={tipAmount}
-            onChangeText={(value) => setTipAmount(value)}
-          />
+          </Text>
+          <View style={{ flexDirection: "row", paddingTop: 20 }}>
+            {/*<Input*/}
+            {/*  inputContainerStyle={{ borderBottomWidth: 0 }}*/}
+            {/*  containerStyle={{*/}
+            {/*    width: "48%",*/}
+            {/*  }}*/}
+            {/*  label={"Amount"}*/}
+            {/*  style={globalStyles.input}*/}
+            {/*  keyboardType={"numeric"}*/}
+            {/*  value={amountToPay}*/}
+            {/*  onChangeText={(value) => setAmountToPay(value)}*/}
+            {/*/>*/}
+            <CurrencyInput
+              label={"Amount"}
+              // value={amountToPay}
+              onChangeText={(value) => setAmountToPay(value)}
+            />
+            <Input
+              inputContainerStyle={{ borderBottomWidth: 0 }}
+              containerStyle={{
+                width: "48%",
+              }}
+              label={"Tip"}
+              style={globalStyles.input}
+              keyboardType={"numeric"}
+              value={tipAmount}
+              onChangeText={(value) => setTipAmount(value)}
+            />
+          </View>
         </>
       ) : null}
 
       {job.status != "paid" && hasActiveInvoice && amountToPay && (
-          <>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
+        <>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <CheckBox
+              title={"Pay with Card"}
+              checked={payWithCard}
+              onPress={() => {
+                setPayWithCard(!payWithCard);
               }}
             >
-              <Button
-                containerStyle={globalStyles.buttonContainer}
-                onPress={() => {
-
-                  try {
-                    const isProduction = process.env.NODE_ENV === "production";
-                    RNAuthorizeNet.getTokenWithRequestForCard({
-                        CLIENT_KEY,
-                        LOGIN_ID,
-                        ...creditCardDetails
-                    }, isProduction).then((response: any) => {
-                      console.log(response)
-                    }).catch((error)=>{
-                        console.log(error);
-                    })
-
-
-                  } catch (error: any) {
-                    // Handle error here
-                    console.log("handle error here");
-                    responseDebug(error);
-                  }
-                }}
-              >
-                <Icon name="credit-card" type="material-community" color="white" />
-                Credit Card
-              </Button>
-              <Button
-                containerStyle={globalStyles.buttonContainer}
-                onPress={() => {
-                  setPaymentType("cash");
-                  setShowModal(true);
-                }}
-              >
-                <Icon name="cash" type="material-community" color="white" />
-                Cash
-              </Button>
-            </View>
-            <View style={{flexDirection: 'column'}}>
-                  {/* Input field for CARD_NO */}
-                  <TextInput
-                      style={globalStyles.input}
-                      placeholder="Card Number"
-                      keyboardType="numeric"
-                      value={creditCardDetails.CARD_NO}
-                      onChangeText={(text) =>
-                          setCreditCardDetails({
-                              ...creditCardDetails,
-                              CARD_NO: text,
-                          })
-                      }
-                  />
-
-
-
-
-                  <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                      <TextInput
-                          style={globalStyles.input}
-                          placeholder="CVV"
-                          keyboardType="numeric"
-                          maxLength={3}
-                          value={creditCardDetails.CVV_NO}
-                          onChangeText={(text) =>
-                              setCreditCardDetails({
-                                  ...creditCardDetails,
-                                  CVV_NO: text,
-                              })
-                          }
-                      />
-                      <TextInput
-                          maxLength={2}
-                          style={globalStyles.input}
-                          placeholder="Expiration Month"
-                          keyboardType="numeric"
-                          value={creditCardDetails.EXPIRATION_MONTH}
-                          onChangeText={(text) =>
-                              setCreditCardDetails({
-                                  ...creditCardDetails,
-                                  EXPIRATION_MONTH: text,
-                              })
-                          }
-                      />
-                      {/* Input field for EXPIRATION_YEAR */}
-                      <TextInput
-                          maxLength={2}
-                          style={globalStyles.input}
-                          placeholder="Expiration Year"
-                          keyboardType="numeric"
-                          value={creditCardDetails.EXPIRATION_YEAR}
-                          onChangeText={(text) =>
-                              setCreditCardDetails({
-                                  ...creditCardDetails,
-                                  EXPIRATION_YEAR: text,
-                              })
-                          }
-                      />
-                  </View>
-
-
-      </View>
-          </>
+              <Icon
+                name="credit-card"
+                type="material-community"
+                color="white"
+              />
+              Pay with Card
+            </CheckBox>
+            <CheckBox
+              title={"Pay with Cash"}
+              checked={showModal}
+              onPress={() => {
+                setPaymentType("cash");
+                setShowModal(!showModal);
+              }}
+            >
+              Pay with Cash
+              <Icon name="cash" type="material-community" color="white" />
+            </CheckBox>
+          </View>
+        </>
       )}
+
+      <Dialog
+        isVisible={payWithCard}
+        onBackdropPress={() => {
+          setPayWithCard(false);
+        }}
+      >
+        <Dialog.Title
+          title={`${paymentType == "card" ? "Charge" : "Collect"} $${
+            +amountToPay + +tipAmount
+          }`}
+          titleStyle={{ textAlign: "center", fontSize: 18 }}
+        />
+
+        {/*<View style={{ flexDirection: "column", marginTop: 20 }}>*/}
+        {/*  <Input*/}
+        {/*    inputContainerStyle={{ borderBottomWidth: 0 }}*/}
+        {/*    style={globalStyles.input}*/}
+        {/*    placeholder="Card Number"*/}
+        {/*    label="Card Number"*/}
+        {/*    keyboardType="numeric"*/}
+        {/*    value={creditCardDetails.CARD_NO}*/}
+        {/*    onChangeText={(text) =>*/}
+        {/*      setCreditCardDetails({*/}
+        {/*        ...creditCardDetails,*/}
+        {/*        CARD_NO: text,*/}
+        {/*      })*/}
+        {/*    }*/}
+        {/*  />*/}
+
+        {/*  <View*/}
+        {/*    style={{*/}
+        {/*      flexDirection: "row",*/}
+        {/*      flexWrap: "wrap",*/}
+        {/*      justifyContent: "space-between",*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    <Input*/}
+        {/*      inputContainerStyle={{ borderBottomWidth: 0 }}*/}
+        {/*      containerStyle={{*/}
+        {/*        width: "33%",*/}
+        {/*      }}*/}
+        {/*      style={globalStyles.input}*/}
+        {/*      placeholder="CVV"*/}
+        {/*      label="CVV"*/}
+        {/*      keyboardType="numeric"*/}
+        {/*      maxLength={3}*/}
+        {/*      value={creditCardDetails.CVV_NO}*/}
+        {/*      onChangeText={(text) =>*/}
+        {/*        setCreditCardDetails({*/}
+        {/*          ...creditCardDetails,*/}
+        {/*          CVV_NO: text,*/}
+        {/*        })*/}
+        {/*      }*/}
+        {/*    />*/}
+        {/*    <Input*/}
+        {/*      maxLength={2}*/}
+        {/*      inputContainerStyle={{ borderBottomWidth: 0 }}*/}
+        {/*      containerStyle={{*/}
+        {/*        width: "33%",*/}
+        {/*      }}*/}
+        {/*      style={globalStyles.input}*/}
+        {/*      placeholder="Month"*/}
+        {/*      label="Month"*/}
+        {/*      keyboardType="numeric"*/}
+        {/*      value={creditCardDetails.EXPIRATION_MONTH}*/}
+        {/*      onChangeText={(text) =>*/}
+        {/*        setCreditCardDetails({*/}
+        {/*          ...creditCardDetails,*/}
+        {/*          EXPIRATION_MONTH: text,*/}
+        {/*        })*/}
+        {/*      }*/}
+        {/*    />*/}
+        {/*    <Input*/}
+        {/*      maxLength={2}*/}
+        {/*      inputContainerStyle={{ borderBottomWidth: 0 }}*/}
+        {/*      containerStyle={{*/}
+        {/*        width: "33%",*/}
+        {/*      }}*/}
+        {/*      style={globalStyles.input}*/}
+        {/*      placeholder="Year"*/}
+        {/*      label="Year"*/}
+        {/*      keyboardType="numeric"*/}
+        {/*      value={creditCardDetails.EXPIRATION_YEAR}*/}
+        {/*      onChangeText={(text) =>*/}
+        {/*        setCreditCardDetails({*/}
+        {/*          ...creditCardDetails,*/}
+        {/*          EXPIRATION_YEAR: text,*/}
+        {/*        })*/}
+        {/*      }*/}
+        {/*    />*/}
+        {/*  </View>*/}
+        {/*  <Button*/}
+        {/*    containerStyle={globalStyles.buttonContainer}*/}
+        {/*    onPress={tokenizeCard}*/}
+        {/*  >*/}
+        {/*    Pay*/}
+        {/*  </Button>*/}
+        {/*</View>*/}
+        <PaymentDialog
+          jobId={job.id}
+          paymentType={paymentType}
+          amountToPay={+amountToPay}
+          tipAmount={+tipAmount}
+          fetchJob={fetchJob}
+          hidePaymentDialog={hidePaymentDialog}
+        />
+      </Dialog>
 
       <Dialog
         isVisible={showModal}
