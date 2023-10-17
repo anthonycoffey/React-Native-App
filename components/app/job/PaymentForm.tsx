@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, TextInput, Platform, Alert } from "react-native";
 import api, { responseDebug } from "../../../utils/api";
-import { Button, Divider, Text } from "@rneui/themed";
+import { Button, Divider, Text, Input } from "@rneui/themed";
 import globalStyles from "../../../styles/globalStyles";
 import { NativeModules } from "react-native";
 const { RNAuthorizeNet } = NativeModules;
@@ -108,8 +108,10 @@ export default function PaymentForm({
     <View>
       {paymentType === "card" && (
         <>
-          <TextInput
+          <Input
+            label={"Card Number"}
             autoComplete="cc-number"
+            inputContainerStyle={{ borderBottomWidth: 0 }}
             style={globalStyles.input}
             placeholderTextColor={"#000"}
             placeholder="Card Number"
@@ -122,30 +124,47 @@ export default function PaymentForm({
               })
             }
           />
-          <TextInput
-            autoComplete={Platform.OS === "android" ? "cc-csc" : "cc-number"}
-            style={globalStyles.input}
-            placeholderTextColor={"#000"}
-            maxLength={4}
-            placeholder="CVC"
-            value={creditCardDetails.CVV_NO}
-            onChangeText={(text) =>
-              setCreditCardDetails({
-                ...creditCardDetails,
-                CVV_NO: text,
-              })
-            }
-          />
 
-          <TextInput
-            autoComplete={Platform.OS === "android" ? "cc-exp" : "off"}
-            style={globalStyles.input}
-            placeholderTextColor={"#000"}
-            maxLength={5}
-            placeholder="(MM/YY)"
-            value={cardExpiry}
-            onChangeText={handleCardExpiryChange}
-          />
+          <View
+            style={{
+              flexWrap: "wrap",
+              flexDirection: "row",
+            }}
+          >
+            <Input
+              label={"CVC"}
+              autoComplete={Platform.OS === "android" ? "cc-csc" : "cc-number"}
+              containerStyle={{
+                width: "48%",
+              }}
+              inputContainerStyle={{ borderBottomWidth: 0 }}
+              style={globalStyles.input}
+              placeholderTextColor={"#000"}
+              maxLength={4}
+              placeholder="CVC"
+              value={creditCardDetails.CVV_NO}
+              onChangeText={(text) =>
+                setCreditCardDetails({
+                  ...creditCardDetails,
+                  CVV_NO: text,
+                })
+              }
+            />
+            <Input
+              label={"Exp."}
+              autoComplete={Platform.OS === "android" ? "cc-exp" : "off"}
+              containerStyle={{
+                width: "48%",
+              }}
+              inputContainerStyle={{ borderBottomWidth: 0 }}
+              style={globalStyles.input}
+              placeholderTextColor={"#000"}
+              maxLength={5}
+              placeholder="(MM/YY)"
+              value={cardExpiry}
+              onChangeText={handleCardExpiryChange}
+            />
+          </View>
         </>
       )}
 
