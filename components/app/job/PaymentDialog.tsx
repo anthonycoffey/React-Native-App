@@ -38,8 +38,8 @@ export default function PaymentDialog({
       api
         .post(`/jobs/${jobId}/payments`, {
           type: "card",
-          amount: amountToPay,
-          tip: tipAmount,
+          amount: dollarsToCents(amountToPay),
+          tip: dollarsToCents(tipAmount),
           opaqueData,
         })
         .then((response) => {

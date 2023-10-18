@@ -4,10 +4,11 @@ import api, { responseDebug } from "../../../utils/api";
 import { Button, Divider, Text, Input } from "@rneui/themed";
 import globalStyles from "../../../styles/globalStyles";
 import { NativeModules } from "react-native";
+import {logNestedObjects} from "../../../utils/objects";
 const { RNAuthorizeNet } = NativeModules;
 
-const LOGIN_ID = process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID || "";
-const CLIENT_KEY = process.env.EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY || "";
+const LOGIN_ID = process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID;
+const CLIENT_KEY = process.env.EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY;
 
 interface PaymentFormProps {
   buttonText: string;
@@ -43,6 +44,13 @@ export default function PaymentForm({
 
   const submitCardPayment = async () => {
     const isProduction = process.env.NODE_ENV === "production";
+    console.log({ isProduction });
+    console.log({
+      CLIENT_KEY,
+      LOGIN_ID,
+      ...creditCardDetails,
+    });
+
     RNAuthorizeNet.getTokenWithRequestForCard(
       {
         CLIENT_KEY,
@@ -52,15 +60,26 @@ export default function PaymentForm({
       isProduction,
     )
       .then((response: any) => {
-        console.log(response);
+        logNestedObjects(response)
         onSuccess(response);
       })
       .catch((error: any) => {
-        const { code, message } = error;
-        const alertMsg: string = `${message}\n\nError Code: ${code}`;
-        Alert.alert("Error", alertMsg, [{ text: "OK" }], {
-          cancelable: false,
-        });
+        logNestedObjects(error)
+        if (Platform.OS=== "ios") {
+          const { code, message } = error;
+          const alertMsg: string = `${message}\n\nError Code: ${code}`;
+          Alert.alert("Error", alertMsg, [{text: "OK"}], {
+            cancelable: false,
+          });
+        } else if (Platform.OS === "android"){
+          logNestedObjects(error)
+          const {userInfo} = error;
+          const {ERROR_TEXT, ERROR_CODE} = userInfo;
+          const alertMsg: string = `${ERROR_TEXT}\n\nError Code: ${ERROR_CODE}`;
+          Alert.alert("Error", alertMsg, [{text: "OK"}], {
+            cancelable: false,
+          });
+        }
       });
   };
 
@@ -102,7 +121,6 @@ export default function PaymentForm({
     return () => {};
   }, [cardExpiry]);
 
-  console.log(paymentType);
 
   return (
     <View>
