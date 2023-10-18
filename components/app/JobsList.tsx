@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
-import { Card, ListItem, Text, Chip } from "@rneui/themed";
+import { Card, ListItem, Text, Chip, FAB } from "@rneui/themed";
 import { formatDateTime, formatRelative } from "../../utils/dates";
 import { Job } from "../../types";
 import { router } from "expo-router";
@@ -33,6 +33,23 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
       <Text h3 style={styles.heading}>
         My Jobs
       </Text>
+
+
+      <TouchableOpacity
+        style={{ position: 'absolute', right: 15, top: 15 }}
+        >
+        <FAB
+          visible={true}
+          onPress={() => {
+            router.push("/job/new");
+          }}
+          size="small"
+          icon={{ name: "add", color: "white"}}
+          color="green"
+        />
+      </TouchableOpacity>
+
+
       {jobs &&
         jobs.map((job, i) => (
           <Card key={i}>
@@ -80,6 +97,7 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
             </TouchableOpacity>
           </Card>
         ))}
+
     </ScrollView>
   );
 }
@@ -95,8 +113,8 @@ const styles = StyleSheet.create({
   },
   heading: {
     textAlign: "center",
-    marginBottom: 20,
-    marginTop: 10,
+    marginBottom: 8,
+    marginTop: 8,
   },
   jobTitle: {
     fontWeight: "bold",

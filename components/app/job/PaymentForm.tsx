@@ -32,13 +32,13 @@ export default function PaymentForm({
   onSuccess,
 }: PaymentFormProps) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [cardExpiry, setCardExpiry] = useState<string>("12/23");
+  const [cardExpiry, setCardExpiry] = useState<string>("");
   const [creditCardDetails, setCreditCardDetails] = useState<CreditCardDetails>(
     {
-      CARD_NO: "4111111111111111",
-      CVV_NO: "000",
-      EXPIRATION_MONTH: "11",
-      EXPIRATION_YEAR: "23",
+      CARD_NO: "",
+      CVV_NO: "",
+      EXPIRATION_MONTH: "",
+      EXPIRATION_YEAR: "",
     },
   );
 
@@ -132,7 +132,7 @@ export default function PaymentForm({
             inputContainerStyle={{ borderBottomWidth: 0 }}
             style={globalStyles.input}
             placeholderTextColor={"#000"}
-            placeholder="Card Number"
+            placeholder="Enter Card Number"
             maxLength={16}
             value={creditCardDetails.CARD_NO}
             onChangeText={(text) =>
