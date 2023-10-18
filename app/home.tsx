@@ -19,19 +19,8 @@ export default function Home() {
   const [options, setOptions] = useState<options | null>();
   const [page, setPage] = useState<page | null>(1);
   const [sort, setSort] = useState<sort | null>("-createdAt");
-  const [scope, setScope] = useState<scope | null>("active");
+  const [scope, setScope] = useState<"active" | "">("active");
 
-  const scopes = [
-    // todo: not totally necessary but a good reference of how the backend is using this value
-    {
-      text: "Active",
-      value: "active",
-    },
-    {
-      text: "All",
-      value: "",
-    },
-  ];
 
   const fetchJobs = () => {
     console.log({ sort, page, scope });
@@ -57,8 +46,8 @@ export default function Home() {
   }, []);
 
   return (
-    <SafeAreaProvider>
+    <>
       <View>{jobs && <JobsList jobs={jobs} fetchJobs={fetchJobs} />}</View>
-    </SafeAreaProvider>
+    </>
   );
 }
