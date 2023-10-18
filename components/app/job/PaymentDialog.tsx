@@ -32,7 +32,6 @@ export default function PaymentDialog({
       dataDescriptor: DATA_DESCRIPTOR,
       dataValue: DATA_VALUE,
     };
-    // communicate with phoenix backend with token
 
     try {
       api
