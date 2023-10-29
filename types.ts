@@ -22,6 +22,7 @@ export interface BaseEntity {
   id: number;
   createdAt: string;
   updatedAt: string | null;
+  deletedAt: string | null;
 }
 
 export interface Customer extends BaseEntity {
@@ -98,7 +99,7 @@ export interface JobLineItems extends BaseEntity {
 
 export interface Service extends BaseEntity {
   name: string;
-  description?: string;
+  description: string | "";
   payoutRate?: number;
   payoutMinimum?: number;
   price: number;
