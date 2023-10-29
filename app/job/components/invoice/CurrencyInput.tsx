@@ -19,7 +19,7 @@ export default function CurrencyInput({
 }: Props) {
   const formatCurrency = (text: string) => {
     // Remove any non-numeric characters
-    const numericValue = +text.replace(/[^0-9.]/g, "");
+    const numericValue = text.replace(/[^0-9.]/g, "");
     const formattedValue = parseFloat(numericValue).toFixed(2);
     onChangeText(formattedValue);
   };
