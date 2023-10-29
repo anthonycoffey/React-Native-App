@@ -1,4 +1,7 @@
+import { AxiosError, AxiosResponse } from "axios";
 import { ImageSourcePropType } from "react-native";
+
+export { AxiosError, AxiosResponse };
 
 export type availableAppsProps = {
   icon: ImageSourcePropType;
