@@ -1,3 +1,20 @@
+import { ImageSourcePropType } from "react-native";
+
+export type availableAppsProps = {
+  icon: ImageSourcePropType;
+  name: string;
+  id: number;
+  open: () => Promise<void>;
+};
+
+export type location = {
+  lat: number;
+  lng: number;
+  place_id?: string;
+  formatted_address?: string;
+  location_type: string;
+};
+
 export interface BaseEntity {
   id: number;
   createdAt: string;
@@ -15,7 +32,7 @@ export interface Customer extends BaseEntity {
 }
 
 export interface CustomerPhone extends BaseEntity {
-  number?: string;
+  number: string;
   note?: string;
   CustomerId?: number;
   Customer?: Customer;
@@ -33,15 +50,14 @@ export interface Address extends BaseEntity {
 }
 
 export interface Job extends BaseEntity {
-  AddressId?: number;
-  Address?: Address;
-  CarId?: number;
-  Car?: Car;
-  Customer?: Customer;
-  CustomerId?: number;
+  AddressId: number;
+  Address: Address;
+  CarId: number;
+  Car: Car;
+  Customer: Customer;
+  CustomerId: number;
   FormSubmissionId?: number;
   arrivalTime: string;
-  assignedTechnician?: object;
   assignedTechnicianId?: number;
   canceledAt?: string;
   completedAt?: string;
@@ -49,7 +65,7 @@ export interface Job extends BaseEntity {
   linkCode?: string;
   paymentStatus: string;
   status: string;
-  proxy?: Proxy;
+  proxy: Proxy;
   JobLineItems: JobLineItems[];
   JobActions?: JobActions[];
   Discounts?: Discount[];
@@ -147,7 +163,7 @@ export interface Proxy extends BaseEntity {
   ProxyNumberId?: number;
   CustomerPhoneId?: number;
   ProxyNumber?: ProxyNumber;
-  CustomerPhone?: CustomerPhone;
+  CustomerPhone: CustomerPhone;
   User?: User;
 }
 

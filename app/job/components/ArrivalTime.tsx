@@ -1,7 +1,6 @@
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
-import { AndroidNativeProps } from "@react-native-community/datetimepicker";
 import React from "react";
 import { View, Text, Platform, StyleSheet } from "react-native";
 import { Button, Icon } from "@rneui/themed";

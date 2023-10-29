@@ -17,7 +17,7 @@ import PaymentDialog from "./PaymentDialog";
 import { centsToDollars } from "../../../utils/money";
 import globalStyles from "../../../styles/globalStyles";
 import api, { responseDebug } from "../../../utils/api";
-import CurrencyInput from "../invoice/CurrencyInput";
+import CurrencyInput from "@/app/job/components/invoice/CurrencyInput";
 
 interface Props {
   job: Job;

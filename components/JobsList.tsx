@@ -7,8 +7,8 @@ import {
   RefreshControl,
 } from "react-native";
 import { Card, ListItem, Text, Chip, FAB } from "@rneui/themed";
-import { formatDateTime, formatRelative } from "../../utils/dates";
-import { Job } from "../../types";
+import { formatDateTime, formatRelative } from "../utils/dates";
+import { Job } from "../types";
 import { router } from "expo-router";
 
 type JobsListProps = {
@@ -34,21 +34,17 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
         My Jobs
       </Text>
 
-
-      <TouchableOpacity
-        style={{ position: 'absolute', right: 15, top: 15 }}
-        >
+      <TouchableOpacity style={{ position: "absolute", right: 15, top: 15 }}>
         <FAB
           visible={true}
           onPress={() => {
             router.push("/job/new");
           }}
           size="small"
-          icon={{ name: "add", color: "white"}}
+          icon={{ name: "add", color: "white" }}
           color="green"
         />
       </TouchableOpacity>
-
 
       {jobs &&
         jobs.map((job, i) => (
@@ -97,7 +93,6 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
             </TouchableOpacity>
           </Card>
         ))}
-
     </ScrollView>
   );
 }

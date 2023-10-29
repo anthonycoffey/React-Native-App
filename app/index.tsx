@@ -7,7 +7,7 @@ import {
   Platform,
   View,
 } from "react-native";
-import LoginForm from "../components/app/LoginForm";
+import LoginForm from "../components/LoginForm";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 
