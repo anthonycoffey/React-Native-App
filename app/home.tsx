@@ -11,7 +11,6 @@ SplashScreen.preventAutoHideAsync();
 
 type options = {} | null;
 type page = number | null;
-type scope = string | null;
 type sort = string | null;
 
 export default function Home() {

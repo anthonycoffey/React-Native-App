@@ -190,13 +190,11 @@ export default function JobPage() {
                 style={globalStyles.input}
               />
 
-              {Platform.OS === "ios" && (
-                <ArrivalTime
-                  timestamp={job.arrivalTime}
-                  jobId={job.id}
-                  fetchJob={fetchJob}
-                />
-              )}
+              <ArrivalTime
+                timestamp={job.arrivalTime}
+                jobId={job.id}
+                fetchJob={fetchJob}
+              />
 
               <Text style={globalStyles.openInMaps}>Open in Maps</Text>
               <View
@@ -276,6 +274,7 @@ export default function JobPage() {
             <Skeleton height={50} animation="wave" style={globalStyles.gap} />
             <Skeleton height={250} animation="wave" style={globalStyles.gap} />
             <Skeleton height={50} animation="wave" style={globalStyles.gap} />
+            <Skeleton height={250} animation="wave" style={globalStyles.gap} />
           </>
         )}
       </ScrollView>
