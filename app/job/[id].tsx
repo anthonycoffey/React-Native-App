@@ -44,13 +44,13 @@ export default function JobPage() {
           <>
             <JobHeader job={job} id={job.id} />
 
+            <JobLineItems job={job} />
+
             <JobStatus id={job.id} status={job.status} fetchJob={fetchJob} />
 
             <JobDetailsAndMapButtons job={job} fetchJob={fetchJob} />
 
             <JobActivityLog job={job} />
-
-            <JobLineItems job={job} />
 
             <Discounts job={job} />
 
