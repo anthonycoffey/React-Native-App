@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { Skeleton } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
-import JobStatus from "./components/JobStatus";
-import Invoice from "./components/Invoice";
+import JobStatus from "@/app/job/components/JobStatus";
+import Invoice from "@/app/job/components/Invoice";
 import JobHeader from "@/app/job/components/JobHeader";
 import Discounts from "@/app/job/components/Discounts";
 import JobDetailsAndMapButtons from "@/app/job/components/jobDetailsAndMapButtons";
+import JobActivityLog from "@/app/job/components/jobActivityLog";
+import JobLineItems from "@/app/job/components/jobLineItems";
 import api from "@/utils/api";
 import globalStyles from "@/styles/globalStyles";
 import { Job } from "types";
-import { JobLineItemsCard } from "@/app/job/components/jobLineItemsCard";
-import { JobActivityLog } from "@/app/job/components/jobActivityLog";
 
 export default function JobPage() {
   const { id } = useLocalSearchParams();
@@ -25,6 +25,7 @@ export default function JobPage() {
     api
       .get(`/jobs/${id}`)
       .then(function (response) {
+        // todo: add response/error types throughout project for optimal typescript support
         const { data } = response;
         setJob(data);
       })
@@ -49,7 +50,7 @@ export default function JobPage() {
 
             <JobActivityLog job={job} />
 
-            <JobLineItemsCard job={job} />
+            <JobLineItems job={job} />
 
             <Discounts job={job} />
 
