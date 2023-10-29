@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Input, useTheme } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api, { responseDebug } from "../../utils/api";
+import api, { responseDebug } from "../utils/api";
 import { router } from "expo-router";
 
 export default function LoginForm() {
   const { theme } = useTheme();
-  const [email, setEmail] = useState("tech@ax.bx");
+  const [email, setEmail] = useState("tech@test.com");
   const [password, setPassword] = useState("test1234");
   const submit = () => {
     api
@@ -59,8 +59,8 @@ export default function LoginForm() {
       <Button
         title="Login"
         onPress={() => {
-            console.log("login submit");
-            submit();
+          console.log("login submit");
+          submit();
         }}
       />
     </View>

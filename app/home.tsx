@@ -3,7 +3,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";
 import api, { responseDebug } from "../utils/api";
-import JobsList from "../components/app/JobsList";
+import JobsList from "../components/JobsList";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -19,7 +19,6 @@ export default function Home() {
   const [page, setPage] = useState<page | null>(1);
   const [sort, setSort] = useState<sort | null>("-createdAt");
   const [scope, setScope] = useState<"active" | "">("active");
-
 
   const fetchJobs = () => {
     console.log({ sort, page, scope });
