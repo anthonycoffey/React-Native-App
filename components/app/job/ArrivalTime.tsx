@@ -1,7 +1,10 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
+import { AndroidNativeProps } from "@react-native-community/datetimepicker";
 import React from "react";
-import { View, Text } from "react-native";
-import { Button } from "@rneui/themed";
+import { View, Text, Platform, StyleSheet } from "react-native";
+import { Button, Icon } from "@rneui/themed";
 import api, { responseDebug } from "../../../utils/api";
 
 type ArrivalTimeProps = {
@@ -70,6 +73,7 @@ export default function ArrivalTime({
           const { data } = response;
           console.log({ data });
           setUpdated(true);
+          fetchJob();
         })
         .catch(function (error) {
           setUpdated(false);
@@ -86,7 +90,7 @@ export default function ArrivalTime({
         padding: 10,
         marginVertical: 20,
         borderWidth: 1,
-        borderRadius: 30,
+        borderRadius: 5,
         borderColor: "#ccc",
         paddingHorizontal: 20,
       }}
@@ -97,7 +101,7 @@ export default function ArrivalTime({
           textAlign: "center",
         }}
       >
-        Edit Arrival Date/Time
+        Arrival Time
       </Text>
       <View
         style={{
@@ -106,21 +110,94 @@ export default function ArrivalTime({
           justifyContent: "space-between",
         }}
       >
-        <DateTimePicker
-          value={new Date(timestamp)}
-          mode="date"
-          onChange={onChangeDate}
-        />
-        <DateTimePicker
-          value={new Date(timestamp)}
-          mode="time"
-          onChange={onChangeTime}
-        />
+        {Platform.OS === "ios" && (
+          <>
+            <DateTimePicker
+              value={new Date(timestamp)}
+              mode="date"
+              onChange={onChangeDate}
+            />
+            <DateTimePicker
+              value={new Date(timestamp)}
+              mode="time"
+              onChange={onChangeTime}
+            />
+          </>
+        )}
+
+        {Platform.OS === "android" && (
+          <View
+            style={{
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <View style={styles.displayTimeContainer}>
+              <Text style={styles.displayTime}>
+                {date
+                  ? new Date(date).toDateString()
+                  : new Date(timestamp).toDateString()}
+              </Text>
+              <Text style={styles.displayTime}>
+                {time
+                  ? new Date(time).toLocaleTimeString()
+                  : new Date(timestamp).toLocaleTimeString()}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingHorizontal: 12,
+                justifyContent: "space-between",
+              }}
+            >
+              <Button
+                size="sm"
+                radius="sm"
+                onPress={() => {
+                  DateTimePickerAndroid.open({
+                    mode: "date",
+                    value: new Date(timestamp),
+                    onChange: onChangeDate,
+                  });
+                }}
+              >
+                <Icon
+                  name="calendar-edit"
+                  type="material-community"
+                  color="white"
+                />
+                Edit Date
+              </Button>
+
+              <Button
+                size="sm"
+                radius="sm"
+                onPress={() => {
+                  DateTimePickerAndroid.open({
+                    mode: "time",
+                    value: new Date(timestamp),
+                    onChange: onChangeTime,
+                  });
+                }}
+              >
+                <Icon
+                  name="clock-edit"
+                  type="material-community"
+                  color="white"
+                />
+                Edit Time
+              </Button>
+            </View>
+          </View>
+        )}
       </View>
+
       <View>
         {(date || time) && !updated && (
           <>
             <Button
+              size="sm"
               buttonStyle={{
                 borderRadius: 10,
                 paddingVertical: 10,
@@ -153,3 +230,24 @@ export default function ArrivalTime({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  displayTimeContainer: {
+    flexDirection: "row",
+    overflow: "hidden",
+    justifyContent: "space-between",
+    marginBottom: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    backgroundColor: "rgba(224,224,224,0.3)",
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  displayTime: {
+    fontFamily: "monospace",
+    fontSize: 16,
+    color: "#171515",
+    textAlign: "center",
+  },
+});
