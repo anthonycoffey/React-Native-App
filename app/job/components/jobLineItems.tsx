@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Icon, Text, ListItem } from "@rneui/themed";
 import { centsToDollars } from "@/utils/money";
 import { Job, JobLineItems } from "types";
 
-export function JobLineItemsCard(props: { job: Job }) {
+type Services = {
+  id: number;
+  name: string;
+  price: number;
+};
+
+type Props = {
+  job: Job;
+};
+
+export default function JobLineItemsCard({ job }: Props) {
+  const [services, setServices] = React.useState<Services[]>([]);
+
+  useEffect(() => {}, []);
+
   return (
     <Card>
       <Card.Title>Line Items</Card.Title>
-      {props.job.JobLineItems?.map(
+      {job.JobLineItems?.map(
         (item: JobLineItems) =>
           item.Service && (
             <ListItem key={item.id}>

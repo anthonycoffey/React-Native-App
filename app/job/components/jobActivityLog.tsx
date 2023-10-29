@@ -3,7 +3,7 @@ import { ListItem } from "@rneui/base";
 import React from "react";
 import { Job, JobActions } from "types";
 
-export function JobActivityLog(props: { job: Job }) {
+export default function JobActivityLog(props: { job: Job }) {
   return (
     <Card>
       <Card.Title>Job Activity</Card.Title>
