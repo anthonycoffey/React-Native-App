@@ -1,8 +1,7 @@
-import { Job, JobLineItems } from "@/types";
-import { Card, Icon, Text } from "@rneui/themed";
-import { ListItem } from "@rneui/base";
-import { centsToDollars } from "@/utils/money";
 import React from "react";
+import { Card, Icon, Text, ListItem } from "@rneui/themed";
+import { centsToDollars } from "@/utils/money";
+import { Job, JobLineItems } from "types";
 
 export function JobLineItemsCard(props: { job: Job }) {
   return (

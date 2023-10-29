@@ -1,8 +1,7 @@
 import React from "react";
 import { Button, Card, Text, Dialog, Divider } from "@rneui/themed";
-import styles from "../../../styles/globalStyles";
-import api, { responseDebug } from "../../../utils/api";
-import globalStyles from "../../../styles/globalStyles";
+import api, { responseDebug } from "@/utils/api";
+import globalStyles from "@/styles/globalStyles";
 import { router } from "expo-router";
 import { TextInput, Alert } from "react-native";
 
@@ -62,7 +61,7 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
           }}
           color="green"
           size="lg"
-          containerStyle={styles.buttonContainer}
+          containerStyle={globalStyles.buttonContainer}
         >
           On My Way
         </Button>
@@ -75,7 +74,7 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
           }}
           color="green"
           size="lg"
-          containerStyle={styles.buttonContainer}
+          containerStyle={globalStyles.buttonContainer}
         >
           Start Job
         </Button>
@@ -90,7 +89,7 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
           }}
           color="green"
           size="lg"
-          containerStyle={styles.buttonContainer}
+          containerStyle={globalStyles.buttonContainer}
         >
           Finish Job
         </Button>
@@ -114,7 +113,7 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
               );
             }}
             color="warning"
-            containerStyle={styles.buttonContainer}
+            containerStyle={globalStyles.buttonContainer}
           >
             Quit Job
           </Button>
@@ -123,7 +122,7 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
               setShowCancelDialog(true);
             }}
             color="error"
-            containerStyle={styles.buttonContainer}
+            containerStyle={globalStyles.buttonContainer}
           >
             Cancel Job
           </Button>

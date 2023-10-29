@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, TextInput, View } from "react-native";
-import { Job } from "../../../types";
+import { Alert, View } from "react-native";
 import {
   Button,
   Card,
@@ -10,14 +9,14 @@ import {
   Divider,
   Dialog,
   Icon,
-  Input,
   CheckBox,
 } from "@rneui/themed";
 import PaymentDialog from "./PaymentDialog";
-import { centsToDollars } from "../../../utils/money";
-import globalStyles from "../../../styles/globalStyles";
-import api, { responseDebug } from "../../../utils/api";
 import CurrencyInput from "@/app/job/components/invoice/CurrencyInput";
+import { centsToDollars } from "@/utils/money";
+import globalStyles from "@/styles/globalStyles";
+import api from "@/utils/api";
+import { Job } from "types";
 
 interface Props {
   job: Job;

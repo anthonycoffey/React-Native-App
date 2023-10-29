@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   containerStyles: {
     flexGrow: 1,
-    padding: 10,
+    padding: 5,
   },
   topLeft: {
     position: "absolute",
@@ -16,6 +16,8 @@ const styles = StyleSheet.create({
   },
   gap: {
     marginVertical: 5,
+    width: "96%",
+    marginHorizontal: "2%",
   },
   statusContainer: {
     flexWrap: "wrap",
