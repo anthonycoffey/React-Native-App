@@ -1,7 +1,7 @@
 import React from "react";
-import api, { responseDebug } from "../../../utils/api";
 import PaymentForm from "./PaymentForm";
-import { dollarsToCents } from "../../../utils/money";
+import api, { responseDebug } from "@/utils/api";
+import { dollarsToCents } from "@/utils/money";
 
 type Props = {
   jobId: number;

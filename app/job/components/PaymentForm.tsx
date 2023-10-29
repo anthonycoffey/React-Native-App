@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, TextInput, Platform, Alert } from "react-native";
-import api, { responseDebug } from "../../../utils/api";
-import { Button, Divider, Text, Input } from "@rneui/themed";
-import globalStyles from "../../../styles/globalStyles";
+import { View, Platform, Alert } from "react-native";
+import { Button, Input } from "@rneui/themed";
+import globalStyles from "@/styles/globalStyles";
 import { NativeModules } from "react-native";
-import {logNestedObjects} from "../../../utils/objects";
+import { logNestedObjects } from "@/utils/objects";
 const { RNAuthorizeNet } = NativeModules;
 
 const LOGIN_ID = process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID;
@@ -60,23 +59,23 @@ export default function PaymentForm({
       isProduction,
     )
       .then((response: any) => {
-        logNestedObjects(response)
+        logNestedObjects(response);
         onSuccess(response);
       })
       .catch((error: any) => {
-        logNestedObjects(error)
-        if (Platform.OS=== "ios") {
+        logNestedObjects(error);
+        if (Platform.OS === "ios") {
           const { code, message } = error;
           const alertMsg: string = `${message}\n\nError Code: ${code}`;
-          Alert.alert("Error", alertMsg, [{text: "OK"}], {
+          Alert.alert("Error", alertMsg, [{ text: "OK" }], {
             cancelable: false,
           });
-        } else if (Platform.OS === "android"){
-          logNestedObjects(error)
-          const {userInfo} = error;
-          const {ERROR_TEXT, ERROR_CODE} = userInfo;
+        } else if (Platform.OS === "android") {
+          logNestedObjects(error);
+          const { userInfo } = error;
+          const { ERROR_TEXT, ERROR_CODE } = userInfo;
           const alertMsg: string = `${ERROR_TEXT}\n\nError Code: ${ERROR_CODE}`;
-          Alert.alert("Error", alertMsg, [{text: "OK"}], {
+          Alert.alert("Error", alertMsg, [{ text: "OK" }], {
             cancelable: false,
           });
         }
@@ -120,7 +119,6 @@ export default function PaymentForm({
 
     return () => {};
   }, [cardExpiry]);
-
 
   return (
     <View>

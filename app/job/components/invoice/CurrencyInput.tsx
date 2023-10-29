@@ -1,7 +1,6 @@
 import React from "react";
-import { View } from "react-native";
 import { Input } from "@rneui/themed";
-import globalStyles from "../../../../styles/globalStyles";
+import globalStyles from "@/styles/globalStyles";
 
 type Props = {
   label: string;

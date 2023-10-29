@@ -4,7 +4,7 @@ import DateTimePicker, {
 import React from "react";
 import { View, Text, Platform, StyleSheet } from "react-native";
 import { Button, Icon } from "@rneui/themed";
-import api, { responseDebug } from "../../../utils/api";
+import api, { responseDebug } from "@/utils/api";
 
 type ArrivalTimeProps = {
   timestamp?: string;

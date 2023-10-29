@@ -7,15 +7,15 @@ import Invoice from "./components/Invoice";
 import JobHeader from "@/app/job/components/JobHeader";
 import Discounts from "@/app/job/components/Discounts";
 import JobDetailsAndMapButtons from "@/app/job/components/jobDetailsAndMapButtons";
-import api from "../../utils/api";
-import globalStyles from "../../styles/globalStyles";
-import { Job } from "../../types";
+import api from "@/utils/api";
+import globalStyles from "@/styles/globalStyles";
+import { Job } from "types";
 import { JobLineItemsCard } from "@/app/job/components/jobLineItemsCard";
 import { JobActivityLog } from "@/app/job/components/jobActivityLog";
 
 export default function JobPage() {
   const { id } = useLocalSearchParams();
-  const [job, setJob] = useState<Job | null>(null);
+  const [job, setJob] = useState<Job | false>(false);
 
   useEffect(() => {
     fetchJob();
@@ -39,7 +39,7 @@ export default function JobPage() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={globalStyles.containerStyles}>
-        {job?.id ? (
+        {job ? (
           <>
             <JobHeader job={job} id={job.id} />
 
@@ -59,10 +59,9 @@ export default function JobPage() {
           </>
         ) : (
           <>
-            <Skeleton height={50} animation="wave" style={globalStyles.gap} />
-            <Skeleton height={250} animation="wave" style={globalStyles.gap} />
-            <Skeleton height={50} animation="wave" style={globalStyles.gap} />
-            <Skeleton height={250} animation="wave" style={globalStyles.gap} />
+            <Skeleton height={100} animation="pulse" style={globalStyles.gap} />
+            <Skeleton height={250} animation="pulse" style={globalStyles.gap} />
+            <Skeleton height={50} animation="pulse" style={globalStyles.gap} />
           </>
         )}
       </ScrollView>
