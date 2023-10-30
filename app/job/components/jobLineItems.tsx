@@ -42,33 +42,27 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
     fetchServices();
   }, []); // Empty dependency array means this runs once after the component mounts
 
-  const SaveCancelButtons = () => {
+  const DoneButton = () => {
     return (
       <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          marginTop: 10,
         }}
       >
         <Button
-          containerStyle={{ minWidth: 100 }}
-          onPress={() => {
-            console.log("cancel");
-            setEdit(!edit);
+          size="sm"
+          containerStyle={{
+            flexGrow: 1,
+            borderRadius: 10,
+            paddingHorizontal: 10,
           }}
-          type="outline"
-        >
-          Cancel
-        </Button>
-        <Button
-          containerStyle={{ flexGrow: 1, maxWidth: "50%" }}
           onPress={() => {
-            console.log("save");
+            console.log("Done");
             setEdit(!edit);
           }}
         >
-          Save
+          Done
         </Button>
       </View>
     );
@@ -136,6 +130,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   };
 
   const deleteLineItem = (item: JobLineItems) => {
+    // todo: need some loading spinners, this takes a second
     Alert.alert(
       "Delete Line Item",
       "Are you sure you want to delete this line item?",
@@ -200,7 +195,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               </Button>
             </TouchableOpacity>
           </View>
-          <SaveCancelButtons />
+          <DoneButton />
         </>
       ) : (
         <FAB
