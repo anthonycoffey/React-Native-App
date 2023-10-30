@@ -3436,7 +3436,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.0, ajv@npm:^8.9.0":
+"ajv@npm:^8.0.0, ajv@npm:^8.11.0, ajv@npm:^8.9.0":
   version: 8.12.0
   resolution: "ajv@npm:8.12.0"
   dependencies:
@@ -5300,6 +5300,18 @@ __metadata:
     path-browserify: "npm:^1.0.0"
     url-parse: "npm:^1.5.9"
   checksum: 2b6ac86e16b3a05c9afb3435e86cc27edb4ede81b1eb1e9e09b2575c90c2def87184617ef410f1cf5602d08dd1fa5ccc39bff837f8fe2278a004cdaa44575850
+  languageName: node
+  linkType: hard
+
+"expo-build-properties@npm:~0.8.3":
+  version: 0.8.3
+  resolution: "expo-build-properties@npm:0.8.3"
+  dependencies:
+    ajv: "npm:^8.11.0"
+    semver: "npm:^7.5.3"
+  peerDependencies:
+    expo: "*"
+  checksum: f255519b68fd9d7fb3a8dd15c8f056cecb36a7aa2469d3c2ee37592d1a07dc8726d8d26dd22942ce776c99ebdcd3f30495b71e8151df0412a141038654e8f6f5
   languageName: node
   linkType: hard
 
@@ -9374,6 +9386,7 @@ __metadata:
     axios: "npm:^1.5.1"
     date-fns: "npm:^2.30.0"
     expo: "npm:^49.0.13"
+    expo-build-properties: "npm:~0.8.3"
     expo-font: "npm:~11.4.0"
     expo-linking: "npm:~5.0.2"
     expo-modules-autolinking: "npm:^1.5.1"
