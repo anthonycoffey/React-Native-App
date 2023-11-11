@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Button, Input } from "@rneui/themed";
 import api, { responseDebug } from "../utils/api";
 import { useSession } from "@/ctx";
+import { router } from "expo-router";
 
 export default function LoginForm() {
   const { signIn } = useSession();
@@ -16,7 +17,8 @@ export default function LoginForm() {
       })
       .then(async function (response) {
         const { token } = response.data;
-        signIn(token);
+        await signIn(token);
+        router.push("(app)/");
       })
       .catch(function (error) {
         responseDebug(error);
