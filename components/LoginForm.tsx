@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, Input, useTheme } from "@rneui/themed";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Button, Input } from "@rneui/themed";
 import api, { responseDebug } from "../utils/api";
-import { router } from "expo-router";
+import { useSession } from "@/ctx";
 
 export default function LoginForm() {
-  const { theme } = useTheme();
+  const { signIn } = useSession();
   const [email, setEmail] = useState("tech@test.com");
   const [password, setPassword] = useState("test1234");
   const submit = () => {
@@ -17,24 +16,7 @@ export default function LoginForm() {
       })
       .then(async function (response) {
         const { token } = response.data;
-        console.log(response);
-        console.log({ token });
-        await AsyncStorage.setItem("token", token);
-        // Add a request interceptor
-        api.interceptors.request.use(
-          (config) => {
-            // Do something before request is sent
-            if (token) {
-              config.headers.Authorization = `Bearer ${token}`;
-            }
-            return config;
-          },
-          (error) => {
-            // Do something with request error
-            return Promise.reject(error);
-          },
-        );
-        router.push("/home");
+        signIn(token);
       })
       .catch(function (error) {
         responseDebug(error);

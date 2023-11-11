@@ -12,11 +12,11 @@ import {
   CheckBox,
 } from "@rneui/themed";
 import PaymentDialog from "./PaymentDialog";
-import CurrencyInput from "@/app/job/components/invoice/CurrencyInput";
+import CurrencyInput from "@/app/(app)/job/components/invoice/CurrencyInput";
 import { centsToDollars } from "@/utils/money";
 import globalStyles from "@/styles/globalStyles";
 import api from "@/utils/api";
-import { Job } from "types";
+import { Job } from "@/types";
 
 interface Props {
   job: Job;
