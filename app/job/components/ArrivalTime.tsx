@@ -5,6 +5,7 @@ import React from "react";
 import { View, Text, Platform, StyleSheet } from "react-native";
 import { Button, Icon } from "@rneui/themed";
 import api, { responseDebug } from "@/utils/api";
+import { AxiosError } from "types";
 
 type ArrivalTimeProps = {
   timestamp?: string;
@@ -24,6 +25,14 @@ export default function ArrivalTime({
   if (!timestamp) {
     return null; // If time is not provided, don't render anything
   }
+
+  const localeDateString = (date: string) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   const onChangeDate = (event: any, selectedDate: any) => {
     const {
@@ -68,13 +77,11 @@ export default function ArrivalTime({
         .patch(`/jobs/${jobId}`, {
           arrivalTime: arrivalTime,
         })
-        .then(function (response) {
-          const { data } = response;
-          console.log({ data });
+        .then(function () {
           setUpdated(true);
           fetchJob();
         })
-        .catch(function (error) {
+        .catch(function (error: AxiosError) {
           setUpdated(false);
           responseDebug(error);
         });
@@ -133,9 +140,7 @@ export default function ArrivalTime({
           >
             <View style={styles.displayTimeContainer}>
               <Text style={styles.displayTime}>
-                {date
-                  ? new Date(date).toDateString()
-                  : new Date(timestamp).toDateString()}
+                {date ? localeDateString(date) : localeDateString(timestamp)}
               </Text>
               <Text style={styles.displayTime}>
                 {time
