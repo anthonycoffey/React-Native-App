@@ -7,8 +7,8 @@ node_modules/
 .expo/
 dist/
 web-build/
-ios/
-android/
+/ios/*
+/android/*
 
 # Native
 *.orig.*
@@ -42,13 +42,15 @@ yarn-error.*
 
 expo-env.d.ts
 # @end expo-cli
-/.idea/prettier.xml
-/.idea/vcs.xml
-/.idea/phoenix-mobile.iml
-/.idea/modules.xml
-/coffeywebdev-d0487-06581ec12d25.json
-.idea
-.yarn
-.editorconfig
-.yarnrc.yml
 
+# IDEs and editors
+/.idea/*
+
+# Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
