@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import { View } from "react-native";
-import api, { responseDebug } from "../utils/api";
-import JobsList from "../components/JobsList";
+import api, { responseDebug } from "@/utils/api";
+import JobsList from "@/components/JobsList";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSession } from "@/ctx";
+import { Button } from "@rneui/themed";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -13,7 +14,8 @@ type options = {} | null;
 type page = number | null;
 type sort = string | null;
 
-export default function Home() {
+export default function Index() {
+  const { signOut } = useSession();
   const [jobs, setJobs] = useState<[] | null>(null);
   const [options, setOptions] = useState<options | null>();
   const [page, setPage] = useState<page | null>(1);

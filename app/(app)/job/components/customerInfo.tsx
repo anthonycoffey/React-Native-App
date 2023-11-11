@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextInput } from "react-native";
 import { Text } from "@rneui/themed";
 import globalStyles from "@/styles/globalStyles";
-import { Job } from "types";
+import { Job } from "@/types";
 
 type Props = {
   job: Job;

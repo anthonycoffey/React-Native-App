@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Image, ImageSourcePropType, Pressable, View } from "react-native";
 import { Card, Text } from "@rneui/themed";
 import { getApps } from "react-native-map-link";
-import ArrivalTime from "@/app/job/components/ArrivalTime";
-import CustomerInfo from "@/app/job/components/customerInfo";
+import ArrivalTime from "@/app/(app)/job/components/ArrivalTime";
+import CustomerInfo from "@/app/(app)/job/components/customerInfo";
 import globalStyles from "@/styles/globalStyles";
 import geocodeAddress from "@/utils/geocode";
-import { location, Job, availableAppsProps } from "types";
+import { location, Job, availableAppsProps } from "@/types";
 
 type Props = {
   job: Job;
