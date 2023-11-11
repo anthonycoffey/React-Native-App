@@ -1,6 +1,6 @@
 rm -rf node_modules ios android
-npm cache clean --force
-npm install
+yarn cache clean
+yarn
 watchman watch-del-all
 rm -fr $TMPDIR/haste-map-*
 rm -rf $TMPDIR/metro-cache
