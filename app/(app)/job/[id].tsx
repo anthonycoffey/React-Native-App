@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { Skeleton } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
-import JobStatus from "@/app/job/components/JobStatus";
-import Invoice from "@/app/job/components/Invoice";
-import JobHeader from "@/app/job/components/JobHeader";
-import Discounts from "@/app/job/components/Discounts";
-import JobDetailsAndMapButtons from "@/app/job/components/jobDetailsAndMapButtons";
-import JobActivityLog from "@/app/job/components/jobActivityLog";
-import JobLineItems from "@/app/job/components/jobLineItems";
+import JobStatus from "./components/JobStatus";
+import Invoice from "./components/Invoice";
+import JobHeader from "./components/JobHeader";
+import Discounts from "./components/Discounts";
+import JobDetailsAndMapButtons from "./components/jobDetailsAndMapButtons";
+import JobActivityLog from "./components/jobActivityLog";
+import JobLineItems from "./components/jobLineItems";
 import api from "@/utils/api";
 import globalStyles from "@/styles/globalStyles";
-import { Job } from "types";
+import { Job } from "@/types";
 
 export default function JobPage() {
   const { id } = useLocalSearchParams();

@@ -1,7 +1,7 @@
 import { Card, Icon } from "@rneui/themed";
 import { ListItem } from "@rneui/base";
 import React from "react";
-import { Job, JobActions } from "types";
+import { Job, JobActions } from "@/types";
 
 export default function JobActivityLog(props: { job: Job }) {
   return (

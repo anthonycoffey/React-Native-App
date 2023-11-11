@@ -8,7 +8,7 @@ import DropDownPicker, {
 } from "react-native-dropdown-picker";
 import { centsToDollars } from "@/utils/money";
 import api from "@/utils/api";
-import { Job, JobLineItems, AxiosResponse, AxiosError, Service } from "types";
+import { Job, JobLineItems, AxiosResponse, AxiosError, Service } from "@/types";
 import { prettyPrint } from "@/utils/objects";
 
 type Props = {

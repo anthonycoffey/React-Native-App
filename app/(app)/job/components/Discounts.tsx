@@ -3,7 +3,7 @@ import { centsToDollars } from "@/utils/money";
 import { View } from "react-native";
 import { ListItem } from "@rneui/base";
 import React, { useEffect, useState } from "react";
-import { Discount, Job } from "types";
+import { Discount, Job } from "@/types";
 
 type Props = {
   job: Job;

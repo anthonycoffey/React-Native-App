@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Chip, Icon, Text } from "@rneui/themed";
 import { formatDateTime } from "@/utils/dates";
 import globalStyles from "@/styles/globalStyles";
-import { Job } from "types";
+import { Job } from "@/types";
 
 type Props = { job: Job; id: number };
 export default function JobHeader({ job, id }: Props) {
