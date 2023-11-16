@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, Input } from "@rneui/themed";
+import { Button, Input } from "tamagui";
 import api, { responseDebug } from "../utils/api";
 import { useSession } from "@/ctx";
 import { router } from "expo-router";
@@ -10,6 +10,8 @@ export default function LoginForm() {
   const [email, setEmail] = useState("tech@test.com");
   const [password, setPassword] = useState("test1234");
   const submit = () => {
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
+    console.log({ API_URL });
     api
       .post(`/users/login`, {
         email: email,
@@ -29,24 +31,23 @@ export default function LoginForm() {
     <View style={styles.container} className="bg-black">
       <Input
         placeholder="Email"
-        leftIcon={{ type: "font-awesome", name: "envelope" }}
         value={email}
         onChangeText={(value: string) => setEmail(value)}
       />
       <Input
         placeholder="Password"
         secureTextEntry={true}
-        leftIcon={{ type: "font-awesome", name: "lock" }}
         value={password}
         onChangeText={(value: string) => setPassword(value)}
       />
       <Button
-        title="Login"
         onPress={() => {
           console.log("login submit");
           submit();
         }}
-      />
+      >
+        Login
+      </Button>
     </View>
   );
 }

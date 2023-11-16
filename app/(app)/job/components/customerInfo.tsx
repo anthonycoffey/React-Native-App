@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextInput } from "react-native";
-import { Text } from "@rneui/themed";
+import { Text } from "tamagui";
 import globalStyles from "@/styles/globalStyles";
 import { Job } from "@/types";
 

@@ -1,44 +1,19 @@
 import React from "react";
-import { ThemeProvider, createTheme, Text } from "@rneui/themed";
-import { Slot, router, usePathname } from "expo-router";
+import { TamaguiProvider } from "tamagui";
+import config from "@/tamagui.config";
+import { Slot } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { SessionProvider } from "../ctx";
+import { SessionProvider } from "@/ctx";
 
 export default function Layout() {
+  console.log(config);
   return (
-    <ThemeProvider theme={theme}>
+    <TamaguiProvider config={config}>
       <SessionProvider>
         <SafeAreaProvider>
           <Slot />
         </SafeAreaProvider>
       </SessionProvider>
-    </ThemeProvider>
+    </TamaguiProvider>
   );
 }
-const styles = {
-  container: {
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: "center",
-  },
-  text: {
-    color: "white",
-  },
-};
-
-const theme = createTheme({
-  lightColors: {
-    primary: "#1818a5",
-  },
-  darkColors: {
-    primary: "#222222",
-  },
-  mode: "light",
-  components: {
-    Text: {
-      h1Style: {
-        fontSize: 32,
-      },
-    },
-  },
-});

@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "@rneui/themed";
+import { Input } from "tamagui";
 import globalStyles from "@/styles/globalStyles";
 
 type Props = {
@@ -26,10 +26,6 @@ export default function CurrencyInput({
   return (
     <Input
       style={globalStyles.input}
-      inputContainerStyle={{ borderBottomWidth: 0 }}
-      containerStyle={{
-        width: "48%",
-      }}
       label={label}
       keyboardType="numeric"
       value={value}

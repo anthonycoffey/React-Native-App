@@ -1,6 +1,6 @@
 import { Redirect, router, Slot, usePathname } from "expo-router";
 import { useSession } from "@/ctx";
-import { Header, Icon, Text } from "@rneui/themed";
+import { Header, Text } from "tamagui";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { View } from "react-native";
 import React from "react";
@@ -27,7 +27,6 @@ export default function AppLayout() {
             alignItems: "center",
           }}
         >
-          <Icon name="menu" color="#fff" />
           <Text style={{ color: "white" }}>Menu</Text>
         </View>
       </TouchableOpacity>
@@ -47,7 +46,6 @@ export default function AppLayout() {
             alignItems: "center",
           }}
         >
-          <Icon name="arrow-back" color="#fff" />
           <Text style={{ color: "white" }}>Go Back</Text>
         </View>
       </TouchableOpacity>
@@ -61,7 +59,6 @@ export default function AppLayout() {
     return (
       <TouchableOpacity onPress={handleLogout}>
         <View>
-          <Icon name="logout" color="#fff" />
           <Text style={styles.text}>Logout</Text>
         </View>
       </TouchableOpacity>
@@ -71,8 +68,8 @@ export default function AppLayout() {
   return (
     <>
       <Header
-        leftComponent={path.includes("job") ? <GoBack /> : <Menu />}
-        rightComponent={<Logout />}
+      // leftComponent={path.includes("job") ? <GoBack /> : <Menu />}
+      // rightComponent={<Logout />}
       />
       <Slot />
     </>

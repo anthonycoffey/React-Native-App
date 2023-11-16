@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Image, ImageSourcePropType, Pressable, View } from "react-native";
-import { Card, Text } from "@rneui/themed";
+import { Card, Text } from "tamagui";
 import { getApps } from "react-native-map-link";
 import ArrivalTime from "@/app/(app)/job/components/ArrivalTime";
 import CustomerInfo from "@/app/(app)/job/components/customerInfo";
@@ -63,8 +63,6 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
   }, [location]);
   return (
     <Card>
-      <Card.Title>Job Details</Card.Title>
-
       <CustomerInfo job={job} location={location} />
 
       <ArrivalTime

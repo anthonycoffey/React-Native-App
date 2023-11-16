@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Alert, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Card, Icon, Text, ListItem, FAB, Button, Dialog } from "@rneui/themed";
+import { Card, Text, ListItem, Button, Dialog } from "tamagui";
 import DropDownPicker, {
   ItemType,
   ValueType,
@@ -51,14 +51,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         }}
       >
         <Button
-          size="sm"
-          containerStyle={{
-            flexGrow: 1,
-            borderRadius: 10,
-            paddingHorizontal: 10,
-          }}
           onPress={() => {
-            console.log("Done");
             setEdit(!edit);
           }}
         >
@@ -69,35 +62,20 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   };
 
   const EditableLineItems = ({ items }: { items: JobLineItems[] }) => {
-    console.log({ items });
     return items.map(
       (item) =>
         item && (
-          <ListItem key={item.id}>
-            <Icon name="cash-plus" type="material-community" />
-            <ListItem.Subtitle style={{ maxWidth: "60%" }}>
-              <Text>
-                {item.Service.name}
-                {"\n"}
-                {centsToDollars(+item.Service.price)}
-              </Text>
-            </ListItem.Subtitle>
-            <ListItem.Content>
-              <Button
-                onPress={() => {
-                  deleteLineItem(item);
-                }}
-                size="sm"
-                color="red"
-                containerStyle={{ right: 0, position: "absolute" }}
-              >
-                <Icon
-                  name="trash-can-outline"
-                  color="white"
-                  type="material-community"
-                />
-              </Button>
-            </ListItem.Content>
+          <ListItem
+            key={item.id}
+            title={item.Service.name}
+            subTitle={centsToDollars(+item.Service.price)}
+          >
+            <Button
+              onPress={() => {
+                deleteLineItem(item);
+              }}
+              color="red"
+            ></Button>
           </ListItem>
         ),
     );
@@ -163,19 +141,15 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
 
   return (
     <Card>
-      <Card.Title>Line Items</Card.Title>
       {!edit &&
         job.JobLineItems?.map(
-          (item) =>
+          (item: JobLineItems) =>
             item.Service && (
               <ListItem key={item.id}>
-                <Icon name="cash-plus" type="material-community" />
-                <ListItem.Content>
-                  <Text>{item.Service.name}</Text>
-                  <Text style={{ textAlign: "right" }}>
-                    {centsToDollars(+item.Service.price)}
-                  </Text>
-                </ListItem.Content>
+                <Text>{item.Service.name}</Text>
+                <Text style={{ textAlign: "right" }}>
+                  {centsToDollars(+item.Service.price)}
+                </Text>
               </ListItem>
             ),
         )}
@@ -189,8 +163,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                 setShow(true);
               }}
             >
-              <Button type="outline">
-                <Icon name="add-circle-outline" type="material" />
+              <Button>
                 <Text>Add Line Item</Text>
               </Button>
             </TouchableOpacity>
@@ -198,47 +171,46 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           <DoneButton />
         </>
       ) : (
-        <FAB
-          size="small"
-          icon={{ name: "add", color: "black" }}
-          color="white"
-          type="solid"
+        <Button
           onPress={() => {
             setEdit(!edit);
           }}
-        />
-      )}
-      <Dialog
-        isVisible={show}
-        onDismiss={() => setShow(!show)}
-        onBackdropPress={() => {
-          setShow(!show);
-        }}
-      >
-        <Dialog.Title title="Add Line Item" />
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            paddingBottom: 100,
-          }}
         >
-          <DropDownPicker
-            open={open}
-            value={value}
-            items={servicesItems}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setServicesItems}
-            placeholder={"Choose a service..."}
-          />
-        </View>
-        <Dialog.Actions>
-          <Dialog.Button title={"Save"} onPress={addLineItem} />
-          <Dialog.Button title={"Cancel"} onPress={() => setShow(!show)} />
-        </Dialog.Actions>
+          Edit
+        </Button>
+      )}
+      <Dialog open={show}>
+        <Dialog.Content>
+          <Dialog.Title>Add Line Item</Dialog.Title>
+
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              paddingBottom: 100,
+            }}
+          >
+            <DropDownPicker
+              open={open}
+              value={value}
+              items={servicesItems}
+              setOpen={setOpen}
+              setValue={setValue}
+              setItems={setServicesItems}
+              placeholder={"Choose a service..."}
+            />
+          </View>
+          <View>
+            <Button title={"Save"} onPress={addLineItem}>
+              Save
+            </Button>
+            <Button title={"Cancel"} onPress={() => setShow(!show)}>
+              Cancel
+            </Button>
+          </View>
+        </Dialog.Content>
       </Dialog>
     </Card>
   );

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { Skeleton } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import JobStatus from "./components/JobStatus";
 import Invoice from "./components/Invoice";
@@ -11,7 +10,8 @@ import JobActivityLog from "./components/jobActivityLog";
 import JobLineItems from "./components/jobLineItems";
 import api from "@/utils/api";
 import globalStyles from "@/styles/globalStyles";
-import { Job } from "@/types";
+import { Job, AxiosResponse, AxiosError } from "@/types";
+import { Text } from "tamagui";
 
 export default function JobPage() {
   const { id } = useLocalSearchParams();
@@ -24,12 +24,12 @@ export default function JobPage() {
   const fetchJob = () => {
     api
       .get(`/jobs/${id}`)
-      .then(function (response) {
+      .then(function (response: AxiosResponse) {
         // todo: add response/error types throughout project for optimal typescript support
         const { data } = response;
         setJob(data);
       })
-      .catch(function (error) {
+      .catch(function (error: AxiosError) {
         console.log(error);
       });
   };
@@ -60,9 +60,7 @@ export default function JobPage() {
           </>
         ) : (
           <>
-            <Skeleton height={100} animation="pulse" style={globalStyles.gap} />
-            <Skeleton height={250} animation="pulse" style={globalStyles.gap} />
-            <Skeleton height={50} animation="pulse" style={globalStyles.gap} />
+            <Text>Loading...</Text>
           </>
         )}
       </ScrollView>

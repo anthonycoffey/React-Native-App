@@ -1,8 +1,6 @@
-import { Card, Icon, Text } from "@rneui/themed";
-import { centsToDollars } from "@/utils/money";
-import { View } from "react-native";
-import { ListItem } from "@rneui/base";
 import React, { useEffect, useState } from "react";
+import { View, ListItem, Card, Text } from "tamagui";
+import { centsToDollars } from "@/utils/money";
 import { Discount, Job } from "@/types";
 
 type Props = {
@@ -24,18 +22,12 @@ export default function Discounts({ job }: Props) {
 
   return (
     <Card>
-      <Card.Title>Discounts</Card.Title>
       <Text style={{ textAlign: "right" }}>
         Total: {centsToDollars(+discountsTotal)}
       </Text>
       <View>
         {job.Discounts?.map((item: Discount) => (
-          <ListItem key={item.id}>
-            <Icon name="cash-plus" type="material-community" />
-            <ListItem.Content>
-              <ListItem.Title>{item.reason}</ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
+          <ListItem key={item.id} title={item.reason}></ListItem>
         ))}
       </View>
     </Card>
