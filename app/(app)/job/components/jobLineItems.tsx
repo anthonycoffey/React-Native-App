@@ -74,7 +74,6 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               onPress={() => {
                 deleteLineItem(item);
               }}
-              color="red"
             ></Button>
           </ListItem>
         ),

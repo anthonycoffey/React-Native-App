@@ -5,8 +5,9 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  FlatList,
 } from "react-native";
-import { Card, ListItem, Text, Button } from "tamagui";
+import { Card, Text } from "tamagui";
 import { router } from "expo-router";
 import Chip from "@/components/Chip";
 import { formatDateTime, formatRelative } from "../utils/dates";
@@ -24,59 +25,45 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
     console.log("refreshing");
     fetchJobs().finally(() => setRefreshing(false));
   }, []);
-
+  console.log({ jobs });
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <Text style={styles.heading}>My Jobs</Text>
-
-      <TouchableOpacity style={{ position: "absolute", right: 15, top: 15 }}>
-        <Button
-          onPress={() => {
-            router.push("/job/new");
-          }}
-        />
-      </TouchableOpacity>
-
-      {jobs &&
-        jobs.map((job, i) => (
-          <Card key={i}>
+    <FlatList
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      data={jobs}
+      renderItem={({ item }) => {
+        return (
+          <Card style={{ padding: 10, margin: 10 }}>
             <TouchableOpacity
               onPress={() => {
                 // @ts-ignore
                 router.push({
                   pathname: "/job/[id]",
                   params: {
-                    id: job.id,
+                    id: item.id,
                   },
                 });
               }}
             >
-              <ListItem
-                title={job.Customer?.fullName}
-                subTitle={`Arrival In: ${formatRelative(job.arrivalTime)}`}
-              >
-                <ListItem.Text>
-                  <View style={styles.details}>
-                    <Text>Address: {job.Address?.short} </Text>
-                    <Text>Arrival Time: {formatDateTime(job.arrivalTime)}</Text>
-                    <Text>Created At: {formatDateTime(job.createdAt)}</Text>
-                  </View>
-                  <View style={styles.chipContainer}>
-                    {job?.paymentStatus && (
-                      <Chip text={job.paymentStatus.toUpperCase()} />
-                    )}
-                    {job?.status && <Chip text={job?.status.toUpperCase()} />}
-                  </View>
-                </ListItem.Text>
-              </ListItem>
+              <Text>{item.Customer?.fullName}</Text>
+              <Text>{`Arrival In: ${formatRelative(item.arrivalTime)}`}</Text>
+              <View style={styles.details}>
+                <Text>Address: {item.Address?.short} </Text>
+                <Text>Arrival Time: {formatDateTime(item.arrivalTime)}</Text>
+                <Text>Created At: {formatDateTime(item.createdAt)}</Text>
+              </View>
+              <View style={styles.chipContainer}>
+                {item?.paymentStatus && (
+                  <Chip text={item.paymentStatus.toUpperCase()} />
+                )}
+                {item?.status && <Chip text={item?.status.toUpperCase()} />}
+              </View>
             </TouchableOpacity>
           </Card>
-        ))}
-    </ScrollView>
+        );
+      }}
+      keyExtractor={(item) => item.id}
+    ></FlatList>
   );
 }
 

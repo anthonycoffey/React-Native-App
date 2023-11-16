@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import JobStatus from "./components/JobStatus";
 import Invoice from "./components/Invoice";
@@ -11,7 +11,7 @@ import JobLineItems from "./components/jobLineItems";
 import api from "@/utils/api";
 import globalStyles from "@/styles/globalStyles";
 import { Job, AxiosResponse, AxiosError } from "@/types";
-import { Text } from "tamagui";
+import { Text, ScrollView } from "tamagui";
 
 export default function JobPage() {
   const { id } = useLocalSearchParams();
@@ -39,7 +39,7 @@ export default function JobPage() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={globalStyles.containerStyles}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 10 }}>
         {job ? (
           <>
             <JobHeader job={job} id={job.id} />

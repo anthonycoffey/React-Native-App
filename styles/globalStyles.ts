@@ -1,10 +1,6 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  containerStyles: {
-    flexGrow: 1,
-    padding: 5,
-  },
   topLeft: {
     position: "absolute",
     display: "flex",
@@ -14,29 +10,11 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
   },
-  gap: {
-    marginVertical: 5,
-    width: "96%",
-    marginHorizontal: "2%",
-  },
+
   statusContainer: {
     flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  buttonContainer: {
-    fontWeight: "bold",
-    marginVertical: 5,
-    borderRadius: 5,
-    dropShadow: {
-      shadowColor: "black",
-      shadowOpacity: 0.1,
-      shadowRadius: 5,
-      shadowOffset: {
-        width: 0,
-        height: 0,
-      },
-    },
   },
   input: {
     color: "#0e0d0d",
@@ -46,9 +24,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
   },
-  lastCard: {
-    paddingBottom: 500,
-  },
+
   label: {
     fontWeight: "bold",
     fontSize: 12,

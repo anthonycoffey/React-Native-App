@@ -8,7 +8,7 @@ import { Job } from "@/types";
 type Props = { job: Job; id: number };
 export default function JobHeader({ job, id }: Props) {
   return (
-    <View style={{ paddingHorizontal: 12 }}>
+    <View style={{ paddingHorizontal: 10 }}>
       <View style={{ marginBottom: 20 }}>
         <View style={globalStyles.topLeft}>
           <Text

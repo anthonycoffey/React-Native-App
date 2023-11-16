@@ -186,7 +186,6 @@ export default function PaymentForm({
 
       <Button
         onPress={paymentType === "cash" ? submitCashPayment : submitCardPayment}
-        color="green"
         disabled={loading}
       >
         {buttonText}

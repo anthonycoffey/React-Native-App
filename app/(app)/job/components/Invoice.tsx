@@ -88,9 +88,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       {loading && <Button>loading button?</Button>}
 
       {!loading && hasActiveInvoice && (
-        <Button color="warning" onPress={regenerateInvoice}>
-          Regenerate
-        </Button>
+        <Button onPress={regenerateInvoice}>Regenerate</Button>
       )}
 
       {job.Invoices?.filter(
