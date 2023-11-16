@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
-import { Button, Card, ListItem, Text, Dialog, Checkbox } from "tamagui";
+import { Button, Card, ListItem, Text, Dialog, Checkbox, Sheet } from "tamagui";
 import { Check } from "@tamagui/lucide-icons";
 import PaymentDialog from "./PaymentDialog";
 import CurrencyInput from "@/app/(app)/job/components/invoice/CurrencyInput";
@@ -143,7 +143,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
               }}
             >
               <Checkbox.Indicator>
-                Pay with Card
+                <Text>Pay with Card</Text>
                 <Check />
               </Checkbox.Indicator>
             </Checkbox>
@@ -156,7 +156,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
               }}
             >
               <Checkbox.Indicator>
-                Pay with Cash
+                <Text>Pay with Cash</Text>
                 <Check />
               </Checkbox.Indicator>
             </Checkbox>
@@ -164,9 +164,11 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
         </>
       )}
 
-      <Dialog open={payWithCard}>
-        <Dialog.Content>
-          <Dialog.Title>Enter Card Details</Dialog.Title>
+      <Sheet open={payWithCard} onOpenChange={setPayWithCard} modal={true}>
+        <Sheet.Overlay />
+        <Sheet.Handle />
+        <Sheet.Frame>
+          <Text>Enter Card Details</Text>
           <PaymentDialog
             jobId={job.id}
             paymentType={paymentType}
@@ -175,11 +177,13 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
             fetchJob={fetchJob}
             hidePaymentDialog={hidePaymentDialog}
           />
-        </Dialog.Content>
-      </Dialog>
-      <Dialog open={payWithCash}>
-        <Dialog.Content>
-          <Dialog.Title>Collect Cash</Dialog.Title>
+        </Sheet.Frame>
+      </Sheet>
+      <Sheet open={payWithCash} onOpenChange={setPayWithCash} modal={true}>
+        <Sheet.Overlay />
+        <Sheet.Handle />
+        <Sheet.Frame>
+          <Text>Collect Cash</Text>
           <Text style={{ padding: 10, textAlign: "center", marginBottom: 10 }}>
             Please collect ${amountToPay} from the customer.
           </Text>
@@ -191,8 +195,8 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
             fetchJob={fetchJob}
             hidePaymentDialog={hidePaymentDialog}
           />
-        </Dialog.Content>
-      </Dialog>
+        </Sheet.Frame>
+      </Sheet>
     </Card>
   );
 }

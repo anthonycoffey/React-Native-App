@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Alert, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Card, Text, ListItem, Button, Dialog } from "tamagui";
+import { Trash } from "@tamagui/lucide-icons";
+import { Card, Text, ListItem, Button, Sheet, Input, XStack } from "tamagui";
 import DropDownPicker, {
   ItemType,
   ValueType,
 } from "react-native-dropdown-picker";
 import { centsToDollars } from "@/utils/money";
 import api from "@/utils/api";
-import { Job, JobLineItems, AxiosResponse, AxiosError, Service } from "@/types";
 import { prettyPrint } from "@/utils/objects";
+import { Job, JobLineItems, AxiosResponse, AxiosError, Service } from "@/types";
 
 type Props = {
   job: Job;
@@ -25,6 +25,14 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   const [show, setShow] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState<boolean>(false);
   const [value, setValue] = useState<number | null>(null);
+  const [valuePrice, setValuePrice] = useState<string>("0");
+
+  useEffect(() => {
+    if (value) {
+      const newLineItem = services[value];
+      setValuePrice(centsToDollars(+newLineItem.price));
+    }
+  }, [value]);
 
   // Fetch services data
   useEffect(() => {
@@ -44,20 +52,13 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
 
   const DoneButton = () => {
     return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
+      <Button
+        onPress={() => {
+          setEdit(!edit);
         }}
       >
-        <Button
-          onPress={() => {
-            setEdit(!edit);
-          }}
-        >
-          Done
-        </Button>
-      </View>
+        Done
+      </Button>
     );
   };
 
@@ -65,17 +66,24 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
     return items.map(
       (item) =>
         item && (
-          <ListItem
+          <XStack
             key={item.id}
-            title={item.Service.name}
-            subTitle={centsToDollars(+item.Service.price)}
+            space
+            justifyContent={"space-between"}
+            alignContent={"center"}
+            alignItems={"center"}
+            padding={10}
           >
+            <Text>{item.Service?.name}</Text>
+            <Text>{centsToDollars(+item.Service?.price)}</Text>
             <Button
+              circular={true}
               onPress={() => {
                 deleteLineItem(item);
               }}
+              icon={Trash}
             ></Button>
-          </ListItem>
+          </XStack>
         ),
     );
   };
@@ -157,15 +165,13 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         <>
           <EditableLineItems items={job.JobLineItems} />
           <View style={{ marginHorizontal: 10, marginBottom: show ? 40 : 10 }}>
-            <TouchableOpacity
+            <Button
               onPress={() => {
                 setShow(true);
               }}
             >
-              <Button>
-                <Text>Add Line Item</Text>
-              </Button>
-            </TouchableOpacity>
+              <Text>Add Line Item</Text>
+            </Button>
           </View>
           <DoneButton />
         </>
@@ -178,10 +184,10 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           Edit
         </Button>
       )}
-      <Dialog open={show}>
-        <Dialog.Content>
-          <Dialog.Title>Add Line Item</Dialog.Title>
-
+      <Sheet open={show} onOpenChange={setShow} modal={true}>
+        <Sheet.Overlay />
+        <Sheet.Handle />
+        <Sheet.Frame>
           <View
             style={{
               flex: 1,
@@ -191,6 +197,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               paddingBottom: 100,
             }}
           >
+            <Text>Add Line Item</Text>
             <DropDownPicker
               open={open}
               value={value}
@@ -200,17 +207,18 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               setItems={setServicesItems}
               placeholder={"Choose a service..."}
             />
+            <Input
+              placeholder={"Price"}
+              keyboardType={"numeric"}
+              value={valuePrice}
+            ></Input>
           </View>
           <View>
-            <Button title={"Save"} onPress={addLineItem}>
-              Save
-            </Button>
-            <Button title={"Cancel"} onPress={() => setShow(!show)}>
-              Cancel
-            </Button>
+            <Button onPress={addLineItem}>Save</Button>
+            <Button onPress={() => setShow(false)}>Cancel</Button>
           </View>
-        </Dialog.Content>
-      </Dialog>
+        </Sheet.Frame>
+      </Sheet>
     </Card>
   );
 }
