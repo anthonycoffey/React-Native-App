@@ -1,6 +1,6 @@
 import React from "react";
 import { TextInput, Alert } from "react-native";
-import { Button, Card, Text, Dialog } from "tamagui";
+import { Button, Card, Text, Dialog, Sheet } from "tamagui";
 import api, { responseDebug } from "@/utils/api";
 import globalStyles from "@/styles/globalStyles";
 import { router } from "expo-router";
@@ -117,9 +117,15 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
         </>
       )}
 
-      <Dialog open={showCancelDialog}>
-        <Dialog.Content>
-          <Dialog.Title>Cancel Job?</Dialog.Title>
+      <Sheet
+        open={showCancelDialog}
+        onOpenChange={setShowCancelDialog}
+        modal={true}
+      >
+        <Sheet.Overlay />
+        <Sheet.Handle />
+        <Sheet.Frame>
+          <Text>Cancel Job?</Text>
           <Text>{cancelComment}</Text>
           <Text style={globalStyles.label}>Enter Reason</Text>
           <TextInput
@@ -144,8 +150,8 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
           >
             Close Window
           </Button>
-        </Dialog.Content>
-      </Dialog>
+        </Sheet.Frame>
+      </Sheet>
     </Card>
   );
 }
