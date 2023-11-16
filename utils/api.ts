@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
+console.log({ API_URL });
 
 // create axios instance
 const api = axios.create({

@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
-import { Card, ListItem, Text, Chip, FAB } from "@rneui/themed";
+import { Card, ListItem, Text, Button } from "tamagui";
+import { router } from "expo-router";
+import Chip from "@/components/Chip";
 import { formatDateTime, formatRelative } from "../utils/dates";
 import { Job } from "../types";
-import { router } from "expo-router";
 
 type JobsListProps = {
   jobs: Job[] | null;
@@ -30,19 +31,13 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <Text h3 style={styles.heading}>
-        My Jobs
-      </Text>
+      <Text style={styles.heading}>My Jobs</Text>
 
       <TouchableOpacity style={{ position: "absolute", right: 15, top: 15 }}>
-        <FAB
-          visible={true}
+        <Button
           onPress={() => {
             router.push("/job/new");
           }}
-          size="small"
-          icon={{ name: "add", color: "white" }}
-          color="green"
         />
       </TouchableOpacity>
 
@@ -51,6 +46,7 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
           <Card key={i}>
             <TouchableOpacity
               onPress={() => {
+                // @ts-ignore
                 router.push({
                   pathname: "/job/[id]",
                   params: {
@@ -59,16 +55,11 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
                 });
               }}
             >
-              <ListItem>
-                <ListItem.Content>
-                  <ListItem.Title style={styles.jobTitle}>
-                    {job.Customer?.fullName}
-                  </ListItem.Title>
-                  <ListItem.Subtitle>
-                    <Text h4>
-                      Arrival In: {formatRelative(job.arrivalTime)}
-                    </Text>
-                  </ListItem.Subtitle>
+              <ListItem
+                title={job.Customer?.fullName}
+                subTitle={`Arrival In: ${formatRelative(job.arrivalTime)}`}
+              >
+                <ListItem.Text>
                   <View style={styles.details}>
                     <Text>Address: {job.Address?.short} </Text>
                     <Text>Arrival Time: {formatDateTime(job.arrivalTime)}</Text>
@@ -76,19 +67,11 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
                   </View>
                   <View style={styles.chipContainer}>
                     {job?.paymentStatus && (
-                      <Chip
-                        title={job.paymentStatus.toUpperCase()}
-                        containerStyle={styles.chip}
-                      />
+                      <Chip text={job.paymentStatus.toUpperCase()} />
                     )}
-                    {job?.status && (
-                      <Chip
-                        title={job?.status.toUpperCase()}
-                        containerStyle={styles.chip}
-                      />
-                    )}
+                    {job?.status && <Chip text={job?.status.toUpperCase()} />}
                   </View>
-                </ListItem.Content>
+                </ListItem.Text>
               </ListItem>
             </TouchableOpacity>
           </Card>

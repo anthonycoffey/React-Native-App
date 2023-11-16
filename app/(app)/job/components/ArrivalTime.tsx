@@ -3,7 +3,7 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import React from "react";
 import { View, Text, Platform, StyleSheet } from "react-native";
-import { Button, Icon } from "@rneui/themed";
+import { Button } from "tamagui";
 import api, { responseDebug } from "@/utils/api";
 import { AxiosError } from "@/types";
 
@@ -156,8 +156,6 @@ export default function ArrivalTime({
               }}
             >
               <Button
-                size="sm"
-                radius="sm"
                 onPress={() => {
                   DateTimePickerAndroid.open({
                     mode: "date",
@@ -166,17 +164,10 @@ export default function ArrivalTime({
                   });
                 }}
               >
-                <Icon
-                  name="calendar-edit"
-                  type="material-community"
-                  color="white"
-                />
                 Edit Date
               </Button>
 
               <Button
-                size="sm"
-                radius="sm"
                 onPress={() => {
                   DateTimePickerAndroid.open({
                     mode: "time",
@@ -185,11 +176,6 @@ export default function ArrivalTime({
                   });
                 }}
               >
-                <Icon
-                  name="clock-edit"
-                  type="material-community"
-                  color="white"
-                />
                 Edit Time
               </Button>
             </View>
@@ -201,13 +187,6 @@ export default function ArrivalTime({
         {(date || time) && !updated && (
           <>
             <Button
-              size="sm"
-              buttonStyle={{
-                borderRadius: 10,
-                paddingVertical: 10,
-                marginBottom: 10,
-              }}
-              color={"blue"}
               onPress={() => {
                 updateArrivalTime();
               }}
@@ -215,11 +194,6 @@ export default function ArrivalTime({
               Save
             </Button>
             <Button
-              buttonStyle={{
-                borderRadius: 10,
-                paddingVertical: 5,
-              }}
-              type={"outline"}
               onPress={() => {
                 setDate("");
                 setTime("");

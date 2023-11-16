@@ -1,9 +1,10 @@
 import React from "react";
-import { Button, Card, Text, Dialog, Divider } from "@rneui/themed";
+import { TextInput, Alert } from "react-native";
+import { Button, Card, Text, Dialog } from "tamagui";
 import api, { responseDebug } from "@/utils/api";
 import globalStyles from "@/styles/globalStyles";
 import { router } from "expo-router";
-import { TextInput, Alert } from "react-native";
+import { AxiosError } from "@/types";
 
 type Props = {
   id: number;
@@ -18,17 +19,17 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
   const updateJobStatus = (event: string) => {
     api
       .post(`/jobs/${id}/${event}`, { event })
-      .then((res) => {
+      .then(() => {
         fetchJob();
       })
-      .catch((error) => {
+      .catch((error: AxiosError) => {
         responseDebug(error);
       });
   };
 
   const quitJob = () => {
     try {
-      api.post(`/jobs/${id}/quit`).then((res) => {
+      api.post(`/jobs/${id}/quit`).then(() => {
         router.back();
       });
     } catch (error) {
@@ -42,7 +43,7 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
         .post(`/jobs/${id}/cancel`, {
           comment: cancelComment,
         })
-        .then((res) => {
+        .then(() => {
           router.back();
         });
     } catch (error) {
@@ -52,7 +53,7 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
 
   return (
     <Card>
-      <Card.Title> STATUS: {status.toUpperCase()}</Card.Title>
+      <Text> STATUS: {status.toUpperCase()}</Text>
 
       {status === "assigned" && (
         <Button
@@ -61,7 +62,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
           }}
           color="green"
           size="lg"
-          containerStyle={globalStyles.buttonContainer}
         >
           On My Way
         </Button>
@@ -73,8 +73,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
             updateJobStatus("start");
           }}
           color="green"
-          size="lg"
-          containerStyle={globalStyles.buttonContainer}
         >
           Start Job
         </Button>
@@ -88,8 +86,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
             // router.back();
           }}
           color="green"
-          size="lg"
-          containerStyle={globalStyles.buttonContainer}
         >
           Finish Job
         </Button>
@@ -113,7 +109,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
               );
             }}
             color="warning"
-            containerStyle={globalStyles.buttonContainer}
           >
             Quit Job
           </Button>
@@ -122,57 +117,41 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
               setShowCancelDialog(true);
             }}
             color="error"
-            containerStyle={globalStyles.buttonContainer}
           >
             Cancel Job
           </Button>
         </>
       )}
 
-      <Dialog
-        isVisible={showCancelDialog}
-        onBackdropPress={() => {
-          setShowCancelDialog(false);
-        }}
-      >
-        <Dialog.Title
-          title="Cancel Job?"
-          titleStyle={{ textAlign: "center", fontSize: 24 }}
-        />
-        <Text>{cancelComment}</Text>
-
-        <Text style={globalStyles.label}>Enter Reason</Text>
-        <TextInput
-          style={globalStyles.input}
-          onChange={(event) => {
-            setCancelComment(event.nativeEvent.text); // todo: research this approach, tested fine on ios
-          }}
-        />
-        <Divider
-          style={{ marginVertical: 12 }}
-          inset={true}
-          insetType={"middle"}
-        />
-        <Button
-          containerStyle={globalStyles.buttonContainer}
-          onPress={() => {
-            setShowCancelDialog(false);
-            cancelJob();
-          }}
-          color="error"
-        >
-          Cancel Job
-        </Button>
-        <Button
-          size={"sm"}
-          type={"outline"}
-          onPress={() => {
-            setCancelComment("");
-            setShowCancelDialog(false);
-          }}
-        >
-          Close Window
-        </Button>
+      <Dialog open={showCancelDialog}>
+        <Dialog.Content>
+          <Dialog.Title>Cancel Job?</Dialog.Title>
+          <Text>{cancelComment}</Text>
+          <Text style={globalStyles.label}>Enter Reason</Text>
+          <TextInput
+            style={globalStyles.input}
+            onChange={(event) => {
+              setCancelComment(event.nativeEvent.text); // todo: research this approach, tested fine on ios
+            }}
+          />
+          <Button
+            onPress={() => {
+              setShowCancelDialog(false);
+              cancelJob();
+            }}
+            color="error"
+          >
+            Cancel Job
+          </Button>
+          <Button
+            onPress={() => {
+              setCancelComment("");
+              setShowCancelDialog(false);
+            }}
+          >
+            Close Window
+          </Button>
+        </Dialog.Content>
       </Dialog>
     </Card>
   );

@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { Chip, Icon, Text } from "@rneui/themed";
+import { Text } from "tamagui";
 import { formatDateTime } from "@/utils/dates";
 import globalStyles from "@/styles/globalStyles";
 import { Job } from "@/types";
@@ -11,7 +11,6 @@ export default function JobHeader({ job, id }: Props) {
     <View style={{ paddingHorizontal: 12 }}>
       <View style={{ marginBottom: 20 }}>
         <View style={globalStyles.topLeft}>
-          <Icon name="calendar-clock" type="material-community" size={36} />
           <Text
             style={{
               fontSize: 18,
@@ -28,8 +27,8 @@ export default function JobHeader({ job, id }: Props) {
       </View>
 
       <View style={globalStyles.statusContainer}>
-        <Chip> {job.status.toUpperCase()}</Chip>
-        <Chip> {job.paymentStatus.toUpperCase()}</Chip>
+        <Text> {job.status.toUpperCase()}</Text>
+        <Text> {job.paymentStatus.toUpperCase()}</Text>
       </View>
     </View>
   );
