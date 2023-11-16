@@ -45,9 +45,5 @@ export default function Index() {
     });
   }, []);
 
-  return (
-    <>
-      <View>{jobs && <JobsList jobs={jobs} fetchJobs={fetchJobs} />}</View>
-    </>
-  );
+  return <JobsList jobs={jobs} fetchJobs={fetchJobs} />;
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, Input } from "tamagui";
+import { Stack, Button, Input } from "tamagui";
 import api, { responseDebug } from "../utils/api";
 import { useSession } from "@/ctx";
 import { router } from "expo-router";
@@ -28,7 +28,7 @@ export default function LoginForm() {
   };
 
   return (
-    <View style={styles.container} className="bg-black">
+    <Stack style={styles.container} space>
       <Input
         placeholder="Email"
         value={email}
@@ -48,13 +48,12 @@ export default function LoginForm() {
       >
         Login
       </Button>
-    </View>
+    </Stack>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 15,

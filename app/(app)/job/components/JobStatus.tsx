@@ -60,8 +60,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
           onPress={() => {
             updateJobStatus("depart");
           }}
-          color="green"
-          size="lg"
         >
           On My Way
         </Button>
@@ -72,7 +70,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
           onPress={() => {
             updateJobStatus("start");
           }}
-          color="green"
         >
           Start Job
         </Button>
@@ -85,7 +82,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
             setCannotCancel(true);
             // router.back();
           }}
-          color="green"
         >
           Finish Job
         </Button>
@@ -108,7 +104,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
                 ],
               );
             }}
-            color="warning"
           >
             Quit Job
           </Button>
@@ -116,7 +111,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
             onPress={() => {
               setShowCancelDialog(true);
             }}
-            color="error"
           >
             Cancel Job
           </Button>
@@ -139,7 +133,6 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
               setShowCancelDialog(false);
               cancelJob();
             }}
-            color="error"
           >
             Cancel Job
           </Button>

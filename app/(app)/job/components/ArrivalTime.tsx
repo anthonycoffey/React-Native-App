@@ -98,7 +98,7 @@ export default function ArrivalTime({
         borderWidth: 1,
         borderRadius: 5,
         borderColor: "#ccc",
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
       }}
     >
       <Text
@@ -151,7 +151,7 @@ export default function ArrivalTime({
             <View
               style={{
                 flexDirection: "row",
-                paddingHorizontal: 12,
+                paddingHorizontal: 10,
                 justifyContent: "space-between",
               }}
             >
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 16,
     paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     borderRadius: 10,
     backgroundColor: "rgba(224,224,224,0.3)",
     borderWidth: 1,
