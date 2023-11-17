@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { View, TouchableOpacity, FlatList } from "react-native";
+import { router } from "expo-router";
 import { Card, Text, Stack, XStack, YStack } from "tamagui";
 import { MapPin, CarFront, Clock, User } from "@tamagui/lucide-icons";
-import { router } from "expo-router";
 import Chip from "@/components/Chip";
-import { formatDateTime, formatRelative } from "@/utils/dates";
-import { Job } from "@/types";
 import { HeaderText, LabelText } from "@/components/Typography";
 import globalStyles from "@/styles/globalStyles";
+import { formatDateTime, formatRelative } from "@/utils/dates";
+import { Job } from "@/types";
 
 type JobsListProps = {
   jobs: Job[] | null;
@@ -100,17 +100,3 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  chip: {
-    paddingHorizontal: 2,
-  },
-  heading: {
-    textAlign: "center",
-    marginBottom: 8,
-    marginTop: 8,
-  },
-  jobTitle: {
-    fontWeight: "bold",
-  },
-});
