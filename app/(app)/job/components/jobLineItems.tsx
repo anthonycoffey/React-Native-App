@@ -1,16 +1,7 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { Alert, View } from "react-native";
-import { Trash } from "@tamagui/lucide-icons";
-import {
-  Card,
-  Text,
-  ListItem,
-  Button,
-  Sheet,
-  Input,
-  XStack,
-  Stack,
-} from "tamagui";
+import React, { useEffect, useState } from "react";
+import { Alert } from "react-native";
+import { PlusCircle, Trash } from "@tamagui/lucide-icons";
+import { View, Card, Text, ListItem, Button, Sheet, Stack } from "tamagui";
 import DropDownPicker, {
   ItemType,
   ValueType,
@@ -18,9 +9,11 @@ import DropDownPicker, {
 import { centsToDollars } from "@/utils/money";
 import api from "@/utils/api";
 import { prettyPrint } from "@/utils/objects";
-import { Job, JobLineItems, AxiosResponse, AxiosError, Service } from "@/types";
 import globalStyles from "@/styles/globalStyles";
-import { CardTitle } from "@/components/Typography";
+import { CardTitle, LabelText } from "@/components/Typography";
+import CurrencyInput from "@/components/CurrencyInput";
+import { SecondaryButton, OutlinedButton } from "@/components/Buttons";
+import { Job, JobLineItems, AxiosResponse, AxiosError, Service } from "@/types";
 
 type Props = {
   job: Job;
@@ -33,19 +26,23 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
     ItemType<ValueType>[]
   >([]);
   const [edit, setEdit] = React.useState<boolean>(false);
+  // show line items edit mode
   const [show, setShow] = React.useState<boolean>(false);
+  // open add service modal
   const [open, setOpen] = React.useState<boolean>(false);
+  // selected service
   const [value, setValue] = useState<number | null>(null);
-  const [valuePrice, setValuePrice] = useState<string>("0");
+  // selected service price
+  const [valuePrice, setValuePrice] = useState<string>("0.00");
 
+  // automatically assign price when service is selected
   useEffect(() => {
     if (value) {
       const newLineItem = services[value];
-      setValuePrice(centsToDollars(+newLineItem.price));
+      setValuePrice(centsToDollars(+newLineItem.price, "numeric"));
     }
   }, [value]);
 
-  // Fetch services data
   useEffect(() => {
     const fetchServices = async () => {
       const response = await api.get("/services?limit=all");
@@ -63,13 +60,13 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
 
   const DoneButton = () => {
     return (
-      <Button
+      <SecondaryButton
         onPress={() => {
           setEdit(!edit);
         }}
       >
-        Done
-      </Button>
+        Done Editing
+      </SecondaryButton>
     );
   };
 
@@ -77,24 +74,32 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
     return items.map(
       (item) =>
         item && (
-          <XStack
+          <Stack
             key={item.id}
-            space
+            marginVertical={5}
+            flexDirection={"row"}
             justifyContent={"space-between"}
             alignContent={"center"}
             alignItems={"center"}
-            padding={10}
+            padding={1}
           >
-            <Text>{item.Service?.name}</Text>
-            <Text>{centsToDollars(+item.Service?.price)}</Text>
+            <Text width={200} numberOfLines={2} ellipsizeMode="tail">
+              {item.Service?.name}
+            </Text>
+            <Text>{centsToDollars(+item?.price)}</Text>
             <Button
+              variant={"outlined"}
+              borderWidth={1}
+              color="$red9"
+              size="$3"
+              borderColor="$red9"
               circular={true}
               onPress={() => {
                 deleteLineItem(item);
               }}
               icon={Trash}
-            ></Button>
-          </XStack>
+            />
+          </Stack>
         ),
     );
   };
@@ -102,19 +107,18 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   const addLineItem = () => {
     if (value) {
       const newLineItem = services[value];
+      const newLineItemPrice = +valuePrice;
 
-      prettyPrint({ newLineItem });
-      prettyPrint(job.JobLineItems, newLineItem);
+      console.log({ ServiceId: newLineItem.id, price: newLineItemPrice });
 
       api
         .post(`/jobs/${job.id}/line-items`, {
           lineItems: [
             ...job.JobLineItems,
-            { ServiceId: newLineItem.id, price: newLineItem.price },
+            { ServiceId: newLineItem.id, price: newLineItemPrice },
           ],
         })
         .then((response: AxiosResponse) => {
-          console.log({ response });
           fetchJob();
           setShow(false);
         })
@@ -159,7 +163,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
 
   return (
     <Card style={globalStyles.card} elevation={4}>
-      <CardTitle>Line Items</CardTitle>
+      <CardTitle>Services</CardTitle>
       {!edit &&
         job.JobLineItems?.map(
           (item: JobLineItems) =>
@@ -178,11 +182,14 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           <EditableLineItems items={job.JobLineItems} />
           <View style={{ marginHorizontal: 10, marginBottom: show ? 40 : 10 }}>
             <Button
+              icon={PlusCircle}
+              chromeless
+              size={"$4"}
               onPress={() => {
                 setShow(true);
               }}
             >
-              <Text>Add Line Item</Text>
+              Add Service
             </Button>
           </View>
           <DoneButton />
@@ -201,23 +208,45 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         <Sheet.Handle />
         <Sheet.Frame style={globalStyles.frameContainer}>
           <CardTitle>Add Line Item</CardTitle>
-          <Stack space={8}>
-            <DropDownPicker
-              open={open}
-              value={value}
-              items={servicesItems}
-              setOpen={setOpen}
-              setValue={setValue}
-              setItems={setServicesItems}
-              placeholder={"Choose a service..."}
-            />
-            <Input
-              placeholder={"Price"}
-              keyboardType={"numeric"}
-              value={valuePrice}
-            ></Input>
-            <Button onPress={addLineItem}>Save</Button>
-            <Button onPress={() => setShow(false)}>Cancel</Button>
+          <View flex={1} space>
+            <Stack>
+              <LabelText>Service</LabelText>
+              <DropDownPicker
+                open={open}
+                value={value}
+                items={servicesItems}
+                setOpen={setOpen}
+                setValue={setValue}
+                setItems={setServicesItems}
+                placeholder={"Choose a service..."}
+              />
+            </Stack>
+            <Stack>
+              {valuePrice && (
+                <CurrencyInput
+                  label={"Price ($USD)"}
+                  keyboardType={"numeric"}
+                  editable={true}
+                  value={valuePrice}
+                  onChangeText={(value: string) => setValuePrice(value)}
+                  borderColor="black"
+                />
+              )}
+            </Stack>
+          </View>
+
+          <Stack space={5}>
+            <SecondaryButton onPress={addLineItem}>Save</SecondaryButton>
+            <OutlinedButton
+              onPress={() => {
+                // reset state
+                setShow(false);
+                setValuePrice("0.00");
+                setValue(null);
+              }}
+            >
+              Cancel
+            </OutlinedButton>
           </Stack>
         </Sheet.Frame>
       </Sheet>

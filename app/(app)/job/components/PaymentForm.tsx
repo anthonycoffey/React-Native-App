@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Platform, Alert } from "react-native";
-import { Button, Input } from "tamagui";
+import { Platform, Alert } from "react-native";
+import { View, Button, Input, XStack, YStack, Stack, Paragraph } from "tamagui";
 import globalStyles from "@/styles/globalStyles";
 import { NativeModules } from "react-native";
 import { logNestedObjects } from "@/utils/objects";
+import { LabelText } from "@/components/Typography";
+import { PrimaryButton } from "@/components/Buttons";
 const { RNAuthorizeNet } = NativeModules;
 
 const LOGIN_ID = process.env.EXPO_PUBLIC_AUTHORIZE_LOGIN_ID;
@@ -121,75 +123,79 @@ export default function PaymentForm({
   }, [cardExpiry]);
 
   return (
-    <View>
-      {paymentType === "card" && (
-        <>
-          <Input
-            label={"Card Number"}
-            autoComplete="cc-number"
-            inputContainerStyle={{ borderBottomWidth: 0 }}
-            style={globalStyles.input}
-            placeholderTextColor={"#000"}
-            placeholder="Enter Card Number"
-            maxLength={16}
-            value={creditCardDetails.CARD_NO}
-            onChangeText={(text) =>
-              setCreditCardDetails({
-                ...creditCardDetails,
-                CARD_NO: text,
-              })
-            }
-          />
-
-          <View
-            style={{
-              flexWrap: "wrap",
-              flexDirection: "row",
-            }}
-          >
+    <>
+      <View flex={1}>
+        {paymentType === "card" && (
+          <>
+            <LabelText>Card Number</LabelText>
             <Input
-              label={"CVC"}
-              autoComplete={Platform.OS === "android" ? "cc-csc" : "cc-number"}
-              containerStyle={{
-                width: "48%",
-              }}
-              inputContainerStyle={{ borderBottomWidth: 0 }}
+              autoComplete="cc-number"
               style={globalStyles.input}
               placeholderTextColor={"#000"}
-              maxLength={4}
-              placeholder="CVC"
-              value={creditCardDetails.CVV_NO}
+              placeholder="Enter Card Number"
+              maxLength={16}
+              value={creditCardDetails.CARD_NO}
               onChangeText={(text) =>
                 setCreditCardDetails({
                   ...creditCardDetails,
-                  CVV_NO: text,
+                  CARD_NO: text,
                 })
               }
             />
-            <Input
-              label={"Exp."}
-              autoComplete={Platform.OS === "android" ? "cc-exp" : "off"}
-              containerStyle={{
-                width: "48%",
-              }}
-              inputContainerStyle={{ borderBottomWidth: 0 }}
-              style={globalStyles.input}
-              placeholderTextColor={"#000"}
-              maxLength={5}
-              placeholder="(MM/YY)"
-              value={cardExpiry}
-              onChangeText={handleCardExpiryChange}
-            />
-          </View>
-        </>
-      )}
 
-      <Button
-        onPress={paymentType === "cash" ? submitCashPayment : submitCardPayment}
-        disabled={loading}
-      >
-        {buttonText}
-      </Button>
-    </View>
+            <XStack justifyContent="space-between">
+              <YStack>
+                <LabelText>CVC</LabelText>
+                <Input
+                  autoComplete={
+                    Platform.OS === "android" ? "cc-csc" : "cc-number"
+                  }
+                  style={globalStyles.input}
+                  placeholderTextColor={"#000"}
+                  maxLength={4}
+                  placeholder="CVC"
+                  value={creditCardDetails.CVV_NO}
+                  onChangeText={(text) =>
+                    setCreditCardDetails({
+                      ...creditCardDetails,
+                      CVV_NO: text,
+                    })
+                  }
+                />
+              </YStack>
+              <YStack>
+                <LabelText>Exp. Date</LabelText>
+                <Input
+                  autoComplete={Platform.OS === "android" ? "cc-exp" : "off"}
+                  style={globalStyles.input}
+                  placeholderTextColor={"#000"}
+                  maxLength={5}
+                  placeholder="(MM/YY)"
+                  value={cardExpiry}
+                  onChangeText={handleCardExpiryChange}
+                />
+              </YStack>
+            </XStack>
+          </>
+        )}
+      </View>
+      <Stack space={5}>
+        <Paragraph style={{ textAlign: "center" }}>
+          {paymentType === "card" &&
+            `By clicking the button below, you agree to charge the card for the amount displayed.`}
+          {paymentType === "cash" &&
+            `By clicking the button below, you agree to be held responsible for the amount displayed.`}
+        </Paragraph>
+        <PrimaryButton
+          size={"$6"}
+          onPress={
+            paymentType === "cash" ? submitCashPayment : submitCardPayment
+          }
+          disabled={loading}
+        >
+          {buttonText}
+        </PrimaryButton>
+      </Stack>
+    </>
   );
 }
