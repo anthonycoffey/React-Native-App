@@ -1,35 +1,59 @@
 import React from "react";
-import { View } from "react-native";
-import { Text } from "tamagui";
-import { formatDateTime } from "@/utils/dates";
+import { Text, Card, View, XStack, YStack, Separator } from "tamagui";
+import { formatDateTime, formatRelative } from "@/utils/dates";
 import globalStyles from "@/styles/globalStyles";
 import { Job } from "@/types";
+import Chip from "@/components/Chip";
+import { AlarmCheck, AlarmClock, MapPin } from "@tamagui/lucide-icons";
+import { LabelText } from "@/components/Typography";
 
 type Props = { job: Job; id: number };
 export default function JobHeader({ job, id }: Props) {
   return (
-    <View style={{ paddingHorizontal: 10 }}>
-      <View style={{ marginBottom: 20 }}>
-        <View style={globalStyles.topLeft}>
-          <Text
-            style={{
-              fontSize: 18,
-              marginLeft: 5,
-              fontWeight: "bold",
-            }}
-          >
-            {job?.arrivalTime && formatDateTime(job.arrivalTime)}
-          </Text>
-        </View>
-        <Text style={{ textAlign: "right", fontSize: 22, fontWeight: "bold" }}>
-          J-{id}
-        </Text>
-      </View>
-
-      <View style={globalStyles.statusContainer}>
-        <Text> {job.status.toUpperCase()}</Text>
-        <Text> {job.paymentStatus.toUpperCase()}</Text>
-      </View>
-    </View>
+    <>
+      <XStack flex={1} flexDirection={"column"}>
+        <YStack flexDirection={"row"} justifyContent={"space-between"}>
+          <Text>{job?.arrivalTime && formatDateTime(job.arrivalTime)}</Text>
+          <LabelText>J-{id}</LabelText>
+        </YStack>
+        <YStack
+          flexDirection={"row"}
+          justifyContent={"space-between"}
+          style={globalStyles.chipContainer}
+        >
+          <Chip>{job.status.toUpperCase()}</Chip>
+          <Chip>{job.paymentStatus.toUpperCase()}</Chip>
+        </YStack>
+        <YStack
+          flexDirection={"row"}
+          alignContent={"center"}
+          alignItems={"center"}
+          style={{ marginTop: 10 }}
+        >
+          <AlarmCheck />
+          <LabelText>ETA</LabelText>
+          <Text>{formatRelative(job.arrivalTime)}</Text>
+        </YStack>
+        <YStack
+          flexDirection={"row"}
+          alignContent={"center"}
+          alignItems={"center"}
+        >
+          <AlarmClock />
+          <LabelText>Arrival</LabelText>
+          <Text>{formatDateTime(job.arrivalTime)}</Text>
+        </YStack>
+        <YStack
+          flexDirection={"row"}
+          alignContent={"center"}
+          alignItems={"center"}
+          style={{ marginBottom: 20 }}
+        >
+          <MapPin />
+          <LabelText>Address</LabelText>
+          <Text>{job.Address?.short}</Text>
+        </YStack>
+      </XStack>
+    </>
   );
 }

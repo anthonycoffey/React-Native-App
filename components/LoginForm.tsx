@@ -28,7 +28,7 @@ export default function LoginForm() {
   };
 
   return (
-    <Stack style={styles.container} space>
+    <Stack style={styles.container} space={5}>
       <Input
         placeholder="Email"
         value={email}

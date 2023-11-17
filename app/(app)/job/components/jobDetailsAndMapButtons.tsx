@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Image, ImageSourcePropType, Pressable, View } from "react-native";
 import { Card, Text } from "tamagui";
 import { getApps } from "react-native-map-link";
-import ArrivalTime from "@/app/(app)/job/components/ArrivalTime";
 import CustomerInfo from "@/app/(app)/job/components/customerInfo";
+import { CardTitle } from "@/components/Typography";
 import globalStyles from "@/styles/globalStyles";
 import geocodeAddress from "@/utils/geocode";
 import { location, Job, availableAppsProps } from "@/types";
@@ -62,16 +62,10 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
     })();
   }, [location]);
   return (
-    <Card>
+    <Card elevation={4} style={globalStyles.card}>
+      <CardTitle>Job Details</CardTitle>
       <CustomerInfo job={job} location={location} />
 
-      <ArrivalTime
-        timestamp={job.arrivalTime}
-        jobId={job.id}
-        fetchJob={fetchJob}
-      />
-
-      <Text style={globalStyles.openInMaps}>Open in Maps</Text>
       <View
         style={{
           flexDirection: "row",

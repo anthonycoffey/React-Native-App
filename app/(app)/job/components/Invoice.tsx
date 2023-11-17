@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
-import { Button, Card, ListItem, Text, Dialog, Checkbox, Sheet } from "tamagui";
+import {
+  Button,
+  Card,
+  ListItem,
+  Text,
+  Checkbox,
+  Sheet,
+  Spinner,
+  Stack,
+  XStack,
+} from "tamagui";
 import { Check } from "@tamagui/lucide-icons";
 import PaymentDialog from "./PaymentDialog";
 import CurrencyInput from "@/app/(app)/job/components/invoice/CurrencyInput";
 import { centsToDollars } from "@/utils/money";
 import api from "@/utils/api";
 import { Invoice, Job, AxiosRsponse } from "@/types";
+import globalStyles from "@/styles/globalStyles";
+import { CardTitle } from "@/components/Typography";
 
 interface Props {
   job: Job;
@@ -14,31 +26,10 @@ interface Props {
 }
 
 export default function InvoiceComponent({ job, fetchJob }: Props) {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [payWithCard, setPayWithCard] = useState<boolean>(false);
-  const [payWithCash, setPayWithCash] = useState<boolean>(false);
-  const [paymentType, setPaymentType] = useState<"cash" | "card">("card");
   const hasActiveInvoice = job.Invoices?.some((invoice: Invoice) =>
     ["pending", "partially-paid", "sent"].includes(invoice.status),
   );
-  const [amountToPay, setAmountToPay] = useState<string>("");
-  const [tipAmount, setTipAmount] = useState<string>("");
-
-  useEffect(() => {
-    const pendingInvoice = job.Invoices?.find(
-      (invoice: Invoice) => invoice.status === "pending",
-    );
-
-    const amount = pendingInvoice
-      ? centsToDollars(pendingInvoice.total, "numeric")
-      : 0;
-
-    setAmountToPay(amount.toString());
-
-    return () => {
-      setAmountToPay("");
-    };
-  }, [job]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const generateInvoice = async () => {
     setLoading(true);
@@ -73,130 +64,31 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
     );
   };
 
-  const hidePaymentDialog = () => {
-    setPayWithCard(false);
-    setPayWithCash(false);
-  };
-
   return (
-    <Card>
+    <Card style={globalStyles.card} elevation={4}>
+      <CardTitle>Invoice</CardTitle>
+
+      {job.Invoices?.filter(
+        (invoice: Invoice) => invoice.status === "pending",
+      ).map((invoice: Invoice) => (
+        <XStack key={invoice.id} justifyContent="space-between" padding={10}>
+          <Text>{invoice.id}</Text>
+          <Text>{invoice.status}</Text>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+            {centsToDollars(invoice.total)}
+          </Text>
+        </XStack>
+      ))}
+
       {!hasActiveInvoice && (
         <Button onPress={generateInvoice}>Generate Invoice</Button>
       )}
-
-      {/* todo: unsure about this , circle back*/}
-      {loading && <Button>loading button?</Button>}
 
       {!loading && hasActiveInvoice && (
         <Button onPress={regenerateInvoice}>Regenerate</Button>
       )}
 
-      {job.Invoices?.filter(
-        (invoice: Invoice) => invoice.status === "pending",
-      ).map((invoice: Invoice) => (
-        <ListItem key={invoice.id} title={invoice.id} subTitle={invoice.status}>
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            {centsToDollars(invoice.total)}
-          </Text>
-        </ListItem>
-      ))}
-
-      {job.status != "paid" && hasActiveInvoice ? (
-        <>
-          <Text
-            style={{
-              textAlign: "center",
-            }}
-          >
-            Take Payment
-          </Text>
-          <View style={{ flexDirection: "row", paddingTop: 20 }}>
-            <CurrencyInput
-              label={"Amount"}
-              value={amountToPay}
-              readOnly={true}
-              editable={false}
-              onChangeText={(value: string) => setAmountToPay(value)}
-            />
-            <CurrencyInput
-              label={"Tip"}
-              value={tipAmount}
-              onChangeText={(value: string) => setTipAmount(value)}
-            />
-          </View>
-        </>
-      ) : null}
-
-      {job.status != "paid" && hasActiveInvoice && amountToPay && (
-        <>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Checkbox
-              checked={payWithCard}
-              onPress={() => {
-                setPayWithCard(!payWithCard);
-                setPaymentType("card");
-              }}
-            >
-              <Checkbox.Indicator>
-                <Text>Pay with Card</Text>
-                <Check />
-              </Checkbox.Indicator>
-            </Checkbox>
-
-            <Checkbox
-              checked={payWithCash}
-              onPress={() => {
-                setPaymentType("cash");
-                setPayWithCash(!payWithCash);
-              }}
-            >
-              <Checkbox.Indicator>
-                <Text>Pay with Cash</Text>
-                <Check />
-              </Checkbox.Indicator>
-            </Checkbox>
-          </View>
-        </>
-      )}
-
-      <Sheet open={payWithCard} onOpenChange={setPayWithCard} modal={true}>
-        <Sheet.Overlay />
-        <Sheet.Handle />
-        <Sheet.Frame>
-          <Text>Enter Card Details</Text>
-          <PaymentDialog
-            jobId={job.id}
-            paymentType={paymentType}
-            amountToPay={+amountToPay}
-            tipAmount={+tipAmount}
-            fetchJob={fetchJob}
-            hidePaymentDialog={hidePaymentDialog}
-          />
-        </Sheet.Frame>
-      </Sheet>
-      <Sheet open={payWithCash} onOpenChange={setPayWithCash} modal={true}>
-        <Sheet.Overlay />
-        <Sheet.Handle />
-        <Sheet.Frame>
-          <Text>Collect Cash</Text>
-          <Text style={{ padding: 10, textAlign: "center", marginBottom: 10 }}>
-            Please collect ${amountToPay} from the customer.
-          </Text>
-          <PaymentDialog
-            jobId={job.id}
-            paymentType={paymentType}
-            amountToPay={+amountToPay}
-            tipAmount={+tipAmount}
-            fetchJob={fetchJob}
-            hidePaymentDialog={hidePaymentDialog}
-          />
-        </Sheet.Frame>
-      </Sheet>
+      {loading && <Spinner size="small" color="$blue5" />}
     </Card>
   );
 }

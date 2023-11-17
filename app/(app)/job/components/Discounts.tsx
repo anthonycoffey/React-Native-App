@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { View, ListItem, Card, Text } from "tamagui";
 import { centsToDollars } from "@/utils/money";
 import { Discount, Job } from "@/types";
+import globalStyles from "@/styles/globalStyles";
+import { CardTitle } from "@/components/Typography";
 
 type Props = {
   job: Job;
@@ -21,7 +23,8 @@ export default function Discounts({ job }: Props) {
   }, [job.Discounts]); // This effect runs whenever job.Discounts changes
 
   return (
-    <Card>
+    <Card style={globalStyles.card} elevation={4}>
+      <CardTitle>Discounts</CardTitle>
       <Text style={{ textAlign: "right" }}>
         Total: {centsToDollars(+discountsTotal)}
       </Text>

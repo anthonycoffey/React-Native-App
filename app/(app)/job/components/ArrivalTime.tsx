@@ -2,10 +2,12 @@ import DateTimePicker, {
   DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
 import React from "react";
-import { View, Text, Platform, StyleSheet } from "react-native";
-import { Button } from "tamagui";
+import { Platform, StyleSheet } from "react-native";
+import { Button, Card, View, Text, Stack } from "tamagui";
 import api, { responseDebug } from "@/utils/api";
 import { AxiosError } from "@/types";
+import globalStyles from "@/styles/globalStyles";
+import { CardTitle } from "@/components/Typography";
 
 type ArrivalTimeProps = {
   timestamp?: string;
@@ -91,24 +93,8 @@ export default function ArrivalTime({
   };
 
   return (
-    <View
-      style={{
-        padding: 10,
-        marginVertical: 20,
-        borderWidth: 1,
-        borderRadius: 5,
-        borderColor: "#ccc",
-        paddingHorizontal: 10,
-      }}
-    >
-      <Text
-        style={{
-          fontSize: 18,
-          textAlign: "center",
-        }}
-      >
-        Arrival Time
-      </Text>
+    <Card style={globalStyles.card} elevation={4}>
+      <CardTitle>Arrival Time</CardTitle>
       <View
         style={{
           paddingVertical: 10,
@@ -185,8 +171,11 @@ export default function ArrivalTime({
 
       <View>
         {(date || time) && !updated && (
-          <>
+          <Stack space={5}>
             <Button
+              size="$3"
+              backgroundColor="$blue10"
+              color="white"
               onPress={() => {
                 updateArrivalTime();
               }}
@@ -194,6 +183,11 @@ export default function ArrivalTime({
               Save
             </Button>
             <Button
+              variant="outlined"
+              size="$3"
+              color="$red9"
+              borderColor="$red9"
+              borderWidth={1}
               onPress={() => {
                 setDate("");
                 setTime("");
@@ -202,10 +196,10 @@ export default function ArrivalTime({
             >
               Cancel
             </Button>
-          </>
+          </Stack>
         )}
       </View>
-    </View>
+    </Card>
   );
 }
 
