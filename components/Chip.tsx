@@ -1,17 +1,22 @@
 import React from "react";
 import { View, Text } from "tamagui";
-
-export default function Chip({ text }: { text: string }) {
+type Props = {
+  children: React.ReactNode;
+};
+export default function Chip({ children }: Props) {
   return (
-    <View
+    <Text
+      backgroundColor="blue"
       style={{
-        backgroundColor: "#eee",
+        flexShrink: 1,
         borderRadius: 4,
-        padding: 4,
-        margin: 4,
+        padding: 5,
+        marginRight: 5,
+        marginVertical: 5,
       }}
+      color="white"
     >
-      <Text>{text}</Text>
-    </View>
+      {children}
+    </Text>
   );
 }

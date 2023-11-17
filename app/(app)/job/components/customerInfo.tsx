@@ -27,13 +27,6 @@ export default function CustomerInfo({ job, location }: Props) {
         value={job.Customer?.fullName}
         style={globalStyles.input}
       />
-      <Text style={globalStyles.label}>Address</Text>
-      <TextInput
-        //  @ts-ignore
-        readOnly={true}
-        value={location?.formatted_address || job.Address?.short}
-        style={globalStyles.input}
-      />
       <Text style={globalStyles.label}>Phone</Text>
       <TextInput
         //  @ts-ignore
@@ -42,11 +35,17 @@ export default function CustomerInfo({ job, location }: Props) {
         style={globalStyles.input}
       />
       <Text style={globalStyles.label}>Car</Text>
-
       <TextInput
         //  @ts-ignore
         readOnly={true}
         value={job?.Car?.concat}
+        style={globalStyles.input}
+      />
+      <Text style={globalStyles.label}>Address</Text>
+      <TextInput
+        //  @ts-ignore
+        readOnly={true}
+        value={location?.formatted_address || job.Address?.short}
         style={globalStyles.input}
       />
     </>

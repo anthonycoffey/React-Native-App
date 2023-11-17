@@ -5,6 +5,7 @@ import {
 } from "react-native-safe-area-context";
 import { Menu } from "@tamagui/lucide-icons";
 import { Button, XStack, Text, Stack, View } from "tamagui";
+import { Rocket } from "@tamagui/lucide-icons";
 
 export default function HeaderToolbar() {
   const insets = useSafeAreaInsets();
@@ -31,7 +32,7 @@ export default function HeaderToolbar() {
         alignItems="center"
         height={50} // Adjust as needed
       >
-        <Text>Phoenix Mobile</Text>
+        <Rocket style={{ marginLeft: 15 }} />
         <Button
           icon={Menu}
           onPress={() => console.log("Menu Pressed")} // Replace with actual functionality

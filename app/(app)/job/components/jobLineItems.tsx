@@ -1,7 +1,16 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Alert, View } from "react-native";
 import { Trash } from "@tamagui/lucide-icons";
-import { Card, Text, ListItem, Button, Sheet, Input, XStack } from "tamagui";
+import {
+  Card,
+  Text,
+  ListItem,
+  Button,
+  Sheet,
+  Input,
+  XStack,
+  Stack,
+} from "tamagui";
 import DropDownPicker, {
   ItemType,
   ValueType,
@@ -10,6 +19,8 @@ import { centsToDollars } from "@/utils/money";
 import api from "@/utils/api";
 import { prettyPrint } from "@/utils/objects";
 import { Job, JobLineItems, AxiosResponse, AxiosError, Service } from "@/types";
+import globalStyles from "@/styles/globalStyles";
+import { CardTitle } from "@/components/Typography";
 
 type Props = {
   job: Job;
@@ -147,7 +158,8 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   };
 
   return (
-    <Card>
+    <Card style={globalStyles.card} elevation={4}>
+      <CardTitle>Line Items</CardTitle>
       {!edit &&
         job.JobLineItems?.map(
           (item: JobLineItems) =>
@@ -187,17 +199,9 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       <Sheet open={show} onOpenChange={setShow} modal={true}>
         <Sheet.Overlay />
         <Sheet.Handle />
-        <Sheet.Frame>
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              paddingBottom: 100,
-            }}
-          >
-            <Text>Add Line Item</Text>
+        <Sheet.Frame style={globalStyles.frameContainer}>
+          <CardTitle>Add Line Item</CardTitle>
+          <Stack space={8}>
             <DropDownPicker
               open={open}
               value={value}
@@ -212,11 +216,9 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               keyboardType={"numeric"}
               value={valuePrice}
             ></Input>
-          </View>
-          <View>
             <Button onPress={addLineItem}>Save</Button>
             <Button onPress={() => setShow(false)}>Cancel</Button>
-          </View>
+          </Stack>
         </Sheet.Frame>
       </Sheet>
     </Card>
