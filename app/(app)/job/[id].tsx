@@ -3,16 +3,14 @@ import { KeyboardAvoidingView, Platform } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import JobStatus from "./components/JobStatus";
 import Invoice from "./components/Invoice";
-import JobHeader from "./components/JobHeader";
-import Discounts from "./components/Discounts";
 import JobDetailsAndMapButtons from "./components/jobDetailsAndMapButtons";
 import JobActivityLog from "./components/jobActivityLog";
 import JobLineItems from "./components/jobLineItems";
-import api from "@/utils/api";
-import { Job, AxiosResponse, AxiosError } from "@/types";
-import { Text, ScrollView, Spinner, Stack, View } from "tamagui";
 import ArrivalTime from "@/app/(app)/job/components/ArrivalTime";
 import { TakePayment } from "@/app/(app)/job/components/TakePayment";
+import { ScrollView, Spinner, Stack } from "tamagui";
+import api from "@/utils/api";
+import { Job, AxiosResponse, AxiosError } from "@/types";
 
 function LoadingSpinner(props: { loading: boolean }) {
   return (
@@ -66,7 +64,6 @@ export default function JobPage() {
               fetchJob={fetchJob}
             />
             <JobLineItems job={job} fetchJob={fetchJob} />
-            <Discounts job={job} />
             <Invoice job={job} fetchJob={fetchJob} />
             <TakePayment job={job} fetchJob={fetchJob} />
             <JobActivityLog job={job} />
