@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Checkbox, Sheet, Stack, Text, Card, Button } from "tamagui";
+import { Checkbox, Sheet, Stack, Text, Card, Button, Paragraph } from "tamagui";
 import { View } from "react-native";
 import CurrencyInput from "@/app/(app)/job/components/invoice/CurrencyInput";
 import { Check } from "@tamagui/lucide-icons";
@@ -108,6 +108,7 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
         <Sheet.Handle />
         <Sheet.Frame style={globalStyles.frameContainer}>
           <CardTitle>Enter Card Details</CardTitle>
+
           <PaymentDialog
             jobId={job.id}
             paymentType={paymentType}
@@ -123,9 +124,11 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
         <Sheet.Handle />
         <Sheet.Frame style={globalStyles.frameContainer}>
           <CardTitle>Collect Cash</CardTitle>
-          <Text style={{ padding: 10, textAlign: "center", marginBottom: 10 }}>
+          <Paragraph
+            style={{ padding: 10, textAlign: "center", marginBottom: 10 }}
+          >
             Please collect ${amountToPay} from the customer.
-          </Text>
+          </Paragraph>
           <PaymentDialog
             jobId={job.id}
             paymentType={paymentType}

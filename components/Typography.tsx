@@ -8,7 +8,7 @@ const HeaderText = styled(Text, {
 const LabelText = styled(Text, {
   fontSize: "$4",
   fontWeight: "bold",
-  marginRight: "$2",
+  marginHorizontal: "$2",
 });
 
 const CardTitle = styled(Text, {
