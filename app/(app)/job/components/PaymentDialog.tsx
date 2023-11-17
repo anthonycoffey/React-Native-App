@@ -2,6 +2,7 @@ import React from "react";
 import PaymentForm from "./PaymentForm";
 import api, { responseDebug } from "@/utils/api";
 import { dollarsToCents } from "@/utils/money";
+import { AxiosResponse, AxiosError } from "@/types";
 
 type Props = {
   jobId: number;
@@ -41,13 +42,13 @@ export default function PaymentDialog({
           tip: dollarsToCents(tipAmount),
           opaqueData,
         })
-        .then((response) => {
+        .then((response: AxiosResponse) => {
           const { data } = response;
           console.log({ data });
           fetchJob();
           hidePaymentDialog();
         })
-        .catch((error) => {
+        .catch((error: AxiosError) => {
           responseDebug(error);
         });
     } catch (error) {
@@ -65,13 +66,13 @@ export default function PaymentDialog({
           amount: dollarsToCents(amountToPay),
           tip: dollarsToCents(tipAmount),
         })
-        .then((response) => {
+        .then((response: AxiosResponse) => {
           const { data } = response;
           console.log({ data });
           fetchJob();
           hidePaymentDialog();
         })
-        .catch((error) => {
+        .catch((error: AxiosError) => {
           responseDebug(error);
         });
     } catch {

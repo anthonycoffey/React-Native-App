@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { Skeleton } from "@rneui/themed";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import JobStatus from "./components/JobStatus";
 import Invoice from "./components/Invoice";
@@ -10,11 +9,26 @@ import JobDetailsAndMapButtons from "./components/jobDetailsAndMapButtons";
 import JobActivityLog from "./components/jobActivityLog";
 import JobLineItems from "./components/jobLineItems";
 import api from "@/utils/api";
-import globalStyles from "@/styles/globalStyles";
-import { Job } from "@/types";
+import { Job, AxiosResponse, AxiosError } from "@/types";
+import { Text, ScrollView, Spinner, Stack, View } from "tamagui";
+import ArrivalTime from "@/app/(app)/job/components/ArrivalTime";
+import { TakePayment } from "@/app/(app)/job/components/TakePayment";
+
+function LoadingSpinner(props: { loading: boolean }) {
+  return (
+    <>
+      {props.loading && (
+        <Stack flex={1} justifyContent="center" alignContent="center">
+          <Spinner size="large" color="$blue10" />
+        </Stack>
+      )}
+    </>
+  );
+}
 
 export default function JobPage() {
   const { id } = useLocalSearchParams();
+  const [loading, setLoading] = useState<boolean>(true);
   const [job, setJob] = useState<Job | false>(false);
 
   useEffect(() => {
@@ -22,16 +36,17 @@ export default function JobPage() {
   }, [id]);
 
   const fetchJob = () => {
+    setLoading(true);
     api
       .get(`/jobs/${id}`)
-      .then(function (response) {
-        // todo: add response/error types throughout project for optimal typescript support
+      .then(function (response: AxiosResponse) {
         const { data } = response;
         setJob(data);
       })
-      .catch(function (error) {
+      .catch(function (error: AxiosError) {
         console.log(error);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -39,30 +54,22 @@ export default function JobPage() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={globalStyles.containerStyles}>
-        {job ? (
+      <LoadingSpinner loading={loading} />
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 10 }}>
+        {job && (
           <>
-            <JobHeader job={job} id={job.id} />
-
-            <JobLineItems job={job} fetchJob={fetchJob} />
-
-            <JobStatus id={job.id} status={job.status} fetchJob={fetchJob} />
-
+            <JobStatus job={job} fetchJob={fetchJob} />
             <JobDetailsAndMapButtons job={job} fetchJob={fetchJob} />
-
-            <JobActivityLog job={job} />
-
+            <ArrivalTime
+              timestamp={job.arrivalTime}
+              jobId={job.id}
+              fetchJob={fetchJob}
+            />
+            <JobLineItems job={job} fetchJob={fetchJob} />
             <Discounts job={job} />
-
-            {job.paymentStatus != "paid" && (
-              <Invoice job={job} fetchJob={fetchJob} />
-            )}
-          </>
-        ) : (
-          <>
-            <Skeleton height={100} animation="pulse" style={globalStyles.gap} />
-            <Skeleton height={250} animation="pulse" style={globalStyles.gap} />
-            <Skeleton height={50} animation="pulse" style={globalStyles.gap} />
+            <Invoice job={job} fetchJob={fetchJob} />
+            <TakePayment job={job} fetchJob={fetchJob} />
+            <JobActivityLog job={job} />
           </>
         )}
       </ScrollView>

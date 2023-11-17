@@ -1,6 +1,7 @@
 import React from "react";
-import { Input } from "@rneui/themed";
+import { Input, Stack, Text } from "tamagui";
 import globalStyles from "@/styles/globalStyles";
+import { LabelText } from "@/components/Typography";
 
 type Props = {
   label: string;
@@ -24,18 +25,16 @@ export default function CurrencyInput({
   };
 
   return (
-    <Input
-      style={globalStyles.input}
-      inputContainerStyle={{ borderBottomWidth: 0 }}
-      containerStyle={{
-        width: "48%",
-      }}
-      label={label}
-      keyboardType="numeric"
-      value={value}
-      editable={editable}
-      disabled={readOnly}
-      onChangeText={formatCurrency}
-    />
+    <Stack>
+      <LabelText style={{ marginBottom: 5 }}>{label}</LabelText>
+      <Input
+        size={"$6"}
+        keyboardType="numeric"
+        value={value}
+        editable={editable}
+        disabled={readOnly}
+        onChangeText={formatCurrency}
+      />
+    </Stack>
   );
 }

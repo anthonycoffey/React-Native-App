@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Platform, Alert } from "react-native";
-import { Button, Input } from "@rneui/themed";
+import { Button, Input } from "tamagui";
 import globalStyles from "@/styles/globalStyles";
 import { NativeModules } from "react-native";
 import { logNestedObjects } from "@/utils/objects";
@@ -186,7 +186,6 @@ export default function PaymentForm({
 
       <Button
         onPress={paymentType === "cash" ? submitCashPayment : submitCardPayment}
-        color="green"
         disabled={loading}
       >
         {buttonText}

@@ -1,25 +1,23 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
-import { Card, Text } from "@rneui/themed";
+import { Card, Text } from "tamagui";
 import JobAddressFrom from "./components/JobAddressForm";
 export default function AddJob() {
   return (
     <ScrollView>
       <View style={{ height: 1000 }}>
-        <Text h3 style={{ textAlign: "center", paddingVertical: 8 }}>
-          Add Job
-        </Text>
+        <Text style={{ textAlign: "center", paddingVertical: 8 }}>Add Job</Text>
         <Card>
-          <Card.Title>Customer</Card.Title>
+          <Text>Customer</Text>
         </Card>
         <Card>
-          <Card.Title>Arrival Time</Card.Title>
+          <Text>Arrival Time</Text>
         </Card>
         <Card>
-          <Card.Title>Car Details</Card.Title>
+          <Text>Car Details</Text>
         </Card>
         <Card>
-          <Card.Title>Address</Card.Title>
+          <Text>Address</Text>
           <JobAddressFrom />
         </Card>
       </View>

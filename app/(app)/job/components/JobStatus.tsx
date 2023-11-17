@@ -1,34 +1,36 @@
 import React from "react";
-import { Button, Card, Text, Dialog, Divider } from "@rneui/themed";
+import { TextInput, Alert } from "react-native";
+import { Button, Card, Text, Sheet, Stack, YStack, XStack } from "tamagui";
 import api, { responseDebug } from "@/utils/api";
 import globalStyles from "@/styles/globalStyles";
 import { router } from "expo-router";
-import { TextInput, Alert } from "react-native";
+import { AxiosError, Job } from "@/types";
+import JobHeader from "@/app/(app)/job/components/JobHeader";
+import { HeaderText } from "@/components/Typography";
 
 type Props = {
-  id: number;
-  status: string;
+  job: Job;
   fetchJob: () => void;
 };
-export default function JobStatus({ id, status, fetchJob }: Props) {
+export default function JobStatus({ job, fetchJob }: Props) {
   const [cancelComment, setCancelComment] = React.useState<string>("");
   const [showCancelDialog, setShowCancelDialog] =
     React.useState<boolean>(false);
   const [cannotCancel, setCannotCancel] = React.useState<boolean>(false);
   const updateJobStatus = (event: string) => {
     api
-      .post(`/jobs/${id}/${event}`, { event })
-      .then((res) => {
+      .post(`/jobs/${job.id}/${event}`, { event })
+      .then(() => {
         fetchJob();
       })
-      .catch((error) => {
+      .catch((error: AxiosError) => {
         responseDebug(error);
       });
   };
 
   const quitJob = () => {
     try {
-      api.post(`/jobs/${id}/quit`).then((res) => {
+      api.post(`/jobs/${job.id}/quit`).then(() => {
         router.back();
       });
     } catch (error) {
@@ -39,10 +41,10 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
   const cancelJob = () => {
     try {
       api
-        .post(`/jobs/${id}/cancel`, {
+        .post(`/jobs/${job.id}/cancel`, {
           comment: cancelComment,
         })
-        .then((res) => {
+        .then(() => {
           router.back();
         });
     } catch (error) {
@@ -51,52 +53,43 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
   };
 
   return (
-    <Card>
-      <Card.Title> STATUS: {status.toUpperCase()}</Card.Title>
+    <Card style={globalStyles.card} elevation={4}>
+      <JobHeader job={job} id={job.id} />
 
-      {status === "assigned" && (
-        <Button
-          onPress={() => {
-            updateJobStatus("depart");
-          }}
-          color="green"
-          size="lg"
-          containerStyle={globalStyles.buttonContainer}
-        >
-          On My Way
-        </Button>
-      )}
+      <Stack space={5}>
+        {job.status === "assigned" && (
+          <Button
+            onPress={() => {
+              updateJobStatus("depart");
+            }}
+          >
+            On My Way
+          </Button>
+        )}
 
-      {status === "en-route" && (
-        <Button
-          onPress={() => {
-            updateJobStatus("start");
-          }}
-          color="green"
-          size="lg"
-          containerStyle={globalStyles.buttonContainer}
-        >
-          Start Job
-        </Button>
-      )}
+        {job.status === "en-route" && (
+          <Button
+            onPress={() => {
+              updateJobStatus("start");
+            }}
+          >
+            Start Job
+          </Button>
+        )}
 
-      {status === "in-progress" && (
-        <Button
-          onPress={() => {
-            updateJobStatus("complete");
-            setCannotCancel(true);
-            // router.back();
-          }}
-          color="green"
-          size="lg"
-          containerStyle={globalStyles.buttonContainer}
-        >
-          Finish Job
-        </Button>
-      )}
+        {job.status === "in-progress" && (
+          <Button
+            onPress={() => {
+              updateJobStatus("complete");
+              setCannotCancel(true);
+              // router.back();
+            }}
+          >
+            Finish Job
+          </Button>
+        )}
 
-      {!cannotCancel && (
-        <>
+        {!cannotCancel && (
           <Button
             onPress={() => {
               Alert.alert(
@@ -112,68 +105,56 @@ export default function JobStatus({ id, status, fetchJob }: Props) {
                 ],
               );
             }}
-            color="warning"
-            containerStyle={globalStyles.buttonContainer}
           >
             Quit Job
           </Button>
+        )}
+        {!cannotCancel && (
           <Button
+            color="red"
             onPress={() => {
               setShowCancelDialog(true);
             }}
-            color="error"
-            containerStyle={globalStyles.buttonContainer}
           >
             Cancel Job
           </Button>
-        </>
-      )}
+        )}
+      </Stack>
 
-      <Dialog
-        isVisible={showCancelDialog}
-        onBackdropPress={() => {
-          setShowCancelDialog(false);
-        }}
+      <Sheet
+        open={showCancelDialog}
+        onOpenChange={setShowCancelDialog}
+        modal={true}
       >
-        <Dialog.Title
-          title="Cancel Job?"
-          titleStyle={{ textAlign: "center", fontSize: 24 }}
-        />
-        <Text>{cancelComment}</Text>
-
-        <Text style={globalStyles.label}>Enter Reason</Text>
-        <TextInput
-          style={globalStyles.input}
-          onChange={(event) => {
-            setCancelComment(event.nativeEvent.text); // todo: research this approach, tested fine on ios
-          }}
-        />
-        <Divider
-          style={{ marginVertical: 12 }}
-          inset={true}
-          insetType={"middle"}
-        />
-        <Button
-          containerStyle={globalStyles.buttonContainer}
-          onPress={() => {
-            setShowCancelDialog(false);
-            cancelJob();
-          }}
-          color="error"
-        >
-          Cancel Job
-        </Button>
-        <Button
-          size={"sm"}
-          type={"outline"}
-          onPress={() => {
-            setCancelComment("");
-            setShowCancelDialog(false);
-          }}
-        >
-          Close Window
-        </Button>
-      </Dialog>
+        <Sheet.Overlay />
+        <Sheet.Handle />
+        <Sheet.Frame style={globalStyles.frameContainer} space>
+          <HeaderText>Cancel Job?</HeaderText>
+          <Text style={globalStyles.label}>Enter Reason</Text>
+          <TextInput
+            style={globalStyles.priceInput}
+            onChange={(event) => {
+              setCancelComment(event.nativeEvent.text);
+            }}
+          />
+          <Button
+            onPress={() => {
+              setShowCancelDialog(false);
+              cancelJob();
+            }}
+          >
+            Cancel Job
+          </Button>
+          <Button
+            onPress={() => {
+              setCancelComment("");
+              setShowCancelDialog(false);
+            }}
+          >
+            Close Window
+          </Button>
+        </Sheet.Frame>
+      </Sheet>
     </Card>
   );
 }

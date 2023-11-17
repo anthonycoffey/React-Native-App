@@ -54,3 +54,17 @@ Proudly powered by
 
 - **ANDROID**: For local development builds to work you need JDK 11 installed and `JAVA_HOME` environment variable set to JDK 11 path
 - **IOS**: For local development builds to work you need XCode installed
+
+
+### Bundler Cache Issues
+
+If you are having unexpected issues, you may need to clear the bundler cache. To do so, run the following commands:
+
+```bash
+rm -rf node_modules ios android
+yarn cache clean
+yarn
+watchman watch-del-all
+rm -fr $TMPDIR/haste-map-*
+rm -rf $TMPDIR/metro-cache
+```

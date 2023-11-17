@@ -2,10 +2,12 @@ import DateTimePicker, {
   DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
 import React from "react";
-import { View, Text, Platform, StyleSheet } from "react-native";
-import { Button, Icon } from "@rneui/themed";
+import { Platform, StyleSheet } from "react-native";
+import { Button, Card, View, Text, Stack } from "tamagui";
 import api, { responseDebug } from "@/utils/api";
 import { AxiosError } from "@/types";
+import globalStyles from "@/styles/globalStyles";
+import { CardTitle } from "@/components/Typography";
 
 type ArrivalTimeProps = {
   timestamp?: string;
@@ -91,24 +93,8 @@ export default function ArrivalTime({
   };
 
   return (
-    <View
-      style={{
-        padding: 10,
-        marginVertical: 20,
-        borderWidth: 1,
-        borderRadius: 5,
-        borderColor: "#ccc",
-        paddingHorizontal: 20,
-      }}
-    >
-      <Text
-        style={{
-          fontSize: 18,
-          textAlign: "center",
-        }}
-      >
-        Arrival Time
-      </Text>
+    <Card style={globalStyles.card} elevation={4}>
+      <CardTitle>Arrival Time</CardTitle>
       <View
         style={{
           paddingVertical: 10,
@@ -151,13 +137,11 @@ export default function ArrivalTime({
             <View
               style={{
                 flexDirection: "row",
-                paddingHorizontal: 12,
+                paddingHorizontal: 10,
                 justifyContent: "space-between",
               }}
             >
               <Button
-                size="sm"
-                radius="sm"
                 onPress={() => {
                   DateTimePickerAndroid.open({
                     mode: "date",
@@ -166,17 +150,10 @@ export default function ArrivalTime({
                   });
                 }}
               >
-                <Icon
-                  name="calendar-edit"
-                  type="material-community"
-                  color="white"
-                />
                 Edit Date
               </Button>
 
               <Button
-                size="sm"
-                radius="sm"
                 onPress={() => {
                   DateTimePickerAndroid.open({
                     mode: "time",
@@ -185,11 +162,6 @@ export default function ArrivalTime({
                   });
                 }}
               >
-                <Icon
-                  name="clock-edit"
-                  type="material-community"
-                  color="white"
-                />
                 Edit Time
               </Button>
             </View>
@@ -199,15 +171,11 @@ export default function ArrivalTime({
 
       <View>
         {(date || time) && !updated && (
-          <>
+          <Stack space={5}>
             <Button
-              size="sm"
-              buttonStyle={{
-                borderRadius: 10,
-                paddingVertical: 10,
-                marginBottom: 10,
-              }}
-              color={"blue"}
+              size="$3"
+              backgroundColor="$blue10"
+              color="white"
               onPress={() => {
                 updateArrivalTime();
               }}
@@ -215,11 +183,11 @@ export default function ArrivalTime({
               Save
             </Button>
             <Button
-              buttonStyle={{
-                borderRadius: 10,
-                paddingVertical: 5,
-              }}
-              type={"outline"}
+              variant="outlined"
+              size="$3"
+              color="$red9"
+              borderColor="$red9"
+              borderWidth={1}
               onPress={() => {
                 setDate("");
                 setTime("");
@@ -228,10 +196,10 @@ export default function ArrivalTime({
             >
               Cancel
             </Button>
-          </>
+          </Stack>
         )}
       </View>
-    </View>
+    </Card>
   );
 }
 
@@ -242,7 +210,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 16,
     paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     borderRadius: 10,
     backgroundColor: "rgba(224,224,224,0.3)",
     borderWidth: 1,

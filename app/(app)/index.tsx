@@ -6,7 +6,7 @@ import JobsList from "@/components/JobsList";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "@/ctx";
-import { Button } from "@rneui/themed";
+import { Button } from "tamagui";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,9 +45,5 @@ export default function Index() {
     });
   }, []);
 
-  return (
-    <>
-      <View>{jobs && <JobsList jobs={jobs} fetchJobs={fetchJobs} />}</View>
-    </>
-  );
+  return <JobsList jobs={jobs} fetchJobs={fetchJobs} />;
 }

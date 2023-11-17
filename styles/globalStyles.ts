@@ -1,42 +1,25 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  containerStyles: {
-    flexGrow: 1,
-    padding: 5,
+  card: {
+    padding: 10,
+    marginVertical: 10,
   },
-  topLeft: {
-    position: "absolute",
+  frameContainer: {
+    padding: 10,
+  },
+  chipContainer: {
+    paddingTop: 10,
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    alignContent: "center",
-    top: 0,
-    left: 0,
-  },
-  gap: {
-    marginVertical: 5,
-    width: "96%",
-    marginHorizontal: "2%",
   },
   statusContainer: {
     flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  buttonContainer: {
-    fontWeight: "bold",
-    marginVertical: 5,
-    borderRadius: 5,
-    dropShadow: {
-      shadowColor: "black",
-      shadowOpacity: 0.1,
-      shadowRadius: 5,
-      shadowOffset: {
-        width: 0,
-        height: 0,
-      },
-    },
+  inlineIcon: {
+    marginHorizontal: 2,
   },
   input: {
     color: "#0e0d0d",
@@ -46,8 +29,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
   },
-  lastCard: {
-    paddingBottom: 500,
+  inputPrice: {
+    color: "#0e0d0d",
+    padding: 10,
+    marginVertical: 5,
+    borderColor: "#131313",
+    borderWidth: 1,
+    borderRadius: 5,
   },
   label: {
     fontWeight: "bold",
