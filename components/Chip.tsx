@@ -4,8 +4,14 @@ type Props = {
   children: React.ReactNode;
 };
 export default function Chip({ children }: Props) {
+  const removeDash = (str: string) => {
+    return str.replace(/-/g, " ");
+  };
+
   return (
     <Text
+      fontWeight={800}
+      letterSpacing={1}
       backgroundColor="blue"
       style={{
         flexShrink: 1,
@@ -16,7 +22,7 @@ export default function Chip({ children }: Props) {
       }}
       color="white"
     >
-      {children}
+      {removeDash(children)}
     </Text>
   );
 }

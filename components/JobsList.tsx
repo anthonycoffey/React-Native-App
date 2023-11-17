@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { Card, Text, Stack, XStack, YStack } from "tamagui";
-import { MapPin, AlarmCheck, AlarmClock, User } from "@tamagui/lucide-icons";
+import { MapPin, CarFront, Clock, User } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import Chip from "@/components/Chip";
 import { formatDateTime, formatRelative } from "@/utils/dates";
@@ -54,7 +54,7 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
                     alignContent={"center"}
                     alignItems={"center"}
                   >
-                    <AlarmCheck style={globalStyles.inlineIcon} />
+                    <CarFront style={globalStyles.inlineIcon} />
                     <LabelText>ETA</LabelText>
 
                     <Text>{formatRelative(item.arrivalTime)}</Text>
@@ -64,7 +64,7 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
                     alignContent={"center"}
                     alignItems={"center"}
                   >
-                    <AlarmClock style={globalStyles.inlineIcon} />
+                    <Clock style={globalStyles.inlineIcon} />
                     <LabelText>Arrival</LabelText>
 
                     <Text>{formatDateTime(item.arrivalTime)}</Text>
