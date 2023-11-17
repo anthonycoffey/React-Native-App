@@ -76,8 +76,11 @@ export default function JobsList({ jobs, fetchJobs }: JobsListProps) {
                   >
                     <MapPin style={globalStyles.inlineIcon} />
                     <LabelText>Address</LabelText>
-
-                    <Text>{item.Address?.short}</Text>
+                    <View>
+                      <Text numberOfLines={2} ellipsizeMode="tail">
+                        {item.Address?.short}
+                      </Text>
+                    </View>
                   </YStack>
                 </XStack>
                 <View style={globalStyles.chipContainer}>

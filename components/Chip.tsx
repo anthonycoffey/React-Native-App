@@ -10,7 +10,7 @@ export default function Chip({ children }: Props) {
 
   return (
     <Text
-      fontWeight={800}
+      fontWeight={"800"}
       letterSpacing={1}
       backgroundColor="blue"
       style={{
