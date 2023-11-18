@@ -20,7 +20,9 @@ const CardTitle = styled(Text, {
 
 const ErrorText = styled(Text, {
   color: "red",
-  fontSize: "$5",
+  fontSize: "$4",
+  letterSpacing: 0.4,
+  lineHeight: "$4",
   textAlign: "center",
   paddingVertical: 10,
 });

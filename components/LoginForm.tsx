@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { Stack, Button, Input } from "tamagui";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import api, { responseDebug } from "@/utils/api";
+import api from "@/utils/api";
 import { useSession } from "@/ctx";
 import { router } from "expo-router";
 import { ErrorText } from "@/components/Typography";
@@ -38,10 +38,23 @@ export default function LoginForm() {
       // @ts-ignore
       router.push("(app)/");
     } catch (error: AxiosError) {
-      console.log(error);
-      console.log(error?.message);
-      const msg = `${error?.message}.\n Please check your credentials, and try again.`;
-      setError(msg);
+      console.log(error.code);
+      switch (error.code) {
+        case "ERR_BAD_REQUEST":
+          setError(
+            `Sorry, we couldn't authenticate your account.\nPlease check your credentials, and try again.`,
+          );
+          break;
+        case "ERR_BAD_RESPONSE":
+          setError(
+            `Sorry, something went wrong.\nPlease try again in a few minutes.`,
+          );
+          break;
+        default:
+          setError(
+            `Something went wrong.\nPlease check your credentials, and try again. If you are still having issues, please contact support.`,
+          );
+      }
     }
   };
 
@@ -73,7 +86,7 @@ export default function LoginForm() {
             onBlur={handleBlur("email")}
           />
           {touched.email && errors.email && (
-            <ErrorText style={styles.errorText}>{errors.email}</ErrorText>
+            <ErrorText>{errors.email}</ErrorText>
           )}
           <Input
             placeholder="Password"
@@ -83,7 +96,7 @@ export default function LoginForm() {
             onBlur={handleBlur("password")}
           />
           {touched.password && errors.password && (
-            <ErrorText style={styles.errorText}>{errors.password}</ErrorText>
+            <ErrorText>{errors.password}</ErrorText>
           )}
           <Button onPress={handleSubmit as any}>Login</Button>
 
@@ -98,7 +111,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
   },
   errorText: {
     color: "red",
