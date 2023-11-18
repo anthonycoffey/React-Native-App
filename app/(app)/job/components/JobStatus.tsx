@@ -7,6 +7,11 @@ import { router } from "expo-router";
 import { AxiosError, Job } from "@/types";
 import JobHeader from "@/app/(app)/job/components/JobHeader";
 import { HeaderText } from "@/components/Typography";
+import {
+  OutlinedButton,
+  PrimaryButton,
+  WarningButton,
+} from "@/components/Buttons";
 
 type Props = {
   job: Job;
@@ -56,29 +61,32 @@ export default function JobStatus({ job, fetchJob }: Props) {
     <Card style={globalStyles.card} elevation={4}>
       <JobHeader job={job} id={job.id} />
 
-      <Stack space={5}>
+      <Stack space={10}>
         {job.status === "assigned" && (
-          <Button
+          <PrimaryButton
+            size="$5"
             onPress={() => {
               updateJobStatus("depart");
             }}
           >
             On My Way
-          </Button>
+          </PrimaryButton>
         )}
 
         {job.status === "en-route" && (
-          <Button
+          <PrimaryButton
+            size="$5"
             onPress={() => {
               updateJobStatus("start");
             }}
           >
             Start Job
-          </Button>
+          </PrimaryButton>
         )}
 
         {job.status === "in-progress" && (
-          <Button
+          <PrimaryButton
+            size="$5"
             onPress={() => {
               updateJobStatus("complete");
               setCannotCancel(true);
@@ -86,11 +94,11 @@ export default function JobStatus({ job, fetchJob }: Props) {
             }}
           >
             Finish Job
-          </Button>
+          </PrimaryButton>
         )}
 
         {!cannotCancel && (
-          <Button
+          <WarningButton
             onPress={() => {
               Alert.alert(
                 "Cancel Job?",
@@ -107,17 +115,18 @@ export default function JobStatus({ job, fetchJob }: Props) {
             }}
           >
             Quit Job
-          </Button>
+          </WarningButton>
         )}
         {!cannotCancel && (
-          <Button
-            color="red"
+          <OutlinedButton
+            color="$red10"
+            borderColor="$red10"
             onPress={() => {
               setShowCancelDialog(true);
             }}
           >
             Cancel Job
-          </Button>
+          </OutlinedButton>
         )}
       </Stack>
 
