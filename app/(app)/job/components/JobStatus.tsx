@@ -1,6 +1,5 @@
-import React from "react";
 import { TextInput, Alert } from "react-native";
-import { Button, Card, Text, Sheet, Stack, YStack, XStack } from "tamagui";
+import { Button, Card, Text, Sheet, Stack } from "tamagui";
 import api, { responseDebug } from "@/utils/api";
 import globalStyles from "@/styles/globalStyles";
 import { router } from "expo-router";
@@ -98,7 +97,10 @@ export default function JobStatus({ job, fetchJob }: Props) {
         )}
 
         {!cannotCancel && (
-          <WarningButton
+          <Button
+            // themeInverse
+            color="white"
+            backgroundColor="$red10"
             onPress={() => {
               Alert.alert(
                 "Cancel Job?",
@@ -115,7 +117,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
             }}
           >
             Quit Job
-          </WarningButton>
+          </Button>
         )}
         {!cannotCancel && (
           <OutlinedButton

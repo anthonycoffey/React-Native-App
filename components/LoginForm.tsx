@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { Stack, Button, Input } from "tamagui";
+import { StyleSheet } from "react-native";
+import { Stack, Button, Input, Image } from "tamagui";
 import api, { responseDebug } from "../utils/api";
 import { useSession } from "@/ctx";
 import { router } from "expo-router";
+import globalStyles from "@/styles/globalStyles";
 
 export default function LoginForm() {
   const { signIn } = useSession();
@@ -28,7 +29,15 @@ export default function LoginForm() {
   };
 
   return (
-    <Stack style={styles.container} space={5}>
+    <Stack style={globalStyles.container} space={5}>
+      <Image
+        width={200}
+        height={200}
+        style={{
+          alignSelf: "center",
+        }}
+        source={require("@/assets/images/logo.png")}
+      />
       <Input
         placeholder="Email"
         value={email}
@@ -51,11 +60,3 @@ export default function LoginForm() {
     </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 15,
-  },
-});

@@ -27,4 +27,6 @@ const ErrorText = styled(Text, {
   paddingVertical: 10,
 });
 
-export { HeaderText, LabelText, CardTitle, ErrorText };
+const MenuText = styled(Text, { fontSize: "$4", textAlign: "center" });
+
+export { HeaderText, LabelText, CardTitle, ErrorText, MenuText };
