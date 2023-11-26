@@ -3,9 +3,9 @@ import { KeyboardAvoidingView, Platform } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import JobStatus from "./components/JobStatus";
 import Invoice from "./components/Invoice";
-import JobDetailsAndMapButtons from "./components/jobDetailsAndMapButtons";
-import JobActivityLog from "./components/jobActivityLog";
-import JobLineItems from "./components/jobLineItems";
+import JobDetailsAndMapButtons from "./components/JobDetailsAndMapButtons";
+import JobActivityLog from "./components/JobActivityLog";
+import JobLineItems from "./components/JobLineItems";
 import ArrivalTime from "@/app/(app)/job/components/ArrivalTime";
 import { TakePayment } from "@/app/(app)/job/components/TakePayment";
 import { ScrollView, Spinner, Stack } from "tamagui";
@@ -53,7 +53,10 @@ export default function JobPage() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <LoadingSpinner loading={loading} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 10 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 10 }}
+        $gtSm={{ paddingHorizontal: 100 }}
+      >
         {job && (
           <>
             <JobStatus job={job} fetchJob={fetchJob} />

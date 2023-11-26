@@ -1,12 +1,16 @@
-import React from "react";
 import { TextInput, Alert } from "react-native";
-import { Button, Card, Text, Sheet, Stack, YStack, XStack } from "tamagui";
+import { Button, Card, Text, Sheet, Stack } from "tamagui";
 import api, { responseDebug } from "@/utils/api";
 import globalStyles from "@/styles/globalStyles";
 import { router } from "expo-router";
 import { AxiosError, Job } from "@/types";
 import JobHeader from "@/app/(app)/job/components/JobHeader";
 import { HeaderText } from "@/components/Typography";
+import {
+  OutlinedButton,
+  PrimaryButton,
+  WarningButton,
+} from "@/components/Buttons";
 
 type Props = {
   job: Job;
@@ -56,29 +60,32 @@ export default function JobStatus({ job, fetchJob }: Props) {
     <Card style={globalStyles.card} elevation={4}>
       <JobHeader job={job} id={job.id} />
 
-      <Stack space={5}>
+      <Stack space={10}>
         {job.status === "assigned" && (
-          <Button
+          <PrimaryButton
+            size="$5"
             onPress={() => {
               updateJobStatus("depart");
             }}
           >
             On My Way
-          </Button>
+          </PrimaryButton>
         )}
 
         {job.status === "en-route" && (
-          <Button
+          <PrimaryButton
+            size="$5"
             onPress={() => {
               updateJobStatus("start");
             }}
           >
             Start Job
-          </Button>
+          </PrimaryButton>
         )}
 
         {job.status === "in-progress" && (
-          <Button
+          <PrimaryButton
+            size="$5"
             onPress={() => {
               updateJobStatus("complete");
               setCannotCancel(true);
@@ -86,15 +93,18 @@ export default function JobStatus({ job, fetchJob }: Props) {
             }}
           >
             Finish Job
-          </Button>
+          </PrimaryButton>
         )}
 
         {!cannotCancel && (
           <Button
+            // themeInverse
+            color="white"
+            backgroundColor="$red10"
             onPress={() => {
               Alert.alert(
-                "Cancel Job?",
-                "Please note, this action cannot be undone.",
+                "Quit Job?",
+                "If you select OK, you will no longer be assigned to this job.\n\nPlease note, this action cannot be undone.",
                 [
                   {
                     text: "Cancel",
@@ -110,14 +120,15 @@ export default function JobStatus({ job, fetchJob }: Props) {
           </Button>
         )}
         {!cannotCancel && (
-          <Button
-            color="red"
+          <OutlinedButton
+            color="$red10"
+            borderColor="$red10"
             onPress={() => {
               setShowCancelDialog(true);
             }}
           >
             Cancel Job
-          </Button>
+          </OutlinedButton>
         )}
       </Stack>
 

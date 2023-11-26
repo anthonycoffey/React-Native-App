@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "tamagui";
 
 // Primary Button
@@ -22,7 +21,15 @@ export const SecondaryButton = (props: any) => {
 // Outline Button
 export const OutlinedButton = (props: any) => {
   return (
-    <Button variant={"outlined"} color="$gray10" {...props}>
+    <Button variant={"outlined"} borderWidth={1} color="$gray10" {...props}>
+      {props.children}
+    </Button>
+  );
+};
+
+export const WarningButton = (props: any) => {
+  return (
+    <Button themeInverse backgroundColor="$red10" {...props}>
       {props.children}
     </Button>
   );

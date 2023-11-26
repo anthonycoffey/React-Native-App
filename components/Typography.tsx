@@ -18,4 +18,15 @@ const CardTitle = styled(Text, {
   marginBottom: 12,
 });
 
-export { HeaderText, LabelText, CardTitle };
+const ErrorText = styled(Text, {
+  color: "red",
+  fontSize: "$4",
+  letterSpacing: 0.4,
+  lineHeight: "$4",
+  textAlign: "center",
+  paddingVertical: 10,
+});
+
+const MenuText = styled(Text, { fontSize: "$4", textAlign: "center" });
+
+export { HeaderText, LabelText, CardTitle, ErrorText, MenuText };

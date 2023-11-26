@@ -169,9 +169,9 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           (item: JobLineItems) =>
             item.Service && (
               <ListItem key={item.id}>
-                <Text>{item.Service.name}</Text>
+                <Text>{item?.Service?.name}</Text>
                 <Text style={{ textAlign: "right" }}>
-                  {centsToDollars(+item.Service.price)}
+                  {centsToDollars(+item?.price)}
                 </Text>
               </ListItem>
             ),

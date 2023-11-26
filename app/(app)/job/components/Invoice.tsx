@@ -1,24 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Alert, View } from "react-native";
-import {
-  Button,
-  Card,
-  ListItem,
-  Text,
-  Checkbox,
-  Sheet,
-  Spinner,
-  Stack,
-  XStack,
-} from "tamagui";
-import { Check } from "@tamagui/lucide-icons";
-import PaymentDialog from "./PaymentDialog";
-import CurrencyInput from "@/app/(app)/job/components/invoice/CurrencyInput";
+import React, { useState } from "react";
+import { Alert } from "react-native";
+import { Card, Text, Spinner, Stack, XStack } from "tamagui";
 import { centsToDollars } from "@/utils/money";
 import api from "@/utils/api";
 import { Invoice, Job, AxiosRsponse } from "@/types";
 import globalStyles from "@/styles/globalStyles";
 import { CardTitle } from "@/components/Typography";
+import Chip from "@/components/Chip";
+import { PrimaryButton } from "@/components/Buttons";
 
 interface Props {
   job: Job;
@@ -71,21 +60,31 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       {job.Invoices?.filter(
         (invoice: Invoice) => invoice.status === "pending",
       ).map((invoice: Invoice) => (
-        <XStack key={invoice.id} justifyContent="space-between" padding={10}>
-          <Text>{invoice.id}</Text>
-          <Text>{invoice.status}</Text>
+        <XStack
+          key={invoice.id}
+          marginVertical={10}
+          justifyContent="space-between"
+          alignItems="center"
+          alignContent="center"
+          padding={10}
+          style={{ borderWidth: 1, borderColor: "$gray10", borderRadius: 10 }}
+        >
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            {centsToDollars(invoice.total)}
+            #{invoice.id}
           </Text>
+          <Text style={{ fontSize: 18 }}>{centsToDollars(invoice.total)}</Text>
+          <Chip>{invoice.status}</Chip>
         </XStack>
       ))}
 
       {!hasActiveInvoice && (
-        <Button onPress={generateInvoice}>Generate Invoice</Button>
+        <PrimaryButton onPress={generateInvoice}>
+          Generate Invoice
+        </PrimaryButton>
       )}
 
       {!loading && hasActiveInvoice && (
-        <Button onPress={regenerateInvoice}>Regenerate</Button>
+        <PrimaryButton onPress={regenerateInvoice}>Regenerate</PrimaryButton>
       )}
 
       {loading && <Spinner size="small" color="$blue5" />}

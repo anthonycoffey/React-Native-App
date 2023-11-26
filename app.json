@@ -1,22 +1,21 @@
 {
   "expo": {
-    "name": "phoenix-mobile",
-    "slug": "phoenix-mobile",
+    "name": "24HR CAR UNLOCKER",
     "version": "0.0.1",
+    "owner": "phoenix-crm",
+    "slug": "phoenix-mobile",
+    "scheme": "phoenix-mobile",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "phoenix-mobile",
     "userInterfaceStyle": "automatic",
-    "owner": "phoenix-crm",
     "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
+      "buildNumber": "3",
       "supportsTablet": true,
       "bundleIdentifier": "com.phoenix-mobile",
       "infoPlist": {
@@ -49,11 +48,6 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.phoenixcrm.phoenixmobile"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",

@@ -2,6 +2,7 @@ import { Redirect, router, Slot, usePathname } from "expo-router";
 import { useSession } from "@/ctx";
 import { Text } from "tamagui";
 import React from "react";
+import ToolbarMenu from "@/components/ToolbarMenu";
 
 export default function AppLayout() {
   const { session, isLoading, signOut } = useSession();
@@ -16,6 +17,7 @@ export default function AppLayout() {
 
   return (
     <>
+      <ToolbarMenu />
       <Slot />
     </>
   );

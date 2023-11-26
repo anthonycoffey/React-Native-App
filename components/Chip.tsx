@@ -5,7 +5,7 @@ type Props = {
 };
 export default function Chip({ children }: Props) {
   const removeDash = (str: string) => {
-    return str.replace(/-/g, " ");
+    return str.replace(/-/g, " ").toUpperCase();
   };
 
   return (
@@ -16,7 +16,7 @@ export default function Chip({ children }: Props) {
       style={{
         flexShrink: 1,
         borderRadius: 4,
-        padding: 5,
+        padding: 8,
         marginRight: 5,
         marginVertical: 5,
       }}

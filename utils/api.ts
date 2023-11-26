@@ -4,7 +4,7 @@ console.log({ API_URL });
 
 // create axios instance
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_URL || "http://localhost:5000",
 });
 export default api;
 
