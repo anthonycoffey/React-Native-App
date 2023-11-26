@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert } from "react-native";
-import { Card, Text, Spinner, Stack } from "tamagui";
+import { Card, Text, Spinner, Stack, XStack } from "tamagui";
 import { centsToDollars } from "@/utils/money";
 import api from "@/utils/api";
 import { Invoice, Job, AxiosRsponse } from "@/types";
@@ -60,7 +60,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       {job.Invoices?.filter(
         (invoice: Invoice) => invoice.status === "pending",
       ).map((invoice: Invoice) => (
-        <Stack
+        <XStack
           key={invoice.id}
           marginVertical={10}
           justifyContent="space-between"
@@ -72,11 +72,9 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>
             #{invoice.id}
           </Text>
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            {centsToDollars(invoice.total)}
-          </Text>
+          <Text style={{ fontSize: 18 }}>{centsToDollars(invoice.total)}</Text>
           <Chip>{invoice.status}</Chip>
-        </Stack>
+        </XStack>
       ))}
 
       {!hasActiveInvoice && (
