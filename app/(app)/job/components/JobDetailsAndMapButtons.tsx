@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Image, ImageSourcePropType, Pressable, View } from "react-native";
 import { Card, Text } from "tamagui";
 import { getApps } from "react-native-map-link";
-import CustomerInfo from "@/app/(app)/job/components/customerInfo";
+import CustomerInfo from "@/app/(app)/job/components/CustomerInfo";
 import { CardTitle } from "@/components/Typography";
 import globalStyles from "@/styles/globalStyles";
 import geocodeAddress from "@/utils/geocode";
