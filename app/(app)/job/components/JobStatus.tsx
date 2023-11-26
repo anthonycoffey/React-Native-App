@@ -103,8 +103,8 @@ export default function JobStatus({ job, fetchJob }: Props) {
             backgroundColor="$red10"
             onPress={() => {
               Alert.alert(
-                "Cancel Job?",
-                "Please note, this action cannot be undone.",
+                "Quit Job?",
+                "If you select OK, you will no longer be assigned to this job.\n\nPlease note, this action cannot be undone.",
                 [
                   {
                     text: "Cancel",
