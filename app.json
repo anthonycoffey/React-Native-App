@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "24HR CAR UNLOCK",
+    "name": "24HR CAR UNLOCKER",
     "version": "0.0.1",
     "owner": "phoenix-crm",
     "slug": "phoenix-mobile",
@@ -15,7 +15,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "2",
+      "buildNumber": "3",
       "supportsTablet": true,
       "bundleIdentifier": "com.phoenix-mobile",
       "infoPlist": {
