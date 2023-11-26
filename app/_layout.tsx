@@ -2,8 +2,7 @@ import React, { useEffect } from "react";
 import { TamaguiProvider, View } from "tamagui";
 import config from "@/tamagui.config";
 import { Slot } from "expo-router";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SessionProvider } from "@/ctx";
 import { useFonts } from "expo-font";
 import ToolbarMenu from "@/components/ToolbarMenu";
@@ -27,7 +26,6 @@ export default function Layout() {
     <TamaguiProvider config={config}>
       <SessionProvider>
         <SafeAreaProvider>
-          <ToolbarMenu />
           <Slot />
         </SafeAreaProvider>
       </SessionProvider>
