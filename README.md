@@ -35,6 +35,16 @@ Proudly powered by
 
 `EXPO_PUBLIC_AUTHORIZE_LOGIN_ID` - Authorize.net login ID
 
+## Simulator Builds (iOS)
+
+In order to run the app on iOS simulators, follow these instructions:
+
+1. Install XCode from the App Store (if you haven't already)
+2. 'yarn build:simulator' to create a new simulator build (this is required if you are changing eas.json config, but otherwise you can skip this step)
+3. 'yarn build:run' to install a simulator build, you select it from the list of available builds after running the command
+
+Note: This works for Android as wel, but you will have to check package.json and modify the scripts accordingly.
+
 
 ### Troubleshooting Tips
 
