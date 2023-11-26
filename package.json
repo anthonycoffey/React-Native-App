@@ -7,6 +7,8 @@
     "prod": "expo start --no-dev",
     "build:ios": "eas build --platform ios",
     "build:android": "eas build --platform android",
+    "build:simulator": "eas build --profile development-simulator --platform ios",
+    "build:run": "eas build:run",
     "update": "eas update",
     "android": "npx expo run:android",
     "ios": "npx expo run:ios",
@@ -71,5 +73,5 @@
   "resolutions": {
     "react-refresh": "~0.14.0"
   },
-  "packageManager": "yarn@4.0.1"
+  "packageManager": "yarn@4.0.2"
 }

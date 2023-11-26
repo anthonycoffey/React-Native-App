@@ -6,6 +6,7 @@ import {
 import { Menu } from "@tamagui/lucide-icons";
 import { Button, XStack, Text, Stack, View } from "tamagui";
 import { Rocket } from "@tamagui/lucide-icons";
+import { router } from "expo-router";
 
 export default function HeaderToolbar() {
   const insets = useSafeAreaInsets();
@@ -35,7 +36,7 @@ export default function HeaderToolbar() {
         <Rocket style={{ marginLeft: 15 }} />
         <Button
           icon={Menu}
-          onPress={() => console.log("Menu Pressed")} // Replace with actual functionality
+          onPress={() => router.push("(app)/")} // Replace with actual functionality
         />
       </XStack>
     </View>

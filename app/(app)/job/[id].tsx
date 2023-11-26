@@ -53,7 +53,10 @@ export default function JobPage() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <LoadingSpinner loading={loading} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 10 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 10 }}
+        $gtSm={{ paddingHorizontal: 100 }}
+      >
         {job && (
           <>
             <JobStatus job={job} fetchJob={fetchJob} />
