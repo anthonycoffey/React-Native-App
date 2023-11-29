@@ -1,6 +1,7 @@
 import React from "react";
 import { useStorageState } from "./useStorageState";
 import api from "@/utils/api";
+import { router } from "expo-router";
 
 const AuthContext = React.createContext<{
   signIn: () => void;
@@ -33,6 +34,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
             config.headers.Authorization = `Bearer ${token}`;
             return config;
           });
+          router.push("(app)/");
         },
         signOut: () => {
           setSession(null);

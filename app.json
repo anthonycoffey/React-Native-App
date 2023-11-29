@@ -47,7 +47,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.phoenix_mobile.app"
+      "package": "com.phoenix-crm.phoenix-mobile",
     },
     "plugins": [
       "expo-router",

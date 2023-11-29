@@ -5,7 +5,7 @@ import { Slot } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SessionProvider } from "@/ctx";
 import { useFonts } from "expo-font";
-import ToolbarMenu from "@/components/ToolbarMenu";
+import ToolbarMenu from "@/components/TabsMenuFooter";
 
 export default function Layout() {
   const [loaded] = useFonts({
