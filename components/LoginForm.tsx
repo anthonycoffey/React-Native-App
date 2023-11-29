@@ -9,8 +9,8 @@ import { Eye, EyeOff } from "@tamagui/lucide-icons";
 
 export default function LoginForm() {
   const { signIn } = useSession();
-  const [email, setEmail] = useState("tech@test.com");
-  const [password, setPassword] = useState("test1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => {
