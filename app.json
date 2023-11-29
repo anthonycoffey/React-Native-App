@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#005DE8"
+      "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -47,10 +47,10 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#005DE8"
+        "backgroundColor": "#ffffff"
       },
-      "package": "com.phoenixcrm.phoenixmobile",
-      "versionCode": 2
+      "package": "com.phoenix_mobile.app",
+      "versionCode": 3
     },
     "plugins": [
       "expo-router",
