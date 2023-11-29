@@ -17,7 +17,7 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "4",
+      "buildNumber": "6",
       "supportsTablet": true,
       "bundleIdentifier": "com.phoenix-mobile",
       "infoPlist": {
@@ -50,7 +50,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.phoenix_mobile.app",
-      "versionCode": 3
+      "versionCode": 4
     },
     "plugins": [
       "expo-router",
