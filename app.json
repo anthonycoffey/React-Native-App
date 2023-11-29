@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "24HR CAR UNLOCKER",
+    "name": "24HR CAR UNLOCK",
     "version": "0.0.1",
     "owner": "phoenix-crm",
     "slug": "phoenix-mobile",
@@ -47,7 +47,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.phoenix-crm.phoenix-mobile",
+      "package": "com.phoenix-crm.phoenix-mobile"
     },
     "plugins": [
       "expo-router",
