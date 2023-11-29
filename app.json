@@ -11,13 +11,13 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#005DE8"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "buildNumber": "3",
+      "buildNumber": "4",
       "supportsTablet": true,
       "bundleIdentifier": "com.phoenix-mobile",
       "infoPlist": {
@@ -47,9 +47,10 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#005DE8"
       },
-      "package": "com.phoenixcrm.phoenixmobile"
+      "package": "com.phoenixcrm.phoenixmobile",
+      "versionCode": 2
     },
     "plugins": [
       "expo-router",
