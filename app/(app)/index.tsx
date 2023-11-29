@@ -3,9 +3,11 @@ import * as SplashScreen from "expo-splash-screen";
 import api, { responseDebug } from "@/utils/api";
 import JobsList from "@/components/JobsList";
 import { router } from "expo-router";
+import { View } from "tamagui";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession } from "@/ctx";
-import { AxiosResponse, AxiosError } from "@/types";
+import { AxiosResponse, AxiosError, Job } from "@/types";
+import globalStyles from "@/styles/globalStyles";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -15,7 +17,7 @@ type sort = string | null;
 
 export default function Index() {
   const { signOut } = useSession();
-  const [jobs, setJobs] = useState<[] | null>(null);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [page, setPage] = useState<page | null>(1);
   const [sort, setSort] = useState<sort | null>("-createdAt");
   const [scope, setScope] = useState<"active" | "">("active");
@@ -36,13 +38,16 @@ export default function Index() {
   useEffect(() => {
     fetchJobs().catch(async function (error: AxiosError) {
       if (error.response.status === 401) {
-        // todo: update to work with new auth token storage, this is old
-        await AsyncStorage.removeItem("token");
+        signOut();
         router.push("/");
       }
       responseDebug(error);
     });
   }, []);
 
-  return <JobsList jobs={jobs} fetchJobs={fetchJobs} />;
+  return (
+    <View style={globalStyles.container}>
+      <JobsList jobs={jobs} fetchJobs={fetchJobs} />
+    </View>
+  );
 }

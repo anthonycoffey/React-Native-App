@@ -1,14 +1,19 @@
 import { Redirect, router, Slot, usePathname } from "expo-router";
 import { useSession } from "@/ctx";
-import { Text } from "tamagui";
-import React from "react";
-import ToolbarMenu from "@/components/ToolbarMenu";
+import { Spinner, View } from "tamagui";
+import TabsMenuFooter from "@/components/TabsMenuFooter";
+import HeaderToolbar from "@/components/HeaderToolbar";
+import globalStyles from "@/styles/globalStyles";
 
 export default function AppLayout() {
   const { session, isLoading, signOut } = useSession();
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return (
+      <View style={globalStyles.container} alignItems="center">
+        <Spinner size="large" color="$blue10" />
+      </View>
+    );
   }
 
   if (!session) {
@@ -17,8 +22,9 @@ export default function AppLayout() {
 
   return (
     <>
-      <ToolbarMenu />
+      <HeaderToolbar />
       <Slot />
+      <TabsMenuFooter />
     </>
   );
 }
