@@ -13,7 +13,9 @@
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "buildNumber": "3",
       "supportsTablet": true,
@@ -47,7 +49,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.phoenix-crm.phoenix-mobile"
+      "package": "com.phoenixcrm.phoenixmobile"
     },
     "plugins": [
       "expo-router",
