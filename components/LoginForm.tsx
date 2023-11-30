@@ -110,6 +110,8 @@ export default function LoginForm() {
               inputMode="email"
               placeholder="Email"
               value={values.email}
+              autoCapitalize="none"
+              autoCorrect={false}
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
             />
