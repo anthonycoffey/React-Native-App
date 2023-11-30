@@ -35,7 +35,6 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   // selected service price
   const [valuePrice, setValuePrice] = useState<string>("0.00");
 
-  // automatically assign price when service is selected
   useEffect(() => {
     if (value) {
       const newLineItem = services[value];
@@ -107,7 +106,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   const addLineItem = () => {
     if (value) {
       const newLineItem = services[value];
-      const newLineItemPrice = +valuePrice;
+      const newLineItemPrice = parseInt(+valuePrice * 100);
 
       console.log({ ServiceId: newLineItem.id, price: newLineItemPrice });
 
@@ -159,6 +158,52 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       ],
       { cancelable: false },
     );
+  };
+
+  const handlePriceChange = (text: any) => {
+    console.log("handle price.." + "");
+    // Remove non-numeric characters
+    let cleanedText = text.replace(/[^0-9.]/g, "");
+
+    // Handle multiple decimal points
+    const splitText = cleanedText.split(".");
+    if (splitText.length > 2) {
+      cleanedText = splitText[0] + "." + splitText[1];
+    }
+
+    // Limit decimal places to 2
+    const decimalSplit = cleanedText.split(".");
+    if (decimalSplit.length === 2 && decimalSplit[1].length > 2) {
+      cleanedText = decimalSplit[0] + "." + decimalSplit[1].slice(0, 2);
+    }
+
+    setValuePrice(cleanedText);
+  };
+
+  const formatCurrency = (text: any) => {
+    // If the input is empty or only a decimal point, set it to zero
+    if (text === "" || text === ".") {
+      return "0.00";
+    }
+
+    // Split the text into whole and fraction parts
+    let [whole, fraction] = text.split(".");
+    whole = whole || "0";
+    fraction = fraction || "00";
+
+    // Ensure the fraction part has two digits
+    if (fraction.length === 1) {
+      fraction = fraction + "0";
+    } else if (fraction.length > 2) {
+      fraction = fraction.slice(0, 2);
+    }
+
+    return `${whole}.${fraction}`;
+  };
+
+  const handlePriceBlur = () => {
+    const formattedValue = formatCurrency(valuePrice);
+    setValuePrice(formattedValue);
   };
 
   return (
@@ -222,16 +267,15 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               />
             </Stack>
             <Stack>
-              {valuePrice && (
-                <CurrencyInput
-                  label={"Price ($USD)"}
-                  keyboardType={"numeric"}
-                  editable={true}
-                  value={valuePrice}
-                  onChangeText={(value: string) => setValuePrice(value)}
-                  borderColor="black"
-                />
-              )}
+              <CurrencyInput
+                label={"Price ($USD)"}
+                keyboardType={"numeric"}
+                editable={true}
+                value={valuePrice}
+                onChangeText={handlePriceChange}
+                onEndEditing={handlePriceBlur}
+                borderColor="black"
+              />
             </Stack>
           </View>
 
