@@ -66,7 +66,7 @@ export default function LoginForm() {
 
   return (
     <Formik
-      initialValues={{ email: "tech@test.com", password: "test1234" }}
+      initialValues={{ email: "", password: "" }}
       validationSchema={LoginSchema}
       onSubmit={(
         values: LoginFormValues,
