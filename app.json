@@ -50,7 +50,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.phoenix_mobile.app",
-      "versionCode": 4
+      "versionCode": 7
     },
     "plugins": [
       "expo-router",
