@@ -13,9 +13,7 @@
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "buildNumber": "9",
       "supportsTablet": true,
@@ -41,7 +39,10 @@
           "nmap",
           "dgis",
           "lftgpas"
-        ]
+        ],
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
+        "NSLocationAlwaysUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
+        "NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location"
       }
     },
     "android": {
@@ -50,7 +51,14 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.phoenix_mobile.app",
-      "versionCode": 7
+      "versionCode": 7,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
     },
     "plugins": [
       "expo-router",
