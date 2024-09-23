@@ -52,15 +52,15 @@ Note: This works for Android as wel, but you will have to check package.json and
 
 - Sometimes issues can be caused by cache, to clear cache with expo: `yarn start --clear`
 
-- An .env file is required with a single property `API_URL` that points to Phoenix backend 
+- An .env file is required with a single property `API_URL` that points to Phoenix backend
 
 - Sometimes issues can be caused by cache, to clear cache with expo running the following command `yarn start --clear`
-  
-    Note: Refer to Expo documentation on clearing cache for your development environment:
 
-    https://docs.expo.dev/troubleshooting/clear-cache-macos-linux/
+  Note: Refer to Expo documentation on clearing cache for your development environment:
 
-    https://docs.expo.dev/troubleshooting/clear-cache-windows/
+  https://docs.expo.dev/troubleshooting/clear-cache-macos-linux/
+
+  https://docs.expo.dev/troubleshooting/clear-cache-windows/
 
 - **ANDROID**: For local development builds to work you need JDK 11 installed and `JAVA_HOME` environment variable set to JDK 11 path
 - **IOS**: For local development builds to work you need XCode installed
