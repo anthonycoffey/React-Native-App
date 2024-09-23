@@ -1,10 +1,17 @@
-// Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require('expo/metro-config');
+const path = require('path');
 
-/** @type {import('expo/metro-config').MetroConfig} */
-const config = getDefaultConfig(__dirname, {
-    // [Web-only]: Enables CSS support in Metro.
-    isCSSEnabled: true,
-});
+module.exports = (async () => {
+  // Get the default configuration
+  const defaultConfig = await getDefaultConfig(__dirname);
 
-module.exports = config;
+  return {
+    ...defaultConfig,  // Spread the default configuration
+    resolver: {
+      ...defaultConfig.resolver,  // Spread the default resolver settings
+      alias: {
+        '@': path.resolve(__dirname, './'),  // Map '@' to the root directory
+      },
+    },
+  };
+})();

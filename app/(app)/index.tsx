@@ -72,10 +72,12 @@ export default function Index() {
 
     fetchLocation(); // Fetch location immediately on mount
 
-    const intervalId = setInterval(fetchLocation, 30000); // Fetch location every 30 seconds
+    const intervalId = setInterval(fetchLocation, 1000); // Fetch location every 30 seconds
 
     return () => clearInterval(intervalId); // Clear interval on unmount
   }, [locationPermission]);
+
+  useEffect(() => {});
 
   return (
     <View style={globalStyles.container}>
