@@ -22,7 +22,7 @@ const LoginSchema = Yup.object().shape({
 });
 
 export default function LoginForm() {
-  const { signIn } = useSession();
+  const session = useSession();
   const [error, setError] = React.useState<string | null>();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -40,7 +40,9 @@ export default function LoginForm() {
         password,
       });
       const { token } = response.data;
-      await signIn(token);
+      if (session) {
+        await session.signIn(token);
+      }
       // @ts-ignore
       router.push('(app)/');
     } catch (error: AxiosError) {
