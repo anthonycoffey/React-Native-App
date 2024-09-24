@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { Button, Input, Image, YStack, XStack } from "tamagui";
-import api, { responseDebug } from "../utils/api";
-import { useSession } from "@/ctx";
-import { Formik, FormikHelpers } from "formik";
-import * as Yup from "yup";
-import { router } from "expo-router";
-import globalStyles from "@/styles/globalStyles";
-import { CardTitle, ErrorText } from "./Typography";
-import { Eye, EyeOff } from "@tamagui/lucide-icons";
-import { AxiosResponse, AxiosError } from "@/types";
+import React, { useState } from 'react';
+import { Button, Input, Image, YStack, XStack } from 'tamagui';
+import api, { responseDebug } from '../utils/api';
+import { useSession } from '@/ctx';
+import { Formik, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
+import { router } from 'expo-router';
+import globalStyles from '@/styles/globalStyles';
+import { CardTitle, ErrorText } from './Typography';
+import { Eye, EyeOff } from '@tamagui/lucide-icons';
+import { AxiosResponse, AxiosError } from '@/types';
 
 interface LoginFormValues {
   email: string;
@@ -17,12 +17,12 @@ interface LoginFormValues {
 
 // Define the validation schema using Yup
 const LoginSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().required("Password is required"),
+  email: Yup.string().email('Invalid email').required('Email is required'),
+  password: Yup.string().required('Password is required'),
 });
 
 export default function LoginForm() {
-  const { signIn } = useSession();
+  const session = useSession();
   const [error, setError] = React.useState<string | null>();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -40,25 +40,27 @@ export default function LoginForm() {
         password,
       });
       const { token } = response.data;
-      await signIn(token);
+      if (session) {
+        await session.signIn(token);
+      }
       // @ts-ignore
-      router.push("(app)/");
+      router.push('(app)/');
     } catch (error: AxiosError) {
       console.log(error.code);
       switch (error.code) {
-        case "ERR_BAD_REQUEST":
+        case 'ERR_BAD_REQUEST':
           setError(
-            `Sorry, we couldn't authenticate your account.\nPlease check your credentials, and try again.`,
+            `Sorry, we couldn't authenticate your account.\nPlease check your credentials, and try again.`
           );
           break;
-        case "ERR_BAD_RESPONSE":
+        case 'ERR_BAD_RESPONSE':
           setError(
-            `Sorry, something went wrong.\nPlease try again in a few minutes.`,
+            `Sorry, something went wrong.\nPlease try again in a few minutes.`
           );
           break;
         default:
           setError(
-            `Something went wrong.\nPlease check your credentials, and try again. If you are still having issues, please contact support.`,
+            `Something went wrong.\nPlease check your credentials, and try again. If you are still having issues, please contact support.`
           );
       }
     }
@@ -66,11 +68,11 @@ export default function LoginForm() {
 
   return (
     <Formik
-      initialValues={{ email: "", password: "" }}
+      initialValues={{ email: 'ab@xy.com', password: 'Dank1234!' }}
       validationSchema={LoginSchema}
       onSubmit={(
         values: LoginFormValues,
-        { setSubmitting }: FormikHelpers<LoginFormValues>,
+        { setSubmitting }: FormikHelpers<LoginFormValues>
       ) => {
         submit(values.email, values.password);
         setSubmitting(false);
@@ -96,9 +98,9 @@ export default function LoginForm() {
               width={200}
               height={200}
               style={{
-                alignSelf: "center",
+                alignSelf: 'center',
               }}
-              source={require("@/assets/images/logo.png")}
+              source={require('@/assets/images/logo.png')}
             />
           </XStack>
           <XStack width="100%" justifyContent="center" alignContent="center">
@@ -112,8 +114,8 @@ export default function LoginForm() {
               value={values.email}
               autoCapitalize="none"
               autoCorrect={false}
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
             />
           </XStack>
           <XStack width="100%" justifyContent="center" alignContent="center">
@@ -135,8 +137,8 @@ export default function LoginForm() {
               autoCapitalize="none"
               autoCorrect={false}
               value={values.password}
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
             />
             <Button
               onPress={toggleVisibility}
