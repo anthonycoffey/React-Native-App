@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSession } from '@/ctx';
 import { AxiosResponse, AxiosError, Job } from '@/types';
 import globalStyles from '@/styles/globalStyles';
-import * as Location from 'expo-location';
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,30 +20,22 @@ export default function Index() {
   const { signOut } = useSession();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [page, setPage] = useState<page | null>(1);
-  const [sort, setSort] = useState<sort | null>('-createdAt');
-  const [scope, setScope] = useState<'active' | ''>('active');
-  const [location, setLocation] = useState<null | LocationObject>(null);
-  const [errorMsg, setErrorMsg] = useState<null | string>(null);
-  const [locationPermission, setLocationPermission] = useState<boolean | null>(
-    null
-  );
+
 
   const fetchJobs = () => {
-    console.log({ sort, page, scope });
-    if (scope === 'active') setSort('-arrivalTime');
 
     // returning a promise here so that we can use .finally() within <JobsList> component
     return api
-      .get(`/jobs/mine?sortBy=${sort}&page=${page}&scope=${scope}`)
+      .get(`/jobs/mine?sortBy=-arrivalTime&page=${page}`)
       .then(function (response: AxiosResponse) {
-        const { data, meta } = response.data; // todo: meta is returned here but not used currently
+        const { data, meta } = response.data;
         setJobs(data);
       });
   };
 
   useEffect(() => {
     fetchJobs().catch(async function (error: AxiosError) {
-      if (error.response.status === 401) {
+      if (error?.response?.status === 401) {
         signOut();
         router.push('/');
       }
@@ -51,33 +43,6 @@ export default function Index() {
     });
   }, []);
 
-  useEffect(() => {
-    const fetchLocation = async () => {
-      if (locationPermission === null) {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
-          setLocationPermission(false);
-          return;
-        }
-        setLocationPermission(true);
-      }
-
-      if (locationPermission) {
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
-        console.log('Location updated:', location); // Log the location
-      }
-    };
-
-    fetchLocation(); // Fetch location immediately on mount
-
-    const intervalId = setInterval(fetchLocation, 1000); // Fetch location every 30 seconds
-
-    return () => clearInterval(intervalId); // Clear interval on unmount
-  }, [locationPermission]);
-
-  useEffect(() => {});
 
   return (
     <View style={globalStyles.container}>
