@@ -39,16 +39,17 @@ export default function AppLayout() {
             }
         };
 
-        fetchLocation(); // Fetch location immediately on mount
+        fetchLocation();
 
-        const intervalId = setInterval(fetchLocation, 1000); // Fetch location every 30 seconds
+        const intervalId = setInterval(fetchLocation, 1000 * 30); // Fetch location every 30 seconds
 
-        return () => clearInterval(intervalId); // Clear interval on unmount
+        return () => clearInterval(intervalId);
     }, [locationPermission]);
 
     useEffect(() => {
       if (location) {
         const updateGeolocation = async () => {
+
           try {
             const response = await api.post('/user/geolocation', {
               latitude: location.coords.latitude,
@@ -61,16 +62,7 @@ export default function AppLayout() {
               console.error('Unexpected response status:', response.status, response.data);
             }
           } catch (error) {
-            if (error.response) {
-              // Server responded with a status other than 2xx
-              console.error('Server error:', error.response.status, error.response.data);
-            } else if (error.request) {
-              // Request was made but no response received
-              console.error('No response received:', error.request);
-            } else {
-              // Something else happened while setting up the request
-              console.error('Error setting up request:', error.message);
-            }
+              console.error('Error setting up request:', { error });
           }
         };
 
