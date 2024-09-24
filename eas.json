@@ -1,4 +1,8 @@
 {
+  "cli": {
+    "version": ">= 12.4.1",
+    "appVersionSource": "remote"
+  },
   "build": {
     "development-simulator": {
       "developmentClient": true,
@@ -6,19 +10,17 @@
       "ios": {
         "simulator": true
       },
-      "node": "20.9.0",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://3205-2605-a601-aa62-f300-7d29-55e3-125e-d10b.ngrok-free.app/",
+        "EXPO_PUBLIC_API_URL": "https://2c8346146cf5.ngrok.app",
         "EXPO_PUBLIC_GEOCODING_API_KEY": "AIzaSyDxT3T4ruESnDUp-VPjaKcMs6JTNCR9pP8",
         "EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY": "3rNp5nRnWbZZ36mTF2m35Neh66U676n7zLYpjqJANmctA7G7jA3rh53CNwQ7GCjQ",
         "EXPO_PUBLIC_AUTHORIZE_LOGIN_ID": "96pXg6YA"
       }
     },
     "development": {
-      "channel": "development",
       "developmentClient": true,
       "distribution": "internal",
-      "node": "20.9.0",
+      "channel": "development",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://phoenix-staging-data-3d6054f8c3ef.herokuapp.com",
         "EXPO_PUBLIC_GEOCODING_API_KEY": "AIzaSyDxT3T4ruESnDUp-VPjaKcMs6JTNCR9pP8",
@@ -26,15 +28,21 @@
         "EXPO_PUBLIC_AUTHORIZE_LOGIN_ID": "96pXg6YA"
       }
     },
+    "preview": {
+      "distribution": "internal"
+    },
     "production": {
+      "autoIncrement": true,
       "channel": "production",
-      "node": "20.9.0",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://phoenix-staging-data-3d6054f8c3ef.herokuapp.com",
+        "EXPO_PUBLIC_API_URL": "https://phoenix-crm-api.herokuapp.com",
         "EXPO_PUBLIC_GEOCODING_API_KEY": "AIzaSyDxT3T4ruESnDUp-VPjaKcMs6JTNCR9pP8",
         "EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY": "3rNp5nRnWbZZ36mTF2m35Neh66U676n7zLYpjqJANmctA7G7jA3rh53CNwQ7GCjQ",
         "EXPO_PUBLIC_AUTHORIZE_LOGIN_ID": "96pXg6YA"
       }
     }
+  },
+  "submit": {
+    "production": {}
   }
 }
