@@ -4,13 +4,13 @@ import api from "@/utils/api";
 import { router } from "expo-router";
 
 const AuthContext = React.createContext<{
-  signIn: () => void;
+  signIn: (token: string) => void;
   signOut: () => void;
-  session?: string | null;
+  session: string | null;
   isLoading: boolean;
 } | null>(null);
 
-// This hook can be used to access the user info.
+
 export function useSession() {
   const value = React.useContext(AuthContext);
   if (process.env.NODE_ENV !== "production") {
