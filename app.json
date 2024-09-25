@@ -4,7 +4,7 @@
     "slug": "24hr-car-unlocking",
     "version": "1.0.0",
     "owner": "phoenix-crm",
-    "scheme": "24hrcarunlocking",
+    "scheme": "phoenix-mobile",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
