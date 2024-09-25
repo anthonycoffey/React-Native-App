@@ -98,12 +98,8 @@ export default function LoginForm() {
         >
           <XStack>
             <Image
-              width={100}
-              height={100}
-              style={{
-                alignSelf: "center",
-              }}
-              source={logo}
+              style={{ width: 300, height: 300 }}
+              source={{ width: 300, height: 300, uri: logo }}
             />
           </XStack>
           <XStack width="100%" justifyContent="center" alignContent="center">
