@@ -15,7 +15,8 @@
         "EXPO_PUBLIC_GEOCODING_API_KEY": "AIzaSyDxT3T4ruESnDUp-VPjaKcMs6JTNCR9pP8",
         "EXPO_PUBLIC_AUTHORIZE_PUBLIC_KEY": "3rNp5nRnWbZZ36mTF2m35Neh66U676n7zLYpjqJANmctA7G7jA3rh53CNwQ7GCjQ",
         "EXPO_PUBLIC_AUTHORIZE_LOGIN_ID": "96pXg6YA"
-      }
+      },
+      "channel": "development-simulator"
     },
     "development": {
       "developmentClient": true,
@@ -29,7 +30,8 @@
       }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "preview"
     },
     "production": {
       "autoIncrement": true,
@@ -43,6 +45,11 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./phoenix-404519-b14787fc33ca.json",
+        "track": "internal"
+      }
+    }
   }
 }
