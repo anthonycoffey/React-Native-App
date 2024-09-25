@@ -14,14 +14,14 @@ export default function HeaderToolbar() {
       borderBottomWidth={1}
     >
       <XStack>
-        <Image
-          source={{
-            width: 80,
-            height: 80,
-            uri: require("@/assets/images/logo.png"),
-          }}
-          width={80}
-        />
+        {/*<Image*/}
+        {/*  source={{*/}
+        {/*    width: 80,*/}
+        {/*    height: 80,*/}
+        {/*    uri: require("@/assets/images/logo.png"),*/}
+        {/*  }}*/}
+        {/*  width={80}*/}
+        {/*/>*/}
       </XStack>
     </YStack>
   );

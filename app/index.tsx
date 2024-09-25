@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
-import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
 import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
   Platform,
   View,
-} from 'react-native';
-import LoginForm from '@/components/LoginForm';
-import {Text} from 'tamagui';
+} from "react-native";
+import LoginForm from "@/components/LoginForm";
+import { Text } from "tamagui";
 
 export default function App() {
   useEffect(() => {
@@ -21,8 +21,8 @@ export default function App() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, backgroundColor: "#252d3a" }}
     >
       <View style={{ flex: 1 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
