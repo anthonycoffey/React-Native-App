@@ -10,7 +10,6 @@ const AuthContext = React.createContext<{
   isLoading: boolean;
 } | null>(null);
 
-
 export function useSession() {
   const value = React.useContext(AuthContext);
   if (process.env.NODE_ENV !== "production") {
@@ -37,7 +36,12 @@ export function SessionProvider(props: React.PropsWithChildren) {
           router.push("(app)/");
         },
         signOut: () => {
-          setSession(null);
+          setSession("");
+          api.interceptors.request.use((config: any) => {
+            delete config.headers.Authorization;
+            return config;
+          });
+          router.navigate("/");
         },
         session,
         isLoading,

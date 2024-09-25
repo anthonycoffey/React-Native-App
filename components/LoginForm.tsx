@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Input, Image, YStack, XStack } from "tamagui";
+import React, { useEffect, useState } from "react";
+import { Button, Input, Image, YStack, XStack, Spinner } from "tamagui";
 import api from "../utils/api";
 import { useSession } from "@/ctx";
 import { Formik, FormikHelpers } from "formik";
@@ -23,15 +23,23 @@ const LoginSchema = Yup.object().shape({
 });
 
 export default function LoginForm() {
-  const session = useSession();
+  const { session, signIn } = useSession();
   const [error, setError] = React.useState<string | null>();
   const [isVisible, setIsVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (session) {
+      router.push("(app)/");
+    }
+  }, [session]);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
 
   const submit = async (email: string, password: string) => {
+    setIsLoading(true);
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
     if (process.env.NODE_ENV === "development") {
       console.log({ API_URL });
@@ -43,11 +51,7 @@ export default function LoginForm() {
         password,
       });
       const { token } = response.data;
-      if (session) {
-        await session.signIn(token);
-      }
-      // @ts-ignore
-      router.push("(app)/");
+      signIn(token);
     } catch (error: AxiosError) {
       console.log(error.code);
       switch (error.code) {
@@ -66,12 +70,14 @@ export default function LoginForm() {
             `Something went wrong.\nPlease check your credentials, and try again. If you are still having issues, please contact support.`,
           );
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Formik
-      initialValues={{ email: "", password: "" }}
+      initialValues={{ email: "ab@xy.com", password: "Dank1234!" }}
       validationSchema={LoginSchema}
       onSubmit={(
         values: LoginFormValues,
@@ -90,8 +96,8 @@ export default function LoginForm() {
         touched,
       }) => (
         <YStack
-          style={globalStyles.container}
-          space={4}
+          space={"$2"}
+          style={globalStyles.loginContainer}
           justifyContent="center"
           alignContent="center"
           alignItems="center"
@@ -102,7 +108,7 @@ export default function LoginForm() {
               source={{ width: 300, height: 300, uri: logo }}
             />
           </XStack>
-          <XStack width="100%" justifyContent="center" alignContent="center">
+          <XStack justifyContent="center" alignContent="center">
             <CardTitle style={{ color: "#fff" }}>Login</CardTitle>
           </XStack>
           <XStack width="100%" justifyContent="center" alignContent="center">
@@ -148,8 +154,8 @@ export default function LoginForm() {
           </XStack>
 
           <XStack width="100%" alignItems="center" justifyContent="center">
-            <Button flex={1} onPress={handleSubmit as any}>
-              Login
+            <Button flex={1} onPress={handleSubmit as any} disabled={isLoading}>
+              {isLoading ? <Spinner size="small" color="$white" /> : "Login"}
             </Button>
           </XStack>
           <XStack width="100%" alignItems="center" justifyContent="center">

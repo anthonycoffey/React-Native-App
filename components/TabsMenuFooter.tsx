@@ -8,8 +8,6 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 export default function HeaderToolbar() {
   const insets = useSafeAreaInsets();
   const path = usePathname();
-  console.log({ path });
-
   const activeStyle = styles.active;
   const inactiveStyle = styles.inactive;
 

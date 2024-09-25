@@ -6,6 +6,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 10,
   },
+  loginContainer: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    maxWidth: 500,
+    margin: "auto",
+  },
   card: {
     padding: 10,
     marginVertical: 10,
