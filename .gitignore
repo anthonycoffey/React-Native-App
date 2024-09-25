@@ -48,3 +48,6 @@ expo-env.d.ts
 # Yarn
 .pnp.*
 .yarn/*
+
+#pnpm
+pnpm-lock.yaml
