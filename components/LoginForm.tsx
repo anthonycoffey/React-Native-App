@@ -153,20 +153,20 @@ export default function LoginForm() {
             </Button>
           </XStack>
 
-          <XStack width="100%" alignItems="center" justifyContent="center">
+          <XStack width="100%">
             <Button flex={1} onPress={handleSubmit as any} disabled={isLoading}>
               {isLoading ? <Spinner size="small" color="$white" /> : "Login"}
             </Button>
           </XStack>
-          <XStack width="100%" alignItems="center" justifyContent="center">
+          <XStack width="100%">
             {error && <ErrorText>{error}</ErrorText>}
           </XStack>
-          <XStack width="100%" justifyContent="center" alignContent="center">
+          <XStack width="100%">
             {touched.password && errors.password && (
               <ErrorText>{errors.password}</ErrorText>
             )}
           </XStack>
-          <XStack width="100%" justifyContent="center" alignContent="center">
+          <XStack width="100%">
             {touched.email && errors.email && (
               <ErrorText>{errors.email}</ErrorText>
             )}
