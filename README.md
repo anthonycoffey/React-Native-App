@@ -4,6 +4,20 @@
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Yarn](https://img.shields.io/badge/yarn-%232C8EBB.svg?style=for-the-badge&logo=yarn&logoColor=white)
 
+## Self Signed Bundles
+
+1. Bundle the file
+
+```bash
+java -jar bundletool.jar build-apks --bundle=application-[BUNDLE_FILENAME.aab] --output=24hrcarunlock.apks --mode=universal --ks=./credentials/android/keystore.jks --ks-key-alias=[KEY_ALIAS]
+```
+
+2. Sign the file
+
+```
+bash jarsigner -verbose -keystore ./credentials/android/keystore.jks -storepass [STORE_PASS] 24hrcarunlock.apks [KEY_ALIAS]
+```
+
 ## NPM Scripts
 
 `yarn start` - starts expo dev server, can pass `--android`, `--ios`, `--web` to build for single environment
