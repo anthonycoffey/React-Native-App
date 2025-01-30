@@ -27,13 +27,19 @@ export default function CustomerInfo({ job, location }: Props) {
         value={job.Customer?.fullName}
         style={globalStyles.input}
       />
-      <Text style={globalStyles.label}>Phone</Text>
-      <TextInput
-        //  @ts-ignore
-        readOnly={true}
-        value={maskedNumber}
-        style={globalStyles.input}
-      />
+
+      {job.proxy?.CustomerPhone?.number && (
+        <>
+          <Text style={globalStyles.label}>Phone</Text>
+          <TextInput
+            //  @ts-ignore
+            readOnly={true}
+            value={maskedNumber}
+            style={globalStyles.input}
+          />
+        </>
+      )}
+
       <Text style={globalStyles.label}>Car</Text>
       <TextInput
         //  @ts-ignore

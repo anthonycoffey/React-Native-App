@@ -1,34 +1,40 @@
 import React from "react";
 import { Platform, StatusBar } from "react-native";
-import { View, XStack } from "tamagui";
+import { Separator, View, XStack, YStack } from "tamagui";
 import { UserCog } from "@tamagui/lucide-icons";
 import { CardTitle } from "@/components/Typography";
-import { PrimaryButton } from "@/components/Buttons";
+import { PrimaryButton, OutlinedButton } from "@/components/Buttons";
 import { useSession } from "@/ctx";
 import globalStyles from "@/styles/globalStyles";
 
 export default function UserSettingsPage() {
   const { signOut } = useSession();
+
+  const handleClockIn = () => {};
+
   return (
     <View
       style={globalStyles.container}
       paddingTop={Platform.OS === "android" ? StatusBar.currentHeight : 0}
       flexDirection={"column"}
     >
-      <XStack paddingHorizontal={20} marginTop={20} justifyContent="center">
-        <UserCog />
-        <CardTitle marginLeft={5}>Account Settings</CardTitle>
-      </XStack>
-      <XStack flex={1}>
-        <PrimaryButton
+      <YStack>
+        <XStack paddingHorizontal={20} marginTop={20} justifyContent="center">
+          <UserCog />
+          <CardTitle marginLeft={5}>Account Settings</CardTitle>
+        </XStack>
+        <Separator />
+      </YStack>
+      <YStack flex={1} style={{ justifyContent: "space-between" }}>
+        <PrimaryButton onPress={() => handleClockIn()}>Clock In</PrimaryButton>
+        <OutlinedButton
           marginTop={20}
-          backgroundColor="red"
-          width="100%"
+          style={{ marginBottom: 20, borderColor: "$red10", color: "$red10" }}
           onPress={() => signOut()}
         >
           Log Out
-        </PrimaryButton>
-      </XStack>
+        </OutlinedButton>
+      </YStack>
     </View>
   );
 }

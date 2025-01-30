@@ -8,6 +8,7 @@ const AuthContext = React.createContext<{
   signOut: () => void;
   session: string | null;
   isLoading: boolean;
+  clockedIn: false;
 } | null>(null);
 
 export function useSession() {
@@ -24,23 +25,42 @@ export function useSession() {
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
 
+  // Store the interceptor ID to later remove it
+  let requestInterceptorId: number | null = null;
+
   return (
     <AuthContext.Provider
       value={{
         signIn: (token: string) => {
           setSession(token);
-          api.interceptors.request.use((config: any) => {
+
+          // Remove existing interceptor if it exists
+          if (requestInterceptorId !== null) {
+            api.interceptors.request.eject(requestInterceptorId);
+          }
+
+          // Add a new interceptor
+          requestInterceptorId = api.interceptors.request.use((config: any) => {
             config.headers.Authorization = `Bearer ${token}`;
             return config;
           });
+
           router.push("(app)/");
         },
         signOut: () => {
           setSession("");
-          api.interceptors.request.use((config: any) => {
+
+          // Remove existing interceptor if it exists
+          if (requestInterceptorId !== null) {
+            api.interceptors.request.eject(requestInterceptorId);
+          }
+
+          // Add an interceptor to remove the Authorization header
+          requestInterceptorId = api.interceptors.request.use((config: any) => {
             delete config.headers.Authorization;
             return config;
           });
+
           router.navigate("/");
         },
         session,
