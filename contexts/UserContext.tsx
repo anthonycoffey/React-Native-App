@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../utils/api'; // Import the API utility
+import api from '@/utils/api'; // Import the API utility
 
 // Define the context type with just the clock-in related functionality
 interface UserContextType {

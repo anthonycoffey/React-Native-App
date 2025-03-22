@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Link, Tabs, useRouter, Redirect } from 'expo-router';
+import { Pressable, ActivityIndicator, View } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useAuth } from '@/contexts/AuthContext';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -17,6 +18,29 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { session, isLoading } = useAuth();
+  const router = useRouter();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoading && !session) {
+      router.replace('/login');
+    }
+  }, [session, isLoading, router]);
+
+  // Show loading spinner while checking auth
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0a7ea4" />
+      </View>
+    );
+  }
+
+  // If not authenticated and not loading, redirect to login
+  if (!session && !isLoading) {
+    return <Redirect href="/login" />;
+  }
 
   return (
     <Tabs

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useStorageState } from '../useStorageState';
+import { useStorageState } from '@/hooks/useStorageState';
 import api from '@/utils/api';
 import { router } from 'expo-router';
 

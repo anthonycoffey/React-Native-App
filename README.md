@@ -1,18 +1,12 @@
-# GPT Native App
-
-## Authentication
-
-This app includes a demo authentication system. To log in, you can use any of the following:
-
-- Email: `demo@example.com` and Password: `password`
-- Or any email with password: `password`
+# Phoenix Mobile
+Expo / React Native app for Phoenix CRM.
 
 ## Features
 
 - Authentication with secure token storage
-- Location-based job tracking
-- Interactive maps for job navigation
-- Session management with auto-logout on expiration
+- Location tracking
+- View / Manage Jobs
+- Create Job
 
 ## Development 
 
