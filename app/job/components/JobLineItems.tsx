@@ -188,7 +188,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       
       <Modal
         visible={showModal}
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         onRequestClose={() => setShowModal(false)}
       >

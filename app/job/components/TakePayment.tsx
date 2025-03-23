@@ -100,7 +100,7 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
 
       <Modal
         visible={payWithCard}
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         onRequestClose={() => setPayWithCard(false)}
       >
@@ -122,7 +122,7 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
 
       <Modal
         visible={payWithCash}
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         onRequestClose={() => setPayWithCash(false)}
       >

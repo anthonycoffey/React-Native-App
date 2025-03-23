@@ -70,7 +70,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
   const handleQuitJob = () => {
     Alert.alert(
       'Quit Job?',
-      'If you select OK, you will no longer be assigned to this job.\n\nPlease note, this action cannot be undone.',
+      'If you select OK, you will no longer be assigned to this job.\n\n⚠️ WARNING ⚠️\n THIS ACTION CANNOT BE UNDONE.',
       [
         {
           text: 'Cancel',
@@ -152,7 +152,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
       </View>
 
       <Modal
-        animationType='slide'
+        animationType='fade'
         transparent={true}
         visible={showCancelDialog}
         onRequestClose={() => setShowCancelDialog(false)}

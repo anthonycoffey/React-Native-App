@@ -18,15 +18,29 @@ export const PrimaryButton = ({
   title,
   onPress,
   style,
+  disabled,
   ...props
-}: ButtonProps) => {
+}: ButtonProps & { disabled?: boolean }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, styles.primaryButton, style]}
-      onPress={onPress}
+      style={[
+        styles.button,
+        styles.primaryButton,
+        disabled && styles.disabledButton,
+        style,
+      ]}
+      onPress={!disabled ? onPress : undefined}
+      activeOpacity={disabled ? 1 : 0.7}
       {...props}
     >
-      <Text style={styles.primaryButtonText}>{title}</Text>
+      <Text
+        style={[
+          styles.primaryButtonText,
+          disabled && styles.disabledButtonText,
+        ]}
+      >
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -36,15 +50,29 @@ export const SecondaryButton = ({
   title,
   onPress,
   style,
+  disabled,
   ...props
-}: ButtonProps) => {
+}: ButtonProps & { disabled?: boolean }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, styles.secondaryButton, style]}
-      onPress={onPress}
+      style={[
+        styles.button,
+        styles.secondaryButton,
+        disabled && styles.disabledButton,
+        style,
+      ]}
+      onPress={!disabled ? onPress : undefined}
+      activeOpacity={disabled ? 1 : 0.7}
       {...props}
     >
-      <Text style={styles.secondaryButtonText}>{title}</Text>
+      <Text
+        style={[
+          styles.secondaryButtonText,
+          disabled && styles.disabledButtonText,
+        ]}
+      >
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -55,8 +83,9 @@ export const OutlinedButton = ({
   onPress,
   style,
   variant,
+  disabled,
   ...props
-}: ButtonProps) => {
+}: ButtonProps & { disabled?: boolean }) => {
   const colorScheme = useColorScheme();
   const defaultTextColor =
     colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
@@ -75,12 +104,20 @@ export const OutlinedButton = ({
         styles.button,
         styles.outlinedButton,
         { borderColor: textColor },
+        disabled && styles.disabledButton,
         style,
       ]}
-      onPress={onPress}
+      onPress={!disabled ? onPress : undefined}
+      activeOpacity={disabled ? 1 : 0.7}
       {...props}
     >
-      <Text style={[styles.outlinedButtonText, { color: textColor }]}>
+      <Text
+        style={[
+          styles.outlinedButtonText,
+          { color: textColor },
+          disabled && styles.disabledButtonText,
+        ]}
+      >
         {title}
       </Text>
     </TouchableOpacity>
@@ -92,15 +129,29 @@ export const WarningButton = ({
   title,
   onPress,
   style,
+  disabled,
   ...props
-}: ButtonProps) => {
+}: ButtonProps & { disabled?: boolean }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, styles.warningButton, style]}
-      onPress={onPress}
+      style={[
+        styles.button,
+        styles.warningButton,
+        disabled && styles.disabledButton,
+        style,
+      ]}
+      onPress={!disabled ? onPress : undefined}
+      activeOpacity={disabled ? 1 : 0.7}
       {...props}
     >
-      <Text style={styles.warningButtonText}>{title}</Text>
+      <Text
+        style={[
+          styles.warningButtonText,
+          disabled && styles.disabledButtonText,
+        ]}
+      >
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -145,5 +196,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
     fontSize: 16,
+  },
+  disabledButton: {
+    backgroundColor: '#d3d3d3',
+  },
+  disabledButtonText: {
+    color: '#a9a9a9',
   },
 });
