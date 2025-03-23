@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Image, ImageSourcePropType, Pressable, View, Text, StyleSheet } from "react-native";
-import { getApps } from "react-native-map-link";
-import CustomerInfo from "@/app/job/components/CustomerInfo";
-import { CardTitle } from "@/components/Typography";
-import globalStyles from "@/styles/globalStyles";
-import geocodeAddress from "@/utils/geocode";
-import { location, Job, availableAppsProps } from "@/types";
+import React, { useEffect, useState } from 'react';
+import {
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  View,
+  Text,
+  StyleSheet,
+} from 'react-native';
+import { getApps } from 'react-native-map-link';
+import CustomerInfo from '@/app/job/components/CustomerInfo';
+import { CardTitle } from '@/components/Typography';
+import globalStyles from '@/styles/globalStyles';
+import geocodeAddress from '@/utils/geocode';
+import { location, Job, availableAppsProps } from '@/types';
 
 type Props = {
   job: Job;
@@ -29,13 +36,13 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
       try {
         const geoQry: string =
           job?.Address?.address_1 +
-          " " +
+          ' ' +
           job?.Address?.address_2 +
-          " " +
+          ' ' +
           job?.Address?.city +
-          " " +
+          ' ' +
           job?.Address?.state +
-          " " +
+          ' ' +
           job?.Address?.zipcode;
         const result = await geocodeAddress(geoQry);
         setLocation(result);
@@ -55,7 +62,7 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
           alwaysIncludeGoogle: true, // optional, true will always add Google Maps to iOS and open in Safari, even if app is not installed (default: false)
           googlePlaceId: place_id,
           googleForceLatLon: true, // optionally force GoogleMaps to use the latlon for the query instead of the title
-          appsWhiteList: ["google-maps", "apple-maps"], // optionally you can set which apps to show (default: will show all supported apps installed on device)
+          appsWhiteList: ['google-maps', 'apple-maps'], // optionally you can set which apps to show (default: will show all supported apps installed on device)
         });
         setAvailableApps(result);
       }
@@ -91,8 +98,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   appsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginTop: 20,
   },
   appIcon: {
@@ -104,5 +111,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
     textAlign: 'center',
     fontSize: 12,
-  }
+  },
 });

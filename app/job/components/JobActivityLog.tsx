@@ -1,44 +1,46 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import { Job, JobActions } from "@/types";
-import { CardTitle } from "@/components/Typography";
-import globalStyles from "@/styles/globalStyles";
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import { Job } from '@/types';
+import { CardTitle } from '@/components/Typography';
+import globalStyles from '@/styles/globalStyles';
 
 export default function JobActivityLog(props: { job: Job }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
-
-  const renderItem = ({ item }: { item: JobActions }) => (
-    <View style={styles.logItem}>
-      <Text style={styles.logText}>{item.action}</Text>
-    </View>
-  );
 
   return (
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Activity Log</CardTitle>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.toggleButton}
         onPress={() => setIsCollapsed(!isCollapsed)}
       >
         <Text style={styles.toggleButtonText}>
-          {isCollapsed ? "Show Log" : "Hide Log"}
+          {isCollapsed ? 'Show Log' : 'Hide Log'}
         </Text>
       </TouchableOpacity>
 
-      {!isCollapsed && props.job.JobActions && props.job.JobActions.length > 0 && (
-        <View style={styles.list}>
-          {props.job.JobActions.map(item => (
-            <View key={item.id.toString()} style={styles.logItem}>
-              <Text style={styles.logText}>{item.action}</Text>
-            </View>
-          ))}
-        </View>
-      )}
+      {!isCollapsed &&
+        props.job.JobActions &&
+        props.job.JobActions.length > 0 && (
+          <View style={styles.list}>
+            {props.job.JobActions.map((item) => (
+              <View key={item.id.toString()} style={styles.logItem}>
+                <Text style={styles.logText}>{item.action}</Text>
+              </View>
+            ))}
+          </View>
+        )}
 
-      {!isCollapsed && (!props.job.JobActions || props.job.JobActions.length === 0) && (
-        <Text style={styles.emptyText}>No activity log entries found</Text>
-      )}
+      {!isCollapsed &&
+        (!props.job.JobActions || props.job.JobActions.length === 0) && (
+          <Text style={styles.emptyText}>No activity log entries found</Text>
+        )}
     </View>
   );
 }
@@ -79,5 +81,5 @@ const styles = StyleSheet.create({
     padding: 10,
     color: '#666',
     fontStyle: 'italic',
-  }
+  },
 });

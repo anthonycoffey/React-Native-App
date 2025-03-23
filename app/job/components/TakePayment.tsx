@@ -1,13 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import CurrencyInput from "@/app/job/components/invoice/CurrencyInput";
-import globalStyles from "@/styles/globalStyles";
-import { CardTitle } from "@/components/Typography";
-import PaymentDialog from "@/app/job/components/PaymentDialog";
-import { Invoice, Job } from "@/types";
-import { centsToDollars } from "@/utils/money";
-import { PrimaryButton } from "@/components/Buttons";
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import CurrencyInput from '@/app/job/components/invoice/CurrencyInput';
+import globalStyles from '@/styles/globalStyles';
+import { CardTitle } from '@/components/Typography';
+import PaymentDialog from '@/app/job/components/PaymentDialog';
+import { Invoice, Job } from '@/types';
+import { centsToDollars } from '@/utils/money';
 
 interface Props {
   job: Job;
@@ -17,27 +23,27 @@ interface Props {
 export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
   const [payWithCard, setPayWithCard] = useState<boolean>(false);
   const [payWithCash, setPayWithCash] = useState<boolean>(false);
-  const [paymentType, setPaymentType] = useState<"cash" | "card">("card");
-  const [amountToPay, setAmountToPay] = useState<string>("");
-  const [tipAmount, setTipAmount] = useState<string>("0.00");
+  const [paymentType, setPaymentType] = useState<'cash' | 'card'>('card');
+  const [amountToPay, setAmountToPay] = useState<string>('');
+  const [tipAmount, setTipAmount] = useState<string>('0.00');
 
   const hasActiveInvoice = job.Invoices?.some((invoice: Invoice) =>
-    ["pending", "partially-paid", "sent"].includes(invoice.status),
+    ['pending', 'partially-paid', 'sent'].includes(invoice.status)
   );
 
   useEffect(() => {
     const pendingInvoice = job.Invoices?.find(
-      (invoice: Invoice) => invoice.status === "pending",
+      (invoice: Invoice) => invoice.status === 'pending'
     );
 
     const amount = pendingInvoice
-      ? centsToDollars(pendingInvoice.total, "numeric")
-      : "0.00";
+      ? centsToDollars(pendingInvoice.total, 'numeric')
+      : '0.00';
 
     setAmountToPay(amount);
 
     return () => {
-      setAmountToPay("");
+      setAmountToPay('');
     };
   }, [job]);
 
@@ -48,13 +54,13 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
 
   return (
     <View style={[globalStyles.card, styles.container]}>
-      {job.status !== "paid" && hasActiveInvoice ? (
+      {job.status !== 'paid' && hasActiveInvoice ? (
         <>
           <CardTitle>Take Payment</CardTitle>
           <View style={styles.inputsRow}>
             <View style={styles.inputContainer}>
               <CurrencyInput
-                label={"Amount (USD$)"}
+                label={'Amount (USD$)'}
                 value={amountToPay}
                 readOnly={true}
                 editable={false}
@@ -63,7 +69,7 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
             </View>
             <View style={styles.inputContainer}>
               <CurrencyInput
-                label={"Tip (USD$)"}
+                label={'Tip (USD$)'}
                 value={tipAmount}
                 onChangeText={(value: string) => setTipAmount(value)}
               />
@@ -72,27 +78,37 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
         </>
       ) : null}
 
-      {job.status !== "paid" && hasActiveInvoice && amountToPay && (
+      {job.status !== 'paid' && hasActiveInvoice && amountToPay && (
         <View style={styles.buttonsRow}>
           <TouchableOpacity
             style={[styles.paymentButton, styles.cardButton]}
             onPress={() => {
               setPayWithCard(!payWithCard);
-              setPaymentType("card");
+              setPaymentType('card');
             }}
           >
-            <MaterialIcons name="credit-card" size={20} color="#fff" style={styles.buttonIcon} />
+            <MaterialIcons
+              name='credit-card'
+              size={20}
+              color='#fff'
+              style={styles.buttonIcon}
+            />
             <Text style={styles.buttonText}>Pay with Card</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             style={[styles.paymentButton, styles.cashButton]}
             onPress={() => {
-              setPaymentType("cash");
+              setPaymentType('cash');
               setPayWithCash(!payWithCash);
             }}
           >
-            <MaterialIcons name="attach-money" size={20} color="#fff" style={styles.buttonIcon} />
+            <MaterialIcons
+              name='attach-money'
+              size={20}
+              color='#fff'
+              style={styles.buttonIcon}
+            />
             <Text style={styles.buttonText}>Pay with Cash</Text>
           </TouchableOpacity>
         </View>
@@ -100,12 +116,25 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
 
       <Modal
         visible={payWithCard}
-        animationType="fade"
+        animationType='fade'
         transparent={true}
         onRequestClose={() => setPayWithCard(false)}
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
+            <TouchableOpacity
+              onPress={hidePaymentDialog}
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                margin: 10,
+                zIndex: 2,
+              }}
+            >
+              <MaterialIcons name='cancel' size={24} color='red' />
+            </TouchableOpacity>
+
             <CardTitle>Enter Card Details</CardTitle>
 
             <PaymentDialog
@@ -122,12 +151,24 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
 
       <Modal
         visible={payWithCash}
-        animationType="fade"
+        animationType='fade'
         transparent={true}
         onRequestClose={() => setPayWithCash(false)}
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
+            <Pressable
+              onPress={hidePaymentDialog}
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                margin: 10,
+                zIndex: 2,
+              }}
+            >
+              <MaterialIcons name='cancel' size={24} color='red' />
+            </Pressable>
             <CardTitle>Collect Cash</CardTitle>
             <Text style={styles.cashInstructions}>
               Please collect ${amountToPay} from the customer.
@@ -159,8 +200,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   inputsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingVertical: 10,
   },
   inputContainer: {
@@ -168,28 +209,28 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   buttonsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 10,
   },
   paymentButton: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 12,
     borderRadius: 6,
     marginHorizontal: 5,
   },
   cardButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: '#4CAF50',
   },
   cashButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: '#4CAF50',
   },
   buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
     fontSize: 14,
   },
   buttonIcon: {
@@ -214,8 +255,8 @@ const styles = StyleSheet.create({
   },
   cashInstructions: {
     padding: 10,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 10,
     fontSize: 16,
-  }
+  },
 });

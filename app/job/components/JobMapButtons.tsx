@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { Text } from '@/components/Themed';
 import { getApps } from 'react-native-map-link';
 import geocodeAddress from '@/utils/geocode';
@@ -12,23 +18,23 @@ type Props = {
 export default function JobMapButtons({ job }: Props) {
   const [loading, setLoading] = useState(true);
   const [mapApps, setMapApps] = useState<any[]>([]);
-  
+
   useEffect(() => {
     async function loadMapOptions() {
       try {
         setLoading(true);
-        
+
         if (!job.Address) {
           setLoading(false);
           return;
         }
-        
+
         // Construct address string for geocoding
         const addressString = `${job.Address.address_1} ${job.Address.city}, ${job.Address.state} ${job.Address.zipcode}`;
-        
+
         // Get coordinates from address
         const location = await geocodeAddress(addressString);
-        
+
         if (location && location.lat && location.lng) {
           // Get available map apps
           const apps = await getApps({
@@ -40,7 +46,7 @@ export default function JobMapButtons({ job }: Props) {
             appsWhiteList: ['google-maps', 'apple-maps'],
             directionsMode: 'driving',
           });
-          
+
           setMapApps(apps);
         }
       } catch (error) {
@@ -49,19 +55,19 @@ export default function JobMapButtons({ job }: Props) {
         setLoading(false);
       }
     }
-    
+
     loadMapOptions();
   }, [job]);
-  
+
   if (loading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="small" color="#0a7ea4" />
+        <ActivityIndicator size='small' color='#0a7ea4' />
         <Text style={styles.loadingText}>Loading navigation options...</Text>
       </View>
     );
   }
-  
+
   if (mapApps.length === 0) {
     return (
       <View style={styles.container}>
@@ -69,14 +75,16 @@ export default function JobMapButtons({ job }: Props) {
       </View>
     );
   }
-  
+
   return (
     <View style={styles.container}>
-      <Text type="subtitle" style={styles.title}>Navigate to Job</Text>
+      <Text type='subtitle' style={styles.title}>
+        Navigate to Job
+      </Text>
       <View style={styles.buttonsContainer}>
         {mapApps.map((app) => (
-          <TouchableOpacity 
-            key={app.id} 
+          <TouchableOpacity
+            key={app.id}
             style={styles.appButton}
             onPress={app.open}
           >

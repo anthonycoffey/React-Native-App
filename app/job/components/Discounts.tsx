@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import { centsToDollars } from "@/utils/money";
-import { Discount, Job } from "@/types";
-import globalStyles from "@/styles/globalStyles";
-import { CardTitle } from "@/components/Typography";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { centsToDollars } from '@/utils/money';
+import { Discount, Job } from '@/types';
+import globalStyles from '@/styles/globalStyles';
+import { CardTitle } from '@/components/Typography';
 
 type Props = {
   job: Job;
@@ -36,7 +36,7 @@ export default function Discounts({ job }: Props) {
       <Text style={styles.totalText}>
         Total: {centsToDollars(+discountsTotal)}
       </Text>
-      
+
       {job.Discounts && job.Discounts.length > 0 ? (
         <FlatList
           data={job.Discounts}
@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   totalText: {
-    textAlign: "right",
-    fontWeight: "bold",
+    textAlign: 'right',
+    fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 10,
   },
@@ -72,11 +72,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   discountItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: '#eee',
   },
   discountReason: {
     fontSize: 16,
@@ -84,12 +84,12 @@ const styles = StyleSheet.create({
   },
   discountAmount: {
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   emptyText: {
     textAlign: 'center',
     padding: 10,
     color: '#666',
     fontStyle: 'italic',
-  }
+  },
 });

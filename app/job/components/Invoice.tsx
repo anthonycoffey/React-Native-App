@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
-import { centsToDollars } from "@/utils/money";
-import api from "@/utils/api";
-import { Invoice, Job, AxiosResponse } from "@/types";
-import globalStyles from "@/styles/globalStyles";
-import { CardTitle } from "@/components/Typography";
-import Chip from "@/components/Chip";
-import { PrimaryButton } from "@/components/Buttons";
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { centsToDollars } from '@/utils/money';
+import api from '@/utils/api';
+import { Invoice, Job, AxiosResponse } from '@/types';
+import globalStyles from '@/styles/globalStyles';
+import { CardTitle } from '@/components/Typography';
+import Chip from '@/components/Chip';
+import { PrimaryButton } from '@/components/Buttons';
 
 interface Props {
   job: Job;
@@ -15,7 +15,7 @@ interface Props {
 
 export default function InvoiceComponent({ job, fetchJob }: Props) {
   const hasActiveInvoice = job.Invoices?.some((invoice: Invoice) =>
-    ["pending", "partially-paid", "sent"].includes(invoice.status),
+    ['pending', 'partially-paid', 'sent'].includes(invoice.status)
   );
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -39,16 +39,16 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
 
   const regenerateInvoice = () => {
     Alert.alert(
-      "Regenerate Invoice?",
-      "Please note, previous invoice will be voided and a new invoice will be generated.",
+      'Regenerate Invoice?',
+      '⚠️ WARNING ⚠️\n\nPrevious invoice will be voided and a new invoice will be generated.',
       [
         {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel",
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
         },
-        { text: "OK", onPress: () => generateInvoice() },
-      ],
+        { text: 'OK', onPress: () => generateInvoice() },
+      ]
     );
   };
 
@@ -57,37 +57,36 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       <CardTitle>Invoice</CardTitle>
 
       {job.Invoices?.filter(
-        (invoice: Invoice) => invoice.status === "pending",
+        (invoice: Invoice) => invoice.status === 'pending'
       ).map((invoice: Invoice) => (
-        <View
-          key={invoice.id}
-          style={styles.invoiceRow}
-        >
-          <Text style={styles.invoiceId}>
-            #{invoice.id}
+        <View key={invoice.id} style={styles.invoiceRow}>
+          <Text style={styles.invoiceId}>#{invoice.id}</Text>
+          <Text style={styles.invoiceTotal}>
+            {centsToDollars(invoice.total)}
           </Text>
-          <Text style={styles.invoiceTotal}>{centsToDollars(invoice.total)}</Text>
           <Chip>{invoice.status}</Chip>
         </View>
       ))}
 
       {!hasActiveInvoice && (
-        <PrimaryButton 
-          title="Generate Invoice"
-          onPress={generateInvoice} 
+        <PrimaryButton
+          title='Generate Invoice'
+          onPress={generateInvoice}
           style={styles.button}
         />
       )}
 
       {!loading && hasActiveInvoice && (
-        <PrimaryButton 
-          title="Regenerate"
-          onPress={regenerateInvoice} 
+        <PrimaryButton
+          title='Regenerate'
+          onPress={regenerateInvoice}
           style={styles.button}
         />
       )}
 
-      {loading && <ActivityIndicator size="small" color="#0a7ea4" style={styles.loader} />}
+      {loading && (
+        <ActivityIndicator size='small' color='#0a7ea4' style={styles.loader} />
+      )}
     </View>
   );
 }
@@ -126,5 +125,5 @@ const styles = StyleSheet.create({
   loader: {
     marginTop: 10,
     alignSelf: 'center',
-  }
+  },
 });

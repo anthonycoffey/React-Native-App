@@ -1,12 +1,12 @@
-import React from "react";
-import PaymentForm from "./PaymentForm";
-import api, { responseDebug } from "@/utils/api";
-import { dollarsToCents } from "@/utils/money";
-import { AxiosResponse, AxiosError } from "@/types";
+import React from 'react';
+import PaymentForm from './PaymentForm';
+import api, { responseDebug } from '@/utils/api';
+import { dollarsToCents } from '@/utils/money';
+import { AxiosResponse, AxiosError } from '@/types';
 
 type Props = {
   jobId: number;
-  paymentType: "cash" | "card";
+  paymentType: 'cash' | 'card';
   amountToPay: number;
   tipAmount: number;
   fetchJob: () => void;
@@ -37,7 +37,7 @@ export default function PaymentDialog({
     try {
       api
         .post(`/jobs/${jobId}/payments`, {
-          type: "card",
+          type: 'card',
           amount: dollarsToCents(amountToPay),
           tip: dollarsToCents(tipAmount),
           opaqueData,
@@ -53,7 +53,7 @@ export default function PaymentDialog({
         });
     } catch (error) {
       console.log({ error });
-      console.log("Failed to create payment");
+      console.log('Failed to create payment');
     }
   };
 
@@ -62,7 +62,7 @@ export default function PaymentDialog({
     try {
       api
         .post(`/jobs/${jobId}/payments`, {
-          type: "cash",
+          type: 'cash',
           amount: dollarsToCents(amountToPay),
           tip: dollarsToCents(tipAmount),
         })
@@ -76,14 +76,14 @@ export default function PaymentDialog({
           responseDebug(error);
         });
     } catch {
-      console.log("Failed to create payment");
+      console.log('Failed to create payment');
     } finally {
     }
   };
 
   return (
     <>
-      {paymentType == "card" && (
+      {paymentType == 'card' && (
         <PaymentForm
           paymentType={paymentType}
           buttonText={`Charge $${amountToPay + tipAmount}`}
@@ -91,7 +91,7 @@ export default function PaymentDialog({
         />
       )}
 
-      {paymentType == "cash" && (
+      {paymentType == 'cash' && (
         <PaymentForm
           paymentType={paymentType}
           buttonText={`Collect $${amountToPay + tipAmount}`}

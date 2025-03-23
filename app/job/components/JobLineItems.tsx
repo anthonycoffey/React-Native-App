@@ -1,15 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Alert, TouchableOpacity, Modal, ScrollView, FlatList } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import DropDownPicker from "react-native-dropdown-picker";
-import { centsToDollars } from "@/utils/money";
-import api from "@/utils/api";
-import { prettyPrint } from "@/utils/objects";
-import globalStyles from "@/styles/globalStyles";
-import { CardTitle, LabelText } from "@/components/Typography";
-import CurrencyInput from "@/app/job/components/invoice/CurrencyInput";
-import { SecondaryButton, OutlinedButton, PrimaryButton } from "@/components/Buttons";
-import { Job, JobLineItems as JobLineItemsType, AxiosResponse, AxiosError, Service } from "@/types";
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  Modal,
+} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { centsToDollars } from '@/utils/money';
+import api from '@/utils/api';
+import { prettyPrint } from '@/utils/objects';
+import globalStyles from '@/styles/globalStyles';
+import { CardTitle } from '@/components/Typography';
+import CurrencyInput from '@/app/job/components/invoice/CurrencyInput';
+import {
+  SecondaryButton,
+  OutlinedButton,
+  PrimaryButton,
+} from '@/components/Buttons';
+import {
+  Job,
+  JobLineItems as JobLineItemsType,
+  AxiosResponse,
+  AxiosError,
+  Service,
+} from '@/types';
 
 type Props = {
   job: Job;
@@ -22,21 +39,25 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   const [edit, setEdit] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
-  const [valuePrice, setValuePrice] = useState<string>("0.00");
+  const [selectedServiceId, setSelectedServiceId] = useState<number | null>(
+    null
+  );
+  const [valuePrice, setValuePrice] = useState<string>('0.00');
 
   useEffect(() => {
     if (selectedServiceId) {
-      const selectedService = services.find(service => service.id === selectedServiceId);
+      const selectedService = services.find(
+        (service) => service.id === selectedServiceId
+      );
       if (selectedService) {
-        setValuePrice(centsToDollars(selectedService.price, "numeric"));
+        setValuePrice(centsToDollars(selectedService.price, 'numeric'));
       }
     }
   }, [selectedServiceId, services]);
 
   useEffect(() => {
     const fetchServices = async () => {
-      const response = await api.get("/services?limit=all");
+      const response = await api.get('/services?limit=all');
       const { data: x } = response;
       const { data } = x;
       setServices(data);
@@ -51,7 +72,9 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
 
   const addLineItem = () => {
     if (selectedServiceId) {
-      const selectedService = services.find(service => service.id === selectedServiceId);
+      const selectedService = services.find(
+        (service) => service.id === selectedServiceId
+      );
       if (selectedService) {
         const newLineItemPrice = parseInt(+valuePrice * 100);
 
@@ -78,16 +101,16 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
 
   const deleteLineItem = (item: JobLineItemsType) => {
     Alert.alert(
-      "Delete Line Item",
-      "Are you sure you want to delete this line item?",
+      'Delete Line Item',
+      '⚠️ WARNING ⚠️\n\n Are you sure you want to delete this line item?',
       [
         {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel",
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
         },
         {
-          text: "OK",
+          text: 'OK',
           onPress: () => {
             api
               .delete(`/jobs/${job.id}/line-items/${item.id}`)
@@ -101,32 +124,30 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           },
         },
       ],
-      { cancelable: false },
+      { cancelable: false }
     );
   };
 
   const resetForm = () => {
-    setValuePrice("0.00");
+    setValuePrice('0.00');
     setSelectedServiceId(null);
   };
 
   const renderItem = ({ item }: { item: JobLineItemsType }) => {
     if (!item || !item.Service) return null;
-    
+
     return (
       <View style={styles.lineItem}>
-        <Text style={styles.serviceName} numberOfLines={1} ellipsizeMode="tail">
+        <Text style={styles.serviceName} numberOfLines={1} ellipsizeMode='tail'>
           {item.Service.name}
         </Text>
-        <Text style={styles.price}>
-          {centsToDollars(+item.price)}
-        </Text>
+        <Text style={styles.price}>{centsToDollars(+item.price)}</Text>
         {edit && (
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => deleteLineItem(item)}
           >
-            <MaterialIcons name="delete" size={24} color="#d32f2f" />
+            <MaterialIcons name='delete' size={24} color='#d32f2f' />
           </TouchableOpacity>
         )}
       </View>
@@ -136,23 +157,25 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   return (
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Services</CardTitle>
-      
+
       {job.JobLineItems && job.JobLineItems.length > 0 ? (
-        job.JobLineItems.map(item => 
+        job.JobLineItems.map((item) =>
           item && item.Service ? (
             <View key={item.id.toString()} style={styles.lineItem}>
-              <Text style={styles.serviceName} numberOfLines={1} ellipsizeMode="tail">
+              <Text
+                style={styles.serviceName}
+                numberOfLines={1}
+                ellipsizeMode='tail'
+              >
                 {item.Service.name}
               </Text>
-              <Text style={styles.price}>
-                {centsToDollars(+item.price)}
-              </Text>
+              <Text style={styles.price}>{centsToDollars(+item.price)}</Text>
               {edit && (
                 <TouchableOpacity
                   style={styles.deleteButton}
                   onPress={() => deleteLineItem(item)}
                 >
-                  <MaterialIcons name="delete" size={24} color="#d32f2f" />
+                  <MaterialIcons name='delete' size={24} color='#d32f2f' />
                 </TouchableOpacity>
               )}
             </View>
@@ -161,41 +184,41 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       ) : (
         <Text style={styles.emptyText}>No services added yet.</Text>
       )}
-      
+
       {edit ? (
         <View style={styles.editButtons}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.addButton}
             onPress={() => setShowModal(true)}
           >
-            <MaterialIcons name="add-circle" size={24} color="#0a7ea4" />
+            <MaterialIcons name='add-circle' size={24} color='#0a7ea4' />
             <Text style={styles.addButtonText}>Add Service</Text>
           </TouchableOpacity>
-          
+
           <SecondaryButton
-            title="Done Editing"
+            title='Done Editing'
             onPress={() => setEdit(false)}
             style={styles.doneButton}
           />
         </View>
       ) : (
         <PrimaryButton
-          title="Edit"
+          title='Edit'
           onPress={() => setEdit(true)}
           style={styles.editButton}
         />
       )}
-      
+
       <Modal
         visible={showModal}
-        animationType="fade"
+        animationType='fade'
         transparent={true}
         onRequestClose={() => setShowModal(false)}
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
             <CardTitle>Add Line Item</CardTitle>
-            
+
             <View style={styles.formContainer}>
               <Text style={globalStyles.label}>Service</Text>
               <DropDownPicker
@@ -205,29 +228,29 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                 setOpen={setDropdownOpen}
                 setValue={setSelectedServiceId}
                 setItems={setServicesItems}
-                placeholder="Choose a service..."
+                placeholder='Choose a service...'
                 style={styles.dropdown}
                 dropDownContainerStyle={styles.dropdownContainer}
               />
-              
+
               <View style={styles.spacer} />
-              
+
               <CurrencyInput
-                label="Price ($USD)"
+                label='Price ($USD)'
                 value={valuePrice}
                 onChangeText={setValuePrice}
                 editable={true}
               />
             </View>
-            
+
             <View style={styles.modalButtons}>
               <SecondaryButton
-                title="Save"
+                title='Save'
                 onPress={addLineItem}
                 style={styles.modalButton}
               />
               <OutlinedButton
-                title="Cancel"
+                title='Cancel'
                 onPress={() => {
                   setShowModal(false);
                   resetForm();

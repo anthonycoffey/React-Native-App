@@ -5,7 +5,7 @@ import globalStyles from '@/styles/globalStyles';
 import { router } from 'expo-router';
 import { AxiosError, Job } from '@/types';
 import JobHeader from '@/app/job/components/JobHeader';
-import { HeaderText, LabelText } from '@/components/Typography';
+import { ErrorText, HeaderText } from '@/components/Typography';
 import {
   OutlinedButton,
   PrimaryButton,
@@ -70,7 +70,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
   const handleQuitJob = () => {
     Alert.alert(
       'Quit Job?',
-      'If you select OK, you will no longer be assigned to this job.\n\n⚠️ WARNING ⚠️\n THIS ACTION CANNOT BE UNDONE.',
+      '⚠️ WARNING ⚠️\n\n If you select OK, you will no longer be assigned to this job.\n\n⚠️ WARNING ⚠️\n THIS ACTION CANNOT BE UNDONE.',
       [
         {
           text: 'Cancel',
@@ -89,9 +89,9 @@ export default function JobStatus({ job, fetchJob }: Props) {
       {job.status === 'in-progress' &&
         (!job.Invoices || job.Invoices.length === 0) && (
           <View style={[styles.infoAlert, styles.marginTop]}>
-            <LabelText>
+            <ErrorText>
               You must generate an invoice before finishing a job.
-            </LabelText>
+            </ErrorText>
           </View>
         )}
 
@@ -99,9 +99,9 @@ export default function JobStatus({ job, fetchJob }: Props) {
         (job.Invoices ?? []).length > 0 &&
         job.paymentStatus !== 'paid' && (
           <View style={[styles.infoAlert, styles.marginTop]}>
-            <LabelText>
+            <ErrorText>
               You must accept payment before finishing a job.
-            </LabelText>
+            </ErrorText>
           </View>
         )}
 
@@ -227,8 +227,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   infoAlert: {
-    backgroundColor: '#e0f7fa',
-    padding: 10,
+    borderWidth: 1,
+    borderColor: 'red',
+    backgroundColor: '#c29c9c9',
+    padding: 0,
     borderRadius: 5,
   },
 });
