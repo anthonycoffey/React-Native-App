@@ -1,4 +1,4 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { MaterialIcons } from '@expo/vector-icons';
 import {
   DarkTheme,
   DefaultTheme,
@@ -23,7 +23,6 @@ export default function RootLayout() {
 
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
   });
 
   useEffect(() => {

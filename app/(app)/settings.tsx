@@ -1,10 +1,9 @@
 import React from 'react';
-import { Platform, StatusBar, View, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { View } from 'react-native';
 import { router } from 'expo-router';
-import { Text } from '@/components/Themed';
 import { OutlinedButton } from '@/components/Buttons';
 import { useAuth } from '@/contexts/AuthContext';
+import globalStyles from '@/styles/globalStyles';
 
 export default function UserSettingsPage() {
   const { signOut } = useAuth();
@@ -19,29 +18,20 @@ export default function UserSettingsPage() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
+    <View style={globalStyles.container}>
+      <View style={{
+        flex: 1,
+        backgroundColor: '#fff',
+        justifyContent: 'space-between',
+        paddingTop: 20,
+        paddingBottom: 20,
+      }}>
         <OutlinedButton
           title='Log Out'
+          variant='error'
           onPress={handleLogout}
         />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
-    paddingHorizontal: 16,
-  },
-  headerText: {
-    marginLeft: 12,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'space-between',
-    paddingBottom: 20,
-  },
-});

@@ -5,8 +5,8 @@ import { router } from 'expo-router';
 
 // Define the AuthContextType
 type AuthContextType = {
-  signIn: (token: string) => void;
-  signOut: () => void;
+  signIn: (token: string) => Promise<void>;
+  signOut: () => Promise<void>;
   session: string | null;
   isLoading: boolean;
 };
@@ -69,13 +69,13 @@ export function AuthProvider(props: React.PropsWithChildren) {
   }, [session]);
 
   // Auth context value
-  const signIn = (token: string) => {
-    setSession(token);
+  const signIn = async (token: string) => {
+    await setSession(token);
     router.push('/(app)');
   };
 
-  const signOut = () => {
-    setSession(null);
+  const signOut = async () => {
+    await setSession(null);
     router.push('/login');
   };
   

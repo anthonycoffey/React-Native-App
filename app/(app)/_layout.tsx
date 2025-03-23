@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Link, Tabs, useRouter, Redirect } from 'expo-router';
 import { Pressable, ActivityIndicator, View } from 'react-native';
 
@@ -7,31 +7,39 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useAuth } from '@/contexts/AuthContext';
+import globalStyles from '@/styles/globalStyles';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+  name: React.ComponentProps<typeof MaterialIcons>['name'];
   color: string;
 }) {
-  return <FontAwesome size={24} style={{ marginBottom: -3 }} {...props} />;
+  return <MaterialIcons size={24} style={{ marginBottom: -3 }} {...props} />;
 }
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { session, isLoading } = useAuth();
   const router = useRouter();
+  const headerShown = useClientOnlyValue(false, true);
 
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoading && !session) {
-      router.replace('/login');
+      // Use setTimeout with 0ms to push this to the end of the execution queue
+      // This gives time for any auth state changes to fully propagate
+      const redirectTimeout = setTimeout(() => {
+        router.replace('/login');
+      }, 0);
+      
+      return () => clearTimeout(redirectTimeout);
     }
   }, [session, isLoading, router]);
 
   // Show loading spinner while checking auth
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={globalStyles.loadingContainer}>
         <ActivityIndicator size="large" color="#0a7ea4" />
       </View>
     );
@@ -47,8 +55,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: headerShown,
       }}>
       <Tabs.Screen
         name="index"
@@ -59,8 +66,8 @@ export default function TabLayout() {
             <Link href="/newJob" asChild>
               <Pressable>
                 {({ pressed }) => (
-                  <FontAwesome
-                    name="plus-circle"
+                  <MaterialIcons
+                    name="add-circle"
                     size={25}
                     color={Colors[colorScheme ?? 'light'].tint}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
@@ -75,14 +82,14 @@ export default function TabLayout() {
         name="go-online"
         options={{
           title: 'Go Online',
-          tabBarIcon: ({ color }) => <TabBarIcon name="wifi" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="location-on" color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color }) => <TabBarIcon name="gear" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="settings" color={color} />,
         }}
       />
     </Tabs>

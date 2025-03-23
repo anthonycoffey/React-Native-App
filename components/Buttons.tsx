@@ -1,21 +1,28 @@
-import { TouchableOpacity, Text, StyleSheet, TouchableOpacityProps } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  TouchableOpacityProps,
+} from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from './useColorScheme';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   onPress: () => void;
+  variant?: 'error' | 'warning' | 'success';
 }
 
 // Primary Button
-export const PrimaryButton = ({ title, onPress, style, ...props }: ButtonProps) => {
+export const PrimaryButton = ({
+  title,
+  onPress,
+  style,
+  ...props
+}: ButtonProps) => {
   return (
-    <TouchableOpacity 
-      style={[
-        styles.button, 
-        styles.primaryButton, 
-        style
-      ]} 
+    <TouchableOpacity
+      style={[styles.button, styles.primaryButton, style]}
       onPress={onPress}
       {...props}
     >
@@ -25,14 +32,15 @@ export const PrimaryButton = ({ title, onPress, style, ...props }: ButtonProps) 
 };
 
 // Secondary Button
-export const SecondaryButton = ({ title, onPress, style, ...props }: ButtonProps) => {
+export const SecondaryButton = ({
+  title,
+  onPress,
+  style,
+  ...props
+}: ButtonProps) => {
   return (
-    <TouchableOpacity 
-      style={[
-        styles.button, 
-        styles.secondaryButton, 
-        style
-      ]} 
+    <TouchableOpacity
+      style={[styles.button, styles.secondaryButton, style]}
       onPress={onPress}
       {...props}
     >
@@ -42,35 +50,53 @@ export const SecondaryButton = ({ title, onPress, style, ...props }: ButtonProps
 };
 
 // Outline Button
-export const OutlinedButton = ({ title, onPress, style, ...props }: ButtonProps) => {
+export const OutlinedButton = ({
+  title,
+  onPress,
+  style,
+  variant,
+  ...props
+}: ButtonProps) => {
   const colorScheme = useColorScheme();
-  const textColor = colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
-  
+  const defaultTextColor =
+    colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
+
+  const variantColors = {
+    error: '#e53935',
+    warning: '#fbc02d',
+    success: '#43a047',
+  };
+
+  const textColor = variant ? variantColors[variant] : defaultTextColor;
+
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[
-        styles.button, 
-        styles.outlinedButton, 
+        styles.button,
+        styles.outlinedButton,
         { borderColor: textColor },
-        style
-      ]} 
+        style,
+      ]}
       onPress={onPress}
       {...props}
     >
-      <Text style={[styles.outlinedButtonText, { color: textColor }]}>{title}</Text>
+      <Text style={[styles.outlinedButtonText, { color: textColor }]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
 
 // Warning Button
-export const WarningButton = ({ title, onPress, style, ...props }: ButtonProps) => {
+export const WarningButton = ({
+  title,
+  onPress,
+  style,
+  ...props
+}: ButtonProps) => {
   return (
-    <TouchableOpacity 
-      style={[
-        styles.button, 
-        styles.warningButton, 
-        style
-      ]} 
+    <TouchableOpacity
+      style={[styles.button, styles.warningButton, style]}
       onPress={onPress}
       {...props}
     >
@@ -119,5 +145,5 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
     fontSize: 16,
-  }
+  },
 });

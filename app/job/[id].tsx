@@ -1,17 +1,29 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { KeyboardAvoidingView, Platform, ActivityIndicator, ScrollView, View, StyleSheet } from "react-native";
-import { useLocalSearchParams } from "expo-router";
-import api from "@/utils/api";
-import { Job, AxiosResponse, AxiosError } from "@/types";
-import { View as ThemedView, Text } from "@/components/Themed";
-import JobMapButtons from "./components/JobMapButtons";
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+  View,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import api from '@/utils/api';
+import { Job, AxiosResponse, AxiosError } from '@/types';
+import JobStatus from './components/JobStatus';
+import Invoice from './components/Invoice';
+import JobDetailsAndMapButtons from './components/JobDetailsAndMapButtons';
+import JobActivityLog from './components/JobActivityLog';
+import JobLineItems from './components/JobLineItems';
+import ArrivalTime from './components/ArrivalTime';
+import { TakePayment } from './components/TakePayment';
 
 function LoadingSpinner(props: { loading: boolean }) {
   return (
     <>
       {props.loading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0a7ea4" />
+          <ActivityIndicator size='large' color='#0a7ea4' />
         </View>
       )}
     </>
@@ -23,7 +35,6 @@ export default function JobPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [job, setJob] = useState<Job | false>(false);
 
-  // Define fetchJob with useCallback so it can be included in dependency array
   const fetchJob = useCallback(() => {
     setLoading(true);
     api
@@ -37,7 +48,7 @@ export default function JobPage() {
       })
       .finally(() => setLoading(false));
   }, [id]);
-  
+
   useEffect(() => {
     fetchJob();
   }, [fetchJob]);
@@ -45,37 +56,28 @@ export default function JobPage() {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <LoadingSpinner loading={loading} />
       <ScrollView 
-        style={styles.container}
+        style={styles.scrollContainer}
         contentContainerStyle={styles.contentContainer}
+        nestedScrollEnabled={true}
       >
         {job && (
-          <ThemedView style={styles.card}>
-            <Text type="title">Job #{job.id}</Text>
-            <Text type="subtitle" style={styles.marginTop}>Customer</Text>
-            <Text>{job.Customer?.fullName}</Text>
-            <Text>{job.Customer?.email}</Text>
-            
-            <Text type="subtitle" style={styles.marginTop}>Address</Text>
-            <Text>{job.Address.address_1}</Text>
-            <Text>{job.Address.city}, {job.Address.state} {job.Address.zipcode}</Text>
-            
-            <Text type="subtitle" style={styles.marginTop}>Vehicle</Text>
-            <Text>{job.Car.year} {job.Car.make} {job.Car.model}</Text>
-            <Text>Color: {job.Car.color}</Text>
-            <Text>Plate: {job.Car.plate}</Text>
-            
-            <Text type="subtitle" style={styles.marginTop}>Status</Text>
-            <Text>{job.status.toUpperCase()}</Text>
-            
-            <Text type="subtitle" style={styles.marginTop}>Payment</Text>
-            <Text>{job.paymentStatus.toUpperCase()}</Text>
-            
-            <JobMapButtons job={job} />
-          </ThemedView>
+          <>
+            <JobStatus job={job} fetchJob={fetchJob} />
+            <JobDetailsAndMapButtons job={job} fetchJob={fetchJob} />
+            <ArrivalTime
+              timestamp={job.arrivalTime}
+              jobId={job.id}
+              fetchJob={fetchJob}
+            />
+            <JobLineItems job={job} fetchJob={fetchJob} />
+            <Invoice job={job} fetchJob={fetchJob} />
+            <TakePayment job={job} fetchJob={fetchJob} />
+            <JobActivityLog job={job} />
+          </>
         )}
       </ScrollView>
     </KeyboardAvoidingView>
@@ -83,28 +85,16 @@ export default function JobPage() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollContainer: {
     flex: 1,
   },
   contentContainer: {
-    padding: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 16,
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  card: {
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  marginTop: {
-    marginTop: 16,
-  }
 });

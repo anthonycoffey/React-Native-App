@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
   View,
   TextInput,
   TouchableOpacity,
@@ -12,11 +11,12 @@ import {
   ActivityIndicator,
   Text as RNText,
 } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/utils/api';
 import { Text } from '@/components/Themed';
 import { PrimaryButton } from '@/components/Buttons';
+import globalStyles from '@/styles/globalStyles';
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
@@ -55,7 +55,7 @@ export default function LoginScreen() {
       });
       
       if (response.data?.token) {
-        signIn(response.data.token);
+        await signIn(response.data.token);
       } else {
         throw new Error('Invalid response format');
       }
@@ -87,21 +87,21 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
+      style={loginStyles.container}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.innerContainer}>
-          <View style={styles.logoContainer}>
-            <Image style={styles.logo} source={require('../assets/icon.png')} />
+        <View style={loginStyles.innerContainer}>
+          <View style={loginStyles.logoContainer}>
+            <Image style={loginStyles.logo} source={require('../assets/icon.png')} />
           </View>
 
-          <Text type='title' style={styles.title}>
+          <Text type='title' style={[globalStyles.title, loginStyles.title]}>
             Login
           </Text>
 
-          <View style={styles.inputContainer}>
+          <View style={globalStyles.inputContainer}>
             <TextInput
-              style={styles.input}
+              style={globalStyles.formInput}
               placeholder='Email'
               value={email}
               onChangeText={setEmail}
@@ -111,9 +111,9 @@ export default function LoginScreen() {
             />
           </View>
 
-          <View style={styles.inputContainer}>
+          <View style={globalStyles.inputContainer}>
             <TextInput
-              style={styles.passwordInput}
+              style={globalStyles.passwordInput}
               placeholder='Password'
               secureTextEntry={!isVisible}
               value={password}
@@ -121,9 +121,9 @@ export default function LoginScreen() {
               autoCapitalize='none'
               autoCorrect={false}
             />
-            <TouchableOpacity onPress={toggleVisibility} style={styles.eyeIcon}>
-              <Feather
-                name={isVisible ? 'eye-off' : 'eye'}
+            <TouchableOpacity onPress={toggleVisibility} style={globalStyles.eyeIcon}>
+              <MaterialIcons
+                name={isVisible ? 'visibility-off' : 'visibility'}
                 size={20}
                 color='#666'
               />
@@ -131,8 +131,8 @@ export default function LoginScreen() {
           </View>
 
           {error && (
-            <View style={styles.errorContainer}>
-              <RNText style={styles.errorText}>{error}</RNText>
+            <View style={globalStyles.errorContainer}>
+              <RNText style={globalStyles.errorText}>{error}</RNText>
             </View>
           )}
 
@@ -140,7 +140,7 @@ export default function LoginScreen() {
             title={isLoading ? '' : 'Login'}
             onPress={handleSubmit}
             disabled={isLoading}
-            style={styles.loginButton}
+            style={loginStyles.loginButton}
           >
             {isLoading && <ActivityIndicator color='#fff' />}
           </PrimaryButton>
@@ -150,7 +150,8 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Keep only unique login-specific styles
+const loginStyles = {
   container: {
     flex: 1,
     backgroundColor: '#252d3a',
@@ -170,49 +171,9 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
     color: '#fff',
-  },
-  inputContainer: {
-    marginBottom: 16,
-    position: 'relative',
-  },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    backgroundColor: '#fff',
-  },
-  passwordInput: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    backgroundColor: '#fff',
-    paddingRight: 50,
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 15,
-    top: 15,
   },
   loginButton: {
     marginTop: 10,
   },
-  errorContainer: {
-    backgroundColor: '#ffebee',
-    padding: 10,
-    borderRadius: 4,
-    marginBottom: 15,
-  },
-  errorText: {
-    color: '#d32f2f',
-    textAlign: 'center',
-  },
-});
+};

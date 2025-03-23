@@ -73,7 +73,7 @@ export default function useLocation(skipRedirect = false) {
       locationSubscriptionRef.current = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.Balanced,
-          timeInterval: 30000, // Update every 30 seconds
+          timeInterval: 1000 * 60 * 3, // Update every 30 seconds
           distanceInterval: 100, // Or when moved 100 meters
         },
         (newLocation) => {

@@ -57,10 +57,15 @@ export function useStorageState(key: string): UseStateHook<string> {
 
   // Set
   const setValue = React.useCallback(
-    (value: string | null) => {
-      setStorageItemAsync(key, value).then(() => {
+    async (value: string | null) => {
+      try {
+        await setStorageItemAsync(key, value);
         setState(value);
-      });
+        return true; // Return success flag
+      } catch (error) {
+        console.error('Failed to set storage state:', error);
+        return false; // Return failure flag
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [key],

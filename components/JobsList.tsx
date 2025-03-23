@@ -6,7 +6,7 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import Chip from '@/components/Chip';
 import { formatDateTime, formatRelative } from '@/utils/dates';
@@ -15,7 +15,15 @@ import { Text, View as ThemedView } from '@/components/Themed';
 import globalStyles from '@/styles/globalStyles';
 
 type JobsListProps = {
-  jobs: Job[] | [];
+  jobs: {
+    data: Job[];
+    meta?: {
+      currentPage: number;
+      lastPage: number;
+      limit: number;
+      total: number;
+    };
+  } | Job[] | [];
   fetchJobs: () => void;
   loading?: boolean;
 };
@@ -42,6 +50,18 @@ export default function JobsList({
   loading = false,
 }: JobsListProps) {
   const [refreshing, setRefreshing] = useState(false);
+  
+  console.log('JobsList', jobs);
+  
+  // Process jobs data to handle different formats
+  const jobsData = React.useMemo(() => {
+    if (!jobs) return [];
+    if (Array.isArray(jobs)) return jobs;
+    if ('data' in jobs && Array.isArray(jobs.data)) return jobs.data;
+    return [];
+  }, [jobs]);
+  
+  const isEmpty = jobsData.length === 0;
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -66,9 +86,12 @@ export default function JobsList({
     <FlatList
       refreshing={refreshing}
       onRefresh={onRefresh}
-      data={jobs}
-      ListEmptyComponent={ListEmptyComponent}
-      contentContainerStyle={styles.listContainer}
+      data={jobsData}
+      ListEmptyComponent={isEmpty ? ListEmptyComponent : null}
+      contentContainerStyle={[
+        styles.listContainer,
+        isEmpty && styles.emptyListContainer
+      ]}
       renderItem={({ item }) => {
         return (
           <ThemedView style={styles.card}>
@@ -84,8 +107,8 @@ export default function JobsList({
             >
               <View style={styles.cardHeader}>
                 <View style={styles.row}>
-                  <Feather
-                    name='user'
+                  <MaterialIcons
+                    name='person'
                     size={18}
                     color='#687076'
                     style={styles.icon}
@@ -97,8 +120,8 @@ export default function JobsList({
 
               <View style={styles.cardContent}>
                 <View style={styles.row}>
-                  <Feather
-                    name='clock'
+                  <MaterialIcons
+                    name='schedule'
                     size={18}
                     color='#687076'
                     style={styles.icon}
@@ -108,8 +131,8 @@ export default function JobsList({
                 </View>
 
                 <View style={styles.row}>
-                  <Feather
-                    name='calendar'
+                  <MaterialIcons
+                    name='event'
                     size={18}
                     color='#687076'
                     style={styles.icon}
@@ -119,8 +142,8 @@ export default function JobsList({
                 </View>
 
                 <View style={styles.row}>
-                  <Feather
-                    name='map-pin'
+                  <MaterialIcons
+                    name='location-pin'
                     size={18}
                     color='#687076'
                     style={styles.icon}
@@ -150,6 +173,10 @@ const styles = StyleSheet.create({
     padding: 16,
     flexGrow: 1,
     minHeight: 500,
+  },
+  emptyListContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingContainer: {
     flex: 1,
