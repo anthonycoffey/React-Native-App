@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TouchableOpacityProps,
 } from 'react-native';
-import Colors from '@/constants/Colors';
+import Colors, { buttonVariants, ui } from '@/constants/Colors';
 import { useColorScheme } from './useColorScheme';
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -12,15 +12,6 @@ interface ButtonProps extends TouchableOpacityProps {
   onPress: () => void;
   variant?: 'error' | 'warning' | 'success' | 'primary' | 'secondary';
 }
-
-// Shared variant colors
-const variantColors = {
-  error: '#e53935',
-  warning: '#fbc02d',
-  success: '#43a047',
-  primary: '#0a7ea4',
-  secondary: '#65b9d6',
-};
 
 // Primary Button
 export const PrimaryButton = ({
@@ -32,8 +23,8 @@ export const PrimaryButton = ({
   ...props
 }: ButtonProps & { disabled?: boolean }) => {
   const backgroundColor = variant
-    ? variantColors[variant]
-    : variantColors.primary;
+    ? buttonVariants[variant]
+    : buttonVariants.primary;
 
   return (
     <TouchableOpacity
@@ -70,8 +61,8 @@ export const SecondaryButton = ({
   ...props
 }: ButtonProps & { disabled?: boolean }) => {
   const backgroundColor = variant
-    ? variantColors[variant]
-    : variantColors.secondary;
+    ? buttonVariants[variant]
+    : buttonVariants.secondary;
 
   return (
     <TouchableOpacity
@@ -111,7 +102,7 @@ export const OutlinedButton = ({
   const defaultTextColor =
     colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
 
-  const textColor = variant ? variantColors[variant] : defaultTextColor;
+  const textColor = variant ? buttonVariants[variant] : defaultTextColor;
 
   return (
     <TouchableOpacity
@@ -149,8 +140,8 @@ export const WarningButton = ({
   ...props
 }: ButtonProps & { disabled?: boolean }) => {
   const backgroundColor = variant
-    ? variantColors[variant]
-    : variantColors.error;
+    ? buttonVariants[variant]
+    : buttonVariants.error;
 
   return (
     <TouchableOpacity
@@ -187,7 +178,7 @@ const styles = StyleSheet.create({
     minWidth: 120,
   },
   primaryButton: {
-    backgroundColor: '#0a7ea4',
+    backgroundColor: buttonVariants.primary,
   },
   primaryButtonText: {
     color: 'white',
@@ -195,7 +186,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   secondaryButton: {
-    backgroundColor: '#65b9d6',
+    backgroundColor: buttonVariants.secondary,
   },
   secondaryButtonText: {
     color: 'white',
@@ -211,7 +202,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   warningButton: {
-    backgroundColor: '#e53935',
+    backgroundColor: buttonVariants.error,
   },
   warningButtonText: {
     color: 'white',
@@ -219,9 +210,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   disabledButton: {
-    backgroundColor: '#d3d3d3',
+    backgroundColor: ui.disabled.background,
   },
   disabledButtonText: {
-    color: '#a9a9a9',
+    color: ui.disabled.text,
   },
 });

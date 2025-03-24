@@ -131,27 +131,6 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
     setSelectedServiceId(null);
   };
 
-  const renderItem = ({ item }: { item: JobLineItemsType }) => {
-    if (!item || !item.Service) return null;
-
-    return (
-      <View style={styles.lineItem}>
-        <Text style={styles.serviceName} numberOfLines={1} ellipsizeMode='tail'>
-          {item.Service.name}
-        </Text>
-        <Text style={styles.price}>{centsToDollars(+item.price)}</Text>
-        {edit && (
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => deleteLineItem(item)}
-          >
-            <MaterialIcons name='delete' size={24} color='#d32f2f' />
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  };
-
   return (
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Services</CardTitle>

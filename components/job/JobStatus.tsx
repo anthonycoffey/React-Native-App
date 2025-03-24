@@ -6,7 +6,6 @@ import { router } from 'expo-router';
 import { AxiosError, Job } from '@/types';
 import JobHeader from '@/components/job/JobHeader';
 import { ErrorText, HeaderText } from '@/components/Typography';
-import { View as ThemedView } from '@/components/Themed';
 
 import {
   OutlinedButton,

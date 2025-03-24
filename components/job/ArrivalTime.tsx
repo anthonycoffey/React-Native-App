@@ -37,10 +37,7 @@ export default function ArrivalTime({
   };
 
   const onChangeDate = (event: any, selectedDate: any) => {
-    const {
-      type,
-      nativeEvent: { timestamp, utcOffset },
-    } = event;
+    const { type } = event;
     if (type === 'set') {
       setUpdated(false);
       setDate(selectedDate.toISOString());

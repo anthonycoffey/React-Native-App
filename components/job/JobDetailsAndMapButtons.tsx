@@ -47,6 +47,7 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
         const result = await geocodeAddress(geoQry);
         setLocation(result);
       } catch (error) {
+        console.log('Geocoding error:', error);
         setLocation(null);
       }
     })();

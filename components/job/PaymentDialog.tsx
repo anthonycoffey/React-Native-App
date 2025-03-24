@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import CashPaymentForm from './CashPaymentForm';
 import api, { responseDebug } from '@/utils/api';
 import { dollarsToCents } from '@/utils/money';
-import { AxiosResponse, AxiosError } from '@/types';
+import { AxiosError } from '@/types';
 import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = {

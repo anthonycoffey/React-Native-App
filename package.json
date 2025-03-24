@@ -1,7 +1,8 @@
 {
-  "name": "gptnative",
+  "name": "phoenix-mobile",
   "main": "expo-router/entry",
   "version": "1.0.1",
+  "private": true,
   "scripts": {
     "start": "expo start",
     "prod": "expo start --no-dev",
@@ -69,6 +70,5 @@
     "prettier": "^3.3.3",
     "react-test-renderer": "18.3.1",
     "typescript": "~5.3.3"
-  },
-  "private": true
+  }
 }

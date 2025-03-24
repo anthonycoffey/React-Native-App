@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Link, Tabs, useRouter, Redirect } from 'expo-router';
-import { Pressable, ActivityIndicator, View } from 'react-native';
+import { Tabs, useRouter, Redirect } from 'expo-router';
+import { ActivityIndicator, View } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';

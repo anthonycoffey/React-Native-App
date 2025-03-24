@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { router } from 'expo-router';
-import { OutlinedButton, PrimaryButton } from '@/components/Buttons';
+import { PrimaryButton } from '@/components/Buttons';
 import { useAuth } from '@/contexts/AuthContext';
 import globalStyles from '@/styles/globalStyles';
 

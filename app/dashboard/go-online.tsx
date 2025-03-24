@@ -1,5 +1,4 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import useLocation from '@/hooks/useLocation';
