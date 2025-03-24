@@ -23,7 +23,6 @@ interface Props {
 }
 
 export default function InvoiceComponent({ job, fetchJob }: Props) {
-  console.log('InvoiceComponent job', job);
 
   const hasActiveInvoice = job.Invoices?.some((invoice: Invoice) =>
     ['pending', 'partially-paid', 'sent'].includes(invoice.status)
