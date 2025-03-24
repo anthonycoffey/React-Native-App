@@ -2,7 +2,7 @@ import React from "react";
 import { Text, StyleSheet } from "react-native";
 
 type Props = {
-  children: React.ReactNode;
+  children: string;
 };
 
 export default function Chip({ children }: Props) {

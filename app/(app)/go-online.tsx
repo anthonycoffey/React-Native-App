@@ -28,11 +28,8 @@ export default function GoOnlineScreen() {
     if (errorMsg) {
       return (
         <View style={globalStyles.centeredContent}>
-          <MaterialIcons name='alert-circle' size={50} color='#ff6b6b' />
-          <Text
-            type='title'
-            style={[globalStyles.statusTitle, { color: '#ff6b6b' }]}
-          >
+          <MaterialIcons name='gps-fixed' size={50} />
+          <Text type='title' style={globalStyles.statusTitle}>
             Location Error
           </Text>
           <Text style={globalStyles.subtitle}>{errorMsg}</Text>
@@ -48,7 +45,7 @@ export default function GoOnlineScreen() {
     if (!hasPermission) {
       return (
         <View style={globalStyles.centeredContent}>
-          <MaterialIcons name='map-pin' size={50} color='#ff9800' />
+          <MaterialIcons name='gps-fixed' size={50} color='#0a7ea4' style={{marginBottom: 10}}/>
           <Text type='title'>Location Access Required</Text>
           <Text style={globalStyles.subtitle}>
             To go online and receive job assignments, please enable location

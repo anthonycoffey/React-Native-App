@@ -16,7 +16,7 @@ import JobDetailsAndMapButtons from './components/JobDetailsAndMapButtons';
 import JobActivityLog from './components/JobActivityLog';
 import JobLineItems from './components/JobLineItems';
 import ArrivalTime from './components/ArrivalTime';
-import { TakePayment } from './components/TakePayment';
+import TakePayment from './components/TakePayment';
 
 function LoadingSpinner(props: { loading: boolean }) {
   return (

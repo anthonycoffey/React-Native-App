@@ -19,7 +19,7 @@ interface Props {
   fetchJob: () => void;
 }
 
-export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
+export default function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
   const [payWithCard, setPayWithCard] = useState<boolean>(false);
   const [payWithCash, setPayWithCash] = useState<boolean>(false);
   const [paymentType, setPaymentType] = useState<'cash' | 'card'>('card');

@@ -31,6 +31,7 @@ export interface Customer extends BaseEntity {
   firstName?: string;
   lastName?: string;
   email?: string;
+  defaultPhone?: {number: string};
   defaultPhoneId?: number;
   CustomerPhones?: CustomerPhone[];
 }
