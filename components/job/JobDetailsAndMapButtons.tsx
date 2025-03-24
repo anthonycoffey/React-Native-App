@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { getApps } from 'react-native-map-link';
-import CustomerInfo from '@/app/job/components/CustomerInfo';
+import CustomerInfo from '@/components/job/CustomerInfo';
 import { CardTitle } from '@/components/Typography';
 import globalStyles from '@/styles/globalStyles';
 import geocodeAddress from '@/utils/geocode';

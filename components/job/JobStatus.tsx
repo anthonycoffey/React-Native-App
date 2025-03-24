@@ -4,7 +4,7 @@ import api, { responseDebug } from '@/utils/api';
 import globalStyles from '@/styles/globalStyles';
 import { router } from 'expo-router';
 import { AxiosError, Job } from '@/types';
-import JobHeader from '@/app/job/components/JobHeader';
+import JobHeader from '@/components/job/JobHeader';
 import { ErrorText, HeaderText } from '@/components/Typography';
 import {
   OutlinedButton,
@@ -186,7 +186,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
                 setCancelComment('');
                 setShowCancelDialog(false);
               }}
-              style={{width: '100%', marginTop: 10}}
+              style={{ width: '100%', marginTop: 10 }}
             />
           </View>
         </View>

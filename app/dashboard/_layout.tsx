@@ -31,7 +31,7 @@ export default function TabLayout() {
       const redirectTimeout = setTimeout(() => {
         router.replace('/login');
       }, 0);
-      
+
       return () => clearTimeout(redirectTimeout);
     }
   }, [session, isLoading, router]);
@@ -40,14 +40,14 @@ export default function TabLayout() {
   if (isLoading) {
     return (
       <View style={globalStyles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0a7ea4" />
+        <ActivityIndicator size='large' color='#0a7ea4' />
       </View>
     );
   }
 
   // If not authenticated and not loading, redirect to login
   if (!session && !isLoading) {
-    return <Redirect href="/login" />;
+    return <Redirect href='/login' />;
   }
 
   return (
@@ -56,40 +56,45 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         // Disable the static render of the header on web
         headerShown: headerShown,
-      }}>
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name='index'
         options={{
-          title: 'Jobs',
-          tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
-          headerRight: () => (
-            <Link href="/newJob" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <MaterialIcons
-                    name="add-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].tint}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+          title: 'My Jobs',
+          tabBarIcon: ({ color }) => <TabBarIcon name='list' color={color} />,
+          // headerRight: () => (
+          //   <Link href="/newJob" asChild>
+          //     <Pressable>
+          //       {({ pressed }) => (
+          //         <MaterialIcons
+          //           name="add-circle"
+          //           size={25}
+          //           color={Colors[colorScheme ?? 'light'].tint}
+          //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+          //         />
+          //       )}
+          //     </Pressable>
+          //   </Link>
+          // ),
+        }}
+      />
+      <Tabs.Screen
+        name='go-online'
+        options={{
+          title: 'Go Online',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name='location-on' color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="go-online"
-        options={{
-          title: 'Go Online',
-          tabBarIcon: ({ color }) => <TabBarIcon name="location-on" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
+        name='settings'
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color }) => <TabBarIcon name="settings" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name='settings' color={color} />
+          ),
         }}
       />
     </Tabs>

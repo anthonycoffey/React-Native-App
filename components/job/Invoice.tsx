@@ -89,7 +89,9 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Invoices</CardTitle>
 
-      {job.Invoices?.map((invoice: Invoice) => (
+      {job.Invoices?.filter(
+        (invoice: Invoice) => invoice.status !== 'void'
+      ).map((invoice: Invoice) => (
         <View key={invoice.id} style={styles.invoiceRow}>
           <Text style={styles.invoiceId}>#{invoice.id}</Text>
           <Chip>{invoice.status}</Chip>

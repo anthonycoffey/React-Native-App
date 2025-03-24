@@ -14,7 +14,7 @@ import api from '@/utils/api';
 import { prettyPrint } from '@/utils/objects';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
-import CurrencyInput from '@/app/job/components/invoice/CurrencyInput';
+import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 import {
   SecondaryButton,
   OutlinedButton,

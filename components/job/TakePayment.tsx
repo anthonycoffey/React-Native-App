@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import CurrencyInput from '@/app/job/components/invoice/CurrencyInput';
+import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
-import PaymentDialog from '@/app/job/components/PaymentDialog';
+import PaymentDialog from '@/components/job/PaymentDialog';
 import { Invoice, Job } from '@/types';
 import { centsToDollars } from '@/utils/money';
 
@@ -19,7 +13,10 @@ interface Props {
   fetchJob: () => void;
 }
 
-export default function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
+export default function TakePayment({
+  job,
+  fetchJob,
+}: Props): React.JSX.Element {
   const [payWithCard, setPayWithCard] = useState<boolean>(false);
   const [payWithCash, setPayWithCash] = useState<boolean>(false);
   const [paymentType, setPaymentType] = useState<'cash' | 'card'>('card');
@@ -89,7 +86,6 @@ export default function TakePayment({ job, fetchJob }: Props): React.JSX.Element
 
       {job.status !== 'paid' && hasActiveInvoice && amountToPay && (
         <View style={styles.buttonsRow}>
-  
           <TouchableOpacity
             style={[styles.paymentButton, styles.cashButton]}
             onPress={() => {

@@ -10,13 +10,13 @@ import {
 import { useLocalSearchParams } from 'expo-router';
 import api from '@/utils/api';
 import { Job, AxiosResponse, AxiosError } from '@/types';
-import JobStatus from './components/JobStatus';
-import Invoice from './components/Invoice';
-import JobDetailsAndMapButtons from './components/JobDetailsAndMapButtons';
-import JobActivityLog from './components/JobActivityLog';
-import JobLineItems from './components/JobLineItems';
-import ArrivalTime from './components/ArrivalTime';
-import TakePayment from './components/TakePayment';
+import JobStatus from '@/components/job/JobStatus';
+import Invoice from '@/components/job/Invoice';
+import JobDetailsAndMapButtons from '@/components/job/JobDetailsAndMapButtons';
+import JobActivityLog from '@/components/job/JobActivityLog';
+import JobLineItems from '@/components/job/JobLineItems';
+import ArrivalTime from '@/components/job/ArrivalTime';
+import TakePayment from '@/components/job/TakePayment';
 
 function LoadingSpinner(props: { loading: boolean }) {
   return (
@@ -59,7 +59,7 @@ export default function JobPage() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <LoadingSpinner loading={loading} />
-      <ScrollView 
+      <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.contentContainer}
         nestedScrollEnabled={true}

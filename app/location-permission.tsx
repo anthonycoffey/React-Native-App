@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  ActivityIndicator,
-  Platform,
-} from 'react-native';
+import { View, ActivityIndicator, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Text } from '@/components/Themed';
@@ -38,7 +34,7 @@ export default function LocationPermissionScreen() {
         }
       }
 
-      router.replace('/(app)');
+      router.replace('/dashboard');
     } catch (error) {
       console.error('Error requesting location permission:', error);
       setDenied(true);
@@ -47,7 +43,7 @@ export default function LocationPermissionScreen() {
   };
 
   const skipPermissions = () => {
-    router.replace('/(app)');
+    router.replace('/dashboard');
   };
 
   return (

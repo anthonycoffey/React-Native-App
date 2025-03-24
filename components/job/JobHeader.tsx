@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Text, View } from '@/components/Themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import { formatDateTime, formatRelative } from '@/utils/dates';
 import globalStyles from '@/styles/globalStyles';

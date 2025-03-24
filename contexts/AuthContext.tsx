@@ -59,14 +59,14 @@ export function AuthProvider(props: React.PropsWithChildren) {
 
   const signIn = async (token: string) => {
     await setSession(token);
-    router.push('/(app)');
+    router.push('/dashboard');
   };
 
   const signOut = async () => {
     await setSession(null);
     router.push('/login');
   };
-  
+
   const value: AuthContextType = {
     signIn,
     signOut,

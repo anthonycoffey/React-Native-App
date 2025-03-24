@@ -1,4 +1,3 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import {
   DarkTheme,
   DefaultTheme,
@@ -40,16 +39,12 @@ export default function RootLayout() {
             value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
           >
             <Stack>
-              <Stack.Screen name='(app)' options={{ headerShown: false }} />
-              <Stack.Screen name='modal' options={{ presentation: 'modal' }} />
+              <Stack.Screen name='dashboard' options={{ headerShown: false }} />
               <Stack.Screen
                 name='job/[id]'
                 options={{ title: 'Job Details' }}
               />
-              <Stack.Screen
-                name='newJob/index'
-                options={{ title: 'New Job' }}
-              />
+
               <Stack.Screen name='login' options={{ headerShown: false }} />
               <Stack.Screen
                 name='location-permission'
