@@ -29,8 +29,10 @@ export default function TakePayment({
   );
 
   useEffect(() => {
+    // we find sent invoice because pending invoices are marked sent once invoice link has been sent
     const pendingInvoice = job.Invoices?.find(
-      (invoice: Invoice) => invoice.status === 'pending'
+      (invoice: Invoice) =>
+        invoice.status === 'pending' || invoice.status === 'sent'
     );
 
     const amount = pendingInvoice
