@@ -39,17 +39,17 @@ export default function useLocation(skipRedirect = false) {
 
   const updateServerLocation = useCallback(
     async (locationData: LocationObject) => {
-      if (isClockedIn) {
-        try {
-          await api.post('/user/geolocation', {
-            latitude: locationData.coords.latitude,
-            longitude: locationData.coords.longitude,
-            accuracy: locationData.coords.accuracy,
-            timestamp: locationData.timestamp,
-          });
-        } catch (error) {
-          console.error('Error updating server with location:', error);
-        }
+      if (!isClockedIn) return;
+
+      try {
+        await api.post('/user/geolocation', {
+          latitude: locationData.coords.latitude,
+          longitude: locationData.coords.longitude,
+          accuracy: locationData.coords.accuracy,
+          timestamp: locationData.timestamp,
+        });
+      } catch (error) {
+        console.error('Error updating server with location:', error);
       }
     },
     [isClockedIn]
@@ -57,7 +57,7 @@ export default function useLocation(skipRedirect = false) {
 
   const getLocation = useCallback(async () => {
     try {
-      if (!hasPermission) return;
+      if (!hasPermission || !isClockedIn) return null;
 
       const currentLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
@@ -74,66 +74,76 @@ export default function useLocation(skipRedirect = false) {
     } finally {
       setIsLoading(false);
     }
-  }, [hasPermission, updateServerLocation]);
+  }, [hasPermission, isClockedIn, updateServerLocation]);
 
-  const startLocationUpdates = useCallback(async () => {
-    try {
-      if (!hasPermission) return;
-
-      if (locationSubscriptionRef.current) {
-        locationSubscriptionRef.current.remove();
-      }
-
-      locationSubscriptionRef.current = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.Balanced,
-          timeInterval: 1000 * 60 * 2,
-          distanceInterval: 100,
-        },
-        (newLocation) => {
-          setLocation(newLocation);
-          updateServerLocation(newLocation);
-        }
-      );
-    } catch (error) {
-      console.error('Error setting up location updates:', error);
-      setErrorMsg('Failed to set up location updates');
+  const startLocationUpdates = useCallback(() => {
+    // Return early if not clocked in or no permission
+    if (!isClockedIn || !hasPermission) {
+      stopLocationUpdates();
+      return;
     }
-  }, [hasPermission, updateServerLocation]);
 
+    // Don't start a new subscription if one is already active
+    if (locationSubscriptionRef.current) return;
+
+    const setupWatch = async () => {
+      try {
+        locationSubscriptionRef.current = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.Balanced,
+            timeInterval: 1000 * 60 * 2, // Every 2 minutes
+            distanceInterval: 100, // Every 100 meters
+          },
+          (newLocation) => {
+            setLocation(newLocation);
+            updateServerLocation(newLocation);
+          }
+        );
+      } catch (error) {
+        console.error('Error setting up location updates:', error);
+        setErrorMsg('Failed to set up location updates');
+      }
+    };
+
+    setupWatch();
+  }, [hasPermission, isClockedIn, updateServerLocation]);
+
+  const stopLocationUpdates = useCallback(() => {
+    if (locationSubscriptionRef.current) {
+      locationSubscriptionRef.current.remove();
+      locationSubscriptionRef.current = null;
+    }
+  }, []);
+
+  // Check permissions on initial load
   useEffect(() => {
     const initialize = async () => {
       setIsLoading(true);
-      const permissionGranted = await checkPermissions();
-
-      if (permissionGranted) {
-        await getLocation();
-        await startLocationUpdates();
-
-      } else {
-        setIsLoading(false);
-      }
+      await checkPermissions();
+      setIsLoading(false);
     };
 
     initialize();
+  }, [checkPermissions]);
+
+  // Start or stop location tracking based on clock-in status
+  useEffect(() => {
+    if (isClockedIn) {
+      startLocationUpdates();
+      getLocation(); // Get initial location when clocked in
+    } else {
+      stopLocationUpdates();
+    }
 
     return () => {
-      if (locationSubscriptionRef.current) {
-        locationSubscriptionRef.current.remove();
-      }
-
+      stopLocationUpdates();
     };
-  }, [checkPermissions, getLocation, startLocationUpdates]);
-
-  useEffect(() => {
-    if (isClockedIn && location) {
-      updateServerLocation(location);
-    }
-  }, [isClockedIn, location, updateServerLocation]);
+  }, [isClockedIn, startLocationUpdates, stopLocationUpdates, getLocation]);
 
   const refreshLocation = useCallback(async () => {
+    if (!isClockedIn) return null;
     return await getLocation();
-  }, [getLocation]);
+  }, [getLocation, isClockedIn]);
 
   return {
     location,
