@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { Text, View } from '@/components/Themed';
+import { StyleSheet, View, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { formatDateTime, formatRelative } from '@/utils/dates';
 import globalStyles from '@/styles/globalStyles';
@@ -14,7 +13,9 @@ export default function JobHeader({ job, id }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text>{job?.arrivalTime && formatDateTime(job.arrivalTime)}</Text>
+        <Text style={globalStyles.label}>
+          {job?.arrivalTime && formatDateTime(job.arrivalTime)}
+        </Text>
         <Text style={globalStyles.label}>J-{id}</Text>
       </View>
 
@@ -60,7 +61,6 @@ export default function JobHeader({ job, id }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

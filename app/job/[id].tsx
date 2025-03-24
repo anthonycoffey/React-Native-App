@@ -3,7 +3,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  View,
   StyleSheet,
   ScrollView,
 } from 'react-native';
@@ -17,14 +16,15 @@ import JobActivityLog from '@/components/job/JobActivityLog';
 import JobLineItems from '@/components/job/JobLineItems';
 import ArrivalTime from '@/components/job/ArrivalTime';
 import TakePayment from '@/components/job/TakePayment';
+import { View as ThemedView } from '@/components/Themed';
 
 function LoadingSpinner(props: { loading: boolean }) {
   return (
     <>
       {props.loading && (
-        <View style={styles.loadingContainer}>
+        <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size='large' color='#0a7ea4' />
-        </View>
+        </ThemedView>
       )}
     </>
   );

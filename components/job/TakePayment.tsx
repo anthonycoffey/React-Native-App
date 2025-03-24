@@ -47,12 +47,10 @@ export default function TakePayment({
   }, [job]);
 
   useEffect(() => {
-    if (amountToPay) {
-      const amount = parseFloat(amountToPay);
-      const tip = tipAmount ? parseFloat(tipAmount) : 0;
-      const total = amount + tip;
-      setTotalDue(total.toFixed(2));
-    }
+    const amount = isNaN(parseFloat(amountToPay)) ? 0 : parseFloat(amountToPay);
+    const tip = isNaN(parseFloat(tipAmount)) ? 0 : parseFloat(tipAmount);
+    const total = amount + tip;
+    setTotalDue(total.toFixed(2));
   }, [amountToPay, tipAmount]);
 
   const hidePaymentDialog = () => {
@@ -170,6 +168,7 @@ export default function TakePayment({
               paymentType={paymentType}
               amountToPay={parseFloat(amountToPay)}
               tipAmount={parseFloat(tipAmount)}
+              totalDue={parseFloat(totalDue)}
               fetchJob={fetchJob}
               hidePaymentDialog={hidePaymentDialog}
             />

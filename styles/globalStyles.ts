@@ -1,19 +1,18 @@
-import { StyleSheet, Platform, StatusBar } from "react-native";
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   // Layout styles
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: 10,
-    backgroundColor: "#fff",
   },
   loginContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: 10,
     maxWidth: 500,
-    margin: "auto",
+    margin: 'auto',
   },
   scrollView: {
     flex: 1,
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
   },
-  
+
   // Card and container styles
   card: {
     padding: 10,
@@ -42,29 +41,29 @@ const styles = StyleSheet.create({
   },
   chipContainer: {
     paddingTop: 10,
-    display: "flex",
-    flexDirection: "row",
+    display: 'flex',
+    flexDirection: 'row',
   },
   statusContainer: {
-    flexWrap: "wrap",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  
+
   // Form elements
   input: {
-    color: "#0e0d0d",
+    color: '#0e0d0d',
     padding: 10,
     marginVertical: 5,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
   },
   inputPrice: {
-    color: "#0e0d0d",
+    color: '#0e0d0d',
     padding: 10,
     marginVertical: 5,
-    borderColor: "#131313",
+    borderColor: '#131313',
     borderWidth: 1,
     borderRadius: 5,
   },
@@ -94,12 +93,12 @@ const styles = StyleSheet.create({
     right: 15,
     top: 15,
   },
-  
+
   // Text styles
   label: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 12,
-    color: "#424242",
+    color: '#424242',
   },
   title: {
     fontSize: 24,
@@ -135,21 +134,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-  
+
   // Map related styles
   openInMaps: {
     fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     marginTop: 8,
     marginBottom: 16,
   },
   mapButton: {
-    display: "flex",
-    flexDirection: "column",
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   locationCard: {
     flexDirection: 'row',
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-  
+
   // Button styles
   button: {
     marginTop: 16,
@@ -180,7 +179,7 @@ const styles = StyleSheet.create({
   clockOutButton: {
     backgroundColor: '#FF5722',
   },
-  
+
   // Misc
   separator: {
     height: 1,

@@ -11,6 +11,7 @@ type Props = {
   paymentType: 'cash' | 'card';
   amountToPay: number;
   tipAmount: number;
+  totalDue: number;
   fetchJob: () => void;
   hidePaymentDialog: () => void;
 };
@@ -20,6 +21,7 @@ export default function PaymentDialog({
   paymentType,
   amountToPay,
   tipAmount,
+  totalDue,
   fetchJob,
   hidePaymentDialog,
 }: Props) {
@@ -58,11 +60,11 @@ export default function PaymentDialog({
           >
             <MaterialIcons name='attach-money' size={50} color='green' />
             <Text style={{ color: 'green', fontSize: 42, fontWeight: 'bold' }}>
-              {(amountToPay + tipAmount).toFixed(2)}
+              {totalDue}
             </Text>
           </View>
           <CashPaymentForm
-            buttonText={`Collect $${(amountToPay + tipAmount).toFixed(2)}`}
+            buttonText={`Collect ${totalDue}`}
             onSuccess={payJobWithCash}
           />
         </>

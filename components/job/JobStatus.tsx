@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { TextInput, Alert, View, StyleSheet, Modal } from 'react-native';
+import { TextInput, Alert, StyleSheet, Modal, View } from 'react-native';
 import api, { responseDebug } from '@/utils/api';
 import globalStyles from '@/styles/globalStyles';
 import { router } from 'expo-router';
 import { AxiosError, Job } from '@/types';
 import JobHeader from '@/components/job/JobHeader';
 import { ErrorText, HeaderText } from '@/components/Typography';
+import { View as ThemedView } from '@/components/Themed';
+
 import {
   OutlinedButton,
   PrimaryButton,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { router } from 'expo-router';
-import { OutlinedButton } from '@/components/Buttons';
+import { OutlinedButton, PrimaryButton } from '@/components/Buttons';
 import { useAuth } from '@/contexts/AuthContext';
 import globalStyles from '@/styles/globalStyles';
 
@@ -21,12 +21,11 @@ export default function UserSettingsPage() {
     <View style={globalStyles.container}>
       <View style={{
         flex: 1,
-        backgroundColor: '#fff',
         justifyContent: 'space-between',
         paddingTop: 20,
         paddingBottom: 20,
       }}>
-        <OutlinedButton
+        <PrimaryButton
           title='Log Out'
           variant='error'
           onPress={handleLogout}

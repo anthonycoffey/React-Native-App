@@ -114,12 +114,9 @@ export default function GoOnlineScreen() {
 
   return (
     <View style={globalStyles.container}>
-      <ScrollView
-        style={globalStyles.scrollView}
-        contentContainerStyle={globalStyles.scrollViewContent}
-      >
+     
         {renderContent()}
-      </ScrollView>
+     
     </View>
   );
 }
