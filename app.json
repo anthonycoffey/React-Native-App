@@ -13,7 +13,9 @@
       "resizeMode": "cover",
       "backgroundColor": "#252c3a"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
@@ -38,11 +40,31 @@
           "gett",
           "nmap",
           "dgis",
+          "lftgpas",
+          "comgooglemaps",
+          "citymapper",
+          "uber",
+          "lyft",
+          "transit",
+          "truckmap",
+          "waze",
+          "yandexnavi",
+          "moovit",
+          "yandextaxi",
+          "yandexmaps",
+          "kakaomap",
+          "szn-mapy",
+          "mapsme",
+          "osmandmaps",
+          "gett",
+          "nmap",
+          "dgis",
           "lftgpas"
         ],
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
         "NSLocationAlwaysUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
-        "NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location"
+        "NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -55,7 +77,9 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "FOREGROUND_SERVICE",
-        "ACCESS_BACKGROUND_LOCATION"
+        "ACCESS_BACKGROUND_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "web": {
@@ -65,15 +89,6 @@
     },
     "plugins": [
       "expo-router",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "minSdkVersion": 34
-          },
-          "ios": {}
-        }
-      ],
       [
         "expo-location",
         {

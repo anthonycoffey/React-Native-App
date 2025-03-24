@@ -1,5 +1,5 @@
 import React from 'react';
-import PaymentForm from './PaymentForm';
+import CashPaymentForm from './CashPaymentForm';
 import api, { responseDebug } from '@/utils/api';
 import { dollarsToCents } from '@/utils/money';
 import { AxiosResponse, AxiosError } from '@/types';
@@ -13,10 +13,7 @@ type Props = {
   hidePaymentDialog: () => void;
 };
 
-type OpaqueData = {
-  dataDescriptor: string;
-  dataValue: string;
-};
+
 
 export default function PaymentDialog({
   jobId,
@@ -26,36 +23,6 @@ export default function PaymentDialog({
   fetchJob,
   hidePaymentDialog,
 }: Props) {
-  const payJobWithCC = (response: any) => {
-    console.log({ response });
-    const { DATA_VALUE, DATA_DESCRIPTOR } = response;
-    const opaqueData: OpaqueData = {
-      dataDescriptor: DATA_DESCRIPTOR,
-      dataValue: DATA_VALUE,
-    };
-
-    try {
-      api
-        .post(`/jobs/${jobId}/payments`, {
-          type: 'card',
-          amount: dollarsToCents(amountToPay),
-          tip: dollarsToCents(tipAmount),
-          opaqueData,
-        })
-        .then((response: AxiosResponse) => {
-          const { data } = response;
-          console.log({ data });
-          fetchJob();
-          hidePaymentDialog();
-        })
-        .catch((error: AxiosError) => {
-          responseDebug(error);
-        });
-    } catch (error) {
-      console.log({ error });
-      console.log('Failed to create payment');
-    }
-  };
 
   const payJobWithCash = (response: any) => {
     console.log({ response });
@@ -83,20 +50,15 @@ export default function PaymentDialog({
 
   return (
     <>
-      {paymentType == 'card' && (
-        <PaymentForm
-          paymentType={paymentType}
-          buttonText={`Charge $${amountToPay + tipAmount}`}
-          onSuccess={payJobWithCC}
-        />
-      )}
+      {/* {paymentType === 'card' && (
+  
+      )} */}
 
-      {paymentType == 'cash' && (
-        <PaymentForm
-          paymentType={paymentType}
+      {paymentType === 'cash' && (
+        <CashPaymentForm
           buttonText={`Collect $${amountToPay + tipAmount}`}
           onSuccess={payJobWithCash}
-        ></PaymentForm>
+        ></CashPaymentForm>
       )}
     </>
   );
