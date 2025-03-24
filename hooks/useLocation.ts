@@ -13,6 +13,11 @@ export default function useLocation(skipRedirect = false) {
   const { isClockedIn } = useUser();
 
   const locationSubscriptionRef = useRef<LocationSubscription | null>(null);
+  const lastUpdateTimeRef = useRef<number>(0);
+  const isInitialLocationSetRef = useRef<boolean>(false);
+
+  // Minimum time between server updates in milliseconds (5 minutes)
+  const UPDATE_INTERVAL = 5 * 60 * 1000;
 
   const checkPermissions = useCallback(async () => {
     try {
@@ -37,22 +42,56 @@ export default function useLocation(skipRedirect = false) {
     }
   }, [skipRedirect]);
 
+  const shouldUpdateServer = useCallback(() => {
+    const now = Date.now();
+    // Check if enough time has passed since the last update
+    if (now - lastUpdateTimeRef.current >= UPDATE_INTERVAL) {
+      lastUpdateTimeRef.current = now;
+      return true;
+    }
+    // Allow first update when user clocks in regardless of time interval
+    if (!isInitialLocationSetRef.current && isClockedIn) {
+      isInitialLocationSetRef.current = true;
+      lastUpdateTimeRef.current = now;
+      return true;
+    }
+    return false;
+  }, [isClockedIn, UPDATE_INTERVAL]);
+
+  // Add a debounce mechanism to prevent rapid-fire API calls
+  const pendingUpdateRef = useRef<boolean>(false);
+
   const updateServerLocation = useCallback(
     async (locationData: LocationObject) => {
       if (!isClockedIn) return;
 
+      // Prevent concurrent updates
+      if (pendingUpdateRef.current) return;
+
+      // Check if we should update the server based on time threshold
+      if (!shouldUpdateServer()) return;
+
       try {
+        pendingUpdateRef.current = true;
+
         await api.post('/user/geolocation', {
           latitude: locationData.coords.latitude,
           longitude: locationData.coords.longitude,
           accuracy: locationData.coords.accuracy,
           timestamp: locationData.timestamp,
         });
+
+        console.log('Location update sent to server');
       } catch (error) {
         console.error('Error updating server with location:', error);
+      } finally {
+        // Add a small delay to prevent rapid sequential calls
+        setTimeout(() => {
+          pendingUpdateRef.current = false;
+        }, 1000);
       }
     },
-    [isClockedIn]
+    [isClockedIn, shouldUpdateServer]
   );
 
   const getLocation = useCallback(async () => {
@@ -63,8 +102,12 @@ export default function useLocation(skipRedirect = false) {
         accuracy: Location.Accuracy.Balanced,
       });
 
+      // Update state but don't trigger server update here
+      // This helps prevent multiple updates when component mounts or remounts
       setLocation(currentLocation);
-      updateServerLocation(currentLocation);
+
+      // Only update server if explicitly requested via refreshLocation
+      // or via the watchPosition callback
 
       return currentLocation;
     } catch (error) {
@@ -74,7 +117,7 @@ export default function useLocation(skipRedirect = false) {
     } finally {
       setIsLoading(false);
     }
-  }, [hasPermission, isClockedIn, updateServerLocation]);
+  }, [hasPermission, isClockedIn]);
 
   const startLocationUpdates = useCallback(() => {
     // Return early if not clocked in or no permission
@@ -91,7 +134,8 @@ export default function useLocation(skipRedirect = false) {
         locationSubscriptionRef.current = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.Balanced,
-            timeInterval: 1000 * 60 * 2, // Every 2 minutes
+            // Much longer intervals to reduce frequency
+            timeInterval: 5 * 60 * 1000, // Every 5 minutes
             distanceInterval: 100, // Every 100 meters
           },
           (newLocation) => {
@@ -113,7 +157,16 @@ export default function useLocation(skipRedirect = false) {
       locationSubscriptionRef.current.remove();
       locationSubscriptionRef.current = null;
     }
+    // Reset the initial location flag when stopping updates
+    isInitialLocationSetRef.current = false;
   }, []);
+
+  // Reset tracking state when clock-in status changes
+  useEffect(() => {
+    if (!isClockedIn) {
+      isInitialLocationSetRef.current = false;
+    }
+  }, [isClockedIn]);
 
   // Check permissions on initial load
   useEffect(() => {
@@ -126,24 +179,50 @@ export default function useLocation(skipRedirect = false) {
     initialize();
   }, [checkPermissions]);
 
+  // Track previous clock-in state to handle transitions properly
+  const prevClockedInRef = useRef<boolean | null>(null);
+
   // Start or stop location tracking based on clock-in status
   useEffect(() => {
-    if (isClockedIn) {
-      startLocationUpdates();
-      getLocation(); // Get initial location when clocked in
-    } else {
+    // Only respond to actual state changes from not-clocked-in to clocked-in
+    const isInitialClockIn = isClockedIn && prevClockedInRef.current === false;
+    prevClockedInRef.current = isClockedIn;
+
+    if (isInitialClockIn) {
+      // Ensure we're not already tracking and prevent double fetches
+      stopLocationUpdates();
+
+      // Start tracking with a single location fetch
+      const timer = setTimeout(() => {
+        startLocationUpdates();
+        // Initial location is already handled by the updateServerLocation throttling
+      }, 500);
+
+      return () => clearTimeout(timer);
+    } else if (!isClockedIn) {
       stopLocationUpdates();
     }
+  }, [isClockedIn, startLocationUpdates, stopLocationUpdates]);
 
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
       stopLocationUpdates();
     };
-  }, [isClockedIn, startLocationUpdates, stopLocationUpdates, getLocation]);
+  }, [stopLocationUpdates]);
 
   const refreshLocation = useCallback(async () => {
     if (!isClockedIn) return null;
-    return await getLocation();
-  }, [getLocation, isClockedIn]);
+
+    const location = await getLocation();
+
+    // Only update the server during manual refresh if criteria are met
+    if (location) {
+      updateServerLocation(location);
+    }
+
+    return location;
+  }, [getLocation, isClockedIn, updateServerLocation]);
 
   return {
     location,
