@@ -13,7 +13,6 @@ export default function useLocation(skipRedirect = false) {
   const { isClockedIn } = useUser();
 
   const locationSubscriptionRef = useRef<LocationSubscription | null>(null);
-  const updateIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const checkPermissions = useCallback(async () => {
     try {
@@ -111,7 +110,6 @@ export default function useLocation(skipRedirect = false) {
         await getLocation();
         await startLocationUpdates();
 
-        updateIntervalRef.current = setInterval(getLocation, 120000);
       } else {
         setIsLoading(false);
       }
@@ -124,9 +122,6 @@ export default function useLocation(skipRedirect = false) {
         locationSubscriptionRef.current.remove();
       }
 
-      if (updateIntervalRef.current) {
-        clearInterval(updateIntervalRef.current);
-      }
     };
   }, [checkPermissions, getLocation, startLocationUpdates]);
 
