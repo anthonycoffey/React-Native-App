@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Modal,
   TouchableOpacity,
-  Pressable,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import CurrencyInput from '@/app/job/components/invoice/CurrencyInput';
@@ -26,6 +25,7 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
   const [paymentType, setPaymentType] = useState<'cash' | 'card'>('card');
   const [amountToPay, setAmountToPay] = useState<string>('');
   const [tipAmount, setTipAmount] = useState<string>('0.00');
+  const [totalDue, setTotalDue] = useState<string>('0.00');
 
   const hasActiveInvoice = job.Invoices?.some((invoice: Invoice) =>
     ['pending', 'partially-paid', 'sent'].includes(invoice.status)
@@ -46,6 +46,15 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
       setAmountToPay('');
     };
   }, [job]);
+
+  useEffect(() => {
+    if (amountToPay) {
+      const amount = parseFloat(amountToPay);
+      const tip = tipAmount ? parseFloat(tipAmount) : 0;
+      const total = amount + tip;
+      setTotalDue(total.toFixed(2));
+    }
+  }, [amountToPay, tipAmount]);
 
   const hidePaymentDialog = () => {
     setPayWithCard(false);
@@ -80,22 +89,7 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
 
       {job.status !== 'paid' && hasActiveInvoice && amountToPay && (
         <View style={styles.buttonsRow}>
-          <TouchableOpacity
-            style={[styles.paymentButton, styles.cardButton]}
-            onPress={() => {
-              setPayWithCard(!payWithCard);
-              setPaymentType('card');
-            }}
-          >
-            <MaterialIcons
-              name='credit-card'
-              size={20}
-              color='#fff'
-              style={styles.buttonIcon}
-            />
-            <Text style={styles.buttonText}>Pay with Card</Text>
-          </TouchableOpacity>
-
+  
           <TouchableOpacity
             style={[styles.paymentButton, styles.cashButton]}
             onPress={() => {
@@ -157,7 +151,7 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
-            <Pressable
+            <TouchableOpacity
               onPress={hidePaymentDialog}
               style={{
                 position: 'absolute',
@@ -168,16 +162,16 @@ export function TakePayment({ job, fetchJob }: Props): React.JSX.Element {
               }}
             >
               <MaterialIcons name='cancel' size={24} color='red' />
-            </Pressable>
+            </TouchableOpacity>
             <CardTitle>Collect Cash</CardTitle>
             <Text style={styles.cashInstructions}>
-              Please collect ${amountToPay} from the customer.
+              Please collect ${totalDue} from the customer.
             </Text>
             <PaymentDialog
               jobId={job.id}
               paymentType={paymentType}
-              amountToPay={+amountToPay}
-              tipAmount={+tipAmount}
+              amountToPay={parseFloat(amountToPay)}
+              tipAmount={parseFloat(tipAmount)}
               fetchJob={fetchJob}
               hidePaymentDialog={hidePaymentDialog}
             />

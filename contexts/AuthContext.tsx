@@ -3,7 +3,6 @@ import { useStorageState } from '@/hooks/useStorageState';
 import api from '@/utils/api';
 import { router } from 'expo-router';
 
-// Define the AuthContextType
 type AuthContextType = {
   signIn: (token: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -11,7 +10,6 @@ type AuthContextType = {
   isLoading: boolean;
 };
 
-// Use the AuthContextType in the context creation
 const AuthContext = React.createContext<AuthContextType | null>(null);
 
 export function useAuth() {
@@ -28,21 +26,15 @@ export function useAuth() {
 export function AuthProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
 
-  // Store the interceptor ID to later remove it
   const requestInterceptorIdRef = useRef<number | null>(null);
 
-  // Setup auth interceptor
   useEffect(() => {
-    // Clean up any existing interceptor
     if (requestInterceptorIdRef.current !== null) {
       api.interceptors.request.eject(requestInterceptorIdRef.current);
       requestInterceptorIdRef.current = null;
     }
 
-    // Set up request interceptor based on session state
     if (session) {
-      console.log('Session found, adding auth header');
-      // Add token to requests when we have a session
       requestInterceptorIdRef.current = api.interceptors.request.use(
         (config) => {
           config.headers.Authorization = `Bearer ${session}`;
@@ -50,8 +42,6 @@ export function AuthProvider(props: React.PropsWithChildren) {
         }
       );
     } else {
-      console.log('No session found, removing auth header');
-      // Remove auth header when no session
       requestInterceptorIdRef.current = api.interceptors.request.use(
         (config) => {
           delete config.headers.Authorization;
@@ -60,7 +50,6 @@ export function AuthProvider(props: React.PropsWithChildren) {
       );
     }
 
-    // Cleanup when component unmounts
     return () => {
       if (requestInterceptorIdRef.current !== null) {
         api.interceptors.request.eject(requestInterceptorIdRef.current);
@@ -68,7 +57,6 @@ export function AuthProvider(props: React.PropsWithChildren) {
     };
   }, [session]);
 
-  // Auth context value
   const signIn = async (token: string) => {
     await setSession(token);
     router.push('/(app)');
@@ -79,7 +67,6 @@ export function AuthProvider(props: React.PropsWithChildren) {
     router.push('/login');
   };
   
-  // Create the value object with all required properties
   const value: AuthContextType = {
     signIn,
     signOut,

@@ -25,8 +25,6 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       await api
         .post(`/jobs/${job.id}/generate-invoice`)
         .then((response: AxiosResponse) => {
-          const { data } = response;
-          console.log({ data });
           fetchJob();
           setLoading(false);
         });
@@ -44,7 +42,6 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       [
         {
           text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
         { text: 'OK', onPress: () => generateInvoice() },

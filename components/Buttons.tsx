@@ -10,8 +10,17 @@ import { useColorScheme } from './useColorScheme';
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   onPress: () => void;
-  variant?: 'error' | 'warning' | 'success';
+  variant?: 'error' | 'warning' | 'success' | 'primary' | 'secondary';
 }
+
+// Shared variant colors
+const variantColors = {
+  error: '#e53935',
+  warning: '#fbc02d',
+  success: '#43a047',
+  primary: '#0a7ea4',
+  secondary: '#65b9d6',
+};
 
 // Primary Button
 export const PrimaryButton = ({
@@ -19,13 +28,19 @@ export const PrimaryButton = ({
   onPress,
   style,
   disabled,
+  variant,
   ...props
 }: ButtonProps & { disabled?: boolean }) => {
+  const backgroundColor = variant
+    ? variantColors[variant]
+    : variantColors.primary;
+
   return (
     <TouchableOpacity
       style={[
         styles.button,
         styles.primaryButton,
+        variant && { backgroundColor },
         disabled && styles.disabledButton,
         style,
       ]}
@@ -51,13 +66,19 @@ export const SecondaryButton = ({
   onPress,
   style,
   disabled,
+  variant,
   ...props
 }: ButtonProps & { disabled?: boolean }) => {
+  const backgroundColor = variant
+    ? variantColors[variant]
+    : variantColors.secondary;
+
   return (
     <TouchableOpacity
       style={[
         styles.button,
         styles.secondaryButton,
+        variant && { backgroundColor },
         disabled && styles.disabledButton,
         style,
       ]}
@@ -89,12 +110,6 @@ export const OutlinedButton = ({
   const colorScheme = useColorScheme();
   const defaultTextColor =
     colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
-
-  const variantColors = {
-    error: '#e53935',
-    warning: '#fbc02d',
-    success: '#43a047',
-  };
 
   const textColor = variant ? variantColors[variant] : defaultTextColor;
 
@@ -130,13 +145,19 @@ export const WarningButton = ({
   onPress,
   style,
   disabled,
+  variant,
   ...props
 }: ButtonProps & { disabled?: boolean }) => {
+  const backgroundColor = variant
+    ? variantColors[variant]
+    : variantColors.error;
+
   return (
     <TouchableOpacity
       style={[
         styles.button,
         styles.warningButton,
+        variant && { backgroundColor },
         disabled && styles.disabledButton,
         style,
       ]}

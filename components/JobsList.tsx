@@ -51,7 +51,6 @@ export default function JobsList({
 }: JobsListProps) {
   const [refreshing, setRefreshing] = useState(false);
   
-  console.log('JobsList', jobs);
   
   // Process jobs data to handle different formats
   const jobsData = React.useMemo(() => {

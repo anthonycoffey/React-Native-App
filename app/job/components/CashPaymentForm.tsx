@@ -1,11 +1,6 @@
-import React, {  useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { PrimaryButton } from '@/components/Buttons';
-
 
 interface PaymentFormProps {
   buttonText: string;
@@ -14,7 +9,6 @@ interface PaymentFormProps {
     DATA_DESCRIPTOR: string;
   }) => void;
 }
-
 
 export default function CashPaymentForm({
   buttonText,
@@ -26,24 +20,19 @@ export default function CashPaymentForm({
     onSuccess();
   };
 
-
-
   return (
     <View style={styles.container}>
 
 
-
-
       <View style={styles.actionsContainer}>
         <Text style={styles.disclaimer}>
-        By clicking the button below, you agree to be held responsible for the amount displayed.
+          By clicking the button below, you agree to be held responsible for the
+          amount displayed.
         </Text>
 
         <PrimaryButton
           title={buttonText}
-          onPress={
-             submitCashPayment 
-          }
+          onPress={submitCashPayment}
           disabled={loading}
           style={styles.button}
         />

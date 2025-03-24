@@ -48,10 +48,7 @@ export default function ArrivalTime({
   };
 
   const onChangeTime = (event: any, selectedTime: any) => {
-    const {
-      type,
-      nativeEvent: { timestamp, utcOffset },
-    } = event;
+    const { type } = event;
     if (type === 'set') {
       setUpdated(false);
       setTime(selectedTime.toISOString());
@@ -59,21 +56,16 @@ export default function ArrivalTime({
   };
 
   const updateArrivalTime = () => {
-    console.log({ date, time, timestamp });
     let arrivalTime = ``;
     if (date && time) {
-      console.log('both date and time change');
       arrivalTime = `${date.split('T')[0]}T${time.split('T')[1]}`;
     } else if (time === '' && date) {
-      console.log('only date change');
       let selectedTime = timestamp.split('T')[1];
       arrivalTime = `${date.split('T')[0]}T${selectedTime}`;
     } else if (date === '' && time) {
-      console.log('only time change');
       arrivalTime = `${timestamp.split('T')[0]}T${time.split('T')[1]}`;
     }
 
-    console.log({ arrivalTime });
     if (arrivalTime) {
       api
         .patch(`/jobs/${jobId}`, {

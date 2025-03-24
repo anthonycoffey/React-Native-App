@@ -15,7 +15,6 @@ export default function JobsScreen() {
   const fetchJobs = useCallback(async () => {
     // Only fetch if we have a valid session token
     if (!session) {
-      console.log('No session token, skipping job fetch');
       return false;
     }
 
@@ -26,7 +25,6 @@ export default function JobsScreen() {
       );
 
       if (response?.data) {
-        console.log('Jobs loaded successfully');
         setJobs(response.data);
       }
     } catch (error) {

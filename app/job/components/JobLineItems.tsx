@@ -106,7 +106,6 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       [
         {
           text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
         {
@@ -114,8 +113,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           onPress: () => {
             api
               .delete(`/jobs/${job.id}/line-items/${item.id}`)
-              .then((response: AxiosResponse) => {
-                console.log({ response });
+              .then(() => {
                 fetchJob();
               })
               .catch((error: AxiosError) => {

@@ -70,11 +70,10 @@ export default function JobStatus({ job, fetchJob }: Props) {
   const handleQuitJob = () => {
     Alert.alert(
       'Quit Job?',
-      '⚠️ WARNING ⚠️\n\n If you select OK, you will no longer be assigned to this job.\n\n⚠️ WARNING ⚠️\n THIS ACTION CANNOT BE UNDONE.',
+      '⚠️ WARNING ⚠️\n\n If you select OK, you will no longer be assigned to this job.',
       [
         {
           text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
         { text: 'OK', onPress: () => quitJob() },
@@ -145,6 +144,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
         {!cannotCancel && (
           <OutlinedButton
             title='Cancel Job'
+            variant='error'
             onPress={() => setShowCancelDialog(true)}
             style={styles.marginTop}
           />
@@ -169,8 +169,10 @@ export default function JobStatus({ job, fetchJob }: Props) {
                 multiline
               />
             </View>
+
             <PrimaryButton
               title='Cancel Job'
+              variant='error'
               onPress={() => {
                 setShowCancelDialog(false);
                 cancelJob();
@@ -178,12 +180,13 @@ export default function JobStatus({ job, fetchJob }: Props) {
               style={globalStyles.button}
             />
             <OutlinedButton
-              title='Close'
+              variant='primary'
+              title='Go Back'
               onPress={() => {
                 setCancelComment('');
                 setShowCancelDialog(false);
               }}
-              style={styles.marginTop}
+              style={{width: '100%', marginTop: 10}}
             />
           </View>
         </View>

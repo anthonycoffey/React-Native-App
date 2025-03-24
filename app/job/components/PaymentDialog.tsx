@@ -1,8 +1,10 @@
 import React from 'react';
+import { Text, View } from 'react-native';
 import CashPaymentForm from './CashPaymentForm';
 import api, { responseDebug } from '@/utils/api';
 import { dollarsToCents } from '@/utils/money';
 import { AxiosResponse, AxiosError } from '@/types';
+import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = {
   jobId: number;
@@ -13,8 +15,6 @@ type Props = {
   hidePaymentDialog: () => void;
 };
 
-
-
 export default function PaymentDialog({
   jobId,
   paymentType,
@@ -23,9 +23,7 @@ export default function PaymentDialog({
   fetchJob,
   hidePaymentDialog,
 }: Props) {
-
-  const payJobWithCash = (response: any) => {
-    console.log({ response });
+  const payJobWithCash = () => {
     try {
       api
         .post(`/jobs/${jobId}/payments`, {
@@ -33,9 +31,7 @@ export default function PaymentDialog({
           amount: dollarsToCents(amountToPay),
           tip: dollarsToCents(tipAmount),
         })
-        .then((response: AxiosResponse) => {
-          const { data } = response;
-          console.log({ data });
+        .then(() => {
           fetchJob();
           hidePaymentDialog();
         })
@@ -50,15 +46,26 @@ export default function PaymentDialog({
 
   return (
     <>
-      {/* {paymentType === 'card' && (
-  
-      )} */}
-
       {paymentType === 'cash' && (
-        <CashPaymentForm
-          buttonText={`Collect $${amountToPay + tipAmount}`}
-          onSuccess={payJobWithCash}
-        ></CashPaymentForm>
+        <>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <MaterialIcons name='attach-money' size={50} color='green' />
+            <Text style={{ color: 'green', fontSize: 42, fontWeight: 'bold' }}>
+              {(amountToPay + tipAmount).toFixed(2)}
+            </Text>
+          </View>
+          <CashPaymentForm
+            buttonText={`Collect $${(amountToPay + tipAmount).toFixed(2)}`}
+            onSuccess={payJobWithCash}
+          />
+        </>
       )}
     </>
   );
