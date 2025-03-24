@@ -81,7 +81,6 @@ export default function useLocation(skipRedirect = false) {
           timestamp: locationData.timestamp,
         });
 
-        console.log('Location update sent to server');
       } catch (error) {
         console.error('Error updating server with location:', error);
       } finally {
