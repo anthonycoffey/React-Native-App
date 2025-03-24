@@ -1,4 +1,5 @@
 # Phoenix Mobile
+
 ![Expo](https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37)
 ![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
@@ -21,7 +22,6 @@ Expo / React Native app for Phoenix CRM.
 - `hooks/` - Custom React hooks
 - `styles/` - Stylesheets
 
-
 ## Self Signed Bundles
 
 1. Bundle the file
@@ -35,6 +35,21 @@ java -jar bundletool.jar build-apks --bundle=application-[BUNDLE_FILENAME.aab] -
 ```
 bash jarsigner -verbose -keystore ./credentials/android/keystore.jks -storepass [STORE_PASS] 24hrcarunlock.apks [KEY_ALIAS]
 ```
+
+## EAS Update
+
+Publishing an update allows:
+
+- Fixing bugs and quickly updating non-native parts of a project instead of creating a new build
+- Sharing a preview version of an app using internal distribution
+
+To publish an update with changes from your project, use the eas update command, and specify a name for the channel and a message to describe the update:
+
+```
+eas update --channel production --message "...your message here..."
+```
+
+> Read More: https://docs.expo.dev/eas-update/getting-started/#publish-an-update
 
 ## NPM Scripts
 
@@ -56,7 +71,6 @@ bash jarsigner -verbose -keystore ./credentials/android/keystore.jks -storepass 
 
 `EXPO_PUBLIC_GEOCODING_API_KEY` - Google Maps API key
 
-
 ## Simulator Builds (iOS)
 
 In order to run the app on iOS simulators, follow these instructions:
@@ -66,7 +80,6 @@ In order to run the app on iOS simulators, follow these instructions:
 3. 'yarn build:run' to install a simulator build, you select it from the list of available builds after running the command
 
 Note: This works for Android as wel, but you will have to check package.json and modify the scripts accordingly.
-
 
 ### Troubleshooting Tips
 
@@ -87,7 +100,6 @@ Note: This works for Android as wel, but you will have to check package.json and
 - **ANDROID**: For local development builds to work you need JDK 11 installed and `JAVA_HOME` environment variable set to JDK 11 path
 - **IOS**: For local development builds to work you need XCode installed
 
-
 ### Bundler Cache Issues
 
 If you are having unexpected issues, you may need to clear the bundler cache. To do so, run the following commands:
@@ -100,7 +112,6 @@ watchman watch-del-all
 rm -fr $TMPDIR/haste-map-*
 rm -rf $TMPDIR/metro-cache
 ```
-
 
 ## eas.json
 
@@ -121,7 +132,7 @@ this file isn't checked into git, but is used by EAS to build the app. It contai
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "http://localhost:5000",
-        "EXPO_PUBLIC_GEOCODING_API_KEY": "",
+        "EXPO_PUBLIC_GEOCODING_API_KEY": ""
       },
       "channel": "development-simulator"
     },
@@ -131,7 +142,7 @@ this file isn't checked into git, but is used by EAS to build the app. It contai
       "channel": "development",
       "env": {
         "EXPO_PUBLIC_API_URL": "",
-        "EXPO_PUBLIC_GEOCODING_API_KEY": "",
+        "EXPO_PUBLIC_GEOCODING_API_KEY": ""
       }
     },
     "preview": {
@@ -143,7 +154,7 @@ this file isn't checked into git, but is used by EAS to build the app. It contai
       "channel": "production",
       "env": {
         "EXPO_PUBLIC_API_URL": "",
-        "EXPO_PUBLIC_GEOCODING_API_KEY": "",
+        "EXPO_PUBLIC_GEOCODING_API_KEY": ""
       }
     }
   },
