@@ -3,21 +3,23 @@ import * as Location from 'expo-location';
 import { LocationObject, LocationSubscription } from 'expo-location';
 import { router } from 'expo-router';
 import api from '@/utils/api';
+import { useUser } from '@/contexts/UserContext';
 
 export default function useLocation(skipRedirect = false) {
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+  const { isClockedIn } = useUser();
+
   const locationSubscriptionRef = useRef<LocationSubscription | null>(null);
   const updateIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Function to check permissions
   const checkPermissions = useCallback(async () => {
     try {
-      const { status: foregroundStatus } = await Location.getForegroundPermissionsAsync();
-      
+      const { status: foregroundStatus } =
+        await Location.getForegroundPermissionsAsync();
+
       if (foregroundStatus === 'granted') {
         setHasPermission(true);
         return true;
@@ -36,19 +38,35 @@ export default function useLocation(skipRedirect = false) {
     }
   }, [skipRedirect]);
 
-  // Function to get location
+  const updateServerLocation = useCallback(
+    async (locationData: LocationObject) => {
+      if (isClockedIn) {
+        try {
+          await api.post('/user/geolocation', {
+            latitude: locationData.coords.latitude,
+            longitude: locationData.coords.longitude,
+            accuracy: locationData.coords.accuracy,
+            timestamp: locationData.timestamp,
+          });
+        } catch (error) {
+          console.error('Error updating server with location:', error);
+        }
+      }
+    },
+    [isClockedIn]
+  );
+
   const getLocation = useCallback(async () => {
     try {
       if (!hasPermission) return;
-      
-      // Get current position
+
       const currentLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
-      
+
       setLocation(currentLocation);
       updateServerLocation(currentLocation);
-      
+
       return currentLocation;
     } catch (error) {
       console.error('Error getting location:', error);
@@ -57,24 +75,21 @@ export default function useLocation(skipRedirect = false) {
     } finally {
       setIsLoading(false);
     }
-  }, [hasPermission]);
+  }, [hasPermission, updateServerLocation]);
 
-  // Function to start watching location
   const startLocationUpdates = useCallback(async () => {
     try {
       if (!hasPermission) return;
-      
-      // Clean up any existing subscription
+
       if (locationSubscriptionRef.current) {
         locationSubscriptionRef.current.remove();
       }
-      
-      // Set up location updates
+
       locationSubscriptionRef.current = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.Balanced,
-          timeInterval: 1000 * 60 * 3, // Update every 30 seconds
-          distanceInterval: 100, // Or when moved 100 meters
+          timeInterval: 1000 * 60 * 2,
+          distanceInterval: 100,
         },
         (newLocation) => {
           setLocation(newLocation);
@@ -85,57 +100,45 @@ export default function useLocation(skipRedirect = false) {
       console.error('Error setting up location updates:', error);
       setErrorMsg('Failed to set up location updates');
     }
-  }, [hasPermission]);
+  }, [hasPermission, updateServerLocation]);
 
-  // Function to update server with new location
-  const updateServerLocation = async (locationData: LocationObject) => {
-    try {
-      await api.post('/user/geolocation', {
-        latitude: locationData.coords.latitude,
-        longitude: locationData.coords.longitude,
-        accuracy: locationData.coords.accuracy,
-        timestamp: locationData.timestamp,
-      });
-    } catch (error) {
-      console.error('Error updating server with location:', error);
-    }
-  };
-
-  // Initialize location tracking
   useEffect(() => {
     const initialize = async () => {
       setIsLoading(true);
       const permissionGranted = await checkPermissions();
-      
+
       if (permissionGranted) {
         await getLocation();
         await startLocationUpdates();
-        
-        // Set up a regular interval to refresh location in case watchPosition doesn't trigger
-        updateIntervalRef.current = setInterval(getLocation, 120000); // Every 2 minutes
+
+        updateIntervalRef.current = setInterval(getLocation, 120000);
       } else {
         setIsLoading(false);
       }
     };
-    
+
     initialize();
-    
-    // Cleanup function
+
     return () => {
       if (locationSubscriptionRef.current) {
         locationSubscriptionRef.current.remove();
       }
-      
+
       if (updateIntervalRef.current) {
         clearInterval(updateIntervalRef.current);
       }
     };
   }, [checkPermissions, getLocation, startLocationUpdates]);
 
-  // Expose methods for manually refreshing location
-  const refreshLocation = async () => {
+  useEffect(() => {
+    if (isClockedIn && location) {
+      updateServerLocation(location);
+    }
+  }, [isClockedIn, location, updateServerLocation]);
+
+  const refreshLocation = useCallback(async () => {
     return await getLocation();
-  };
+  }, [getLocation]);
 
   return {
     location,
