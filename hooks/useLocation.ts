@@ -106,6 +106,14 @@ export default function useLocation(skipRedirect = false) {
     }
   }, [hasPermission, isClockedIn]);
 
+  const stopLocationUpdates = useCallback(() => {
+    if (locationSubscriptionRef.current) {
+      locationSubscriptionRef.current.remove();
+      locationSubscriptionRef.current = null;
+    }
+    isInitialLocationSetRef.current = false;
+  }, []);
+
   const startLocationUpdates = useCallback(() => {
     if (!isClockedIn || !hasPermission) {
       stopLocationUpdates();
@@ -119,7 +127,7 @@ export default function useLocation(skipRedirect = false) {
         locationSubscriptionRef.current = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.Balanced,
-            timeInterval: 5 * 60 * 1000,
+            timeInterval: UPDATE_INTERVAL,
             distanceInterval: 100,
           },
           (newLocation) => {
@@ -134,15 +142,9 @@ export default function useLocation(skipRedirect = false) {
     };
 
     setupWatch();
-  }, [hasPermission, isClockedIn, updateServerLocation]);
+  }, [hasPermission, isClockedIn, updateServerLocation, UPDATE_INTERVAL, stopLocationUpdates]);
 
-  const stopLocationUpdates = useCallback(() => {
-    if (locationSubscriptionRef.current) {
-      locationSubscriptionRef.current.remove();
-      locationSubscriptionRef.current = null;
-    }
-    isInitialLocationSetRef.current = false;
-  }, []);
+
 
   useEffect(() => {
     if (!isClockedIn) {
