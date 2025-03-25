@@ -1,15 +1,21 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { formatDateTime, formatRelative } from '@/utils/dates';
 import globalStyles from '@/styles/globalStyles';
 import { Job } from '@/types';
 import Chip from '@/components/Chip';
 import { LabelText } from '@/components/Typography';
+import { View, Text } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { getIconColor } from '@/hooks/useThemeColor';
 
 type Props = { job: Job; id: number };
 
 export default function JobHeader({ job, id }: Props) {
+  const colorScheme = useColorScheme();
+  const iconColor = getIconColor(colorScheme);
+  
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
@@ -28,7 +34,7 @@ export default function JobHeader({ job, id }: Props) {
         <MaterialIcons
           name='directions-car'
           size={20}
-          color='#687076'
+          color={iconColor}
           style={styles.icon}
         />
         <LabelText>ETA</LabelText>
@@ -39,7 +45,7 @@ export default function JobHeader({ job, id }: Props) {
         <MaterialIcons
           name='schedule'
           size={20}
-          color='#687076'
+          color={iconColor}
           style={styles.icon}
         />
         <LabelText>Arrival</LabelText>
@@ -50,7 +56,7 @@ export default function JobHeader({ job, id }: Props) {
         <MaterialIcons
           name='location-pin'
           size={20}
-          color='#687076'
+          color={iconColor}
           style={styles.icon}
         />
         <LabelText>Address</LabelText>

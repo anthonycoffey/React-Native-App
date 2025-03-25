@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { TextInput, StyleSheet } from 'react-native';
 import globalStyles from '@/styles/globalStyles';
 import { LabelText } from '@/components/Typography';
+import { View } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { getInputBackgroundColor, getTextColor, getPlaceholderTextColor } from '@/hooks/useThemeColor';
 
 type Props = {
   label: string;
@@ -37,15 +40,25 @@ export default function CurrencyInput({
     onChangeText(cleanedText);
   };
 
+  const colorScheme = useColorScheme();
+
   return (
     <View style={styles.container}>
       <LabelText style={styles.label}>{label}</LabelText>
       <TextInput
-        style={[globalStyles.input, styles.input]}
+        style={[
+          globalStyles.input, 
+          styles.input, 
+          { 
+            color: getTextColor(colorScheme),
+            backgroundColor: getInputBackgroundColor(colorScheme) 
+          }
+        ]}
         keyboardType='numeric'
         value={value}
         editable={editable && !readOnly}
         onChangeText={handleTextChange}
+        placeholderTextColor={getPlaceholderTextColor(colorScheme)}
       />
     </View>
   );

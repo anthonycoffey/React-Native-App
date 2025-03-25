@@ -1,5 +1,8 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Text as ThemedText } from '@/components/Themed';
+import Colors from '@/constants/Colors';
+import { useColorScheme } from './useColorScheme';
 
 type TypographyProps = {
   children: React.ReactNode;
@@ -7,30 +10,32 @@ type TypographyProps = {
 };
 
 export const LabelText = ({ children, style }: TypographyProps) => {
-  return <Text style={[styles.label, style]}>{children}</Text>;
+  const colorScheme = useColorScheme();
+  const textColor = colorScheme === 'dark' ? Colors.dark.text : '#424242';
+  
+  return <ThemedText style={[styles.label, { color: textColor }, style]}>{children}</ThemedText>;
 };
 
 export const HeaderText = ({ children, style }: TypographyProps) => {
-  return <Text style={[styles.header, style]}>{children}</Text>;
+  return <ThemedText style={[styles.header, style]}>{children}</ThemedText>;
 };
 
 export const CardTitle = ({ children, style }: TypographyProps) => {
-  return <Text style={[styles.cardTitle, style]}>{children}</Text>;
+  return <ThemedText style={[styles.cardTitle, style]}>{children}</ThemedText>;
 };
 
 export const ErrorText = ({ children, style }: TypographyProps) => {
-  return <Text style={[styles.error, style]}>{children}</Text>;
+  return <ThemedText style={[styles.error, style]}>{children}</ThemedText>;
 };
 
 export const MenuText = ({ children, style }: TypographyProps) => {
-  return <Text style={[styles.menu, style]}>{children}</Text>;
+  return <ThemedText style={[styles.menu, style]}>{children}</ThemedText>;
 };
 
 const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     fontSize: 14,
-    color: '#424242',
     marginRight: 8,
     marginLeft: 8,
   },

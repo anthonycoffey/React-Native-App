@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { TextInput, StyleSheet } from 'react-native';
 import globalStyles from '@/styles/globalStyles';
 import { Job } from '@/types';
+import { View, Text } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { getInputBackgroundColor, getTextColor } from '@/hooks/useThemeColor';
 
 type Props = {
   job: Job;
@@ -20,6 +23,15 @@ export default function CustomerInfo({ job, location }: Props) {
     (job.proxy?.CustomerPhone?.number
       ? job.proxy.CustomerPhone.number.slice(-4)
       : '');
+      
+  const colorScheme = useColorScheme();
+  const inputStyles = [
+    globalStyles.input, 
+    { 
+      backgroundColor: getInputBackgroundColor(colorScheme),
+      color: getTextColor(colorScheme)
+    }
+  ];
 
   return (
     <View style={styles.container}>
@@ -27,7 +39,7 @@ export default function CustomerInfo({ job, location }: Props) {
       <TextInput
         editable={false}
         value={job.Customer?.fullName}
-        style={globalStyles.input}
+        style={inputStyles}
       />
 
       {job.proxy?.CustomerPhone?.number && (
@@ -36,7 +48,7 @@ export default function CustomerInfo({ job, location }: Props) {
           <TextInput
             editable={false}
             value={maskedNumber}
-            style={globalStyles.input}
+            style={inputStyles}
           />
         </>
       )}
@@ -45,14 +57,14 @@ export default function CustomerInfo({ job, location }: Props) {
       <TextInput
         editable={false}
         value={job?.Car?.concat}
-        style={globalStyles.input}
+        style={inputStyles}
       />
 
       <Text style={globalStyles.label}>Address</Text>
       <TextInput
         editable={false}
         value={location?.formatted_address || job.Address?.short}
-        style={globalStyles.input}
+        style={inputStyles}
         multiline
       />
     </View>

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { TextInput, Alert, StyleSheet, Modal, View } from 'react-native';
+import { TextInput, Alert, StyleSheet, Modal } from 'react-native';
 import api, { responseDebug } from '@/utils/api';
 import globalStyles from '@/styles/globalStyles';
 import { router } from 'expo-router';
 import { AxiosError, Job } from '@/types';
 import JobHeader from '@/components/job/JobHeader';
 import { ErrorText, HeaderText } from '@/components/Typography';
+import { View } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import Colors from '@/constants/Colors';
 
 import {
   OutlinedButton,
@@ -159,12 +162,22 @@ export default function JobStatus({ job, fetchJob }: Props) {
         onRequestClose={() => setShowCancelDialog(false)}
       >
         <View style={styles.modalBackground}>
-          <View style={styles.modalContent}>
+          <View style={[
+            styles.modalContent, 
+            { backgroundColor: useColorScheme() === 'dark' ? Colors.dark.background : 'white' }
+          ]}>
             <HeaderText>Cancel Job?</HeaderText>
             <View style={styles.inputContainer}>
               <TextInput
-                style={globalStyles.input}
+                style={[
+                  globalStyles.input, 
+                  { 
+                    color: useColorScheme() === 'dark' ? Colors.dark.text : Colors.light.text,
+                    backgroundColor: useColorScheme() === 'dark' ? '#2c2c2c' : 'white' 
+                  }
+                ]}
                 placeholder='Enter reason for cancellation'
+                placeholderTextColor={useColorScheme() === 'dark' ? '#9BA1A6' : '#687076'}
                 value={cancelComment}
                 onChangeText={setCancelComment}
                 multiline
@@ -200,7 +213,7 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -220,7 +233,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    backgroundColor: 'white',
+    // backgroundColor is set dynamically based on theme
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
@@ -233,7 +246,7 @@ const styles = StyleSheet.create({
   infoAlert: {
     borderWidth: 1,
     borderColor: 'red',
-    backgroundColor: '#c29c9c9',
+    backgroundColor: 'rgba(255, 0, 0, 0.1)', // Fixed typo and made more theme-friendly
     padding: 0,
     borderRadius: 5,
   },

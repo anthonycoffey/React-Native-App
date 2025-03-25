@@ -3,8 +3,6 @@ import {
   Image,
   ImageSourcePropType,
   Pressable,
-  View,
-  Text,
   StyleSheet,
 } from 'react-native';
 import { getApps } from 'react-native-map-link';
@@ -13,6 +11,8 @@ import { CardTitle } from '@/components/Typography';
 import globalStyles from '@/styles/globalStyles';
 import geocodeAddress from '@/utils/geocode';
 import { location, Job, availableAppsProps } from '@/types';
+import { View, Text } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
 
 type Props = {
   job: Job;
@@ -70,6 +70,8 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
     })();
   }, [location]);
 
+  const colorScheme = useColorScheme();
+
   return (
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Job Details</CardTitle>
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

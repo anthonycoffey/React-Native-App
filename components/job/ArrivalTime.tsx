@@ -2,12 +2,19 @@ import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
-import { Platform, StyleSheet, View, Text } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import api, { responseDebug } from '@/utils/api';
 import { AxiosError } from '@/types';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
+import { View, Text } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { 
+  getBackgroundColor, 
+  getBorderColor, 
+  getTextColor 
+} from '@/hooks/useThemeColor';
 
 type ArrivalTimeProps = {
   timestamp?: string;
@@ -79,6 +86,8 @@ export default function ArrivalTime({
     }
   };
 
+  const colorScheme = useColorScheme();
+
   return (
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Arrival Time</CardTitle>
@@ -89,22 +98,36 @@ export default function ArrivalTime({
               value={new Date(timestamp)}
               mode='date'
               onChange={onChangeDate}
+              themeVariant={colorScheme}
             />
             <DateTimePicker
               value={new Date(timestamp)}
               mode='time'
               onChange={onChangeTime}
+              themeVariant={colorScheme}
             />
           </>
         )}
 
         {Platform.OS === 'android' && (
           <View style={styles.androidContainer}>
-            <View style={styles.displayTimeContainer}>
-              <Text style={styles.displayTime}>
+            <View style={[
+              styles.displayTimeContainer,
+              {
+                backgroundColor: colorScheme === 'dark' ? 'rgba(50, 50, 50, 0.5)' : 'rgba(224, 224, 224, 0.3)',
+                borderColor: getBorderColor(colorScheme)
+              }
+            ]}>
+              <Text style={[
+                styles.displayTime,
+                { color: getTextColor(colorScheme) }
+              ]}>
                 {date ? localeDateString(date) : localeDateString(timestamp)}
               </Text>
-              <Text style={styles.displayTime}>
+              <Text style={[
+                styles.displayTime,
+                { color: getTextColor(colorScheme) }
+              ]}>
                 {time
                   ? new Date(time).toLocaleTimeString()
                   : new Date(timestamp).toLocaleTimeString()}
@@ -164,7 +187,7 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -187,14 +210,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 10,
-    backgroundColor: 'rgba(224,224,224,0.3)',
+    // backgroundColor is set dynamically
     borderWidth: 1,
-    borderColor: '#ccc',
+    // borderColor is set dynamically
   },
   displayTime: {
     fontFamily: 'monospace',
     fontSize: 16,
-    color: '#171515',
+    // color is set dynamically
     textAlign: 'center',
   },
   buttonRow: {

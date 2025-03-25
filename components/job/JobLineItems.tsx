@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
   StyleSheet,
   Alert,
   TouchableOpacity,
@@ -27,6 +25,14 @@ import {
   AxiosError,
   Service,
 } from '@/types';
+import { View, Text } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { 
+  getBackgroundColor, 
+  getBorderColor, 
+  getTextColor, 
+  getInputBackgroundColor 
+} from '@/hooks/useThemeColor';
 
 type Props = {
   job: Job;
@@ -131,6 +137,8 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
     setSelectedServiceId(null);
   };
 
+  const colorScheme = useColorScheme();
+  
   return (
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Services</CardTitle>
@@ -138,7 +146,10 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       {job.JobLineItems && job.JobLineItems.length > 0 ? (
         job.JobLineItems.map((item) =>
           item && item.Service ? (
-            <View key={item.id.toString()} style={styles.lineItem}>
+            <View key={item.id.toString()} style={[
+              styles.lineItem, 
+              { borderBottomColor: getBorderColor(colorScheme) }
+            ]}>
               <Text
                 style={styles.serviceName}
                 numberOfLines={1}
@@ -159,7 +170,12 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           ) : null
         )
       ) : (
-        <Text style={styles.emptyText}>No services added yet.</Text>
+        <Text style={[
+          styles.emptyText, 
+          { color: colorScheme === 'dark' ? '#9BA1A6' : '#666' }
+        ]}>
+          No services added yet.
+        </Text>
       )}
 
       {edit ? (
@@ -168,8 +184,17 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
             style={styles.addButton}
             onPress={() => setShowModal(true)}
           >
-            <MaterialIcons name='add-circle' size={24} color='#0a7ea4' />
-            <Text style={styles.addButtonText}>Add Service</Text>
+            <MaterialIcons 
+              name='add-circle' 
+              size={24} 
+              color={colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4'} 
+            />
+            <Text style={[
+              styles.addButtonText,
+              { color: colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4' }
+            ]}>
+              Add Service
+            </Text>
           </TouchableOpacity>
 
           <SecondaryButton
@@ -193,7 +218,10 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         onRequestClose={() => setShowModal(false)}
       >
         <View style={styles.modalBackground}>
-          <View style={styles.modalContent}>
+          <View style={[
+            styles.modalContent,
+            { backgroundColor: getBackgroundColor(colorScheme) }
+          ]}>
             <CardTitle>Add Line Item</CardTitle>
 
             <View style={styles.formContainer}>
@@ -206,8 +234,23 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                 setValue={setSelectedServiceId}
                 setItems={setServicesItems}
                 placeholder='Choose a service...'
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownContainer}
+                style={[
+                  styles.dropdown,
+                  { 
+                    backgroundColor: getInputBackgroundColor(colorScheme),
+                    borderColor: getBorderColor(colorScheme)
+                  }
+                ]}
+                textStyle={{ color: getTextColor(colorScheme) }}
+                placeholderStyle={{ color: colorScheme === 'dark' ? '#9BA1A6' : '#687076' }}
+                dropDownContainerStyle={[
+                  styles.dropdownContainer,
+                  { 
+                    backgroundColor: getInputBackgroundColor(colorScheme),
+                    borderColor: getBorderColor(colorScheme)
+                  }
+                ]}
+                theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
               />
 
               <View style={styles.spacer} />
@@ -246,7 +289,7 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    // backgroundColor is now managed by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -257,7 +300,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    // borderBottomColor is set dynamically
   },
   serviceName: {
     flex: 1,
@@ -281,9 +324,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   addButtonText: {
-    color: '#0a7ea4',
     fontSize: 16,
     marginLeft: 8,
+    // color is set dynamically
   },
   editButton: {
     marginTop: 15,
@@ -294,7 +337,7 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: 'center',
     padding: 20,
-    color: '#666',
+    // color is set dynamically
   },
   modalBackground: {
     flex: 1,
@@ -304,7 +347,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '90%',
-    backgroundColor: 'white',
+    // backgroundColor is set dynamically
     borderRadius: 10,
     padding: 20,
     elevation: 5,
@@ -317,11 +360,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   dropdown: {
-    borderColor: '#ccc',
     borderRadius: 5,
+    // borderColor and backgroundColor are set dynamically
   },
   dropdownContainer: {
-    borderColor: '#ccc',
+    // borderColor is set dynamically
   },
   spacer: {
     height: 15,

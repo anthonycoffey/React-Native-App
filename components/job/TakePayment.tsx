@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 import globalStyles from '@/styles/globalStyles';
@@ -7,6 +7,9 @@ import { CardTitle } from '@/components/Typography';
 import PaymentDialog from '@/components/job/PaymentDialog';
 import { Invoice, Job } from '@/types';
 import { centsToDollars } from '@/utils/money';
+import { View, Text } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { getBackgroundColor } from '@/hooks/useThemeColor';
 
 interface Props {
   job: Job;
@@ -58,6 +61,8 @@ export default function TakePayment({
     setPayWithCash(false);
   };
 
+  const colorScheme = useColorScheme();
+  
   return (
     <View style={[globalStyles.card, styles.container]}>
       {job.status !== 'paid' && hasActiveInvoice ? (
@@ -99,7 +104,7 @@ export default function TakePayment({
               color='#fff'
               style={styles.buttonIcon}
             />
-            <Text style={styles.buttonText}>Pay with Cash</Text>
+            <Text lightColor="#fff" darkColor="#fff" style={styles.buttonText}>Pay with Cash</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -111,7 +116,10 @@ export default function TakePayment({
         onRequestClose={() => setPayWithCard(false)}
       >
         <View style={styles.modalBackground}>
-          <View style={styles.modalContent}>
+          <View style={[
+            styles.modalContent,
+            { backgroundColor: getBackgroundColor(colorScheme) }
+          ]}>
             <TouchableOpacity
               onPress={hidePaymentDialog}
               style={{
@@ -146,7 +154,10 @@ export default function TakePayment({
         onRequestClose={() => setPayWithCash(false)}
       >
         <View style={styles.modalBackground}>
-          <View style={styles.modalContent}>
+          <View style={[
+            styles.modalContent,
+            { backgroundColor: getBackgroundColor(colorScheme) }
+          ]}>
             <TouchableOpacity
               onPress={hidePaymentDialog}
               style={{
@@ -183,7 +194,7 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -220,7 +231,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50',
   },
   buttonText: {
-    color: '#fff',
+    // color is set with lightColor/darkColor props
     fontWeight: 'bold',
     fontSize: 14,
   },
@@ -235,7 +246,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '90%',
-    backgroundColor: 'white',
+    // backgroundColor is set dynamically
     borderRadius: 10,
     padding: 20,
     elevation: 5,

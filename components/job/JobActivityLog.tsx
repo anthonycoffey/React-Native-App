@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 import { Job } from '@/types';
 import { CardTitle } from '@/components/Typography';
 import globalStyles from '@/styles/globalStyles';
+import { View, Text } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { getBorderColor } from '@/hooks/useThemeColor';
 
 export default function JobActivityLog(props: { job: Job }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const colorScheme = useColorScheme();
 
   return (
     <View style={[globalStyles.card, styles.container]}>
@@ -20,7 +22,12 @@ export default function JobActivityLog(props: { job: Job }) {
         style={styles.toggleButton}
         onPress={() => setIsCollapsed(!isCollapsed)}
       >
-        <Text style={styles.toggleButtonText}>
+        <Text 
+          style={[
+            styles.toggleButtonText,
+            { color: colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4' }
+          ]}
+        >
           {isCollapsed ? 'Show Log' : 'Hide Log'}
         </Text>
       </TouchableOpacity>
@@ -30,7 +37,13 @@ export default function JobActivityLog(props: { job: Job }) {
         props.job.JobActions.length > 0 && (
           <View style={styles.list}>
             {props.job.JobActions.map((item) => (
-              <View key={item.id.toString()} style={styles.logItem}>
+              <View 
+                key={item.id.toString()} 
+                style={[
+                  styles.logItem,
+                  { borderBottomColor: getBorderColor(colorScheme) }
+                ]}
+              >
                 <Text style={styles.logText}>{item.action}</Text>
               </View>
             ))}
@@ -39,7 +52,12 @@ export default function JobActivityLog(props: { job: Job }) {
 
       {!isCollapsed &&
         (!props.job.JobActions || props.job.JobActions.length === 0) && (
-          <Text style={styles.emptyText}>No activity log entries found</Text>
+          <Text style={[
+            styles.emptyText,
+            { color: colorScheme === 'dark' ? '#9BA1A6' : '#666' }
+          ]}>
+            No activity log entries found
+          </Text>
         )}
     </View>
   );
@@ -49,7 +67,7 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -61,7 +79,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   toggleButtonText: {
-    color: '#0a7ea4',
+    // color is set dynamically
     fontSize: 16,
     textAlign: 'center',
   },
@@ -71,7 +89,7 @@ const styles = StyleSheet.create({
   logItem: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    // borderBottomColor is set dynamically
   },
   logText: {
     fontSize: 14,
@@ -79,7 +97,7 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: 'center',
     padding: 10,
-    color: '#666',
+    // color is set dynamically
     fontStyle: 'italic',
   },
 });

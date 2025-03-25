@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { Text } from "@/components/Themed";
 
 type Props = {
   children: string;
@@ -11,7 +12,7 @@ export default function Chip({ children }: Props) {
   };
 
   return (
-    <Text style={styles.chip}>
+    <Text style={styles.chip} lightColor="white" darkColor="white">
       {removeDash(children)}
     </Text>
   );

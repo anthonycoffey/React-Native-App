@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
   StyleSheet,
   Alert,
   ActivityIndicator,
@@ -16,6 +14,13 @@ import { CardTitle } from '@/components/Typography';
 import Chip from '@/components/Chip';
 import { PrimaryButton } from '@/components/Buttons';
 import { MaterialIcons } from '@expo/vector-icons';
+import { View, Text } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { 
+  getBackgroundColor, 
+  getBorderColor, 
+  getTextColor 
+} from '@/hooks/useThemeColor';
 
 interface Props {
   job: Job;
@@ -84,6 +89,9 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
     }
   };
 
+  const colorScheme = useColorScheme();
+  const spinnerColor = colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4';
+  
   return (
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Invoices</CardTitle>
@@ -91,7 +99,13 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       {job.Invoices?.filter(
         (invoice: Invoice) => invoice.status !== 'void'
       ).map((invoice: Invoice) => (
-        <View key={invoice.id} style={styles.invoiceRow}>
+        <View 
+          key={invoice.id} 
+          style={[
+            styles.invoiceRow, 
+            { borderColor: getBorderColor(colorScheme) }
+          ]}
+        >
           <Text style={styles.invoiceId}>#{invoice.id}</Text>
           <Chip>{invoice.status}</Chip>
           <Text style={styles.invoiceTotal}>
@@ -100,7 +114,11 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
           <View style={styles.actionsContainer}>
             {invoice.status !== 'void' && (
               <TouchableOpacity onPress={() => openSendDialog(invoice)}>
-                <MaterialIcons name='send' color='#0a7ea4' size={28} />
+                <MaterialIcons 
+                  name='send' 
+                  color={colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4'} 
+                  size={28} 
+                />
               </TouchableOpacity>
             )}
           </View>
@@ -124,7 +142,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       )}
 
       {loading && (
-        <ActivityIndicator size='small' color='#0a7ea4' style={styles.loader} />
+        <ActivityIndicator size='small' color={spinnerColor} style={styles.loader} />
       )}
 
       <Modal
@@ -134,7 +152,10 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
         onRequestClose={() => setShowSendDialog(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[
+            styles.modalContent,
+            { backgroundColor: getBackgroundColor(colorScheme) }
+          ]}>
             <Text style={styles.modalTitle}>Send Invoice</Text>
 
             <Text style={{ textAlign: 'center' }}>
@@ -143,10 +164,21 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
 
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={styles.cancelButton}
+                style={[
+                  styles.cancelButton,
+                  { 
+                    backgroundColor: colorScheme === 'dark' ? '#2c2c2c' : '#f8f9fa',
+                    borderColor: getBorderColor(colorScheme)
+                  }
+                ]}
                 onPress={() => setShowSendDialog(false)}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={[
+                  styles.cancelButtonText,
+                  { color: getTextColor(colorScheme) }
+                ]}>
+                  Cancel
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -172,7 +204,7 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -186,7 +218,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    // borderColor is set dynamically
     borderRadius: 10,
   },
   invoiceId: {
@@ -216,7 +248,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    backgroundColor: 'white',
+    // backgroundColor is set dynamically
     borderRadius: 8,
     padding: 20,
     elevation: 5,
@@ -238,7 +270,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    // borderColor is set dynamically
     borderRadius: 4,
     padding: 10,
     marginBottom: 15,
@@ -249,15 +281,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   cancelButton: {
-    backgroundColor: '#f8f9fa',
+    // backgroundColor is set dynamically
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#ddd',
+    // borderColor is set dynamically
   },
   cancelButtonText: {
-    color: '#212529',
+    // color is set dynamically
   },
   confirmButton: {
     backgroundColor: '#0a7ea4',

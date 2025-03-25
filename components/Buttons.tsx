@@ -1,11 +1,11 @@
 import {
   TouchableOpacity,
-  Text,
   StyleSheet,
   TouchableOpacityProps,
 } from 'react-native';
 import Colors, { buttonVariants, ui } from '@/constants/Colors';
 import { useColorScheme } from './useColorScheme';
+import { Text } from '@/components/Themed';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
