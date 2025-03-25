@@ -20,7 +20,7 @@
 - **Imports**: Order: React first, external libraries, project imports via `@/` aliases
 - **Types**: TypeScript strict mode, explicit interfaces for props/responses
 - **Naming**: PascalCase for components/interfaces, camelCase for variables/functions
-- **Components**: One component per file, filename matches export name
+- **Components**: Suggested one component per file, filename matches export name
 - **Error Handling**: Try/catch for async ops, check error.response details
 - **State Management**: React Context for global state (AuthContext, UserContext)
 - **Testing**: Jest with react-test-renderer, use snapshot testing
