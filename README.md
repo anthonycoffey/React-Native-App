@@ -3,7 +3,7 @@
 ![Expo](https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37)
 ![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
-![Yarn](https://img.shields.io/badge/yarn-%232C8EBB.svg?style=for-the-badge&logo=yarn&logoColor=white)
+![NPM](https://img.shields.io/badge/NPM-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white)
 
 Expo / React Native app for Phoenix CRM.
 
@@ -53,17 +53,17 @@ eas update --channel production --message "...your message here..."
 
 ## NPM Scripts
 
-`yarn start` - starts expo dev server, can pass `--android`, `--ios`, `--web` to build for single environment
+`npm start` - starts expo dev server, can pass `--android`, `--ios`, `--web` to build for single environment
 
 `expo run:android` - test app outside of expo managed service on Android platform
 
 `expo run:ios` - test app outside of expo managed service on iOS platform
 
-`yarn ios` - starts local development build for iOS
+`npm run ios` - starts local development build for iOS
 
-`yarn android` - starts local development build for Android
+`npm run android` - starts local development build for Android
 
-`yarn test` - runs Jest unit tests
+`npm test` - runs Jest unit tests
 
 ## .env config
 
@@ -76,8 +76,8 @@ eas update --channel production --message "...your message here..."
 In order to run the app on iOS simulators, follow these instructions:
 
 1. Install XCode from the App Store (if you haven't already)
-2. 'yarn build:simulator' to create a new simulator build (this is required if you are changing eas.json config, but otherwise you can skip this step)
-3. 'yarn build:run' to install a simulator build, you select it from the list of available builds after running the command
+2. 'npm run build:simulator' to create a new simulator build (this is required if you are changing eas.json config, but otherwise you can skip this step)
+3. 'npm run build:run' to install a simulator build, you select it from the list of available builds after running the command
 
 Note: This works for Android as wel, but you will have to check package.json and modify the scripts accordingly.
 
@@ -85,11 +85,11 @@ Note: This works for Android as wel, but you will have to check package.json and
 
 - Windows Users: if Axios requests aren't working, use ngrok tunnel for `phoenix` backend API because there may be networking issues without it.
 
-- Sometimes issues can be caused by cache, to clear cache with expo: `yarn start --clear`
+- Sometimes issues can be caused by cache, to clear cache with expo: `npm start -- --clear`
 
 - An .env file is required with a single property `API_URL` that points to Phoenix backend
 
-- Sometimes issues can be caused by cache, to clear cache with expo running the following command `yarn start --clear`
+- Sometimes issues can be caused by cache, to clear cache with expo running the following command `npm start -- --clear`
 
   Note: Refer to Expo documentation on clearing cache for your development environment:
 
@@ -100,14 +100,16 @@ Note: This works for Android as wel, but you will have to check package.json and
 - **ANDROID**: For local development builds to work you need JDK 11 installed and `JAVA_HOME` environment variable set to JDK 11 path
 - **IOS**: For local development builds to work you need XCode installed
 
+- **NPM Recommended**: Expo officially recommends using npm over other package managers. Using npm ensures the best compatibility and reduces potential dependency issues.
+
 ### Bundler Cache Issues
 
 If you are having unexpected issues, you may need to clear the bundler cache. To do so, run the following commands:
 
 ```bash
 rm -rf node_modules ios android
-yarn cache clean
-yarn
+npm cache clean --force
+npm install
 watchman watch-del-all
 rm -fr $TMPDIR/haste-map-*
 rm -rf $TMPDIR/metro-cache
