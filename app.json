@@ -13,9 +13,7 @@
       "resizeMode": "cover",
       "backgroundColor": "#252c3a"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
@@ -118,7 +116,6 @@
     },
     "updates": {
       "url": "https://u.expo.dev/2677fe67-4a13-4c97-ad83-2378c282be14"
-    },
-    "jsEngine": "hermes"
+    }
   }
 }
