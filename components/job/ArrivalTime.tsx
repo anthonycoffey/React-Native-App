@@ -2,9 +2,9 @@ import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
-import { Platform, StyleSheet } from 'react-native';
-import api, { responseDebug } from '@/utils/api';
-import { AxiosError } from '@/types';
+import { Platform, StyleSheet, Alert } from 'react-native'; // Added Alert
+import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
+// Removed AxiosError from '@/types'
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
@@ -59,7 +59,7 @@ export default function ArrivalTime({
     }
   };
 
-  const updateArrivalTime = () => {
+  const updateArrivalTime = async () => { // Added async
     let arrivalTime = ``;
     if (date && time) {
       arrivalTime = `${date.split('T')[0]}T${time.split('T')[1]}`;
@@ -71,18 +71,23 @@ export default function ArrivalTime({
     }
 
     if (arrivalTime) {
-      api
-        .patch(`/jobs/${jobId}`, {
+      try {
+        await apiService.patch(`/jobs/${jobId}`, {
           arrivalTime: arrivalTime,
-        })
-        .then(function () {
-          setUpdated(true);
-          fetchJob();
-        })
-        .catch(function (error: AxiosError) {
-          setUpdated(false);
-          responseDebug(error);
         });
+        setUpdated(true);
+        fetchJob();
+      } catch (error) {
+        setUpdated(false);
+        console.error('Failed to update arrival time:');
+        if (error instanceof HttpError) {
+          console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+          Alert.alert('Error', `Failed to update arrival time. Server said: ${error.body?.message || error.message}`);
+        } else {
+          console.error('  An unexpected error occurred:', error);
+          Alert.alert('Error', 'An unexpected error occurred while updating arrival time.');
+        }
+      }
     }
   };
 
@@ -98,13 +103,13 @@ export default function ArrivalTime({
               value={new Date(timestamp)}
               mode='date'
               onChange={onChangeDate}
-              themeVariant={colorScheme}
+              themeVariant={colorScheme ?? undefined} // Handle null from useColorScheme
             />
             <DateTimePicker
               value={new Date(timestamp)}
               mode='time'
               onChange={onChangeTime}
-              themeVariant={colorScheme}
+              themeVariant={colorScheme ?? undefined} // Handle null from useColorScheme
             />
           </>
         )}
@@ -114,19 +119,19 @@ export default function ArrivalTime({
             <View style={[
               styles.displayTimeContainer,
               {
-                backgroundColor: colorScheme === 'dark' ? 'rgba(50, 50, 50, 0.5)' : 'rgba(224, 224, 224, 0.3)',
-                borderColor: getBorderColor(colorScheme)
+                backgroundColor: (colorScheme ?? 'light') === 'dark' ? 'rgba(50, 50, 50, 0.5)' : 'rgba(224, 224, 224, 0.3)',
+                borderColor: getBorderColor(colorScheme ?? 'light')
               }
             ]}>
               <Text style={[
                 styles.displayTime,
-                { color: getTextColor(colorScheme) }
+                { color: getTextColor(colorScheme ?? 'light') }
               ]}>
                 {date ? localeDateString(date) : localeDateString(timestamp)}
               </Text>
               <Text style={[
                 styles.displayTime,
-                { color: getTextColor(colorScheme) }
+                { color: getTextColor(colorScheme ?? 'light') }
               ]}>
                 {time
                   ? new Date(time).toLocaleTimeString()

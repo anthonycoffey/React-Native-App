@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { centsToDollars } from '@/utils/money';
-import api from '@/utils/api';
+import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
 import { Invoice, Job } from '@/types';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
@@ -41,11 +41,18 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
   const generateInvoice = async () => {
     setLoading(true);
     try {
-      await api.post(`/jobs/${job.id}/generate-invoice`);
+      await apiService.post(`/jobs/${job.id}/generate-invoice`);
       fetchJob();
-      setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.error('Failed to generate invoice:');
+      if (error instanceof HttpError) {
+        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        Alert.alert('Error', `Failed to generate invoice. Server said: ${error.body?.message || error.message}`);
+      } else {
+        console.error('  An unexpected error occurred:', error);
+        Alert.alert('Error', 'An unexpected error occurred while generating invoice.');
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -75,22 +82,28 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
 
     setSendingInvoice(true);
     try {
-      await api.post(`/invoices/${selectedInvoice.id}/send`, {
+      await apiService.post(`/invoices/${selectedInvoice.id}/send`, {
         phone,
       });
       setShowSendDialog(false);
       fetchJob();
       Alert.alert('Success', 'Invoice sent successfully');
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to send invoice');
+      console.error('Failed to send invoice:');
+      if (error instanceof HttpError) {
+        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        Alert.alert('Error', `Failed to send invoice. Server said: ${error.body?.message || error.message}`);
+      } else {
+        console.error('  An unexpected error occurred:', error);
+        Alert.alert('Error', 'An unexpected error occurred while sending invoice.');
+      }
     } finally {
       setSendingInvoice(false);
     }
   };
 
   const colorScheme = useColorScheme();
-  const spinnerColor = colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4';
+  const spinnerColor = (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4';
   
   return (
     <View style={[globalStyles.card, styles.container]}>
@@ -99,14 +112,14 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       {job.Invoices?.filter(
         (invoice: Invoice) => invoice.status !== 'void'
       ).map((invoice: Invoice) => (
-        <View 
-          key={invoice.id} 
-          style={[
-            styles.invoiceRow, 
-            { borderColor: getBorderColor(colorScheme) }
-          ]}
-        >
-          <Text style={styles.invoiceId}>#{invoice.id}</Text>
+          <View 
+            key={invoice.id} 
+            style={[
+              styles.invoiceRow, 
+              { borderColor: getBorderColor(colorScheme ?? 'light') }
+            ]}
+          >
+            <Text style={styles.invoiceId}>#{invoice.id}</Text>
           <Chip>{invoice.status}</Chip>
           <Text style={styles.invoiceTotal}>
             {centsToDollars(invoice.total)}
@@ -116,7 +129,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
               <TouchableOpacity onPress={() => openSendDialog(invoice)}>
                 <MaterialIcons 
                   name='send' 
-                  color={colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4'} 
+                  color={(colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'} 
                   size={28} 
                 />
               </TouchableOpacity>
@@ -154,7 +167,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
         <View style={styles.modalOverlay}>
           <View style={[
             styles.modalContent,
-            { backgroundColor: getBackgroundColor(colorScheme) }
+            { backgroundColor: getBackgroundColor(colorScheme ?? 'light') }
           ]}>
             <Text style={styles.modalTitle}>Send Invoice</Text>
 
@@ -167,15 +180,15 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
                 style={[
                   styles.cancelButton,
                   { 
-                    backgroundColor: colorScheme === 'dark' ? '#2c2c2c' : '#f8f9fa',
-                    borderColor: getBorderColor(colorScheme)
+                    backgroundColor: (colorScheme ?? 'light') === 'dark' ? '#2c2c2c' : '#f8f9fa',
+                    borderColor: getBorderColor(colorScheme ?? 'light')
                   }
                 ]}
                 onPress={() => setShowSendDialog(false)}
               >
                 <Text style={[
                   styles.cancelButtonText,
-                  { color: getTextColor(colorScheme) }
+                  { color: getTextColor(colorScheme ?? 'light') }
                 ]}>
                   Cancel
                 </Text>

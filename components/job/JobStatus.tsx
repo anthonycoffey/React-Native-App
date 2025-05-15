@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { TextInput, Alert, StyleSheet, Modal } from 'react-native';
-import api, { responseDebug } from '@/utils/api';
+import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
 import globalStyles from '@/styles/globalStyles';
 import { router } from 'expo-router';
-import { AxiosError, Job } from '@/types';
+import { Job } from '@/types'; // Removed AxiosError
 import JobHeader from '@/components/job/JobHeader';
 import { ErrorText, HeaderText } from '@/components/Typography';
 import { View } from '@/components/Themed';
@@ -36,38 +36,53 @@ export default function JobStatus({ job, fetchJob }: Props) {
     setIsFinishDisabled(finishDisabled);
   }, [job]);
 
-  const updateJobStatus = (event: string) => {
-    api
-      .post(`/jobs/${job.id}/${event}`, { event })
-      .then(() => {
-        fetchJob();
-      })
-      .catch((error: AxiosError) => {
-        responseDebug(error);
-      });
-  };
-
-  const quitJob = () => {
+  const updateJobStatus = async (event: string) => {
     try {
-      api.post(`/jobs/${job.id}/quit`).then(() => {
-        router.back();
-      });
+      await apiService.post(`/jobs/${job.id}/${event}`, { event });
+      fetchJob();
     } catch (error) {
-      console.log(error);
+      console.error(`Failed to update job status for event ${event}:`);
+      if (error instanceof HttpError) {
+        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        Alert.alert('Error', `Failed to update job status. Server said: ${error.body?.message || error.message}`);
+      } else {
+        console.error('  An unexpected error occurred:', error);
+        Alert.alert('Error', 'An unexpected error occurred while updating job status.');
+      }
     }
   };
 
-  const cancelJob = () => {
+  const quitJob = async () => {
     try {
-      api
-        .post(`/jobs/${job.id}/cancel`, {
-          comment: cancelComment,
-        })
-        .then(() => {
-          router.back();
-        });
+      await apiService.post(`/jobs/${job.id}/quit`);
+      router.back();
     } catch (error) {
-      console.log(error);
+      console.error('Failed to quit job:');
+      if (error instanceof HttpError) {
+        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        Alert.alert('Error', `Failed to quit job. Server said: ${error.body?.message || error.message}`);
+      } else {
+        console.error('  An unexpected error occurred:', error);
+        Alert.alert('Error', 'An unexpected error occurred while quitting job.');
+      }
+    }
+  };
+
+  const cancelJob = async () => {
+    try {
+      await apiService.post(`/jobs/${job.id}/cancel`, {
+        comment: cancelComment,
+      });
+      router.back();
+    } catch (error) {
+      console.error('Failed to cancel job:');
+      if (error instanceof HttpError) {
+        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        Alert.alert('Error', `Failed to cancel job. Server said: ${error.body?.message || error.message}`);
+      } else {
+        console.error('  An unexpected error occurred:', error);
+        Alert.alert('Error', 'An unexpected error occurred while canceling job.');
+      }
     }
   };
 

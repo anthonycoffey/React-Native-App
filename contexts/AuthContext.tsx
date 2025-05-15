@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react'; // Removed useRef
 import { useStorageState } from '@/hooks/useStorageState';
-import api from '@/utils/api';
+import { apiService } from '@/utils/ApiService'; // Import new apiService
 import { router } from 'expo-router';
 
 type AuthContextType = {
@@ -8,6 +8,7 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   session: string | null;
   isLoading: boolean;
+  isApiConfigured: boolean; // Added
 };
 
 const AuthContext = React.createContext<AuthContextType | null>(null);
@@ -25,36 +26,19 @@ export function useAuth() {
 
 export function AuthProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
-
-  const requestInterceptorIdRef = useRef<number | null>(null);
+  const [isApiConfigured, setIsApiConfigured] = useState(false);
 
   useEffect(() => {
-    if (requestInterceptorIdRef.current !== null) {
-      api.interceptors.request.eject(requestInterceptorIdRef.current);
-      requestInterceptorIdRef.current = null;
-    }
+    console.log('[AuthContext Effect] Running. Session:', session);
+    setIsApiConfigured(false); // Reset when session changes
 
-    if (session) {
-      requestInterceptorIdRef.current = api.interceptors.request.use(
-        (config) => {
-          config.headers.Authorization = `Bearer ${session}`;
-          return config;
-        }
-      );
-    } else {
-      requestInterceptorIdRef.current = api.interceptors.request.use(
-        (config) => {
-          delete config.headers.Authorization;
-          return config;
-        }
-      );
-    }
+    apiService.setAuthToken(session); // Set token in the new ApiService
+    console.log(`[AuthContext Effect] Token set in ApiService. Session: ${session ? 'exists' : 'null'}`);
+    
+    setIsApiConfigured(true); // API service is now configured with the current token state
+    console.log('[AuthContext Effect] isApiConfigured set to true.');
 
-    return () => {
-      if (requestInterceptorIdRef.current !== null) {
-        api.interceptors.request.eject(requestInterceptorIdRef.current);
-      }
-    };
+    // No cleanup needed for interceptors anymore
   }, [session]);
 
   const signIn = async (token: string) => {
@@ -72,6 +56,7 @@ export function AuthProvider(props: React.PropsWithChildren) {
     signOut,
     session,
     isLoading,
+    isApiConfigured, // Added to value
   };
 
   return (

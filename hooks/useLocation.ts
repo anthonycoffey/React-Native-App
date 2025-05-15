@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import * as Location from 'expo-location';
 import { LocationObject, LocationSubscription } from 'expo-location';
 import { router } from 'expo-router';
-import api from '@/utils/api';
+import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
 import { useUser } from '@/contexts/UserContext';
 
 export default function useLocation(skipRedirect = false) {
@@ -68,7 +68,7 @@ export default function useLocation(skipRedirect = false) {
       try {
         pendingUpdateRef.current = true;
 
-        await api.post('/user/geolocation', {
+        await apiService.post('/user/geolocation', {
           latitude: locationData.coords.latitude,
           longitude: locationData.coords.longitude,
           accuracy: locationData.coords.accuracy,
@@ -76,7 +76,13 @@ export default function useLocation(skipRedirect = false) {
         });
 
       } catch (error) {
-        console.error('Error updating server with location:', error);
+        console.error('Error updating server with location:');
+        if (error instanceof HttpError) {
+          console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+          // Decide if user needs to be alerted or if this can fail silently
+        } else {
+          console.error('  An unexpected error occurred:', error);
+        }
       } finally {
         setTimeout(() => {
           pendingUpdateRef.current = false;

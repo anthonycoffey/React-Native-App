@@ -26,6 +26,7 @@ export default {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
+    borderColor: '#ddd', // Added border color for light theme
   },
   dark: {
     text: '#ECEDEE',
@@ -34,5 +35,6 @@ export default {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    borderColor: '#444', // Added border color for dark theme
   },
 };

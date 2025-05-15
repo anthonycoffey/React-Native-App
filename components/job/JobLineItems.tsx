@@ -8,7 +8,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { centsToDollars } from '@/utils/money';
-import api from '@/utils/api';
+import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
 import { prettyPrint } from '@/utils/objects';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
@@ -21,10 +21,8 @@ import {
 import {
   Job,
   JobLineItems as JobLineItemsType,
-  AxiosResponse,
-  AxiosError,
   Service,
-} from '@/types';
+} from '@/types'; // Removed AxiosResponse, AxiosError
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { 
@@ -63,44 +61,60 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
 
   useEffect(() => {
     const fetchServices = async () => {
-      const response = await api.get('/services?limit=all');
-      const { data: x } = response;
-      const { data } = x;
-      setServices(data);
-      const items = data.map((service: Service) => ({
-        label: service.name,
-        value: service.id,
-      }));
-      setServicesItems(items);
+      try {
+        // Assuming the API returns { data: Service[] }
+        const response = await apiService.get<{ data: Service[] }>('/services?limit=all');
+        const fetchedServices = response.data;
+        setServices(fetchedServices);
+        const items = fetchedServices.map((service: Service) => ({
+          label: service.name,
+          value: service.id,
+        }));
+        setServicesItems(items);
+      } catch (error) {
+        console.error('Failed to fetch services:');
+        if (error instanceof HttpError) {
+          console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+          Alert.alert('Error', `Failed to load services. Server said: ${error.body?.message || error.message}`);
+        } else {
+          console.error('  An unexpected error occurred:', error);
+          Alert.alert('Error', 'An unexpected error occurred while loading services.');
+        }
+      }
     };
     fetchServices();
   }, []);
 
-  const addLineItem = () => {
+  const addLineItem = async () => {
     if (selectedServiceId) {
       const selectedService = services.find(
         (service) => service.id === selectedServiceId
       );
       if (selectedService) {
-        const newLineItemPrice = parseInt(+valuePrice * 100);
-
-        api
-          .post(`/jobs/${job.id}/line-items`, {
+        const newLineItemPrice = Math.round(+valuePrice * 100); // Changed from parseInt
+        try {
+          await apiService.post(`/jobs/${job.id}/line-items`, {
             lineItems: [
               ...job.JobLineItems,
               { ServiceId: selectedServiceId, price: newLineItemPrice },
             ],
-          })
-          .then((response: AxiosResponse) => {
-            fetchJob();
-            setShowModal(false);
-            resetForm();
-          })
-          .catch((error: AxiosError) => {
-            prettyPrint({ error });
-            setShowModal(false);
-            resetForm();
           });
+          fetchJob();
+          setShowModal(false);
+          resetForm();
+        } catch (error) {
+          console.error('Failed to add line item:');
+          if (error instanceof HttpError) {
+            console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+            Alert.alert('Error', `Failed to add line item. Server said: ${error.body?.message || error.message}`);
+          } else {
+            console.error('  An unexpected error occurred:', error);
+            Alert.alert('Error', 'An unexpected error occurred while adding line item.');
+          }
+          // Keep modal open on error for correction, or close as per original logic
+          // setShowModal(false); 
+          // resetForm();
+        }
       }
     }
   };
@@ -116,15 +130,20 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         },
         {
           text: 'OK',
-          onPress: () => {
-            api
-              .delete(`/jobs/${job.id}/line-items/${item.id}`)
-              .then(() => {
-                fetchJob();
-              })
-              .catch((error: AxiosError) => {
-                prettyPrint({ error });
-              });
+          onPress: async () => {
+            try {
+              await apiService.delete(`/jobs/${job.id}/line-items/${item.id}`);
+              fetchJob();
+            } catch (error) {
+              console.error('Failed to delete line item:');
+              if (error instanceof HttpError) {
+                console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+                Alert.alert('Error', `Failed to delete line item. Server said: ${error.body?.message || error.message}`);
+              } else {
+                console.error('  An unexpected error occurred:', error);
+                Alert.alert('Error', 'An unexpected error occurred while deleting line item.');
+              }
+            }
           },
         },
       ],
@@ -148,7 +167,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           item && item.Service ? (
             <View key={item.id.toString()} style={[
               styles.lineItem, 
-              { borderBottomColor: getBorderColor(colorScheme) }
+              { borderBottomColor: getBorderColor(colorScheme ?? 'light') } // Added default for colorScheme
             ]}>
               <Text
                 style={styles.serviceName}
@@ -172,7 +191,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       ) : (
         <Text style={[
           styles.emptyText, 
-          { color: colorScheme === 'dark' ? '#9BA1A6' : '#666' }
+          { color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#666' } // Added default for colorScheme
         ]}>
           No services added yet.
         </Text>
@@ -187,11 +206,11 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
             <MaterialIcons 
               name='add-circle' 
               size={24} 
-              color={colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4'} 
+              color={(colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'} // Added default for colorScheme
             />
             <Text style={[
               styles.addButtonText,
-              { color: colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4' }
+              { color: (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4' } // Added default for colorScheme
             ]}>
               Add Service
             </Text>
@@ -220,7 +239,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         <View style={styles.modalBackground}>
           <View style={[
             styles.modalContent,
-            { backgroundColor: getBackgroundColor(colorScheme) }
+            { backgroundColor: getBackgroundColor(colorScheme ?? 'light') } // Added default for colorScheme
           ]}>
             <CardTitle>Add Line Item</CardTitle>
 
@@ -237,20 +256,20 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                 style={[
                   styles.dropdown,
                   { 
-                    backgroundColor: getInputBackgroundColor(colorScheme),
-                    borderColor: getBorderColor(colorScheme)
+                    backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'), // Added default
+                    borderColor: getBorderColor(colorScheme ?? 'light') // Added default
                   }
                 ]}
-                textStyle={{ color: getTextColor(colorScheme) }}
-                placeholderStyle={{ color: colorScheme === 'dark' ? '#9BA1A6' : '#687076' }}
+                textStyle={{ color: getTextColor(colorScheme ?? 'light') }} // Added default
+                placeholderStyle={{ color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#687076' }} // Added default
                 dropDownContainerStyle={[
                   styles.dropdownContainer,
                   { 
-                    backgroundColor: getInputBackgroundColor(colorScheme),
-                    borderColor: getBorderColor(colorScheme)
+                    backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'), // Added default
+                    borderColor: getBorderColor(colorScheme ?? 'light') // Added default
                   }
                 ]}
-                theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
+                theme={(colorScheme ?? 'light') === 'dark' ? 'DARK' : 'LIGHT'} // Added default
               />
 
               <View style={styles.spacer} />

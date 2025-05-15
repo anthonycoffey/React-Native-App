@@ -75,6 +75,25 @@ export interface Job extends BaseEntity {
   JobActions?: JobActions[];
   Discounts?: Discount[];
   Invoices?: Invoice[];
+  JobFiles?: JobFile[];
+  JobComments?: JobComment[]; // Added JobComments
+}
+
+export interface JobComment extends BaseEntity {
+  text: string;
+  JobId: number;
+  UserId: number; // Assuming comments are linked to a User
+  User?: User; // To include commenter details
+}
+
+export interface JobFile {
+  id: number;
+  url: string;
+  name: string;
+  type: string; // e.g., "image/jpeg", "video/mp4"
+  createdAt: string;
+  updatedAt: string;
+  JobId: number;
 }
 
 export interface Invoice extends BaseEntity {
