@@ -126,17 +126,17 @@ export default function JobPage() {
 
   return (
     <ThemedView style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <LoadingSpinner loading={loading} />
+        <ScrollView
+          style={styles.scrollContainer}
+          contentContainerStyle={styles.contentContainer}
+          nestedScrollEnabled={true}
         >
-          <LoadingSpinner loading={loading} />
-          <ScrollView
-            style={styles.scrollContainer}
-            contentContainerStyle={styles.contentContainer}
-            nestedScrollEnabled={true}
-          >
+          <SafeAreaView style={{ flex: 1 }}>
             <JobStatus job={job} fetchJob={fetchJob} />
             <JobDetailsAndMapButtons job={job} fetchJob={fetchJob} />
             <ArrivalTime
@@ -156,10 +156,9 @@ export default function JobPage() {
               currentUserId={currentUserId}
               fetchJob={fetchJob}
             />
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-      {/* CommentModal is now rendered inside JobComments.tsx */}
+          </SafeAreaView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ThemedView>
   );
 }
@@ -170,14 +169,11 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 10,
-    paddingBottom: 16, // Ensure space for content at the bottom
-    paddingTop: 16,
+    paddingBottom: 16,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // Styles commentsSectionContainer, collapsibleHeader, sectionTitle, addCommentButton
-  // are now moved to JobComments.tsx's StyleSheet.
 });
