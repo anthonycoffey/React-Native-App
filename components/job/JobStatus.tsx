@@ -199,24 +199,25 @@ export default function JobStatus({ job, fetchJob }: Props) {
               />
             </View>
 
-            <PrimaryButton
-              title='Cancel Job'
-              variant='error'
-              onPress={() => {
-                setShowCancelDialog(false);
-                cancelJob();
-              }}
-              style={globalStyles.button}
-            />
-            <OutlinedButton
-              variant='primary'
-              title='Go Back'
-              onPress={() => {
-                setCancelComment('');
-                setShowCancelDialog(false);
-              }}
-              style={{ width: '100%', marginTop: 10 }}
-            />
+            <View style={styles.modalButtonContainer}>
+              <OutlinedButton
+                title='Go Back'
+                onPress={() => {
+                  setCancelComment('');
+                  setShowCancelDialog(false);
+                }}
+                style={styles.modalButton} // Apply new style
+              />
+              <PrimaryButton
+                title='Cancel Job'
+                variant='error'
+                onPress={() => {
+                  setShowCancelDialog(false);
+                  cancelJob();
+                }}
+                style={styles.modalButton} // Apply new style
+              />
+            </View>
           </View>
         </View>
       </Modal>
@@ -257,6 +258,16 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '100%',
     marginBottom: 15,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+  },
+  modalButton: {
+    // Buttons will take their natural width defined in Buttons.tsx (minWidth: 120)
+    // Adjust if more specific sizing is needed, e.g., width: '48%'
   },
   infoAlert: {
     borderWidth: 1,

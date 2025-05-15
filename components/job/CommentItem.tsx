@@ -1,10 +1,12 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { formatDistanceToNowStrict } from 'date-fns';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Text, View as ThemedView } from '@/components/Themed';
-import { PrimaryButton, SecondaryButton } from '@/components/Buttons';
-import { User } from '@/contexts/UserContext';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { User } from '@/contexts/AuthContext'; // Changed from UserContext
 import { JobComment } from '@/types'; // Import JobComment
+import { buttonVariants } from '@/constants/Colors';
 
 interface CommentItemProps {
   comment: JobComment;
@@ -20,6 +22,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onDeletePress,
 }) => {
   const isOwnComment = comment.User?.id === currentUserId;
+  const iconColor = useThemeColor({}, 'icon');
+  const deleteIconColor = buttonVariants.error; // Use directly from constants
+
 
   const handleEdit = () => {
     onEditPress(comment);
@@ -40,8 +45,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
       <Text style={styles.commentText}>{comment.text}</Text>
       {isOwnComment && (
         <View style={styles.actionsContainer}>
-          <SecondaryButton onPress={handleEdit} title="Edit" style={styles.actionButton} />
-          <PrimaryButton onPress={handleDelete} title="Delete" style={styles.actionButton} variant="error" />
+          <TouchableOpacity onPress={handleEdit} style={styles.iconButton}>
+            <MaterialIcons name="edit" size={20} color={iconColor} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleDelete} style={styles.iconButton}>
+            <MaterialIcons name="delete" size={20} color={deleteIconColor} />
+          </TouchableOpacity>
         </View>
       )}
     </ThemedView>
@@ -76,10 +85,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginTop: 10,
   },
-  actionButton: {
+  actionButton: { // This style is no longer used directly by buttons, but iconButton is new
     marginLeft: 10,
-    // Adjust padding/margin for buttons if needed
   },
+  iconButton: {
+    padding: 5,
+    marginLeft: 10,
+  }
 });
 
 export default CommentItem;

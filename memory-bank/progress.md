@@ -24,6 +24,19 @@ This document tracks what works, what's left to build, the current status, known
     - Components consuming `currentUser` (e.g., `app/job/[id].tsx`) were updated to use `useAuth()`.
     - This architectural change resolves previous race conditions related to user data fetching and API readiness signaling.
     - The `isApiConfigured` flag in `AuthContext.tsx` (with deferred setting) remains to ensure proper timing for `apiService` token configuration before the fetch.
+- **Comment Item UI Update:**
+    - Modified `components/job/CommentItem.tsx` to replace text-based edit/delete buttons with smaller, iconic `MaterialIcons` buttons (`edit`, `delete`).
+    - Ensured icons use appropriate theme-aware colors.
+    - Resolved associated TypeScript errors by correcting `User` type import and using `buttonVariants.error` for delete icon color.
+- **Job Cancellation Dialog UI Update (in `components/job/JobStatus.tsx`):**
+    - Adjusted button layout for "Go Back" and "Cancel Job" to be space-between justified (left/right alignment).
+    - Updated "Go Back" button to a standard `OutlinedButton` for neutral styling.
+    - Ensured "Cancel Job" (destructive) button retains its error styling.
+    - Removed full-width properties from individual buttons in the dialog.
+- **Comments Section Refactor:**
+    - Extracted comments functionality from `app/job/[id].tsx` into a new dedicated component: `components/job/JobComments.tsx`.
+    - This new component now manages its own state, handlers, and JSX for displaying comments, the comment modal, and related actions.
+    - `app/job/[id].tsx` has been simplified by removing the direct comments logic and now renders the `JobComments` component.
 
 ## What's Left to Build
 

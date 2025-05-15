@@ -41,6 +41,19 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - Components previously using `currentUser` from `useUser()` (e.g., `app/job/[id].tsx`) have been updated to use `currentUser` from `useAuth()`.
     - This change centralizes authentication and user identity management, providing a more robust and synchronized state.
     - A temporary 5-second delay (used for earlier diagnosis) was removed from `UserContext.tsx` as part of this refactor.
+- **Updated `components/job/CommentItem.tsx` for Edit/Delete Buttons:**
+    - Replaced text-based `PrimaryButton` and `SecondaryButton` with smaller, iconic buttons using `MaterialIcons` (`edit` and `delete`) wrapped in `TouchableOpacity`.
+    - Ensured icons use theme-aware colors (`useThemeColor` for edit icon, `buttonVariants.error` from `constants/Colors` for delete icon).
+    - Corrected `User` type import from `contexts/UserContext` to `contexts/AuthContext`.
+- **Updated Job Cancellation Dialog in `components/job/JobStatus.tsx`:**
+    - Arranged "Go Back" and "Cancel Job" buttons in a row with space-between justification for left/right alignment.
+    - "Go Back" button (left) changed to a standard `OutlinedButton` (no variant) for less visual prominence.
+    - "Cancel Job" button (right, destructive) remains a `PrimaryButton` with `variant='error'`.
+    - Removed full-width styling from individual buttons, allowing them to size naturally within the new row container.
+- **Refactored Comments Section into `JobComments.tsx` Component:**
+    - Created new component `components/job/JobComments.tsx`.
+    - Moved all comment-related state, handlers (add, edit, delete, modal control), JSX (collapsible section, list, modal), and styles from `app/job/[id].tsx` to `JobComments.tsx`.
+    - The new `JobComments` component now encapsulates all comment functionality and is rendered within `app/job/[id].tsx`, receiving necessary props like `jobId`, `jobComments`, `currentUserId`, and `fetchJob`.
 
 ## Next Steps
 
