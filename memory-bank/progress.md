@@ -17,8 +17,13 @@ This document tracks what works, what's left to build, the current status, known
   - Refactored `CommentsList.tsx` to use `map` instead of `FlatList` to prevent nested VirtualizedList issues.
   - Enhanced comments section in `app/job/[id].tsx` to be collapsible.
   - Added client-side pagination to `CommentsList.tsx`.
-- **User Data Fetching:** Resolved a 401 error when fetching user data by introducing an `isApiConfigured` flag in `AuthContext` and ensuring `UserContext` waits for API readiness.
-- **User Data Fetch Delay:** Added a 5-second delay to the `/users/me` API request in `contexts/UserContext.tsx`.
+- **User Data Fetching Architecture:**
+    - Migrated user data (`/users/me`) fetching logic from `UserContext.tsx` to `AuthContext.tsx`.
+    - `AuthContext.tsx` now manages `currentUser` state and `isUserLoading` state, fetching user data directly when a session is active and `apiService` is configured.
+    - `UserContext.tsx` is simplified, focusing on non-authentication-related user state like `isClockedIn`.
+    - Components consuming `currentUser` (e.g., `app/job/[id].tsx`) were updated to use `useAuth()`.
+    - This architectural change resolves previous race conditions related to user data fetching and API readiness signaling.
+    - The `isApiConfigured` flag in `AuthContext.tsx` (with deferred setting) remains to ensure proper timing for `apiService` token configuration before the fetch.
 
 ## What's Left to Build
 

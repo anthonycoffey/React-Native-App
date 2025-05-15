@@ -6,8 +6,8 @@ This document outlines the system architecture, key technical decisions, design 
 
 1.  **Framework:** Expo React Native application (latest SDK, utilizing React v19).
 2.  **API Communication:**
-    *   The mobile app communicates with the existing backend API (shared with the Phoenix CRM web app).
-    *   The specific protocol (e.g., REST, GraphQL) and implementation details can be found in `utils/api.ts`. *(To be verified by reviewing `utils/api.ts`)*
+    *   The mobile app communicates with the existing backend API (shared with the Phoenix CRM web app) using a custom fetch-based client.
+    *   The API client implementation is located in `utils/ApiService.ts`.
 3.  **Local Data Storage:**
     *   **Authentication Token:** Securely stored using `expo-secure-store` (likely managed via `hooks/useStorageState.ts` or within `contexts/AuthContext.tsx`).
     *   **Other Persistent State:** Potentially `AsyncStorage` for non-sensitive user preferences or cached data (managed via `hooks/useStorageState.ts`).
@@ -26,9 +26,9 @@ This document outlines the system architecture, key technical decisions, design 
         *   `react-native-dropdown-picker` for dropdown/select inputs.
         *   `react-native-map-link` for integration with map applications.
 2.  **State Management:**
-    *   **Global State:** React Context API is used for managing global state, specifically for:
-        *   Authentication (`contexts/AuthContext.tsx`).
-        *   User Data (`contexts/UserContext.tsx`).
+    *   **Global State:** React Context API is used for managing global state:
+        *   `contexts/AuthContext.tsx`: Manages the user's session (authentication token), API readiness status (`isApiConfigured`), and the authenticated user's data (`currentUser`). It fetches user data upon successful session establishment and token configuration in the `apiService`. The `isApiConfigured` flag is set deferred (next event tick) to ensure proper synchronization.
+        *   `contexts/UserContext.tsx`: Manages other user-specific states not directly tied to authentication, such as `isClockedIn`.
     *   **Local State:** Standard React component state (`useState`, `useEffect`) is used extensively within components for managing their internal data and lifecycle.
 3.  **Styling & Theming:**
     *   Styling is primarily managed using React Native's `StyleSheet` API.
@@ -51,7 +51,7 @@ This document outlines the system architecture, key technical decisions, design 
 3.  **Functional Components with Hooks:** Standard approach for component development.
 4.  **File System Routing:** Leveraged from Expo Router.
 5.  **Higher-Order Components (HOCs):** Potentially used for route protection or wrapping layouts, though Expo Router's layout mechanism might reduce direct HOC usage for routing. *(To be verified)*
-6.  **API Service Abstraction:** API calls are likely centralized or abstracted in `utils/api.ts` for maintainability.
+6.  **API Service Abstraction:** API calls are centralized and abstracted in `utils/ApiService.ts`, which provides a custom fetch-based client for interacting with the backend.
 7.  **Error Handling:** Specific patterns for API error handling and display to the user. *(To be detailed by reviewing API call implementations)*
 8.  **Form Handling:** Patterns for input management, validation, and submission. *(To be detailed as forms are implemented/reviewed)*
 

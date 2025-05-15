@@ -1,27 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
-import { useAuth } from '@/contexts/AuthContext'; // Import useAuth
+import { apiService, HttpError } from '@/utils/ApiService'; // HttpError might be used by clockIn/Out
+// useAuth import is removed as it's no longer needed in this context
+// import { useAuth } from '@/contexts/AuthContext'; 
 
-// Define the User interface and expected API response structure
-export interface User {
-  id: number | string;
-  fullName: string;
-  // Add other relevant fields from the /users/me response if needed later
-}
-
-interface UserApiResponse {
-  user: User;
-  // Potentially other fields like 'success' if your API wraps the user object
-}
+// User interface and UserApiResponse are now managed by AuthContext
 
 // Define the context type
 interface UserContextType {
   isClockedIn: boolean;
-  isLoading: boolean; // Represents loading for clock-in status and potentially user data
+  isLoadingClockedInStatus: boolean; // Renamed for clarity
   clockIn: () => Promise<void>;
   clockOut: () => Promise<void>;
-  currentUser: User | null;
+  // currentUser is removed
 }
 
 // Create the context
@@ -36,14 +27,14 @@ interface UserProviderProps {
 const CLOCKED_IN_KEY = 'user_clocked_in';
 
 export function UserProvider({ children }: UserProviderProps) {
-  const auth = useAuth();
-  const session = auth?.session;
-  const isAuthLoading = auth?.isLoading ?? true;
-  const isApiConfigured = auth?.isApiConfigured ?? false; // Consume isApiConfigured
+  // const auth = useAuth(); // Removed
+  // const session = auth?.session; // Removed
+  // const isAuthLoading = auth?.isLoading ?? true; // Removed
+  // const isApiConfigured = auth?.isApiConfigured ?? false; // Removed
 
   const [isClockedIn, setIsClockedIn] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Combined loading state for now
+  // const [currentUser, setCurrentUser] = useState<User | null>(null); // Removed: currentUser managed by AuthContext
+  const [isLoadingClockedInStatus, setIsLoadingClockedInStatus] = useState(true); // Renamed for clarity
 
   // Initial load of clocked-in status
   useEffect(() => {
@@ -54,47 +45,15 @@ export function UserProvider({ children }: UserProviderProps) {
       } catch (error) {
         console.error('Failed to load clocked-in status:', error);
       } finally {
-        setIsLoading(false);
+        setIsLoadingClockedInStatus(false); // Updated state setter
       }
     }
 
     loadClockedInStatus();
   }, []);
 
-  // Effect to load current user data when session changes
-  useEffect(() => {
-    const fetchUserData = async () => {
-      console.log('[UserContext] Attempting to fetch user data. isApiConfigured:', isApiConfigured, 'Session:', session ? 'exists' : 'null', 'isAuthLoading:', isAuthLoading);
-      try {
-        console.log('[UserContext] Introducing 5s delay before fetching /users/me');
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        // Assuming the API returns an object like { user: UserData }
-        const response = await apiService.get<UserApiResponse>('/users/me');
-        console.log('[UserContext] User data fetched successfully:', response);
-        setCurrentUser(response.user); // Access the user property from the response
-      } catch (error) {
-        console.error('[UserContext] Failed to load current user:');
-        if (error instanceof HttpError) {
-          console.error(`  Status: ${error.status}`);
-          console.error(`  Body: ${JSON.stringify(error.body)}`);
-          console.error(`  Message: ${error.message}`);
-        } else {
-          console.error('  An unexpected error occurred:', error);
-        }
-        setCurrentUser(null);
-      }
-    };
-
-    if (isApiConfigured) {
-      // Only proceed if API is configured
-      if (session && !isAuthLoading) {
-        fetchUserData();
-      } else if (!session && !isAuthLoading) {
-        setCurrentUser(null); // No session, clear user
-      }
-    }
-    // If isApiConfigured is false, or isAuthLoading is true, this effect will re-run when they change.
-  }, [session, isAuthLoading, isApiConfigured]); // Added isApiConfigured dependency
+  // Effect to load current user data when session changes - ENTIRELY REMOVED
+  // useEffect(() => { ... }, [session, isAuthLoading, isApiConfigured]);
 
   // Save clocked-in status when it changes
   useEffect(() => {
@@ -110,10 +69,10 @@ export function UserProvider({ children }: UserProviderProps) {
     }
 
     // Skip saving on initial load
-    if (!isLoading) {
+    if (!isLoadingClockedInStatus) { // Updated state variable
       saveClockedInStatus();
     }
-  }, [isClockedIn, isLoading]);
+  }, [isClockedIn, isLoadingClockedInStatus]); // Updated dependency
 
   // Clock in function
   const clockIn = async () => {
@@ -124,7 +83,9 @@ export function UserProvider({ children }: UserProviderProps) {
     } catch (error) {
       console.error('[UserContext] Failed to clock in:');
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        console.error(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
       } else {
         console.error('  An unexpected error occurred:', error);
       }
@@ -140,7 +101,9 @@ export function UserProvider({ children }: UserProviderProps) {
     } catch (error) {
       console.error('[UserContext] Failed to clock out:');
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        console.error(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
       } else {
         console.error('  An unexpected error occurred:', error);
       }
@@ -149,10 +112,10 @@ export function UserProvider({ children }: UserProviderProps) {
 
   const value: UserContextType = {
     isClockedIn,
-    isLoading,
+    isLoadingClockedInStatus, // Updated
     clockIn,
     clockOut,
-    currentUser,
+    // currentUser, // Removed
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

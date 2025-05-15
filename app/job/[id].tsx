@@ -25,7 +25,7 @@ import { PrimaryButton } from '@/components/Buttons'; // Import PrimaryButton
 import { View as ThemedView, Text } from '@/components/Themed';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useUser } from '@/contexts/UserContext';
+import { useAuth } from '@/contexts/AuthContext'; // Changed from useUser
 import { MaterialIcons } from '@expo/vector-icons'; // Added for icons
 
 function LoadingSpinner(props: { loading: boolean }) {
@@ -48,10 +48,22 @@ export default function JobPage() {
   const jobId = jobIdParam ? parseInt(jobIdParam, 10) : null; // Ensure it's a number or null
 
   const router = useRouter();
-  const { currentUser } = useUser();
+  const auth = useAuth();
+
+  // currentUser and isUserLoading now come from AuthContext
+  // Aliasing isUserLoading to avoid conflict with local 'loading' state, though they serve different purposes.
+  // Handle case where auth context might not be available yet (though useAuth throws in dev)
+  if (!auth) {
+    return (
+      <ThemedView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={Colors.light.tint} />
+      </ThemedView>
+    );
+  }
+  const { currentUser, isUserLoading: isAuthUserLoading } = auth; 
   const currentUserId = currentUser?.id;
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true); // This loading is for the job data
   const [job, setJob] = useState<Job | null>(null); // Changed to null for initial state
   const colorScheme = useColorScheme();
 
