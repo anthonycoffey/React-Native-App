@@ -37,6 +37,18 @@ This document tracks what works, what's left to build, the current status, known
     - Extracted comments functionality from `app/job/[id].tsx` into a new dedicated component: `components/job/JobComments.tsx`.
     - This new component now manages its own state, handlers, and JSX for displaying comments, the comment modal, and related actions.
     - `app/job/[id].tsx` has been simplified by removing the direct comments logic and now renders the `JobComments` component.
+- **Proxy management functionality:**
+    - Created `JobProxy.tsx` component to allow technicians to view/edit active proxy connections.
+    - This component is integrated into the job details page and allows for easy management of proxy connections.
+    - Includes new phone form to add new phone numbers to the list of customer phone numbers included in the `CustomerPhones` array within the `Customer` object for each `Job`.
+- **File uploads functionality:**
+    - Created `JobFiles.tsx` component to handle file uploads for job-related documents.
+    - Integrated file upload UI into the job details page.
+    - Implemented file preview and removal functionality.
+    - Video playback support not yet implemented.
+- **Theming Strategy Documentation:**
+    - Reviewed `components/job/CommentModal.tsx` to understand its light/dark mode styling.
+    - Updated `memory-bank/systemPatterns.md` to include a comprehensive section on the app's theming strategy. This includes how to get the current theme, use themed base components, apply theme colors to standard components using `useThemeColor` and its helper functions, and the importance of consistency. This documented pattern is now the standard for all components.
 
 ## What's Left to Build
 

@@ -32,13 +32,29 @@ This document outlines the system architecture, key technical decisions, design 
     *   **Local State:** Standard React component state (`useState`, `useEffect`) is used extensively within components for managing their internal data and lifecycle.
 3.  **Styling & Theming:**
     *   Styling is primarily managed using React Native's `StyleSheet` API.
-    *   A theming system is in place to support light and dark modes:
-        *   `constants/Colors.ts` defines color palettes for light and dark themes.
-        *   `components/useColorScheme.ts` (and its `.web.ts` counterpart) likely provides the current theme context.
-        *   `components/Themed.tsx` exports `Text` and `View` components that automatically adapt to the current theme using `useThemeColor` hook.
-        *   `hooks/useThemeColor.ts` offers helper functions (e.g., `getTextColor`, `getBackgroundColor`, `getInputBackgroundColor`, `getBorderColor`, `getIconColor`, `getPlaceholderTextColor`) for applying theme-specific colors to standard React Native components or for more granular styling needs.
-        *   `styles/globalStyles.ts` contains reusable StyleSheet objects (e.g., `card`, `input`, `label`).
-    *   While many components are theme-aware, some older or highly specific components might still contain hardcoded styles (e.g., specific background colors, text colors not tied to the theme palette). These represent opportunities for future refactoring to enhance theme consistency.
+    *   A comprehensive theming system is in place to support light and dark modes consistently across the application. This is the standard approach and **must be followed for all new and existing components**:
+        *   **Getting the Current Theme:** The current color scheme (e.g., 'light' or 'dark') is obtained using `const theme = useColorScheme() ?? 'light';` (import from `@/components/useColorScheme`).
+        *   **Themed Base Components:** For fundamental UI elements, use the pre-themed components:
+            *   `import { Text, View as ThemedView } from '@/components/Themed';`
+            *   These components automatically adapt their styles (e.g., text color, background color) based on the active theme.
+        *   **Applying Theme Colors to Standard Components:** When styling standard React Native components (e.g., `TextInput`, `TouchableOpacity`) or requiring specific theme colors for custom styles:
+            *   Use the `useThemeColor` hook for direct palette access: `const specificColor = useThemeColor({ light: lightColor, dark: darkColor }, 'colorNameInPalette');` or `const backgroundColor = useThemeColor({}, 'background');` (import from `@/hooks/useThemeColor`).
+            *   Utilize the set of helper functions provided by `hooks/useThemeColor.ts`. These functions take the `theme` string ('light' or 'dark') as an argument:
+                *   `getBackgroundColor(theme)`
+                *   `getTextColor(theme)`
+                *   `getBorderColor(theme)`
+                *   `getInputBackgroundColor(theme)`
+                *   `getPlaceholderTextColor(theme)`
+                *   `getIconColor(theme)`
+                *   `getLinkColor(theme)`
+                *   `getButtonTextColor(theme, variant)`
+                *   `getButtonBackgroundColor(theme, variant)`
+                *   `getButtonBorderColor(theme, variant)`
+            *   Example: `style={{ borderColor: getBorderColor(theme), color: getTextColor(theme) }}`.
+        *   **Color Definitions:** Base color values for light and dark themes are defined in `constants/Colors.ts`. The `useThemeColor` hook and its helpers draw from these definitions.
+        *   **Custom Components:** Reusable custom components (e.g., `PrimaryButton`, `Chip`) are expected to encapsulate their own theme-aware styling using the above mechanisms.
+        *   **Global Styles:** `styles/globalStyles.ts` contains reusable StyleSheet objects (e.g., `card`, `input`, `label`) that should also be made theme-aware if they involve colors, or be used in conjunction with themed styles.
+    *   **Consistency Goal:** All components should strive to be fully theme-aware. Hardcoded colors should be avoided unless they are universally applicable (e.g., a standard black shadow or a fixed overlay color that works for both themes). Existing components with hardcoded theme-dependent colors should be refactored.
 4.  **Permissions Handling:**
     *   Utilizes Expo's permission modules (e.g., `expo-location` for location, `expo-document-picker` for file access). `hooks/useLocation.ts` likely handles location permissions and tracking.
 5.  **Offline Support:**

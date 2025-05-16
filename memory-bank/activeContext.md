@@ -54,6 +54,9 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - Created new component `components/job/JobComments.tsx`.
     - Moved all comment-related state, handlers (add, edit, delete, modal control), JSX (collapsible section, list, modal), and styles from `app/job/[id].tsx` to `JobComments.tsx`.
     - The new `JobComments` component now encapsulates all comment functionality and is rendered within `app/job/[id].tsx`, receiving necessary props like `jobId`, `jobComments`, `currentUserId`, and `fetchJob`.
+- **Documented Theming Strategy:**
+    - Analyzed `components/job/CommentModal.tsx` to understand its light/dark mode implementation.
+    - Updated `memory-bank/systemPatterns.md` with a detailed description of the standard theming approach, emphasizing the use of `useColorScheme`, themed components from `@/components/Themed`, and helper functions from `hooks/useThemeColor.ts`. This documented pattern is to be followed for all components.
 
 ## Next Steps
 
