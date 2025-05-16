@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, StyleSheet, TextInput, Platform } from 'react-native';
+import { Modal, View, StyleSheet, TextInput } from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
-import { PrimaryButton, SecondaryButton } from '@/components/Buttons';
+import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { 
   useThemeColor, 
   getBorderColor, 
@@ -28,12 +28,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
   const [commentText, setCommentText] = useState(initialText);
   const theme = useColorScheme() ?? 'light';
 
-  // Use the default background for the modal card, relying on elevation/shadow for distinction
-  // If a specific 'card' color key exists in Colors.ts and is usable with useThemeColor, that could be an alternative.
   const themedCardBackgroundColor = useThemeColor({}, 'background'); 
   const themedTextColor = useThemeColor({}, 'text');
   
-  // For TextInput specific colors
   const inputBorderColor = getBorderColor(theme);
   const inputPlaceholderTextColor = getPlaceholderTextColor(theme);
   const inputBackgroundColor = getInputBackgroundColor(theme);
@@ -79,7 +76,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
             textAlignVertical="top" // for Android
           />
           <View style={styles.buttonContainer}>
-            <SecondaryButton title="Cancel" onPress={onClose} style={styles.button} />
+            <OutlinedButton title="Cancel" onPress={onClose} style={styles.button} variant="error" />
             <PrimaryButton title="Submit" onPress={handleSubmit} style={styles.button} disabled={!commentText.trim()} />
           </View>
         </ThemedView>
@@ -98,7 +95,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 10,
     padding: 25,
-    alignItems: 'stretch', // Stretch children to fill width
+    alignItems: 'stretch',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -107,7 +104,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '90%', // Modal width
+    width: '90%',
   },
   modalTitle: {
     marginBottom: 15,
@@ -116,21 +113,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   input: {
-    minHeight: 100, // For multiline
+    minHeight: 100,
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
     marginBottom: 20,
     fontSize: 16,
-    // textAlignVertical: 'top' // Handled inline for Android
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Or 'flex-end' with margin on left button
+    justifyContent: 'space-between',
   },
   button: {
-    flex: 1, // Make buttons take equal space
-    marginHorizontal: 5, // Add some space between buttons
+    flex: 1,
+    marginHorizontal: 5,
   },
 });
 

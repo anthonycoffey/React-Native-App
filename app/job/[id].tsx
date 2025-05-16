@@ -5,28 +5,25 @@ import {
   ActivityIndicator,
   StyleSheet,
   ScrollView,
-  Alert, // For delete confirmation
-  TouchableOpacity, // Added for collapsible section
+  Alert,
 } from 'react-native';
 
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
-import { Job, JobComment } from '@/types'; // Removed AxiosResponse, AxiosError
+import { apiService, HttpError } from '@/utils/ApiService';
+import { Job } from '@/types';
 import JobStatus from '@/components/job/JobStatus';
+import { JobProxy } from '@/components/job/JobProxy';
 import Invoice from '@/components/job/Invoice';
 import JobDetailsAndMapButtons from '@/components/job/JobDetailsAndMapButtons';
-import JobActivityLog from '@/components/job/JobActivityLog';
 import JobLineItems from '@/components/job/JobLineItems';
 import ArrivalTime from '@/components/job/ArrivalTime';
 import TakePayment from '@/components/job/TakePayment';
 import JobFiles from '@/components/job/JobFiles';
-// CommentsList, CommentModal, PrimaryButton for comments are now in JobComments
-import JobComments from '@/components/job/JobComments'; // Import new JobComments component
-import { View as ThemedView, Text } from '@/components/Themed';
+import JobComments from '@/components/job/JobComments';
+import { View as ThemedView } from '@/components/Themed';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useAuth } from '@/contexts/AuthContext'; // Changed from useUser
-import { MaterialIcons } from '@expo/vector-icons'; // Added for icons
+import { useAuth } from '@/contexts/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 function LoadingSpinner(props: { loading: boolean }) {
@@ -45,15 +42,12 @@ function LoadingSpinner(props: { loading: boolean }) {
 }
 
 export default function JobPage() {
-  const { id: jobIdParam } = useLocalSearchParams<{ id: string }>(); // Get jobId from params
-  const jobId = jobIdParam ? parseInt(jobIdParam, 10) : null; // Ensure it's a number or null
+  const { id: jobIdParam } = useLocalSearchParams<{ id: string }>();
+  const jobId = jobIdParam ? parseInt(jobIdParam, 10) : null;
 
   const router = useRouter();
   const auth = useAuth();
 
-  // currentUser and isUserLoading now come from AuthContext
-  // Aliasing isUserLoading to avoid conflict with local 'loading' state, though they serve different purposes.
-  // Handle case where auth context might not be available yet (though useAuth throws in dev)
   if (!auth) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -64,11 +58,9 @@ export default function JobPage() {
   const { currentUser, isUserLoading: isAuthUserLoading } = auth;
   const currentUserId = currentUser?.id;
 
-  const [loading, setLoading] = useState<boolean>(true); // This loading is for the job data
-  const [job, setJob] = useState<Job | null>(null); // Changed to null for initial state
-  const colorScheme = useColorScheme(); // Keep for other parts of the page if needed
-
-  // Comment-related state and handlers are now moved to JobComments.tsx
+  const [loading, setLoading] = useState<boolean>(true);
+  const [job, setJob] = useState<Job | null>(null);
+  const colorScheme = useColorScheme();
 
   const fetchJob = useCallback(async () => {
     if (!jobId) {
@@ -93,7 +85,7 @@ export default function JobPage() {
           'An unexpected error occurred while loading job details.'
         );
       }
-      setJob(null); // Clear job on error
+      setJob(null);
     } finally {
       setLoading(false);
     }
@@ -104,7 +96,6 @@ export default function JobPage() {
   }, [fetchJob]);
 
   if (loading && !job) {
-    // Show loading spinner if loading and no job data yet
     return (
       <ThemedView style={{ flex: 1 }}>
         <LoadingSpinner loading={true} />
@@ -113,7 +104,6 @@ export default function JobPage() {
   }
 
   if (!job) {
-    // If not loading and still no job, show error or redirect
     return (
       <ThemedView style={{ flex: 1 }}>
         <LoadingSpinner loading={loading} />
@@ -138,6 +128,7 @@ export default function JobPage() {
         >
           <SafeAreaView style={{ flex: 1 }}>
             <JobStatus job={job} fetchJob={fetchJob} />
+            <JobProxy job={job} refetchJob={fetchJob} />
             <JobDetailsAndMapButtons job={job} fetchJob={fetchJob} />
             <ArrivalTime
               timestamp={job.arrivalTime}
@@ -148,8 +139,6 @@ export default function JobPage() {
             <Invoice job={job} fetchJob={fetchJob} />
             <TakePayment job={job} fetchJob={fetchJob} />
             <JobFiles job={job} fetchJob={fetchJob} />
-
-            {/* Render the new JobComments component */}
             <JobComments
               jobId={job.id}
               jobComments={job.JobComments || []}

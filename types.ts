@@ -1,7 +1,4 @@
-import { AxiosError, AxiosResponse } from "axios";
-import { ImageSourcePropType } from "react-native";
-
-export { AxiosError, AxiosResponse };
+import { ImageSourcePropType } from 'react-native';
 
 export type availableAppsProps = {
   icon: ImageSourcePropType;
@@ -31,7 +28,7 @@ export interface Customer extends BaseEntity {
   firstName?: string;
   lastName?: string;
   email?: string;
-  defaultPhone?: {number: string};
+  defaultPhone?: { number: string };
   defaultPhoneId?: number;
   CustomerPhones?: CustomerPhone[];
 }
@@ -70,7 +67,8 @@ export interface Job extends BaseEntity {
   linkCode?: string;
   paymentStatus: string;
   status: string;
-  proxy: Proxy;
+  proxy: Proxy | null; // Allow null for no active proxy
+  assignedTechnician?: AssignedTechnician; // Add assignedTechnician object
   JobLineItems: JobLineItems[];
   JobActions?: JobActions[];
   Discounts?: Discount[];
@@ -119,7 +117,7 @@ export interface JobLineItems extends BaseEntity {
 
 export interface Service extends BaseEntity {
   name: string;
-  description: string | "";
+  description: string | '';
   payoutRate?: number;
   payoutMinimum?: number;
   price: number;

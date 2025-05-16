@@ -19,7 +19,7 @@ interface JobCommentsProps {
   jobId: number;
   jobComments: JobComment[];
   currentUserId: number | string | undefined;
-  fetchJob: () => void; // To refresh parent job data, including comments
+  fetchJob: () => void;
 }
 
 const JobComments: React.FC<JobCommentsProps> = ({
@@ -28,16 +28,14 @@ const JobComments: React.FC<JobCommentsProps> = ({
   currentUserId,
   fetchJob,
 }) => {
-  const [loading, setLoading] = useState<boolean>(false); // Local loading for comment operations
+  const [loading, setLoading] = useState<boolean>(false);
   const colorScheme = useColorScheme() ?? 'light';
 
-  // Comment Modal State
   const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
   const [commentModalMode, setCommentModalMode] = useState<'add' | 'edit'>('add');
   const [selectedComment, setSelectedComment] = useState<JobComment | null>(null);
   const [isCommentsCollapsed, setIsCommentsCollapsed] = useState(false);
 
-  // Modal Control Functions
   const openAddModal = () => {
     setSelectedComment(null);
     setCommentModalMode('add');
@@ -55,12 +53,11 @@ const JobComments: React.FC<JobCommentsProps> = ({
     setSelectedComment(null);
   };
 
-  // API Call Functions
   const handleAddComment = async (text: string) => {
     setLoading(true);
     try {
       await apiService.post(`/jobs/${jobId}/comments`, { text });
-      fetchJob(); // Refresh job data to show new comment
+      fetchJob();
       closeCommentModal();
     } catch (error) {
       console.error('Failed to add comment:', error);
@@ -79,7 +76,7 @@ const JobComments: React.FC<JobCommentsProps> = ({
     setLoading(true);
     try {
       await apiService.patch(`/jobs/${jobId}/comments/${selectedComment.id}`, { text });
-      fetchJob(); // Refresh job data
+      fetchJob();
       closeCommentModal();
     } catch (error) {
       console.error('Failed to edit comment:', error);
@@ -106,7 +103,7 @@ const JobComments: React.FC<JobCommentsProps> = ({
             setLoading(true);
             try {
               await apiService.delete(`/jobs/${jobId}/comments/${commentIdToDelete}`);
-              fetchJob(); // Refresh job data
+              fetchJob();
             } catch (error) {
               console.error('Failed to delete comment:', error);
               if (error instanceof HttpError) {
@@ -179,8 +176,6 @@ const styles = StyleSheet.create({
   commentsSectionContainer: {
     marginTop: 20,
     paddingVertical: 10,
-    // Consider adding card-like styling if desired, e.g., from globalStyles.card
-    // backgroundColor: 'transparent', // Ensure it doesn't obscure content below if part of a larger card
   },
   collapsibleHeader: {
     flexDirection: 'row',
@@ -197,7 +192,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginHorizontal: 10,
   },
-  loadingOverlay: { // For local loading indicator
+  loadingOverlay: {
     position: 'absolute',
     left: 0,
     right: 0,
@@ -205,8 +200,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.1)', // Slight overlay
-    zIndex: 10, // Ensure it's on top
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    zIndex: 10,
   },
 });
 

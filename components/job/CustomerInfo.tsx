@@ -18,13 +18,7 @@ type Props = {
 };
 
 export default function CustomerInfo({ job, location }: Props) {
-  const maskedNumber =
-    'XXX-XXX-' +
-    (job.proxy?.CustomerPhone?.number
-      ? job.proxy.CustomerPhone.number.slice(-4)
-      : '');
-      
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() || 'light';
   const inputStyles = [
     globalStyles.input, 
     { 
@@ -41,17 +35,6 @@ export default function CustomerInfo({ job, location }: Props) {
         value={job.Customer?.fullName}
         style={inputStyles}
       />
-
-      {job.proxy?.CustomerPhone?.number && (
-        <>
-          <Text style={globalStyles.label}>Phone</Text>
-          <TextInput
-            editable={false}
-            value={maskedNumber}
-            style={inputStyles}
-          />
-        </>
-      )}
 
       <Text style={globalStyles.label}>Car</Text>
       <TextInput
