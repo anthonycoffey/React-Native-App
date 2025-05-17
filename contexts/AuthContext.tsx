@@ -1,37 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useStorageState } from '@/hooks/useStorageState';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import HttpError
+import { apiService, HttpError } from '@/utils/ApiService';
 import { router } from 'expo-router';
-
-// Define User interface (consider moving to types.ts later)
-export interface User {
-  id: number | string;
-  fullName: string;
-  avatar?: string | null;
-  banned?: boolean;
-  createdAt?: string;
-  darkMode?: boolean;
-  deletedAt?: string | null;
-  email?: string;
-  firstName?: string;
-  isOnline?: boolean;
-  lastGeolocationUpdate?: string | null;
-  lastName?: string;
-  latitude?: number | null;
-  location?: { // Assuming a GeoJSON Point structure or similar
-    type?: string;
-    coordinates?: number[];
-    crs?: object; // Coordinate Reference System
-  } | null;
-  longitude?: number | null;
-  otp?: string | null;
-  otpExpiration?: string | null;
-  phone?: string | null;
-  referralCode?: string | null;
-  referralCodeUsed?: number | null;
-  roles?: string[];
-  updatedAt?: string;
-}
+import { User } from '@/types';
 
 interface UserApiResponse {
   user: User;
@@ -41,10 +12,11 @@ type AuthContextType = {
   signIn: (token: string) => Promise<void>;
   signOut: () => Promise<void>;
   session: string | null;
-  isLoading: boolean; // True while session is loading from storage
+  isLoading: boolean;
   isApiConfigured: boolean;
   currentUser: User | null;
-  isUserLoading: boolean; // True while /users/me is fetching
+  isUserLoading: boolean;
+  fetchCurrentUser: () => Promise<void>;
 };
 
 const AuthContext = React.createContext<AuthContextType | null>(null);
@@ -66,52 +38,60 @@ export function AuthProvider(props: React.PropsWithChildren) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(false); // Separate loading for user data
 
+  const fetchUserData = async () => {
+    if (!session) {
+      setCurrentUser(null);
+      setIsUserLoading(false);
+      console.log('[AuthContext] fetchUserData called without session.');
+      return;
+    }
+    console.log('[AuthContext] fetchUserData called. Fetching user...');
+    setIsUserLoading(true);
+    try {
+      const response = await apiService.get<UserApiResponse>('/users/me');
+      console.log('[AuthContext] User data fetched successfully:', response.user);
+      setCurrentUser(response.user);
+    } catch (error) {
+      console.error('[AuthContext] Failed to load current user during manual fetch:');
+      if (error instanceof HttpError) {
+        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        if (error.status === 401) {
+          console.warn('[AuthContext] Received 401 on manual fetch, signing out.');
+            setSession(null);
+            signOut();
+        }
+      } else {
+        console.error('  An unexpected error occurred:', error);
+      }
+      setCurrentUser(null);
+    } finally {
+      setIsUserLoading(false);
+    }
+  };
+
   useEffect(() => {
     console.log('[AuthContext Effect] Session changed. Current session:', session);
-    apiService.setAuthToken(session); // Configure ApiService with current token (or null)
+    apiService.setAuthToken(session);
     
     if (session) {
-      // Session exists, attempt to fetch user data
-      setIsApiConfigured(false); // Mark API as not ready for this new session yet
+      setIsApiConfigured(false);
       setIsUserLoading(true);
-      setCurrentUser(null); // Clear previous user while new one is loading
+      setCurrentUser(null);
 
       const timerId = setTimeout(async () => {
-        setIsApiConfigured(true); // API is now considered configured for this session
-        console.log('[AuthContext] API configured for session. Fetching user...');
-        try {
-          const response = await apiService.get<UserApiResponse>('/users/me');
-          console.log('[AuthContext] User data fetched successfully:', response.user);
-          setCurrentUser(response.user);
-        } catch (error) {
-          console.error('[AuthContext] Failed to load current user:');
-          if (error instanceof HttpError) {
-            console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-            // Potentially sign out if 401, or handle specific errors
-            if (error.status === 401 && session) { // Check session again to avoid loop on initial bad token
-              console.warn('[AuthContext] Received 401, signing out.');
-              // await signOut(); // This might cause issues if called during effect cleanup or state transitions
-            }
-          } else {
-            console.error('  An unexpected error occurred:', error);
-          }
-          setCurrentUser(null); // Ensure user is null on error
-        } finally {
-          setIsUserLoading(false);
-        }
+      setIsApiConfigured(true);
+      await fetchUserData();
       }, 0);
 
       return () => {
-        clearTimeout(timerId);
-        setIsApiConfigured(false); // Clean up: API no longer configured for this session
+      clearTimeout(timerId);
+      setIsApiConfigured(false);
       };
 
     } else {
-      // No session, so clear user data and mark API as not configured for authenticated requests
       setCurrentUser(null);
       setIsUserLoading(false);
-      setIsApiConfigured(false); // Or true, if "configured with null token" is the meaning
-                                 // Let's stick to false: not configured for AUTHENTICATED requests
+      setIsApiConfigured(false);
       console.log('[AuthContext] No session. User cleared, API not configured for auth.');
     }
   }, [session]);
@@ -130,10 +110,11 @@ export function AuthProvider(props: React.PropsWithChildren) {
     signIn,
     signOut,
     session,
-    isLoading: isLoadingSession, // isLoading now refers to session loading
+    isLoading: isLoadingSession,
     isApiConfigured,
     currentUser,
     isUserLoading,
+    fetchCurrentUser: fetchUserData,
   };
 
   return (

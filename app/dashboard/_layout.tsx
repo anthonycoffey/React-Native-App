@@ -19,36 +19,37 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { session, isLoading } = useAuth();
+  const auth = useAuth(); // Get the whole context
   const router = useRouter();
   const headerShown = useClientOnlyValue(false, true);
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!isLoading && !session) {
-      // Use setTimeout with 0ms to push this to the end of the execution queue
-      // This gives time for any auth state changes to fully propagate
+    // Ensure auth context is available before checking session and isLoading
+    if (auth && !auth.isLoading && !auth.session) {
       const redirectTimeout = setTimeout(() => {
         router.replace('/login');
       }, 0);
-
       return () => clearTimeout(redirectTimeout);
     }
-  }, [session, isLoading, router]);
+  }, [auth, router]); // Depend on the whole auth context or specific fields
 
-  // Show loading spinner while checking auth
-  if (isLoading) {
+  // Show loading spinner while checking auth or if auth context is not yet available
+  if (!auth || auth.isLoading) {
     return (
       <View style={globalStyles.loadingContainer}>
-        <ActivityIndicator size='large' color='#0a7ea4' />
+        <ActivityIndicator size='large' color={Colors[colorScheme ?? 'light'].tint} />
       </View>
     );
   }
 
   // If not authenticated and not loading, redirect to login
-  if (!session && !isLoading) {
+  if (!auth.session && !auth.isLoading) {
     return <Redirect href='/login' />;
   }
+  
+  // If auth is somehow null here despite the check, it's an issue with AuthProvider setup
+  // but the useAuth hook should throw in dev if it's null.
 
   return (
     <Tabs
@@ -94,6 +95,15 @@ export default function TabLayout() {
           title: 'Settings',
           tabBarIcon: ({ color }) => (
             <TabBarIcon name='settings' color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='account' // This should match the filename app/dashboard/account.tsx
+        options={{
+          title: 'My Account',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name='account-circle' color={color} />
           ),
         }}
       />

@@ -204,6 +204,14 @@ export interface User extends BaseEntity {
   longitude?: number;
   lastGeolocationUpdate?: string;
   darkMode?: boolean;
+  avatar?: string | null; // Added from AuthContext
+  location?: { // Added from AuthContext
+    type?: string;
+    coordinates?: number[];
+    crs?: object;
+  } | null;
+  referralCode?: string | null; // Added from AuthContext
+  referralCodeUsed?: number | null; // Added from AuthContext
 }
 
 export interface ProxyNumber extends BaseEntity {
