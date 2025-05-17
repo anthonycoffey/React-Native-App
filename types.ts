@@ -139,7 +139,7 @@ export interface Car extends BaseEntity {
   year?: number;
   color?: string;
   plate?: string;
-  vin?: string;
+  vin?: string | null;
   CustomerId?: number;
 }
 

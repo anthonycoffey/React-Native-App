@@ -49,6 +49,13 @@ This document tracks what works, what's left to build, the current status, known
 - **Theming Strategy Documentation:**
     - Reviewed `components/job/CommentModal.tsx` to understand its light/dark mode styling.
     - Updated `memory-bank/systemPatterns.md` to include a comprehensive section on the app's theming strategy. This includes how to get the current theme, use themed base components, apply theme colors to standard components using `useThemeColor` and its helper functions, and the importance of consistency. This documented pattern is now the standard for all components.
+- **Editable Customer Information:**
+    - Implemented editing for Customer Name, Customer Email, Service Address, and Car details within `components/job/CustomerInfo.tsx`.
+    - Created `EditNameModal.tsx`, `EditEmailModal.tsx`, `EditAddressModal.tsx`, and `EditCarModal.tsx` in `components/job/modals/`.
+    - Updated `Car` type in `types.ts` for `vin` to be `string | null`.
+    - Integrated modals and API save logic (including for email) into `CustomerInfo.tsx`. Service Address updates now use `PATCH /jobs/:id` with the full job object.
+    - Ensured `fetchJob` prop is correctly passed and typed through `JobDetailsAndMapButtons.tsx`.
+    - Adhered to theming guidelines for all new UI, including ensuring full-width text inputs in `EditNameModal` and `EditEmailModal` for consistency.
 
 ## What's Left to Build
 

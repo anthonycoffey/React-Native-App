@@ -16,7 +16,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 
 type Props = {
   job: Job;
-  fetchJob: () => void;
+  fetchJob: () => Promise<void>; // Changed to Promise<void>
 };
 
 export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
@@ -75,7 +75,7 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
   return (
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Job Details</CardTitle>
-      <CustomerInfo job={job} location={location} />
+      <CustomerInfo job={job} location={location} fetchJob={fetchJob} />
 
       <View style={styles.appsContainer}>
         {availableApps.map(({ icon, name, id, open }: availableAppsProps) => (

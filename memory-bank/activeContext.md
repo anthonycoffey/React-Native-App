@@ -57,6 +57,15 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
 - **Documented Theming Strategy:**
     - Analyzed `components/job/CommentModal.tsx` to understand its light/dark mode implementation.
     - Updated `memory-bank/systemPatterns.md` with a detailed description of the standard theming approach, emphasizing the use of `useColorScheme`, themed components from `@/components/Themed`, and helper functions from `hooks/useThemeColor.ts`. This documented pattern is to be followed for all components.
+- **Implemented Editable Customer Information in `CustomerInfo.tsx`:**
+    - Added functionality to edit Customer Name, Customer Email, Service Address, and Car details.
+    - Created new modal components for editing: `components/job/modals/EditNameModal.tsx`, `components/job/modals/EditEmailModal.tsx`, `components/job/modals/EditAddressModal.tsx`, and `components/job/modals/EditCarModal.tsx`.
+    - Updated `types.ts` to allow `Car.vin` to be `string | null`.
+    - Modified `components/job/CustomerInfo.tsx` to include state for editable fields (including email), edit icons, modal integration, and API save handlers.
+    - Ensured `fetchJob` prop is passed from `components/job/JobDetailsAndMapButtons.tsx` to `CustomerInfo.tsx` with the correct type (`() => Promise<void>`).
+    - All new UI elements adhere to the established theming strategy.
+    - API calls for saving data use `utils/ApiService.ts` and `Alert.alert` for notifications. Service Address updates are now sent to `PATCH /jobs/:id` with the full job object, instead of `PATCH /address/:addressId`.
+    - Refined styling in `EditNameModal.tsx` and `EditEmailModal.tsx` to ensure full-width text inputs, consistent with `CommentModal.tsx`, by adjusting `modalView.alignItems` to `stretch`.
 
 ## Next Steps
 
