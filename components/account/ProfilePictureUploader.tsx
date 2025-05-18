@@ -28,7 +28,7 @@ export default function ProfilePictureUploader() {
   if (!authContext) {
     return null;
   }
-  
+
   const {
     currentUser,
     fetchCurrentUser,
@@ -144,7 +144,7 @@ export default function ProfilePictureUploader() {
           ) : (
             <MaterialIcons
               name={currentUser.avatar ? 'edit' : 'add-a-photo'}
-              size={28}
+              size={26} // Reduced from 28
               color={iconColor}
             />
           )}
@@ -152,7 +152,7 @@ export default function ProfilePictureUploader() {
 
         {currentUser.avatar && (
           <>
-            <View style={{ width: 20 }} />
+            <View style={{ width: 10 }} />
             <TouchableOpacity
               onPress={deleteImage}
               disabled={isLoading}
@@ -164,7 +164,7 @@ export default function ProfilePictureUploader() {
               {deleting ? (
                 <ActivityIndicator size='small' color={errorColor} />
               ) : (
-                <MaterialIcons name='delete' size={28} color={errorColor} />
+                <MaterialIcons name='delete' size={26} color={errorColor} /> // Reduced from 28
               )}
             </TouchableOpacity>
           </>
@@ -183,7 +183,6 @@ const localStyles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: 20,
   },
   avatarPlaceholder: {
     width: 100,
@@ -191,22 +190,18 @@ const localStyles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
   },
   iconButton: {
-    padding: 10,
+    padding: 8,
     borderRadius: 25,
   },
   disabledButton: {
     opacity: 0.5,
   },
-  activityIndicator: {
-    marginTop: 10,
-  },
+
 });

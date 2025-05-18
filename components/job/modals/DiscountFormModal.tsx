@@ -224,6 +224,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
                   searchPlaceholderTextColor={getPlaceholderTextColor(theme)}
                   // arrowIconStyle={{ tintColor: getIconColor(theme) }} // Removed tintColor
                   // tickIconStyle={{ tintColor: getIconColor(theme) }} // Removed tintColor
+                  theme={theme === 'dark' ? 'DARK' : 'LIGHT'}
                   zIndex={3000}
                   zIndexInverse={1000}
                 />
@@ -259,6 +260,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
                   dropDownContainerStyle={{ backgroundColor: getInputBackgroundColor(theme), borderColor: getBorderColor(theme) }}
                   // arrowIconStyle={{ tintColor: getIconColor(theme) }} // Removed tintColor
                   // tickIconStyle={{ tintColor: getIconColor(theme) }} // Removed tintColor
+                  theme={theme === 'dark' ? 'DARK' : 'LIGHT'}
                   zIndex={2000}
                   zIndexInverse={2000}
                 />

@@ -101,6 +101,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name='create-job'
         options={{
+          title: 'Create Job',
           // This screen remains hidden from tabs, typically used for modal or full-screen presentation
           href: null,
         }}

@@ -260,3 +260,24 @@ export interface NewDiscountData {
 export type JobScreenParams = {
   id: string;
 };
+
+// Paycheck related types
+export interface Paycheck extends BaseEntity {
+  amount: number; // in cents
+  status: string;
+  UserId: number;
+  PayrollId: number;
+  User?: User; // Optional, as it's an included relation
+}
+
+export interface PaginationMeta {
+  total: number;
+  currentPage: number;
+  limit: number;
+  lastPage: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: PaginationMeta;
+}

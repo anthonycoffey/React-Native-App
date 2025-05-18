@@ -9,7 +9,11 @@ import ProfilePictureUploader from '@/components/account/ProfilePictureUploader'
 import Card from '@/components/Card';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
-import { OutlinedButton, PrimaryButton, SecondaryButton } from '@/components/Buttons';
+import {
+  OutlinedButton,
+  PrimaryButton,
+  SecondaryButton,
+} from '@/components/Buttons';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -95,6 +99,8 @@ export default function AccountScreen() {
     >
       <ThemedView style={localStyles.sectionContainer}>
         <Text style={globalStyles.title}>My Account</Text>
+        <Text style={globalStyles.subtitle}>My Avatar</Text>
+        <ProfilePictureUploader />
       </ThemedView>
 
       <Card>
@@ -146,20 +152,12 @@ export default function AccountScreen() {
 
       <Card>
         <Text style={globalStyles.subtitle}>Paychecks</Text>
-        <Text style={localStyles.infoText}>
-          Paycheck history will be available here.
-        </Text>
         <PrimaryButton
           title='View Paychecks'
           onPress={() => router.push('/dashboard/account/paychecks')}
           style={{ marginTop: 10 }}
         />
       </Card>
-
-      <ThemedView style={localStyles.sectionContainer}>
-        <Text style={globalStyles.subtitle}>My Avatar</Text>
-        <ProfilePictureUploader />
-      </ThemedView>
 
       <ThemedView style={localStyles.sectionContainer}>
         <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} />
@@ -172,6 +170,7 @@ const localStyles = StyleSheet.create({
   sectionContainer: {
     paddingVertical: 10,
     paddingHorizontal: 15,
+    marginBottom: 10,
   },
   balanceText: {
     fontSize: 18,

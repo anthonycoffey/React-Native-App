@@ -7,6 +7,7 @@ import Colors from '@/constants/Colors';
 import Card from '@/components/Card'; // Updated import path
 import globalStyles from '@/styles/globalStyles';
 import { useLocalSearchParams } from 'expo-router';
+import DepositFiles from '@/components/deposit/DepositFiles'; // Import the new component
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
 import { formatDateTime } from '@/utils/dates';
@@ -20,11 +21,26 @@ interface CashIntakeForSingleDeposit {
     JobId?: number | string;
   };
 }
+
+interface CashDepositFile {
+  id: number;
+  url: string;
+  name: string;
+  type: string;
+  createdAt: string;
+  CashDepositId: number;
+}
+
 interface SingleDeposit {
   id: number | string;
   amount: number;
   createdAt: string;
   CashIntakes: CashIntakeForSingleDeposit[];
+  CashDepositFiles?: CashDepositFile[];
+  User?: { // Assuming User might be part of the full deposit object based on typical API responses
+    fullName: string;
+    // other user fields if available/needed
+  };
 }
 
 export default function SingleDepositScreen() {
@@ -112,6 +128,17 @@ export default function SingleDepositScreen() {
           <Text>No cash intakes associated with this deposit.</Text>
         )}
       </Card>
+
+      {deposit && deposit.id && (
+        <Card>
+          <Text style={globalStyles.subtitle}>Proof of Deposit</Text>
+          <DepositFiles
+            depositId={deposit.id}
+            files={deposit.CashDepositFiles || []}
+            onFilesUpdate={loadDepositDetails}
+          />
+        </Card>
+      )}
     </ScrollView>
   );
 }

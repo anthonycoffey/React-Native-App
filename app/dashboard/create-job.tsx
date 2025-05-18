@@ -1264,6 +1264,10 @@ const canSubmitForm = () => {
             ]}
             theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
             listMode='MODAL' // Changed listMode to MODAL to avoid nested VirtualizedList warning
+            searchable={true}
+            searchPlaceholder="Search services..."
+            searchTextInputStyle={{ borderColor: getBorderColor(colorScheme), color: getTextColor(colorScheme) }}
+            searchPlaceholderTextColor={getPlaceholderTextColor(colorScheme)}
             zIndex={3000} // zIndex might be less critical in MODAL mode, but keeping for safety
             zIndexInverse={1000}
           />
