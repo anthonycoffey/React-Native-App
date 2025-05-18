@@ -48,6 +48,9 @@ import Colors from '@/constants/Colors';
 import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 import { centsToDollars, dollarsToCents } from '@/utils/money';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as Crypto from 'expo-crypto'; // For session token
+
+const GEOCODING_API_KEY = process.env.EXPO_PUBLIC_GEOCODING_API_KEY;
 
 const manualDebounce = (func: (...args: any[]) => void, delay: number) => {
   let timeoutId: number | null = null;
@@ -99,6 +102,13 @@ export default function CreateJobScreen() {
   const [isNewCar, setIsNewCar] = useState(false);
 
   const [addressForm, setAddressForm] = useState<AddressFormData>({});
+  const [addressInput, setAddressInput] = useState(''); // For the address text input
+  const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
+  const [isFetchingAddressSuggestions, setIsFetchingAddressSuggestions] =
+    useState(false);
+  const [placesSessionToken, setPlacesSessionToken] = useState<
+    string | undefined
+  >(undefined);
 
   const [lineItems, setLineItems] = useState<JobLineItemCreate[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -114,6 +124,10 @@ export default function CreateJobScreen() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Generate a session token when the component mounts or screen focuses
+    // For simplicity, generating on mount. In a real app, might regenerate if user leaves and returns.
+    setPlacesSessionToken(Crypto.randomUUID());
+
     const fetchServices = async () => {
       try {
         const response = await apiService.get<{ data: Service[] }>(
@@ -217,6 +231,126 @@ export default function CreateJobScreen() {
     },
   ];
   const placeholderTextColor = getPlaceholderTextColor(colorScheme);
+
+  // --- Google Places Autocomplete Functions ---
+  const fetchAddressSuggestions = async (input: string) => {
+    if (
+      !input ||
+      input.trim().length < 3 ||
+      !GEOCODING_API_KEY ||
+      !placesSessionToken
+    ) {
+      setAddressSuggestions([]);
+      setIsFetchingAddressSuggestions(false);
+      return;
+    }
+    setIsFetchingAddressSuggestions(true);
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+      input
+    )}&key=${GEOCODING_API_KEY}&components=country:us&sessiontoken=${placesSessionToken}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.predictions) {
+        setAddressSuggestions(data.predictions);
+      } else {
+        setAddressSuggestions([]);
+        console.error(
+          'Error fetching address suggestions:',
+          data.status,
+          data.error_message
+        );
+      }
+    } catch (error) {
+      console.error('Failed to fetch address suggestions:', error);
+      setAddressSuggestions([]);
+    } finally {
+      setIsFetchingAddressSuggestions(false);
+    }
+  };
+
+  const debouncedFetchAddressSuggestions = useCallback(
+    manualDebounce(fetchAddressSuggestions, 700),
+    [GEOCODING_API_KEY, placesSessionToken] // Re-create if key or token changes
+  );
+
+  const handleAddressInputChange = (text: string) => {
+    setAddressInput(text); // Update the visual input
+    setAddressForm((prev) => ({ ...prev, address_1: text })); // Keep address_1 in sync for now
+    debouncedFetchAddressSuggestions(text);
+  };
+
+  const handleSelectAddressSuggestion = async (suggestion: any) => {
+    if (!GEOCODING_API_KEY || !placesSessionToken || !suggestion.place_id) {
+      Alert.alert('Error', 'Could not get address details.');
+      return;
+    }
+    setAddressInput(suggestion.description); // Update input field to selected address
+    setAddressSuggestions([]); // Clear suggestions
+    setIsFetchingAddressSuggestions(true); // Show loading for details fetch
+
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${
+      suggestion.place_id
+    }&key=${GEOCODING_API_KEY}&fields=address_component,formatted_address&sessiontoken=${placesSessionToken}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.result && data.result.address_components) {
+        const components = data.result.address_components;
+        const newAddress: AddressFormData = {
+          address_1: suggestion.description, // Use the formatted suggestion for address_1 initially
+          address_2: '', // Clear address_2
+          city: '',
+          state: '',
+          zipcode: undefined,
+        };
+        let streetNumber = '';
+        let route = '';
+
+        components.forEach((component: any) => {
+          if (component.types.includes('street_number'))
+            streetNumber = component.long_name;
+          if (component.types.includes('route')) route = component.long_name;
+          if (component.types.includes('locality'))
+            newAddress.city = component.long_name;
+          if (component.types.includes('administrative_area_level_1'))
+            newAddress.state = component.short_name;
+          if (component.types.includes('postal_code'))
+            newAddress.zipcode = parseInt(component.long_name) || undefined;
+        });
+
+        // Refine address_1 if street number and route are found
+        if (streetNumber && route) {
+          newAddress.address_1 = `${streetNumber} ${route}`;
+        } else if (route) {
+          // If only route, use that (e.g. for street names without numbers)
+          newAddress.address_1 = route;
+        }
+        // If city was part of the suggestion.description but not in components (rare), keep it.
+        // This logic can be further refined based on how structured the address needs to be.
+
+        setAddressForm(newAddress);
+        setAddressInput(newAddress.address_1 || suggestion.description); // Update input with more precise address_1
+        setPlacesSessionToken(Crypto.randomUUID()); // Renew session token after a selection
+      } else {
+        Alert.alert('Error', 'Could not retrieve address details.');
+        console.error(
+          'Error fetching place details:',
+          data.status,
+          data.error_message
+        );
+      }
+    } catch (error) {
+      console.error('Failed to fetch place details:', error);
+      Alert.alert('Error', 'Failed to retrieve address details.');
+    } finally {
+      setIsFetchingAddressSuggestions(false);
+    }
+  };
+  // --- End Google Places Autocomplete Functions ---
 
   const handleDateTimeChange = (
     event: DateTimePickerEvent,
@@ -482,18 +616,8 @@ export default function CreateJobScreen() {
             </Text>
             <View style={styles.buttonRow}>
               <OutlinedButton
-                title='Change to New Customer'
-                onPress={() => {
-                  setCustomerForm({});
-                  setSelectedCustomer(null);
-                  setIsNewCustomer(false);
-                  setNewCustomerModalVisible(true);
-                }}
-                style={styles.flexButton}
-              />
-              <View style={{ width: 10 }} />
-              <OutlinedButton
                 title='Clear'
+                variant='error'
                 onPress={() => {
                   setSelectedCustomer(null);
                   setCustomerForm({});
@@ -844,14 +968,41 @@ export default function CreateJobScreen() {
         <LabelText>Address Line 1</LabelText>
         <TextInput
           style={themedInputStyle}
-          placeholder='Enter address line 1'
+          placeholder='Start typing address...'
           placeholderTextColor={placeholderTextColor}
-          value={addressForm.address_1 || ''}
-          onChangeText={(text) =>
-            setAddressForm((prev) => ({ ...prev, address_1: text }))
-          }
+          value={addressInput} // Use addressInput for visual
+          onChangeText={handleAddressInputChange}
           editable={!loading}
         />
+        {isFetchingAddressSuggestions && (
+          <ActivityIndicator style={{ marginVertical: 5 }} />
+        )}
+        {addressSuggestions.length > 0 && (
+          <View
+            style={[
+              styles.suggestionsContainer,
+              {
+                backgroundColor: getInputBackgroundColor(colorScheme),
+                borderColor: getBorderColor(colorScheme),
+              },
+            ]}
+          >
+            {addressSuggestions.map((item) => (
+              <TouchableOpacity
+                key={item.place_id}
+                style={[
+                  styles.suggestionItem,
+                  { borderBottomColor: getBorderColor(colorScheme) },
+                ]}
+                onPress={() => handleSelectAddressSuggestion(item)}
+              >
+                <Text style={{ color: getTextColor(colorScheme) }}>
+                  {item.description}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
         <LabelText>Address Line 2 (Optional)</LabelText>
         <TextInput
           style={themedInputStyle}
@@ -928,7 +1079,11 @@ export default function CreateJobScreen() {
               <Text
                 style={[
                   styles.lineItemText, // Existing: flex: 1
-                  { color: getTextColor(colorScheme), flex: 0, marginHorizontal: 10 }, // Changed: Added flex: 0 and marginHorizontal
+                  {
+                    color: getTextColor(colorScheme),
+                    flex: 0,
+                    marginHorizontal: 10,
+                  }, // Changed: Added flex: 0 and marginHorizontal
                 ]}
               >
                 {centsToDollars(item.price)}
@@ -982,8 +1137,8 @@ export default function CreateJobScreen() {
               },
             ]}
             theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
-            listMode='SCROLLVIEW'
-            zIndex={3000}
+            listMode='MODAL' // Changed listMode to MODAL to avoid nested VirtualizedList warning
+            zIndex={3000} // zIndex might be less critical in MODAL mode, but keeping for safety
             zIndexInverse={1000}
           />
         </View>
@@ -1128,4 +1283,16 @@ const styles = StyleSheet.create({
   },
   dropdown: {},
   dropdownContainer: {},
+  suggestionsContainer: {
+    // Styles for the suggestions dropdown container
+    borderWidth: 1,
+    borderRadius: 4,
+    marginTop: 2,
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  suggestionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+  },
 });

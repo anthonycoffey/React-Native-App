@@ -240,3 +240,19 @@ export interface ProxyNumber extends BaseEntity {
   number?: string;
   ProxySessionId?: number;
 }
+
+// Types for Discount Feature Refactor
+export interface ApiDiscountCode extends BaseEntity {
+  code: string;
+  reason: string; // Or constructed if not directly from API
+  type: 'fixed' | 'percent';
+  amount: number; // Cents for 'fixed', percentage value for 'percent'
+  isActive: boolean; // Likely true if fetched from 'active' endpoint
+  // Add any other relevant fields from your DiscountCode model
+}
+
+export interface NewDiscountData {
+  amount: number; // Final calculated discount amount in cents
+  reason: string;
+  DiscountCodeId?: number | null;
+}

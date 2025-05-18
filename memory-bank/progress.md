@@ -65,6 +65,16 @@ This document tracks what works, what's left to build, the current status, known
     - Standardized `Card` usage in `app/dashboard/create-job.tsx` by replacing local card styles.
     - Updated `app/dashboard/account.tsx` to use the new `Card` import and ensured its internal text elements are themed correctly.
     - Ensured `LabelText` in `components/Typography.tsx` uses themed text color.
+- **Discounts Feature Refactor (Vue-inspired):**
+    - Added `ApiDiscountCode` and `NewDiscountData` to `types.ts`.
+    - Created `components/job/DiscountList.tsx` for displaying discounts and handling removals.
+    - Created `components/job/modals/DiscountFormModal.tsx` for adding discounts (fixed, percent, code-based) with API fetching for codes and validation.
+    - Refactored `components/job/Discounts.tsx` to integrate the new list and modal components, calculate totals, and manage API interactions. It now uses the standard `Card` component.
+- **Custom Address Autocompletion (using `expo-crypto`):**
+    - Uninstalled `uuid` and `@types/uuid`. Installed `expo-crypto`.
+    - Updated `app/dashboard/create-job.tsx` to use `Crypto.randomUUID()` for session tokens.
+    - Custom implementation for Google Places Autocomplete and Details APIs using `fetch` and a `View` with `.map()` for suggestions is in place.
+    - Changed Service `DropDownPicker`'s `listMode` to `'MODAL'` to address nested VirtualizedList warning.
 
 ## What's Left to Build
 

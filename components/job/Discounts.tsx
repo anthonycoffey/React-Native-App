@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { centsToDollars } from '@/utils/money';
-import { Discount, Job } from '@/types';
+import { Discount, Job, NewDiscountData, JobLineItems as JobLineItemType } from '@/types';
 import globalStyles from '@/styles/globalStyles';
-import { CardTitle, ErrorText } from '@/components/Typography';
+import { CardTitle } from '@/components/Typography';
 import { View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
   getBackgroundColor,
-  getBorderColor,
   getTextColor,
-  getPlaceholderTextColor,
 } from '@/hooks/useThemeColor';
-import { PrimaryButton, IconButton } from '@/components/Buttons';
+import { PrimaryButton } from '@/components/Buttons';
 import { apiService } from '@/utils/ApiService';
-import AddDiscountModal from './modals/AddDiscountModal'; // Import the modal
+import DiscountList from './DiscountList'; // New component
+import DiscountFormModal from './modals/DiscountFormModal'; // New component
+import Card from '@/components/Card'; // Using the Card component
 
 type Props = {
   job: Job;
@@ -30,192 +22,115 @@ type Props = {
 };
 
 export default function Discounts({ job, fetchJob }: Props) {
-  const [discountsTotal, setDiscountsTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [addModalVisible, setAddModalVisible] = useState(false);
-
+  const [isFormModalVisible, setIsFormModalVisible] = useState(false);
   const theme = useColorScheme() ?? 'light';
 
-  useEffect(() => {
-    const calculateTotal = () => {
-      const total =
-        job.Discounts?.reduce((acc, item) => acc + item.amount, 0) ?? 0;
-      setDiscountsTotal(total);
-    };
-    calculateTotal();
+  const discountsTotal = useMemo(() => {
+    return job.Discounts?.reduce((acc, item) => acc + item.amount, 0) ?? 0;
   }, [job.Discounts]);
 
+  const lineItemsTotal = useMemo(() => {
+    return job.JobLineItems?.reduce((acc: number, item: JobLineItemType) => acc + item.price, 0) ?? 0;
+  }, [job.JobLineItems]);
+
+  // This is the job total *before* any discounts are applied, used by the form modal
+  const jobTotalBeforeDiscounts = lineItemsTotal;
+
   const handleRemoveDiscount = async (discountId: number) => {
-    Alert.alert(
-      'Confirm Removal',
-      'Are you sure you want to remove this discount?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: async () => {
-            setIsLoading(true);
-            try {
-              await apiService.delete(
-                `/jobs/${job.id}/discounts/${discountId}`
-              );
-              await fetchJob(); // Refresh job data
-              Alert.alert('Success', 'Discount removed successfully.');
-            } catch (error) {
-              console.error('Failed to remove discount:', error);
-              Alert.alert(
-                'Error',
-                'Failed to remove discount. Please try again.'
-              );
-            } finally {
-              setIsLoading(false);
-            }
-          },
-        },
-      ]
-    );
+    // Confirmation is handled within DiscountList, this function just performs the action
+    setIsLoading(true);
+    try {
+      await apiService.delete(`/jobs/${job.id}/discounts/${discountId}`);
+      await fetchJob(); // Refresh job data
+      Alert.alert('Success', 'Discount removed successfully.');
+    } catch (error) {
+      console.error('Failed to remove discount:', error);
+      const errorMessage = (error as any)?.body?.message || 'Failed to remove discount. Please try again.';
+      Alert.alert('Error', errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const renderItem = ({ item }: { item: Discount }) => (
-    <View
-      style={[
-        styles.discountItem,
-        { borderBottomColor: getBorderColor(theme) },
-      ]}
-    >
-      <Text style={[styles.discountReason, { color: getTextColor(theme) }]}>
-        {item.reason}
-      </Text>
-      <Text style={[styles.discountAmount, { color: getTextColor(theme) }]}>
-        {centsToDollars(item.amount)}
-      </Text>
-      <IconButton
-        iconName='delete' // Changed to a more common icon name
-        onPress={() => handleRemoveDiscount(item.id)}
-        // color prop removed, will use default or inherit
-        disabled={isLoading}
-        // size prop removed
-        style={{ marginLeft: 8 }}
-      />
-    </View>
-  );
+  const handleAddDiscountSubmit = async (discountData: NewDiscountData) => {
+    setIsLoading(true);
+    try {
+      await apiService.post(`/jobs/${job.id}/discounts`, discountData);
+      await fetchJob(); // Refresh job data
+      setIsFormModalVisible(false); // Close modal on success
+      Alert.alert('Success', 'Discount added successfully.');
+    } catch (error) {
+      console.error('Failed to add discount:', error);
+      const errorMessage = (error as any)?.body?.message || 'Failed to add discount. Please try again.';
+      Alert.alert('Error', errorMessage);
+      // Keep modal open on error for user to retry or cancel
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <ThemedView
-      style={[
-        globalStyles.card,
-        styles.container,
-        { backgroundColor: getBackgroundColor(theme) },
-      ]}
-    >
+    <Card>
       <View style={styles.headerContainer}>
-        <CardTitle style={{ color: getTextColor(theme) }}>
-          Discounts
-        </CardTitle>
-        <PrimaryButton
-          title='Add Discount'
-          onPress={() => setAddModalVisible(true)}
-          style={styles.addButton}
-          disabled={isLoading}
-        />
+        <CardTitle style={{ color: getTextColor(theme) }}>Discounts</CardTitle>
+        <Text style={[styles.totalText, { color: getTextColor(theme) }]}>
+          {centsToDollars(discountsTotal)}
+        </Text>
       </View>
-      <Text style={[styles.totalText, { color: getTextColor(theme) }]}>
-        Total: {centsToDollars(+discountsTotal)}
-      </Text>
 
-      {isLoading && !job.Discounts?.length ? (
+      {isLoading && (!job.Discounts || job.Discounts.length === 0) ? (
         <ActivityIndicator
-          size='small'
+          size="small"
           color={getTextColor(theme)}
-          style={{ marginVertical: 10 }}
-        />
-      ) : null}
-
-      {job.Discounts && job.Discounts.length > 0 ? (
-        <FlatList
-          data={job.Discounts}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          style={styles.list}
-          scrollEnabled={false} // If inside a ScrollView
+          style={{ marginVertical: 20 }}
         />
       ) : (
-        <Text style={[styles.emptyText, { color: getPlaceholderTextColor(theme) }]}>
-          No discounts applied
-        </Text>
+        <DiscountList
+          discounts={job.Discounts || []}
+          onRemoveDiscount={handleRemoveDiscount}
+          isLoading={isLoading}
+          jobId={job.id}
+        />
       )}
 
-      <AddDiscountModal
-        isVisible={addModalVisible}
-        onClose={() => setAddModalVisible(false)}
+      <View style={styles.actionsContainer}>
+        <PrimaryButton
+          title="Add Discount"
+          onPress={() => setIsFormModalVisible(true)}
+          disabled={isLoading}
+          style={styles.addButton}
+        />
+      </View>
+
+      <DiscountFormModal
+        isVisible={isFormModalVisible}
+        onClose={() => setIsFormModalVisible(false)}
+        jobTotal={jobTotalBeforeDiscounts} // Pass job total *before* discounts
+        onSubmit={handleAddDiscountSubmit}
+        isLoading={isLoading}
         jobId={job.id}
-        onSave={async (discountData) => {
-          setIsLoading(true);
-          try {
-            await apiService.post(`/jobs/${job.id}/discounts`, discountData);
-            await fetchJob(); // Refresh job data
-            setAddModalVisible(false); // Close modal on success
-            Alert.alert('Success', 'Discount added successfully.');
-          } catch (error) {
-            console.error('Failed to add discount:', error);
-            Alert.alert(
-              'Error',
-              // @ts-ignore
-              error?.body?.message || 'Failed to add discount. Please try again.'
-            );
-            // Keep modal open on error for user to retry or cancel
-          } finally {
-            setIsLoading(false);
-          }
-        }}
       />
-    </ThemedView>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    // Elevation and shadow are part of globalStyles.card, borderRadius might be too
-  },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
   },
-  addButton: {
-    // specific styles for button if needed, e.g. marginLeft
-  },
   totalText: {
-    textAlign: 'right',
     fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 18,
   },
-  list: {
-    marginTop: 10,
+  actionsContainer: {
+    marginTop: 15,
+    alignItems: 'flex-end', // Align button to the right, like Vue example
   },
-  discountItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-  },
-  discountReason: {
-    fontSize: 16,
-    flex: 1, // Allow reason to take available space
-  },
-  discountAmount: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginHorizontal: 8, // Add some spacing
-  },
-  emptyText: {
-    textAlign: 'center',
-    paddingVertical: 10,
-    fontStyle: 'italic',
+  addButton: {
+    // No specific styles needed if it's to take natural width or be styled by PrimaryButton defaults
   },
 });

@@ -75,6 +75,24 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - Standardized `Card` usage in `app/dashboard/create-job.tsx`, replacing local styles with the shared component.
     - Updated `app/dashboard/account.tsx` to use the new `Card` import path and ensured its internal text elements correctly use themed colors.
     - Updated `components/Typography.tsx` (`LabelText`) to rely on `ThemedText` for color, ensuring consistency.
+- **Refactored Discounts Feature:**
+    - Updated `types.ts` with `ApiDiscountCode` and `NewDiscountData` types for the new discount functionality.
+    - Created `components/job/DiscountList.tsx` to display the list of discounts and handle removal confirmation.
+    - Created `components/job/modals/DiscountFormModal.tsx` to provide a comprehensive form for adding discounts, including support for fixed amounts, percentages, and fetching/using predefined discount codes. It handles internal state for form inputs, fetches discount codes from `/discount-codes/active`, calculates discount impacts, and provides validation.
+    - Refactored `components/job/Discounts.tsx` to:
+        - Utilize the new `DiscountList` and `DiscountFormModal` components.
+        - Calculate `lineItemsTotal` (from `job.JobLineItems`) and `discountsTotal`.
+        - Pass `jobTotalBeforeDiscounts` (which is `lineItemsTotal`) to the `DiscountFormModal`.
+        - Manage loading states and API interactions for adding/removing discounts.
+        - Use the standard `Card` component for its main layout.
+    - Ensured all new components adhere to theming and project patterns.
+- **Implemented Custom Address Autocompletion (using `expo-crypto`):**
+    - Uninstalled `uuid` and `@types/uuid`.
+    - Installed `expo-crypto`.
+    - Updated `app/dashboard/create-job.tsx` to use `Crypto.randomUUID()` for Google Places API session tokens.
+    - Retained custom logic for fetching suggestions (Google Places Autocomplete API) and details (Google Places Details API) via `fetch`.
+    - Suggestions are displayed in a `View` with `.map()`, replacing the `FlatList` to avoid the nested VirtualizedList warning.
+    - Changed the Service `DropDownPicker`'s `listMode` to `'MODAL'` to also avoid the nested VirtualizedList warning.
 
 ## Next Steps
 

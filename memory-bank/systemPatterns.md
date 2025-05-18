@@ -70,6 +70,15 @@ This document outlines the system architecture, key technical decisions, design 
 6.  **API Service Abstraction:** API calls are centralized and abstracted in `utils/ApiService.ts`, which provides a custom fetch-based client for interacting with the backend.
 7.  **Error Handling:** Specific patterns for API error handling and display to the user. *(To be detailed by reviewing API call implementations)*
 8.  **Form Handling:** Patterns for input management, validation, and submission. *(To be detailed as forms are implemented/reviewed)*
+    *   **Custom Address Autocompletion:** Implemented in `app/dashboard/create-job.tsx` for the service address.
+        *   Uses a standard `TextInput` for user input.
+        *   On text change, a debounced function (`debouncedFetchAddressSuggestions`) calls the Google Places Autocomplete API (`https://maps.googleapis.com/maps/api/place/autocomplete/json`) using `fetch`.
+        *   Requires `EXPO_PUBLIC_GEOCODING_API_KEY` and a `sessiontoken` (generated using `Crypto.randomUUID()` from `expo-crypto`).
+        *   Suggestions are displayed in a `FlatList` below the input.
+        *   On selecting a suggestion, its `place_id` is used to call the Google Places Details API (`https://maps.googleapis.com/maps/api/place/details/json`) to get detailed address components.
+        *   The `addressForm` state is then populated with the parsed components (street, city, state, zip).
+        *   The `sessiontoken` is renewed after a place detail is fetched.
+    *   **Dropdowns:** The Service selection uses `react-native-dropdown-picker` with `listMode='MODAL'` to avoid nesting a VirtualizedList within the main `ScrollView`.
 
 ## Component Relationships
 

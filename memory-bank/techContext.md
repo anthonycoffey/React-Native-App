@@ -13,6 +13,7 @@ This document details the technologies used, development setup, technical constr
 - **Package Manager:** NPM (officially recommended by Expo for this project)
 - **Build & Deployment:** EAS Build, EAS Update
 - **Testing:** Jest (implied by `npm test` script)
+- **Cryptography:** `expo-crypto` (used for generating UUIDs for Google Places API session tokens)
 
 ## Development Setup
 
@@ -46,6 +47,7 @@ This document details the technologies used, development setup, technical constr
 ## Dependencies
 
 - Refer to `package.json` for a full list of dependencies.
+  - `expo-crypto`: Provides cryptographic functionalities, including UUID generation for Google Places API session tokens.
 
 ## Tool Usage Patterns
 
