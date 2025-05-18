@@ -1,5 +1,13 @@
 import React from "react";
 import { View, TextInput, StyleSheet, Text, TextInputProps } from "react-native";
+import { useColorScheme } from '@/components/useColorScheme';
+import { 
+  useThemeColor, 
+  getBorderColor, 
+  getPlaceholderTextColor, 
+  getInputBackgroundColor,
+  getTextColor
+} from '@/hooks/useThemeColor';
 
 type CurrencyInputProps = {
   label: string;
@@ -7,6 +15,7 @@ type CurrencyInputProps = {
   editable?: boolean;
   readOnly?: boolean;
   onChangeText: (text: string) => void;
+  placeholder?: string; // Added placeholder prop
 };
 
 export default function CurrencyInput({
@@ -15,8 +24,17 @@ export default function CurrencyInput({
   editable = true,
   readOnly = false,
   onChangeText,
+  placeholder, // Added placeholder prop
   ...props
 }: CurrencyInputProps & TextInputProps) {
+  const theme = useColorScheme() ?? 'light';
+
+  const themedLabelColor = getTextColor(theme);
+  const themedInputBorderColor = getBorderColor(theme);
+  const themedInputBackgroundColor = getInputBackgroundColor(theme);
+  const themedInputTextColor = getTextColor(theme);
+  const themedPlaceholderTextColor = getPlaceholderTextColor(theme);
+
   const handleTextChange = (text: string) => {
     // Remove non-numeric characters
     let cleanedText = text.replace(/[^0-9.]/g, '');
@@ -38,13 +56,22 @@ export default function CurrencyInput({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: themedLabelColor }]}>{label}</Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          { 
+            borderColor: themedInputBorderColor, 
+            backgroundColor: themedInputBackgroundColor,
+            color: themedInputTextColor 
+          }
+        ]}
         keyboardType="numeric"
         value={value}
         editable={editable && !readOnly}
         onChangeText={handleTextChange}
+        placeholder={placeholder} // Use placeholder prop
+        placeholderTextColor={themedPlaceholderTextColor}
         {...props}
       />
     </View>
@@ -59,13 +86,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginBottom: 6,
-    color: "#424242",
+    // color: "#424242", // Replaced by themed color
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    // borderColor: "#ccc", // Replaced by themed color
     borderRadius: 4,
     padding: 12,
     fontSize: 16,
+    // Hardcoded colors removed, will be applied dynamically
   }
 });

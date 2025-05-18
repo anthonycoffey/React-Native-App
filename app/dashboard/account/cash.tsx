@@ -6,12 +6,14 @@ import {
   Alert,
   ActivityIndicator,
   Modal,
+  View, // Added standard View
 } from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getBackgroundColor, getBorderColor, getTextColor, useThemeColor } from '@/hooks/useThemeColor';
+import { getBackgroundColor, getBorderColor, getTextColor, useThemeColor, getIconColor } from '@/hooks/useThemeColor'; // Added getIconColor
 import Colors from '@/constants/Colors';
 import globalStyles from '@/styles/globalStyles';
+import { MaterialIcons } from '@expo/vector-icons'; // Added MaterialIcons
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
 import { formatDateTime } from '@/utils/dates';
@@ -121,25 +123,34 @@ export default function CashManagementScreen() {
     const itemRowDynamicStyle = [
       localStyles.itemRow,
       { borderBottomColor: getBorderColor(colorScheme) },
-      isSelected && { backgroundColor: colorScheme === 'dark' ? Colors.dark.tint + '40' : Colors.light.tint + '40' },
+      // isSelected && { backgroundColor: colorScheme === 'dark' ? Colors.dark.tint + '40' : Colors.light.tint + '40' }, // Removed background highlight
     ];
+
+    const checkboxIconName = isSelected ? 'check-box' : 'check-box-outline-blank';
+    const checkboxIconColor = isSelected 
+      ? (colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint) 
+      : getIconColor(colorScheme);
+
     return (
       <TouchableOpacity
         onPress={() => toggleSelection(item)}
         style={itemRowDynamicStyle}
       >
-        <Text style={localStyles.itemCell}>
-          Amount: {centsToDollars(item.amount)}
-        </Text>
-        <Text style={localStyles.itemCell}>
-          Owed: {centsToDollars(item.owed)}
-        </Text>
-        {item.Payment?.Job?.id && (
-          <Text style={localStyles.itemCell}>Job: J-{item.Payment.Job.id}</Text>
-        )}
-        <Text style={localStyles.itemCell}>
-          Date: {formatDateTime(item.createdAt)}
-        </Text>
+        <MaterialIcons name={checkboxIconName} size={24} color={checkboxIconColor} style={localStyles.checkboxIcon} />
+        <View style={localStyles.itemTextContainer}>
+          <Text style={[localStyles.itemCell, {color: getTextColor(colorScheme)}]}>
+            Amount: {centsToDollars(item.amount)}
+          </Text>
+          <Text style={[localStyles.itemCell, {color: getTextColor(colorScheme)}]}>
+            Owed: {centsToDollars(item.owed)}
+          </Text>
+          {item.Payment?.Job?.id && (
+            <Text style={[localStyles.itemCell, {color: getTextColor(colorScheme)}]}>Job: J-{item.Payment.Job.id}</Text>
+          )}
+          <Text style={[localStyles.itemCell, {color: getTextColor(colorScheme)}]}>
+            Date: {formatDateTime(item.createdAt)}
+          </Text>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -191,6 +202,7 @@ export default function CashManagementScreen() {
             <CurrencyInput
               label='Deposit Amount (USD)'
               value={(newDepositAmount / 100).toFixed(2)}
+              placeholder="0.00" // Added placeholder for consistency, though value is usually set
               onChangeText={(text: string) => {
                 const numericValue = parseFloat(text.replace(/[^0-9.]/g, ''));
                 setNewDepositAmount(
@@ -227,12 +239,22 @@ const localStyles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   itemRow: {
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  itemSelected: {},
+  checkboxIcon: {
+    marginRight: 15,
+  },
+  itemTextContainer: {
+    flex: 1,
+  },
+  // itemSelected: {}, // No longer used
   itemCell: {
     fontSize: 14,
+    marginBottom: 2, // Added for spacing between text lines
   },
   emptyText: {
     textAlign: 'center',

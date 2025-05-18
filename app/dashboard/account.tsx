@@ -92,11 +92,6 @@ export default function AccountScreen() {
       </ThemedView>
 
       <ThemedView style={localStyles.sectionContainer}>
-        <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} />
-      </ThemedView>
-
-      <ThemedView style={localStyles.sectionContainer}>
-        <Text style={globalStyles.subtitle}>Profile Picture</Text>
         <ProfilePictureUploader />
       </ThemedView>
 
@@ -158,13 +153,17 @@ export default function AccountScreen() {
           style={{ marginTop: 10 }}
         />
       </Card>
+
+      <ThemedView style={localStyles.sectionContainer}>
+        <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} />
+      </ThemedView>
     </ScrollView>
   );
 }
 
 const localStyles = StyleSheet.create({
   sectionContainer: {
-    marginBottom: 20,
+    paddingVertical: 10,
     paddingHorizontal: 15,
   },
   balanceText: {

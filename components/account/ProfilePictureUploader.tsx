@@ -1,31 +1,44 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { useAuth } from '@/contexts/AuthContext';
-import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Text } from '@/components/Themed';
 import { apiService } from '@/utils/ApiService';
 import { useColorScheme } from '@/components/useColorScheme';
-import globalStyles from '@/styles/globalStyles'; // Corrected import
+import { useThemeColor } from '@/hooks/useThemeColor';
+import globalStyles from '@/styles/globalStyles';
+import Colors from '@/constants/Colors';
 
 export default function ProfilePictureUploader() {
   const authContext = useAuth();
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const colorScheme = useColorScheme() ?? 'light';
+  const iconColor = useThemeColor({}, 'icon');
+  const errorColor = Colors[colorScheme].errorText;
 
-  // Handle null authContext or currentUser
-  if (!authContext) { 
+  if (!authContext) {
     return null;
   }
-  // currentUser can be null initially while loading, so we check before use
-  const { currentUser, fetchCurrentUser, isUserLoading: isAuthUserLoading } = authContext;
-
+  
+  const {
+    currentUser,
+    fetchCurrentUser,
+    isUserLoading: isAuthUserLoading,
+  } = authContext;
 
   const pickImage = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: 'image/*', // Allow any image type
+        type: 'image/*',
         copyToCacheDirectory: true,
       });
 
@@ -50,10 +63,9 @@ export default function ProfilePictureUploader() {
       } as any);
 
       await apiService.post('/account/avatar', formData, {
-         headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      // Check if fetchCurrentUser exists on authContext before calling
       if (authContext.fetchCurrentUser) {
         await authContext.fetchCurrentUser();
       }
@@ -70,7 +82,6 @@ export default function ProfilePictureUploader() {
     setDeleting(true);
     try {
       await apiService.delete('/account/avatar');
-      // Check if fetchCurrentUser exists on authContext before calling
       if (authContext.fetchCurrentUser) {
         await authContext.fetchCurrentUser();
       }
@@ -83,47 +94,82 @@ export default function ProfilePictureUploader() {
     }
   };
 
-  const isLoading = uploading || deleting || isAuthUserLoading; // Include auth loading state
+  const isLoading = uploading || deleting || isAuthUserLoading;
 
-  if (isAuthUserLoading && !currentUser) { // Show loading indicator if auth is loading and no user yet
+  if (isAuthUserLoading && !currentUser) {
     return (
       <View style={localStyles.container}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
       </View>
     );
   }
-  
-  // If currentUser is still null after auth loading (e.g. error state), handle appropriately
+
   if (!currentUser) {
-     // This case should ideally be handled by a general app error boundary or a redirect
-     // For now, just don't render the uploader if no user.
     return null;
   }
-
 
   return (
     <View style={localStyles.container}>
       {currentUser.avatar ? (
-        <Image source={{ uri: currentUser.avatar }} style={localStyles.avatar} />
+        <Image
+          source={{ uri: currentUser.avatar }}
+          style={localStyles.avatar}
+        />
       ) : (
-        <View style={[localStyles.avatarPlaceholder, { backgroundColor: colorScheme === 'dark' ? globalStyles.input.borderColor : '#e0e0e0'}]}>
+        <View
+          style={[
+            localStyles.avatarPlaceholder,
+            {
+              backgroundColor:
+                colorScheme === 'dark'
+                  ? globalStyles.input.borderColor
+                  : '#e0e0e0',
+            },
+          ]}
+        >
           <Text>No Avatar</Text>
         </View>
       )}
-      <PrimaryButton
-        title={uploading ? "Uploading..." : (currentUser.avatar ? 'Change Photo' : 'Upload Photo')}
-        onPress={pickImage}
-        disabled={isLoading}
-      />
-      {currentUser.avatar && (
-        <OutlinedButton
-          title={deleting ? "Deleting..." : "Delete Photo"}
-          onPress={deleteImage}
+      <View style={localStyles.buttonRow}>
+        <TouchableOpacity
+          onPress={pickImage}
           disabled={isLoading}
-          style={localStyles.deleteButton}
-          variant="error"
-        />
-      )}
+          style={[
+            localStyles.iconButton,
+            isLoading && localStyles.disabledButton,
+          ]}
+        >
+          {uploading ? (
+            <ActivityIndicator size='small' color={iconColor} />
+          ) : (
+            <MaterialIcons
+              name={currentUser.avatar ? 'edit' : 'add-a-photo'}
+              size={28}
+              color={iconColor}
+            />
+          )}
+        </TouchableOpacity>
+
+        {currentUser.avatar && (
+          <>
+            <View style={{ width: 20 }} />
+            <TouchableOpacity
+              onPress={deleteImage}
+              disabled={isLoading}
+              style={[
+                localStyles.iconButton,
+                isLoading && localStyles.disabledButton,
+              ]}
+            >
+              {deleting ? (
+                <ActivityIndicator size='small' color={errorColor} />
+              ) : (
+                <MaterialIcons name='delete' size={28} color={errorColor} />
+              )}
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
     </View>
   );
 }
@@ -131,7 +177,7 @@ export default function ProfilePictureUploader() {
 const localStyles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical: 0,
   },
   avatar: {
     width: 100,
@@ -143,15 +189,24 @@ const localStyles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    // backgroundColor handled inline with theme
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
   },
-  deleteButton: {
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 10,
+  },
+  iconButton: {
+    padding: 10,
+    borderRadius: 25,
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
   activityIndicator: {
     marginTop: 10,
-  }
+  },
 });

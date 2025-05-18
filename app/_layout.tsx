@@ -44,7 +44,7 @@ export default function RootLayout() {
               <Stack.Screen
                 name='job/[id]'
                 options={({ route }) => ({
-                  title: `Job: ${(route.params as JobScreenParams)?.id}`,
+                  title: `J-${(route.params as JobScreenParams)?.id}`,
                   headerBackVisible: true,
                 })}
               />
