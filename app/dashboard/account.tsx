@@ -9,7 +9,7 @@ import ProfilePictureUploader from '@/components/account/ProfilePictureUploader'
 import Card from '@/components/Card';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
-import { PrimaryButton, SecondaryButton } from '@/components/Buttons';
+import { OutlinedButton, PrimaryButton, SecondaryButton } from '@/components/Buttons';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -91,10 +91,6 @@ export default function AccountScreen() {
         <Text style={globalStyles.title}>My Account</Text>
       </ThemedView>
 
-      <ThemedView style={localStyles.sectionContainer}>
-        <ProfilePictureUploader />
-      </ThemedView>
-
       <Card>
         <Text style={globalStyles.subtitle}>Account Balance</Text>
         <Text style={localStyles.balanceText}>
@@ -108,7 +104,7 @@ export default function AccountScreen() {
             style={localStyles.flexButton}
           />
           <ThemedView style={{ width: 10 }} />
-          <SecondaryButton
+          <OutlinedButton
             title='View Owed Cash'
             onPress={() => router.push('/dashboard/account/cash')}
             style={localStyles.flexButton}
@@ -153,6 +149,11 @@ export default function AccountScreen() {
           style={{ marginTop: 10 }}
         />
       </Card>
+
+      <ThemedView style={localStyles.sectionContainer}>
+        <Text style={globalStyles.subtitle}>My Avatar</Text>
+        <ProfilePictureUploader />
+      </ThemedView>
 
       <ThemedView style={localStyles.sectionContainer}>
         <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} />

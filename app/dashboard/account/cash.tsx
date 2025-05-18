@@ -102,7 +102,7 @@ export default function CashManagementScreen() {
         cashIntakeIds: selectedRows.map((row) => row.id),
       };
       const createdDeposit = await apiService.post<{ id: string | number }>(
-        '/cash-deposits',
+        '/cash/deposits',
         depositData
       );
       setDepositModalVisible(false);
