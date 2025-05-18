@@ -14,7 +14,7 @@ type CurrencyInputProps = {
   editable?: boolean;
   readOnly?: boolean;
   onChangeText: (text: string) => void;
-  placeholder?: string; // Added placeholder prop
+  placeholder?: string;
 };
 
 export default function CurrencyInput({
@@ -23,7 +23,7 @@ export default function CurrencyInput({
   editable = true,
   readOnly = false,
   onChangeText,
-  placeholder, // Added placeholder prop
+  placeholder,
   ...props
 }: CurrencyInputProps & TextInputProps) {
   const theme = useColorScheme() ?? 'light';
@@ -69,7 +69,7 @@ export default function CurrencyInput({
         value={value}
         editable={editable && !readOnly}
         onChangeText={handleTextChange}
-        placeholder={placeholder} // Use placeholder prop
+        placeholder={placeholder}
         placeholderTextColor={themedPlaceholderTextColor}
         {...props}
       />
@@ -85,14 +85,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginBottom: 6,
-    // color: "#424242", // Replaced by themed color
   },
   input: {
     borderWidth: 1,
-    // borderColor: "#ccc", // Replaced by themed color
     borderRadius: 4,
     padding: 12,
     fontSize: 16,
-    // Hardcoded colors removed, will be applied dynamically
   }
 });

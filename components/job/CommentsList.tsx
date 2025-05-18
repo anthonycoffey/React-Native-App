@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'; // Added useState, useEffect
-import { View, StyleSheet } from 'react-native'; // Removed FlatList
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import CommentItem from './CommentItem';
 import { JobComment } from '@/types';
-import { SecondaryButton } from '@/components/Buttons'; // For pagination buttons
+import { SecondaryButton } from '@/components/Buttons';
 
-const ITEMS_PER_PAGE = 3; // Or any other desired number
+const ITEMS_PER_PAGE = 3;
 
 interface CommentsListProps {
   comments: JobComment[];
@@ -22,7 +22,6 @@ const CommentsList: React.FC<CommentsListProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Reset to page 1 if comments array changes (e.g., after add/delete)
   useEffect(() => {
     setCurrentPage(1);
   }, [comments]);
@@ -88,7 +87,7 @@ const CommentsList: React.FC<CommentsListProps> = ({
 
 const styles = StyleSheet.create({
   emptyContainer: {
-    paddingVertical: 20, // Keep some padding
+    paddingVertical: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -101,12 +100,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 15,
-    paddingHorizontal: 10, // Align with other content if needed
+    paddingHorizontal: 10,
   },
   paginationButton: {
-    paddingHorizontal: 12, // Smaller padding for pagination buttons
+    paddingHorizontal: 12,
     paddingVertical: 8,
-    minWidth: 80, // Smaller minWidth
+    minWidth: 80,
   },
   pageInfoText: {
     fontSize: 14,

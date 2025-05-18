@@ -23,7 +23,7 @@ const Card: React.FC<CardProps> = ({ style, children, ...otherProps }) => {
           borderColor: cardBorderColor,
           shadowColor: themedShadowColor,
         },
-        style, // Allow overriding styles
+        style,
       ]}
       {...otherProps}
     >
@@ -36,13 +36,12 @@ const styles = StyleSheet.create({
   cardBase: {
     borderRadius: 8,
     padding: 15,
-    marginBottom: 15, // Standardized margin
-    borderWidth: StyleSheet.hairlineWidth, // Added for distinction
-    // Shadow properties
+    marginBottom: 15,
+    borderWidth: StyleSheet.hairlineWidth,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
-    elevation: 2, // Android shadow
+    elevation: 2,
   },
 });
 

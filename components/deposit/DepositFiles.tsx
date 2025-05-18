@@ -7,7 +7,7 @@ import {
   Image,
   Alert,
   ActivityIndicator,
-  ScrollView, // Added for potential scroll in gallery
+  ScrollView,
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { apiService, HttpError } from '@/utils/ApiService';
@@ -17,8 +17,6 @@ import { PrimaryButton } from '@/components/Buttons';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 
-// Mirroring the interface from app/dashboard/account/deposits/[id].tsx
-// Ideally, this would be in a shared types file
 interface CashDepositFile {
   id: number;
   url: string;
@@ -28,7 +26,6 @@ interface CashDepositFile {
   CashDepositId: number;
 }
 
-// Type for the file object appended to FormData
 interface FormDataFile {
   uri: string;
   name: string;
@@ -110,13 +107,7 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
   const colorScheme = useColorScheme() ?? 'light';
 
   const styles = StyleSheet.create({
-    container: {
-      // marginTop: 16, // Handled by Card component usually
-      // padding: 10, // Handled by Card component
-      // borderWidth: 1, // Handled by Card component
-      // borderColor: Colors[colorScheme].borderColor, // Handled by Card component
-      // borderRadius: 8, // Handled by Card component
-    },
+    container: {},
     title: {
       marginBottom: 10,
     },
@@ -158,7 +149,7 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
     try {
       const result = await DocumentPicker.getDocumentAsync({
         multiple: true,
-        type: 'image/*', // Only images for deposit proofs
+        type: 'image/*',
       });
 
       if (result.canceled === false && result.assets && result.assets.length > 0) {
@@ -182,7 +173,7 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
         const fileToAppend: FormDataFile = {
           uri: fileAsset.uri,
           name: fileAsset.name,
-          type: fileAsset.mimeType || 'application/octet-stream', // Fallback MIME type
+          type: fileAsset.mimeType || 'application/octet-stream',
         };
         formData.append('files[]', fileToAppend as any);
       }
@@ -193,7 +184,7 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       Alert.alert('Success', 'Image(s) uploaded successfully.');
-      await onFilesUpdate(); // Refresh deposit data
+      await onFilesUpdate();
     } catch (error) {
       console.error('Upload error:');
       if (error instanceof HttpError) {
@@ -220,11 +211,6 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
 
   return (
     <ThemedView style={styles.container}>
-      {/* Title is usually part of the parent Card, so removed from here */}
-      {/* <ThemedText type='subtitle' style={styles.title}>
-        Proof Images ({files?.length || 0})
-      </ThemedText> */}
-
       {files && files.length > 0 ? (
         <ScrollView contentContainerStyle={styles.galleryContainer} horizontal={false}>
           {files.map((file) => (

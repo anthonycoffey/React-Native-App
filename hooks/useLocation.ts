@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import * as Location from 'expo-location';
 import { LocationObject, LocationSubscription } from 'expo-location';
 import { router } from 'expo-router';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
+import { apiService, HttpError } from '@/utils/ApiService';
 import { useUser } from '@/contexts/UserContext';
 
 export default function useLocation(skipRedirect = false) {
@@ -74,12 +74,12 @@ export default function useLocation(skipRedirect = false) {
           accuracy: locationData.coords.accuracy,
           timestamp: locationData.timestamp,
         });
-
       } catch (error) {
         console.error('Error updating server with location:');
         if (error instanceof HttpError) {
-          console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-          // Decide if user needs to be alerted or if this can fail silently
+          console.error(
+            `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+          );
         } else {
           console.error('  An unexpected error occurred:', error);
         }
@@ -148,9 +148,13 @@ export default function useLocation(skipRedirect = false) {
     };
 
     setupWatch();
-  }, [hasPermission, isClockedIn, updateServerLocation, UPDATE_INTERVAL, stopLocationUpdates]);
-
-
+  }, [
+    hasPermission,
+    isClockedIn,
+    updateServerLocation,
+    UPDATE_INTERVAL,
+    stopLocationUpdates,
+  ]);
 
   useEffect(() => {
     if (!isClockedIn) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import globalStyles from '@/styles/globalStyles';
-import { Job, Address, Car as CarType } from '@/types'; // Renamed Car to CarType to avoid conflict
+import { Job, Address, Car as CarType } from '@/types';
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
@@ -13,11 +13,10 @@ import {
 import EditNameModal from './modals/EditNameModal';
 import EditAddressModal from './modals/EditAddressModal';
 import EditCarModal from './modals/EditCarModal';
-import EditEmailModal from './modals/EditEmailModal'; // Added Email Modal
-import { apiService } from '@/utils/ApiService'; // Corrected import
+import EditEmailModal from './modals/EditEmailModal';
+import { apiService } from '@/utils/ApiService';
 
 type CustomerInfoProps = {
-  // Renamed Props to CustomerInfoProps for clarity
   job: Job;
   location: {
     lat: number | undefined;
@@ -26,7 +25,7 @@ type CustomerInfoProps = {
     formatted_address?: string | undefined;
     location_type: string | undefined;
   } | null;
-  fetchJob: () => Promise<void>; // Added fetchJob prop
+  fetchJob: () => Promise<void>;
 };
 
 export default function CustomerInfo({
@@ -36,24 +35,22 @@ export default function CustomerInfo({
 }: CustomerInfoProps) {
   const colorScheme = useColorScheme() ?? 'light';
 
-  // State for editable values
   const [customerName, setCustomerName] = useState(
     job.Customer?.fullName || ''
   );
-  const [customerEmail, setCustomerEmail] = useState(job.Customer?.email || ''); // Added email state
+  const [customerEmail, setCustomerEmail] = useState(job.Customer?.email || '');
   const [serviceAddress, setServiceAddress] = useState<Address | undefined>(
     job.Address
   );
   const [carInfo, setCarInfo] = useState<CarType | undefined>(job.Car);
 
-  // State for modal visibility
   const [isEditNameModalVisible, setIsEditNameModalVisible] = useState(false);
-  const [isEditEmailModalVisible, setIsEditEmailModalVisible] = useState(false); // Added email modal state
+  const [isEditEmailModalVisible, setIsEditEmailModalVisible] = useState(false);
   const [isEditAddressModalVisible, setIsEditAddressModalVisible] =
     useState(false);
   const [isEditCarModalVisible, setIsEditCarModalVisible] = useState(false);
 
-  const [loading, setLoading] = useState(false); // General loading for parent component if needed, modals handle their own
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setCustomerName(job.Customer?.fullName || '');
@@ -73,24 +70,19 @@ export default function CustomerInfo({
 
   const iconColor = getIconColor(colorScheme);
 
-  // --- Save Handlers ---
   const handleSaveName = async (newName: string) => {
     if (!job.CustomerId) {
       Alert.alert('Error', 'Customer ID is missing.');
       return;
     }
-    // API call logic from user prompt
-    // const id = job.CustomerId;
-    // await this.$api.customers().update(id, { fullName: newName }); // Adapt this
-    // Example adaptation:
     await apiService.patch(`/customers/${job.CustomerId}`, {
       fullName: newName,
-    }); // PATCH or PUT based on API
+    });
     await fetchJob();
   };
 
   const handleSaveAddress = async (updatedAddress: Address) => {
-    if (!job.id) { // Use job.id for the /jobs/:id endpoint
+    if (!job.id) {
       Alert.alert('Error', 'Job ID is missing.');
       return;
     }
@@ -98,31 +90,21 @@ export default function CustomerInfo({
       Alert.alert('Error', 'Updated address is missing an ID.');
       return;
     }
-
     const updatedJobPayload = {
-      ...job, // Spread the original job object
-      Address: updatedAddress, // Replace the Address property with the full updated address object
-      AddressId: updatedAddress.id, // Ensure the top-level AddressId on the job also reflects the updated address's ID
+      ...job,
+      Address: updatedAddress,
+      AddressId: updatedAddress.id,
     };
-
-    // Note: Depending on the backend API for PATCH /jobs/:id,
-    // it might be necessary to strip out read-only fields (like nested createdAt, updatedAt, or even entire sub-objects like Customer)
-    // from updatedJobPayload if the backend doesn't ignore them or errors on their presence.
-    // For this change, we assume the backend can handle the full job structure with the modified Address.
     await apiService.patch(`/jobs/${job.id}`, updatedJobPayload);
     await fetchJob();
   };
 
   const handleSaveCar = async (updatedCar: CarType) => {
     if (!job.id) {
-      // Assuming job.id is the correct ID for the $jobs.update endpoint
       Alert.alert('Error', 'Job ID is missing.');
       return;
     }
-    // API call logic from user prompt
-    // await this.$jobs.update(this.job.id, { Car: this.updatedCar });
-    // Example adaptation:
-    await apiService.patch(`/jobs/${job.id}`, { Car: updatedCar }); // PATCH or PUT based on API
+    await apiService.patch(`/jobs/${job.id}`, { Car: updatedCar });
     await fetchJob();
   };
 
@@ -242,15 +224,13 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   editIcon: {
-    padding: 5, // For easier touch
+    padding: 5,
   },
   inputReadOnly: {
-    // Style to make it look less like an active input when read-only
-    borderWidth: 0, // Or a very subtle border
-    // backgroundColor: 'transparent', // Or a slightly different shade
+    borderWidth: 0,
   },
   addressInput: {
-    minHeight: 60, // Ensure enough height for multiline
-    textAlignVertical: 'top', // For Android
+    minHeight: 60,
+    textAlignVertical: 'top',
   },
 });

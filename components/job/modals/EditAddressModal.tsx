@@ -65,16 +65,14 @@ export default function EditAddressModal({
     }
     setLoading(true);
     try {
-      // Ensure all required fields are present, even if empty from Partial<Address>
       const addressToSave: Address = {
-        id: currentAddress?.id || 0, // Keep existing ID or use 0 for new (though API should handle ID)
+        id: currentAddress?.id || 0,
         address_1: address.address_1 || '',
         address_2: address.address_2 || '',
         city: address.city || '',
         state: address.state || '',
         zipcode: Number(address.zipcode) || 0,
-        // Include other fields from Address type if necessary, or ensure API handles defaults
-        short: currentAddress?.short || '', // Preserve short address or generate if needed
+        short: currentAddress?.short || '',
         lat: currentAddress?.lat,
         lng: currentAddress?.lng,
         createdAt: currentAddress?.createdAt || new Date().toISOString(),

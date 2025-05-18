@@ -28,11 +28,11 @@ export interface Customer extends BaseEntity {
   firstName?: string;
   lastName?: string;
   email?: string;
-  phone?: string; // For new customer creation
+  phone?: string;
   defaultPhone?: { number: string };
   defaultPhoneId?: number;
   CustomerPhones?: CustomerPhone[];
-  Cars?: Car[]; // Optional list of cars associated with the customer
+  Cars?: Car[];
 }
 
 export interface CustomerPhone extends BaseEntity {
@@ -69,41 +69,41 @@ export interface Job extends BaseEntity {
   linkCode?: string;
   paymentStatus: string;
   status: string;
-  proxy: Proxy | null; // Allow null for no active proxy
-  assignedTechnician?: AssignedTechnician; // Add assignedTechnician object
+  proxy: Proxy | null;
+  assignedTechnician?: AssignedTechnician;
   JobLineItems: JobLineItems[];
   JobActions?: JobActions[];
   Discounts?: Discount[];
   Invoices?: Invoice[];
   JobFiles?: JobFile[];
-  JobComments?: JobComment[]; // Added JobComments
-  referralCode?: string | null; // Added for job-specific referral code
-  Payments?: Payment[]; // Added for list of payments
+  JobComments?: JobComment[];
+  referralCode?: string | null;
+  Payments?: Payment[];
 }
 
 export interface Payment extends BaseEntity {
   JobId: number;
-  type: 'cash' | 'card' | string; // Payment method
-  amount: number; // Amount in cents
-  tip?: number; // Optional tip in cents
-  status?: string; // e.g., 'succeeded', 'pending', 'failed'
-  transactionId?: string | null; // Optional transaction ID from payment gateway
-  paymentIntentId?: string | null; // Optional payment intent ID
-  notes?: string | null; // Optional notes about the payment
+  type: 'cash' | 'card' | string;
+  amount: number;
+  tip?: number;
+  status?: string;
+  transactionId?: string | null;
+  paymentIntentId?: string | null;
+  notes?: string | null;
 }
 
 export interface JobComment extends BaseEntity {
   text: string;
   JobId: number;
-  UserId: number; // Assuming comments are linked to a User
-  User?: User; // To include commenter details
+  UserId: number;
+  User?: User;
 }
 
 export interface JobFile {
   id: number;
   url: string;
   name: string;
-  type: string; // e.g., "image/jpeg", "video/mp4"
+  type: string;
   createdAt: string;
   updatedAt: string;
   JobId: number;
@@ -132,7 +132,7 @@ export interface JobLineItems extends BaseEntity {
 
 export interface JobLineItemCreate {
   ServiceId: number;
-  price: number; // Price in cents
+  price: number;
 }
 
 export interface Service extends BaseEntity {
@@ -224,14 +224,14 @@ export interface User extends BaseEntity {
   longitude?: number;
   lastGeolocationUpdate?: string;
   darkMode?: boolean;
-  avatar?: string | null; // Added from AuthContext
-  location?: { // Added from AuthContext
+  avatar?: string | null;
+  location?: {
     type?: string;
     coordinates?: number[];
     crs?: object;
   } | null;
-  referralCode?: string | null; // Added from AuthContext
-  referralCodeUsed?: number | null; // Added from AuthContext
+  referralCode?: string | null;
+  referralCodeUsed?: number | null;
 }
 
 export interface ProxyNumber extends BaseEntity {
@@ -241,18 +241,16 @@ export interface ProxyNumber extends BaseEntity {
   ProxySessionId?: number;
 }
 
-// Types for Discount Feature Refactor
 export interface ApiDiscountCode extends BaseEntity {
   code: string;
-  reason: string; // Or constructed if not directly from API
+  reason: string;
   type: 'fixed' | 'percent';
-  amount: number; // Cents for 'fixed', percentage value for 'percent'
-  isActive: boolean; // Likely true if fetched from 'active' endpoint
-  // Add any other relevant fields from your DiscountCode model
+  amount: number;
+  isActive: boolean;
 }
 
 export interface NewDiscountData {
-  amount: number; // Final calculated discount amount in cents
+  amount: number;
   reason: string;
   DiscountCodeId?: number | null;
 }
@@ -261,13 +259,12 @@ export type JobScreenParams = {
   id: string;
 };
 
-// Paycheck related types
 export interface Paycheck extends BaseEntity {
-  amount: number; // in cents
+  amount: number;
   status: string;
   UserId: number;
   PayrollId: number;
-  User?: User; // Optional, as it's an included relation
+  User?: User;
 }
 
 export interface PaginationMeta {

@@ -152,7 +152,6 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
   return (
     <ThemedView style={cardStyle}>
       {job.proxy ? (
-        // Active Proxy View
         <>
           <View style={styles.titleRow}>
             <IconButton
@@ -180,7 +179,6 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
           />
         </>
       ) : (
-        // No Proxy / Start Proxy View
         <>
           <Text style={[styles.noProxyText, { color: themedTextColor }]}>
             No active proxy.
@@ -241,7 +239,7 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
               value={formattedPhoneNumber}
               onChangeText={handlePhoneNumberChange}
               keyboardType='phone-pad'
-              maxLength={12} // XXX-XXX-XXXX is 12 chars
+              maxLength={12}
               style={[
                 styles.input,
                 {
@@ -257,7 +255,7 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
               value={newPhoneForm.note}
               onChangeText={(text) =>
                 setNewPhoneForm((prev) => ({ ...prev, note: text }))
-              } // Keep note handling simple
+              }
               multiline
               numberOfLines={3}
               style={[

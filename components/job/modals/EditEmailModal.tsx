@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 10,
     padding: 25,
-    alignItems: 'stretch', // Changed from 'center' to 'stretch'
+    alignItems: 'stretch',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

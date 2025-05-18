@@ -44,7 +44,7 @@ export default function JobReferralCode({ job, fetchJob }: Props) {
         code: referralCodeInput.trim(),
       });
       await fetchJob();
-      setReferralCodeInput(''); // Clear input on success
+      setReferralCodeInput('');
       Alert.alert('Success', 'Referral code added successfully.');
     } catch (error) {
       console.error('Failed to add referral code:', error);
@@ -106,14 +106,16 @@ export default function JobReferralCode({ job, fetchJob }: Props) {
 
       {!isLoading && job.referralCode ? (
         <View style={styles.displayContainer}>
-          <Text style={[styles.referralCodeText, { color: getTextColor(theme) }]}>
+          <Text
+            style={[styles.referralCodeText, { color: getTextColor(theme) }]}
+          >
             {job.referralCode}
           </Text>
           <OutlinedButton
             title='Remove Code'
             onPress={handleRemoveReferralCode}
             disabled={isLoading}
-            variant='error' // Assuming OutlinedButton can take a variant for color
+            variant='error'
           />
         </View>
       ) : null}

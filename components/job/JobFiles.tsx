@@ -10,14 +10,13 @@ import {
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { Job, JobFile } from '@/types';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
+import { apiService, HttpError } from '@/utils/ApiService';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Text as ThemedText, View as ThemedView } from '@/components/Themed';
-import { PrimaryButton } from '@/components/Buttons'; // Import PrimaryButton
+import { PrimaryButton } from '@/components/Buttons';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 
-// Type for the file object appended to FormData
 interface FormDataFile {
   uri: string;
   name: string;
@@ -76,7 +75,6 @@ const FileViewerModal = ({
       backgroundColor: Colors[colorScheme ?? 'light'].tint,
       borderRadius: 5,
     },
-    // Removed closeButton style as PrimaryButton has its own
   });
 
   return (
@@ -104,7 +102,7 @@ const FileViewerModal = ({
           <PrimaryButton
             title="Close"
             onPress={onClose}
-            style={{ marginTop: 15 }} // Added margin similar to original TouchableOpacity
+            style={{ marginTop: 15 }}
           />
         </View>
       </View>
@@ -131,26 +129,25 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     },
     galleryContainer: {
       flexDirection: 'row',
-      flexWrap: 'wrap', // Allows items to wrap to the next line
-      // justifyContent: 'space-between', // Or 'flex-start' if you prefer
+      flexWrap: 'wrap',
     },
     filePreviewContainer: {
       margin: 5,
       alignItems: 'center',
-      width: 100, // Fixed width for each preview item
+      width: 100,
     },
     imagePreview: {
       width: 80,
       height: 80,
       borderRadius: 4,
       marginBottom: 5,
-      backgroundColor: '#e0e0e0', // Placeholder background
+      backgroundColor: '#e0e0e0',
     },
     fileName: {
       fontSize: 12,
       textAlign: 'center',
     },
-    fileItem: { // Kept for non-image files, or as a fallback
+    fileItem: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -158,7 +155,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       borderBottomWidth: 1,
       borderBottomColor: Colors[colorScheme ?? 'light'].borderColor,
     },
-    fileItemName: { // Renamed from fileName to avoid conflict if used for list items
+    fileItemName: {
       flex: 1,
       marginRight: 8,
     },
@@ -171,46 +168,31 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       borderTopWidth: 1,
       borderTopColor: Colors[colorScheme ?? 'light'].borderColor,
     },
-    // Removed styles: button, buttonText, disabledButton, selectedFileText
     loadingContainer: {
       marginVertical: 10,
-      alignItems: 'center', // Added for better centering of loader + text
+      alignItems: 'center',
     },
   });
 
   const pickDocument = async () => {
-    if (loadingFiles) return; // Prevent picking if already loading/uploading
-
-    // setLoadingFiles(true); // Set loading true before picker, as UX implies immediate action
-    // Decided against setting loading true *before* picker, as picker itself is an interaction.
-    // Loading will be true during the actual upload process initiated by handleFileUploadInternal.
+    if (loadingFiles) return;
     try {
       const result = await DocumentPicker.getDocumentAsync({
         multiple: true,
-        type: ['image/*', 'video/*'], // Allow images and videos
+        type: ['&ast;/*'],
       });
 
       if (result.canceled === false && result.assets && result.assets.length > 0) {
-        // setSelectedFilesForUpload(result.assets); // No longer need to set this state for UI
-        await handleFileUploadInternal(result.assets); // Directly call upload
-      } else if (result.canceled === true) {
-        // User cancelled the picker, do nothing or clear any transient state if needed
-        // setSelectedFilesForUpload([]); // Not strictly needed if not used for UI
+        await handleFileUploadInternal(result.assets);
       }
     } catch (err) {
       console.error('Error picking document:', err);
       Alert.alert('Error', 'Could not open document picker.');
-      // setLoadingFiles(false); // Ensure loading is false if error occurs before upload starts
     }
-    // setLoadingFiles(false) will be handled by handleFileUploadInternal's finally block
   };
 
-  // Renamed and modified to accept assets directly for auto-upload
   const handleFileUploadInternal = async (assetsToUpload: DocumentPicker.DocumentPickerAsset[]) => {
     if (!assetsToUpload || assetsToUpload.length === 0) {
-      // This case might occur if pickDocument somehow calls it with no assets
-      // Or if called directly without valid assets.
-      // Alert.alert('No files to upload', 'Please select files first.'); // Optional: user won't see this if auto-triggered
       return;
     }
 
@@ -228,7 +210,6 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     });
 
     try {
-      // apiService.post will handle FormData correctly without explicit headers here
       await apiService.post(`/jobs/${job.id}/files`, formData);
       Alert.alert('Success', 'Files uploaded successfully.');
       fetchJob();
@@ -251,7 +232,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     try {
       await apiService.delete(`/jobs/${job.id}/files/${fileId}`);
       Alert.alert('Success', 'File deleted successfully.');
-      fetchJob(); // Refresh job data
+      fetchJob();
     } catch (error) {
       console.error('Delete error:');
       if (error instanceof HttpError) {
@@ -320,13 +301,12 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
                 </ThemedText>
                 <TouchableOpacity
                   onPress={() => promptDeleteFile(file)}
-                  style={[styles.deleteButton, { position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 12 }]} // Position delete icon on preview
+                  style={[styles.deleteButton, { position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 12 }]}
                 >
                   <MaterialIcons name='close' size={18} color='#fff' />
                 </TouchableOpacity>
               </TouchableOpacity>
             ) : (
-              // Fallback for non-image files (simple list item)
               <View key={file.id} style={styles.fileItem}>
                 <TouchableOpacity
                   onPress={() => viewFile(file)}
@@ -363,9 +343,8 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
           title="Upload File(s)"
           onPress={pickDocument}
           disabled={loadingFiles}
-          style={{ marginBottom: 10 }} // Add some margin if needed
+          style={{ marginBottom: 10 }}
         />
-
 
         {loadingFiles ? (
           <View style={styles.loadingContainer}>

@@ -22,7 +22,6 @@ export default function TabLayout() {
   const router = useRouter();
   const headerShown = useClientOnlyValue(false, true);
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (auth && !auth.isLoading && !auth.session) {
       const redirectTimeout = setTimeout(() => {
@@ -32,7 +31,6 @@ export default function TabLayout() {
     }
   }, [auth, router]);
 
-  // Show loading spinner while checking auth or if auth context is not yet available
   if (!auth || auth.isLoading) {
     return (
       <View style={globalStyles.loadingContainer}>
@@ -44,7 +42,6 @@ export default function TabLayout() {
     );
   }
 
-  // If not authenticated and not loading, redirect to login
   if (!auth.session && !auth.isLoading) {
     return <Redirect href='/login' />;
   }

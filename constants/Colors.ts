@@ -1,7 +1,6 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
-// Button variant colors
 export const buttonVariants = {
   error: '#e53935',
   warning: '#fbc02d',
@@ -10,7 +9,6 @@ export const buttonVariants = {
   secondary: '#65b9d6',
 };
 
-// Additional UI colors
 export const ui = {
   disabled: {
     background: '#d3d3d3',
@@ -26,9 +24,10 @@ export default {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
-    borderColor: '#ddd', // Added border color for light theme
-    errorText: buttonVariants.error, // Added error text color
-    shadow: '#000000', // Shadow color for light theme
+    borderColor: '#ddd',
+    errorText: '#D32F2F',
+    errorBackground: '#FFEBEE',
+    shadow: '#000000',
   },
   dark: {
     text: '#ECEDEE',
@@ -37,8 +36,9 @@ export default {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
-    borderColor: '#444', // Added border color for dark theme
-    errorText: buttonVariants.error, // Added error text color
-    shadow: '#333333', // Shadow color for dark theme
+    borderColor: '#444',
+    errorText: '#FFCDD2',
+    errorBackground: '#B71C1C',
+    shadow: '#333333',
   },
 };

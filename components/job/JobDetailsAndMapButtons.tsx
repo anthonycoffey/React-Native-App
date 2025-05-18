@@ -16,7 +16,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 
 type Props = {
   job: Job;
-  fetchJob: () => Promise<void>; // Changed to Promise<void>
+  fetchJob: () => Promise<void>;
 };
 
 export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
@@ -60,10 +60,10 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
         const result = await getApps({
           latitude: lat,
           longitude: lng,
-          alwaysIncludeGoogle: true, // optional, true will always add Google Maps to iOS and open in Safari, even if app is not installed (default: false)
+          alwaysIncludeGoogle: true,
           googlePlaceId: place_id,
-          googleForceLatLon: true, // optionally force GoogleMaps to use the latlon for the query instead of the title
-          appsWhiteList: ['google-maps', 'apple-maps'], // optionally you can set which apps to show (default: will show all supported apps installed on device)
+          googleForceLatLon: true,
+          appsWhiteList: ['google-maps', 'apple-maps'],
         });
         setAvailableApps(result);
       }
@@ -93,7 +93,6 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

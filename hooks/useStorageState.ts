@@ -2,10 +2,10 @@ import * as SecureStore from "expo-secure-store";
 import * as React from "react";
 import { Platform } from "react-native";
 
-type UseStateHook<T> = [[boolean, T | null], (value?: T | null) => void];
+type UseStateHook<T> = [[boolean, T | null], (value: T | null) => Promise<boolean>];
 
 function useAsyncState<T>(
-  initialValue: [boolean, T | null] = [true, undefined],
+  initialValue: [boolean, T | null] = [true, null],
 ): UseStateHook<T> {
   return React.useReducer(
     (state: [boolean, T | null], action: T | null = null) => [false, action],
@@ -34,9 +34,7 @@ export async function setStorageItemAsync(key: string, value: string | null) {
 }
 
 export function useStorageState(key: string): UseStateHook<string> {
-  // Public
   const [state, setState] = useAsyncState<string>();
-
   // Get
   React.useEffect(() => {
     if (Platform.OS === "web") {
@@ -61,15 +59,15 @@ export function useStorageState(key: string): UseStateHook<string> {
       try {
         await setStorageItemAsync(key, value);
         setState(value);
-        return true; // Return success flag
+        return true;
       } catch (error) {
         console.error('Failed to set storage state:', error);
-        return false; // Return failure flag
+        return false;
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [key],
   );
-
+  
   return [state, setValue];
 }

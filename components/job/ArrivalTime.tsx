@@ -2,18 +2,16 @@ import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
-import { Platform, StyleSheet, Alert } from 'react-native'; // Added Alert
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
-// Removed AxiosError from '@/types'
+import { Platform, StyleSheet, Alert } from 'react-native';
+import { apiService, HttpError } from '@/utils/ApiService';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import { 
-  getBackgroundColor, 
-  getBorderColor, 
-  getTextColor 
+import {
+  getBorderColor,
+  getTextColor
 } from '@/hooks/useThemeColor';
 
 type ArrivalTimeProps = {
@@ -32,7 +30,7 @@ export default function ArrivalTime({
   const [updated, setUpdated] = useState<boolean>(false);
 
   if (!timestamp) {
-    return null; // If time is not provided, don't render anything
+    return null;
   }
 
   const localeDateString = (date: string) => {
@@ -59,7 +57,7 @@ export default function ArrivalTime({
     }
   };
 
-  const updateArrivalTime = async () => { // Added async
+  const updateArrivalTime = async () => {
     let arrivalTime = ``;
     if (date && time) {
       arrivalTime = `${date.split('T')[0]}T${time.split('T')[1]}`;
@@ -103,13 +101,13 @@ export default function ArrivalTime({
               value={new Date(timestamp)}
               mode='date'
               onChange={onChangeDate}
-              themeVariant={colorScheme ?? undefined} // Handle null from useColorScheme
+              themeVariant={colorScheme ?? undefined}
             />
             <DateTimePicker
               value={new Date(timestamp)}
               mode='time'
               onChange={onChangeTime}
-              themeVariant={colorScheme ?? undefined} // Handle null from useColorScheme
+              themeVariant={colorScheme ?? undefined}
             />
           </>
         )}
@@ -192,7 +190,6 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -215,14 +212,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 10,
-    // backgroundColor is set dynamically
     borderWidth: 1,
-    // borderColor is set dynamically
   },
   displayTime: {
     fontFamily: 'monospace',
     fontSize: 16,
-    // color is set dynamically
     textAlign: 'center',
   },
   buttonRow: {

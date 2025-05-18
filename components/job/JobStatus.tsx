@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { TextInput, Alert, StyleSheet, Modal } from 'react-native';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
+import { apiService, HttpError } from '@/utils/ApiService';
 import globalStyles from '@/styles/globalStyles';
 import { router } from 'expo-router';
-import { Job } from '@/types'; // Removed AxiosError
+import { Job } from '@/types';
 import JobHeader from '@/components/job/JobHeader';
 import { ErrorText, HeaderText } from '@/components/Typography';
 import { View } from '@/components/Themed';
@@ -43,11 +43,19 @@ export default function JobStatus({ job, fetchJob }: Props) {
     } catch (error) {
       console.error(`Failed to update job status for event ${event}:`);
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-        Alert.alert('Error', `Failed to update job status. Server said: ${error.body?.message || error.message}`);
+        console.error(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
+        Alert.alert(
+          'Error',
+          `Failed to update job status. Server said: ${error.body?.message || error.message}`
+        );
       } else {
         console.error('  An unexpected error occurred:', error);
-        Alert.alert('Error', 'An unexpected error occurred while updating job status.');
+        Alert.alert(
+          'Error',
+          'An unexpected error occurred while updating job status.'
+        );
       }
     }
   };
@@ -59,11 +67,19 @@ export default function JobStatus({ job, fetchJob }: Props) {
     } catch (error) {
       console.error('Failed to quit job:');
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-        Alert.alert('Error', `Failed to quit job. Server said: ${error.body?.message || error.message}`);
+        console.error(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
+        Alert.alert(
+          'Error',
+          `Failed to quit job. Server said: ${error.body?.message || error.message}`
+        );
       } else {
         console.error('  An unexpected error occurred:', error);
-        Alert.alert('Error', 'An unexpected error occurred while quitting job.');
+        Alert.alert(
+          'Error',
+          'An unexpected error occurred while quitting job.'
+        );
       }
     }
   };
@@ -77,11 +93,19 @@ export default function JobStatus({ job, fetchJob }: Props) {
     } catch (error) {
       console.error('Failed to cancel job:');
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-        Alert.alert('Error', `Failed to cancel job. Server said: ${error.body?.message || error.message}`);
+        console.error(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
+        Alert.alert(
+          'Error',
+          `Failed to cancel job. Server said: ${error.body?.message || error.message}`
+        );
       } else {
         console.error('  An unexpected error occurred:', error);
-        Alert.alert('Error', 'An unexpected error occurred while canceling job.');
+        Alert.alert(
+          'Error',
+          'An unexpected error occurred while canceling job.'
+        );
       }
     }
   };
@@ -177,22 +201,35 @@ export default function JobStatus({ job, fetchJob }: Props) {
         onRequestClose={() => setShowCancelDialog(false)}
       >
         <View style={styles.modalBackground}>
-          <View style={[
-            styles.modalContent, 
-            { backgroundColor: useColorScheme() === 'dark' ? Colors.dark.background : 'white' }
-          ]}>
+          <View
+            style={[
+              styles.modalContent,
+              {
+                backgroundColor:
+                  useColorScheme() === 'dark'
+                    ? Colors.dark.background
+                    : 'white',
+              },
+            ]}
+          >
             <HeaderText>Cancel Job?</HeaderText>
             <View style={styles.inputContainer}>
               <TextInput
                 style={[
-                  globalStyles.input, 
-                  { 
-                    color: useColorScheme() === 'dark' ? Colors.dark.text : Colors.light.text,
-                    backgroundColor: useColorScheme() === 'dark' ? '#2c2c2c' : 'white' 
-                  }
+                  globalStyles.input,
+                  {
+                    color:
+                      useColorScheme() === 'dark'
+                        ? Colors.dark.text
+                        : Colors.light.text,
+                    backgroundColor:
+                      useColorScheme() === 'dark' ? '#2c2c2c' : 'white',
+                  },
                 ]}
                 placeholder='Enter reason for cancellation'
-                placeholderTextColor={useColorScheme() === 'dark' ? '#9BA1A6' : '#687076'}
+                placeholderTextColor={
+                  useColorScheme() === 'dark' ? '#9BA1A6' : '#687076'
+                }
                 value={cancelComment}
                 onChangeText={setCancelComment}
                 multiline
@@ -206,7 +243,6 @@ export default function JobStatus({ job, fetchJob }: Props) {
                   setCancelComment('');
                   setShowCancelDialog(false);
                 }}
-                style={styles.modalButton} // Apply new style
               />
               <PrimaryButton
                 title='Cancel Job'
@@ -215,7 +251,6 @@ export default function JobStatus({ job, fetchJob }: Props) {
                   setShowCancelDialog(false);
                   cancelJob();
                 }}
-                style={styles.modalButton} // Apply new style
               />
             </View>
           </View>
@@ -229,7 +264,6 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -249,7 +283,6 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    // backgroundColor is set dynamically based on theme
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
@@ -265,14 +298,10 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
   },
-  modalButton: {
-    // Buttons will take their natural width defined in Buttons.tsx (minWidth: 120)
-    // Adjust if more specific sizing is needed, e.g., width: '48%'
-  },
   infoAlert: {
     borderWidth: 1,
     borderColor: 'red',
-    backgroundColor: 'rgba(255, 0, 0, 0.1)', // Fixed typo and made more theme-friendly
+    backgroundColor: 'rgba(255, 0, 0, 0.1)',
     padding: 0,
     borderRadius: 5,
   },

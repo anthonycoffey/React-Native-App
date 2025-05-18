@@ -12,7 +12,6 @@ export default function JobsScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [jobs, setJobs] = useState<Job[]>([]);
 
-  // Simplified fetch jobs function
   const fetchJobs = useCallback(async () => {
     if (!session) {
       setJobs([]);
@@ -22,7 +21,6 @@ export default function JobsScreen() {
 
     setLoading(true);
     try {
-      // Assuming the API directly returns Job[] for this endpoint
       const fetchedJobs = await apiService.get<Job[]>(
         '/jobs/mine?sortBy=-arrivalTime&scope=active'
       );

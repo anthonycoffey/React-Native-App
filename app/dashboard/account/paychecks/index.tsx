@@ -5,15 +5,15 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { getBackgroundColor, getTextColor, getBorderColor } from '@/hooks/useThemeColor';
 import globalStyles from '@/styles/globalStyles';
 import { useAuth } from '@/contexts/AuthContext';
-import { apiService } from '@/utils/ApiService'; // Corrected import
+import { apiService } from '@/utils/ApiService';
 import { Paycheck, PaginatedResponse, PaginationMeta } from '@/types';
 import { formatDateTime } from '@/utils/dates';
 import { centsToDollars } from '@/utils/money';
-import Card from '@/components/Card'; // Corrected import
+import Card from '@/components/Card';
 
 export default function PaychecksScreen() {
-  const auth = useAuth(); // Corrected to handle potentially null auth context
-  const currentUser = auth?.currentUser; // Safely access currentUser
+  const auth = useAuth();
+  const currentUser = auth?.currentUser;
   const userId = currentUser?.id;
   const colorScheme = useColorScheme() ?? 'light';
 
@@ -34,7 +34,7 @@ export default function PaychecksScreen() {
     try {
       const queryParams = new URLSearchParams({
         page: page.toString(),
-        limit: '10', // Or make this configurable
+        limit: '10',
         sortBy: '-createdAt',
         'filter[UserId]': userId.toString(),
       });
@@ -132,13 +132,12 @@ const localStyles = StyleSheet.create({
   paycheckItem: {
     marginBottom: 15,
     padding: 15,
-    // Card component handles its own background and border
   },
   itemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 8,
-    backgroundColor: 'transparent', // Ensure ThemedView inside Card is transparent
+    backgroundColor: 'transparent',
   },
   itemLabel: {
     fontWeight: 'bold',
@@ -148,6 +147,6 @@ const localStyles = StyleSheet.create({
     fontSize: 16,
   },
   listContent: {
-    paddingHorizontal: 10, // Add some padding to the list itself
+    paddingHorizontal: 10,
   }
 });

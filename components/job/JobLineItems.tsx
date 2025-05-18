@@ -8,8 +8,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { centsToDollars } from '@/utils/money';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
-import { prettyPrint } from '@/utils/objects';
+import { apiService, HttpError } from '@/utils/ApiService';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
 import CurrencyInput from '@/components/job/invoice/CurrencyInput';
@@ -22,7 +21,7 @@ import {
   Job,
   JobLineItems as JobLineItemsType,
   Service,
-} from '@/types'; // Removed AxiosResponse, AxiosError
+} from '@/types';
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { 
@@ -62,7 +61,6 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        // Assuming the API returns { data: Service[] }
         const response = await apiService.get<{ data: Service[] }>('/services?limit=all');
         const fetchedServices = response.data;
         setServices(fetchedServices);
@@ -91,7 +89,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         (service) => service.id === selectedServiceId
       );
       if (selectedService) {
-        const newLineItemPrice = Math.round(+valuePrice * 100); // Changed from parseInt
+        const newLineItemPrice = Math.round(+valuePrice * 100);
         try {
           await apiService.post(`/jobs/${job.id}/line-items`, {
             lineItems: [
@@ -111,9 +109,6 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
             console.error('  An unexpected error occurred:', error);
             Alert.alert('Error', 'An unexpected error occurred while adding line item.');
           }
-          // Keep modal open on error for correction, or close as per original logic
-          // setShowModal(false); 
-          // resetForm();
         }
       }
     }
@@ -167,7 +162,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           item && item.Service ? (
             <View key={item.id.toString()} style={[
               styles.lineItem, 
-              { borderBottomColor: getBorderColor(colorScheme ?? 'light') } // Added default for colorScheme
+              { borderBottomColor: getBorderColor(colorScheme ?? 'light') }
             ]}>
               <Text
                 style={styles.serviceName}
@@ -191,7 +186,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       ) : (
         <Text style={[
           styles.emptyText, 
-          { color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#666' } // Added default for colorScheme
+          { color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#666' }
         ]}>
           No services added yet.
         </Text>
@@ -206,11 +201,11 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
             <MaterialIcons 
               name='add-circle' 
               size={24} 
-              color={(colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'} // Added default for colorScheme
+              color={(colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'}
             />
             <Text style={[
               styles.addButtonText,
-              { color: (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4' } // Added default for colorScheme
+              { color: (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4' }
             ]}>
               Add Service
             </Text>
@@ -239,7 +234,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         <View style={styles.modalBackground}>
           <View style={[
             styles.modalContent,
-            { backgroundColor: getBackgroundColor(colorScheme ?? 'light') } // Added default for colorScheme
+            { backgroundColor: getBackgroundColor(colorScheme ?? 'light') }
           ]}>
             <CardTitle>Add Line Item</CardTitle>
 
@@ -256,20 +251,20 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                 style={[
                   styles.dropdown,
                   { 
-                    backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'), // Added default
-                    borderColor: getBorderColor(colorScheme ?? 'light') // Added default
+                    backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'),
+                    borderColor: getBorderColor(colorScheme ?? 'light')
                   }
                 ]}
-                textStyle={{ color: getTextColor(colorScheme ?? 'light') }} // Added default
-                placeholderStyle={{ color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#687076' }} // Added default
+                textStyle={{ color: getTextColor(colorScheme ?? 'light') }}
+                placeholderStyle={{ color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#687076' }}
                 dropDownContainerStyle={[
                   styles.dropdownContainer,
                   { 
-                    backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'), // Added default
-                    borderColor: getBorderColor(colorScheme ?? 'light') // Added default
+                    backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'),
+                    borderColor: getBorderColor(colorScheme ?? 'light')
                   }
                 ]}
-                theme={(colorScheme ?? 'light') === 'dark' ? 'DARK' : 'LIGHT'} // Added default
+                theme={(colorScheme ?? 'light') === 'dark' ? 'DARK' : 'LIGHT'}
               />
 
               <View style={styles.spacer} />
@@ -308,7 +303,6 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    // backgroundColor is now managed by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -319,7 +313,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    // borderBottomColor is set dynamically
   },
   serviceName: {
     flex: 1,
@@ -345,7 +338,6 @@ const styles = StyleSheet.create({
   addButtonText: {
     fontSize: 16,
     marginLeft: 8,
-    // color is set dynamically
   },
   editButton: {
     marginTop: 15,
@@ -356,7 +348,6 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: 'center',
     padding: 20,
-    // color is set dynamically
   },
   modalBackground: {
     flex: 1,
@@ -366,7 +357,6 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '90%',
-    // backgroundColor is set dynamically
     borderRadius: 10,
     padding: 20,
     elevation: 5,
@@ -380,10 +370,8 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     borderRadius: 5,
-    // borderColor and backgroundColor are set dynamically
   },
   dropdownContainer: {
-    // borderColor is set dynamically
   },
   spacer: {
     height: 15,

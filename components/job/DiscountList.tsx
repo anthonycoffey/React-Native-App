@@ -5,20 +5,18 @@ import { centsToDollars } from '@/utils/money';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getBorderColor, getTextColor, getPlaceholderTextColor } from '@/hooks/useThemeColor';
 import { IconButton } from '@/components/Buttons';
-// import { CardSubTitle } from '@/components/Typography'; // Assuming CardSubTitle or similar for item text - Removed as it's not exported
 
 interface DiscountListProps {
   discounts: Discount[];
   onRemoveDiscount: (discountId: number) => Promise<void>;
   isLoading: boolean;
-  jobId: number; // Added jobId as per Vue example, though removeDiscount directly uses discountId
+  jobId: number;
 }
 
 const DiscountList: React.FC<DiscountListProps> = ({
   discounts,
   onRemoveDiscount,
   isLoading,
-  // jobId, // Not directly used in this component's logic if onRemoveDiscount handles API call
 }) => {
   const theme = useColorScheme() ?? 'light';
 
@@ -58,7 +56,6 @@ const DiscountList: React.FC<DiscountListProps> = ({
           onPress={() => handleRemovePress(item)}
           disabled={isLoading}
           style={styles.removeButton}
-          // Use theme color for icon if IconButton doesn't handle it
         />
       </View>
     </View>
@@ -80,7 +77,7 @@ const DiscountList: React.FC<DiscountListProps> = ({
       renderItem={renderItem}
       keyExtractor={(item) => item.id.toString()}
       style={styles.list}
-      scrollEnabled={false} // Assuming this list might be part of a larger scrollable view
+      scrollEnabled={false}
     />
   );
 };
@@ -102,7 +99,6 @@ const styles = StyleSheet.create({
   },
   discountReason: {
     fontSize: 16,
-    // Using CardSubTitle might provide consistent styling
   },
   amountAndActionContainer: {
     flexDirection: 'row',
@@ -111,12 +107,12 @@ const styles = StyleSheet.create({
   discountAmount: {
     fontSize: 16,
     fontWeight: '500',
-    minWidth: 70, // Ensure space for amount
+    minWidth: 70,
     textAlign: 'right',
   },
   removeButton: {
     marginLeft: 8,
-    padding: 6, // Make icon easier to tap
+    padding: 6,
   },
   emptyContainer: {
     paddingVertical: 20,

@@ -13,7 +13,6 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   session: string | null;
   isLoading: boolean;
-  isApiConfigured: boolean;
   currentUser: User | null;
   isUserLoading: boolean;
   fetchCurrentUser: () => Promise<void>;
@@ -34,76 +33,77 @@ export function useAuth() {
 
 export function AuthProvider(props: React.PropsWithChildren) {
   const [[isLoadingSession, session], setSession] = useStorageState('session');
-  const [isApiConfigured, setIsApiConfigured] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isUserLoading, setIsUserLoading] = useState(false); 
-  
-  const fetchUserData = async () => {
-    if (!session) {
+  const [isUserLoading, setIsUserLoading] = useState(false);
+
+  const fetchAndSetCurrentUser = async (currentSession: string | null) => {
+    if (!currentSession) {
       setCurrentUser(null);
       setIsUserLoading(false);
-      console.log('[AuthContext] fetchUserData called without session.');
+      apiService.setAuthToken(null);
       return;
     }
-    console.log('[AuthContext] fetchUserData called. Fetching user...');
+
+    apiService.setAuthToken(currentSession);
     setIsUserLoading(true);
     try {
       const response = await apiService.get<UserApiResponse>('/users/me');
-      console.log('[AuthContext] User data fetched successfully:', response.user);
       setCurrentUser(response.user);
     } catch (error) {
-      console.error('[AuthContext] Failed to load current user during manual fetch:');
+      console.error('[AuthContext] Failed to load current user:');
+      setCurrentUser(null);
       if (error instanceof HttpError) {
         console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
         if (error.status === 401) {
-          console.warn('[AuthContext] Received 401 on manual fetch, signing out.');
-            setSession(null);
-            signOut();
+          console.warn('[AuthContext] Received 401, signing out.');
+          await signOutAndNavigate();
         }
       } else {
         console.error('  An unexpected error occurred:', error);
       }
-      setCurrentUser(null);
     } finally {
       setIsUserLoading(false);
     }
   };
 
   useEffect(() => {
-    console.log('[AuthContext Effect] Session changed. Current session:', session);
-    apiService.setAuthToken(session);
-    
     if (session) {
-      setIsApiConfigured(false);
-      setIsUserLoading(true);
-      setCurrentUser(null);
-
-      const timerId = setTimeout(async () => {
-      setIsApiConfigured(true);
-      await fetchUserData();
-      }, 0);
-
-      return () => {
-      clearTimeout(timerId);
-      setIsApiConfigured(false);
-      };
-
+      fetchAndSetCurrentUser(session);
     } else {
+      apiService.setAuthToken(null);
       setCurrentUser(null);
       setIsUserLoading(false);
-      setIsApiConfigured(false);
-      console.log('[AuthContext] No session. User cleared, API not configured for auth.');
     }
   }, [session]);
 
   const signIn = async (token: string) => {
-    setSession(token);
-    router.push('/dashboard');
+    setIsUserLoading(true);
+    apiService.setAuthToken(token);
+
+    try {
+      const response = await apiService.get<UserApiResponse>('/users/me');
+      setCurrentUser(response.user);
+      await setSession(token);
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('[AuthContext] SignIn failed during user data fetch:', error);
+      apiService.setAuthToken(null);
+      setCurrentUser(null);
+      throw error;
+    } finally {
+      setIsUserLoading(false);
+    }
   };
 
+  const signOutAndNavigate = async () => {
+    apiService.setAuthToken(null);
+    setCurrentUser(null);
+    await setSession(null);
+    router.replace('/login');
+  };
+  
   const signOut = async () => {
-    setSession(null);
-    router.push('/login');
+    await signOutAndNavigate();
   };
 
   const value: AuthContextType = {
@@ -111,10 +111,9 @@ export function AuthProvider(props: React.PropsWithChildren) {
     signOut,
     session,
     isLoading: isLoadingSession,
-    isApiConfigured,
     currentUser,
     isUserLoading,
-    fetchCurrentUser: fetchUserData,
+    fetchCurrentUser: () => fetchAndSetCurrentUser(session),
   };
 
   return (

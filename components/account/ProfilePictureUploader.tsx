@@ -144,7 +144,7 @@ export default function ProfilePictureUploader() {
           ) : (
             <MaterialIcons
               name={currentUser.avatar ? 'edit' : 'add-a-photo'}
-              size={26} // Reduced from 28
+              size={26}
               color={iconColor}
             />
           )}
@@ -164,7 +164,7 @@ export default function ProfilePictureUploader() {
               {deleting ? (
                 <ActivityIndicator size='small' color={errorColor} />
               ) : (
-                <MaterialIcons name='delete' size={26} color={errorColor} /> // Reduced from 28
+                <MaterialIcons name='delete' size={26} color={errorColor} />
               )}
             </TouchableOpacity>
           </>

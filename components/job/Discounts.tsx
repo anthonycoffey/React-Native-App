@@ -1,20 +1,15 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { centsToDollars } from '@/utils/money';
-import { Discount, Job, NewDiscountData, JobLineItems as JobLineItemType } from '@/types';
-import globalStyles from '@/styles/globalStyles';
+import { Job, NewDiscountData, JobLineItems as JobLineItemType } from '@/types';
 import { CardTitle } from '@/components/Typography';
-import { View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import {
-  getBackgroundColor,
-  getTextColor,
-} from '@/hooks/useThemeColor';
+import { getTextColor } from '@/hooks/useThemeColor';
 import { PrimaryButton } from '@/components/Buttons';
 import { apiService } from '@/utils/ApiService';
-import DiscountList from './DiscountList'; // New component
-import DiscountFormModal from './modals/DiscountFormModal'; // New component
-import Card from '@/components/Card'; // Using the Card component
+import DiscountList from './DiscountList';
+import DiscountFormModal from './modals/DiscountFormModal';
+import Card from '@/components/Card';
 
 type Props = {
   job: Job;
@@ -31,22 +26,27 @@ export default function Discounts({ job, fetchJob }: Props) {
   }, [job.Discounts]);
 
   const lineItemsTotal = useMemo(() => {
-    return job.JobLineItems?.reduce((acc: number, item: JobLineItemType) => acc + item.price, 0) ?? 0;
+    return (
+      job.JobLineItems?.reduce(
+        (acc: number, item: JobLineItemType) => acc + item.price,
+        0
+      ) ?? 0
+    );
   }, [job.JobLineItems]);
 
-  // This is the job total *before* any discounts are applied, used by the form modal
   const jobTotalBeforeDiscounts = lineItemsTotal;
 
   const handleRemoveDiscount = async (discountId: number) => {
-    // Confirmation is handled within DiscountList, this function just performs the action
     setIsLoading(true);
     try {
       await apiService.delete(`/jobs/${job.id}/discounts/${discountId}`);
-      await fetchJob(); // Refresh job data
+      await fetchJob();
       Alert.alert('Success', 'Discount removed successfully.');
     } catch (error) {
       console.error('Failed to remove discount:', error);
-      const errorMessage = (error as any)?.body?.message || 'Failed to remove discount. Please try again.';
+      const errorMessage =
+        (error as any)?.body?.message ||
+        'Failed to remove discount. Please try again.';
       Alert.alert('Error', errorMessage);
     } finally {
       setIsLoading(false);
@@ -57,14 +57,15 @@ export default function Discounts({ job, fetchJob }: Props) {
     setIsLoading(true);
     try {
       await apiService.post(`/jobs/${job.id}/discounts`, discountData);
-      await fetchJob(); // Refresh job data
-      setIsFormModalVisible(false); // Close modal on success
+      await fetchJob();
+      setIsFormModalVisible(false);
       Alert.alert('Success', 'Discount added successfully.');
     } catch (error) {
       console.error('Failed to add discount:', error);
-      const errorMessage = (error as any)?.body?.message || 'Failed to add discount. Please try again.';
+      const errorMessage =
+        (error as any)?.body?.message ||
+        'Failed to add discount. Please try again.';
       Alert.alert('Error', errorMessage);
-      // Keep modal open on error for user to retry or cancel
     } finally {
       setIsLoading(false);
     }
@@ -81,7 +82,7 @@ export default function Discounts({ job, fetchJob }: Props) {
 
       {isLoading && (!job.Discounts || job.Discounts.length === 0) ? (
         <ActivityIndicator
-          size="small"
+          size='small'
           color={getTextColor(theme)}
           style={{ marginVertical: 20 }}
         />
@@ -96,17 +97,16 @@ export default function Discounts({ job, fetchJob }: Props) {
 
       <View style={styles.actionsContainer}>
         <PrimaryButton
-          title="Add Discount"
+          title='Add Discount'
           onPress={() => setIsFormModalVisible(true)}
           disabled={isLoading}
-          style={styles.addButton}
         />
       </View>
 
       <DiscountFormModal
         isVisible={isFormModalVisible}
         onClose={() => setIsFormModalVisible(false)}
-        jobTotal={jobTotalBeforeDiscounts} // Pass job total *before* discounts
+        jobTotal={jobTotalBeforeDiscounts}
         onSubmit={handleAddDiscountSubmit}
         isLoading={isLoading}
         jobId={job.id}
@@ -128,9 +128,6 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     marginTop: 15,
-    alignItems: 'flex-end', // Align button to the right, like Vue example
-  },
-  addButton: {
-    // No specific styles needed if it's to take natural width or be styled by PrimaryButton defaults
+    alignItems: 'flex-end',
   },
 });

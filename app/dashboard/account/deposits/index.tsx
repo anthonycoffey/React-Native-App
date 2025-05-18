@@ -40,7 +40,6 @@ export default function DepositsListScreen() {
     setLoading(true);
     try {
       const response = await apiService.get<DepositsApiResponse>('/account/cash/deposits');
-      console.log({response})
       setDeposits(response.data || []);
     } catch (error) {
       console.error('Failed to load deposits:', error);

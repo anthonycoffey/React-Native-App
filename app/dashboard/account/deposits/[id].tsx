@@ -4,10 +4,10 @@ import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getBackgroundColor, getBorderColor, getTextColor } from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
-import Card from '@/components/Card'; // Updated import path
+import Card from '@/components/Card';
 import globalStyles from '@/styles/globalStyles';
 import { useLocalSearchParams } from 'expo-router';
-import DepositFiles from '@/components/deposit/DepositFiles'; // Import the new component
+import DepositFiles from '@/components/deposit/DepositFiles';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
 import { formatDateTime } from '@/utils/dates';
@@ -37,9 +37,8 @@ interface SingleDeposit {
   createdAt: string;
   CashIntakes: CashIntakeForSingleDeposit[];
   CashDepositFiles?: CashDepositFile[];
-  User?: { // Assuming User might be part of the full deposit object based on typical API responses
+  User?: {
     fullName: string;
-    // other user fields if available/needed
   };
 }
 

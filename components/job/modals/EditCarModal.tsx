@@ -39,7 +39,7 @@ export default function EditCarModal({
   const [car, setCar] = useState<Partial<Car>>(currentCar || initialCarState);
   const [loading, setLoading] = useState(false);
 
-  const bgColor = getInputBackgroundColor(colorScheme); // Added
+  const bgColor = getInputBackgroundColor(colorScheme);
 
   useEffect(() => {
     if (visible) {
@@ -94,7 +94,7 @@ export default function EditCarModal({
   const themedInputStyle = [
     globalStyles.input,
     {
-      backgroundColor: bgColor, // Changed
+      backgroundColor: bgColor,
       color: getTextColor(colorScheme),
       borderColor: getBorderColor(colorScheme),
       marginBottom: 15,
@@ -216,7 +216,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: '90%',
-    maxHeight: '85%', // Adjusted for potentially more fields
   },
   buttonContainer: {
     flexDirection: 'row',

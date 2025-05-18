@@ -2,13 +2,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   TouchableOpacityProps,
-  ViewStyle, // Added for StyleProp
-  StyleProp, // Added for StyleProp
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons'; // Added
+import { MaterialIcons } from '@expo/vector-icons';
 import Colors, { buttonVariants, ui } from '@/constants/Colors';
 import { useColorScheme } from './useColorScheme';
-import { useThemeColor } from '@/hooks/useThemeColor'; // Added
+import { useThemeColor } from '@/hooks/useThemeColor';
 import { Text } from '@/components/Themed';
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -17,7 +15,6 @@ interface ButtonProps extends TouchableOpacityProps {
   variant?: 'error' | 'warning' | 'success' | 'primary' | 'secondary';
 }
 
-// Primary Button
 export const PrimaryButton = ({
   title,
   onPress,
@@ -55,7 +52,6 @@ export const PrimaryButton = ({
   );
 };
 
-// Secondary Button
 export const SecondaryButton = ({
   title,
   onPress,
@@ -93,7 +89,6 @@ export const SecondaryButton = ({
   );
 };
 
-// Outline Button
 export const OutlinedButton = ({
   title,
   onPress,
@@ -134,7 +129,6 @@ export const OutlinedButton = ({
   );
 };
 
-// Warning Button
 export const WarningButton = ({
   title,
   onPress,
@@ -172,12 +166,11 @@ export const WarningButton = ({
   );
 };
 
-// Chip Button
 export const ChipButton = ({
   title,
   onPress,
   style,
-  variant, // Allow variant for color consistency if needed
+  variant,
   disabled,
   ...props
 }: ButtonProps & { disabled?: boolean }) => {
@@ -185,16 +178,15 @@ export const ChipButton = ({
   const defaultTextColor =
     colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
 
-  // Use variant color if provided, otherwise default text color for outline
   const chipColor = variant ? buttonVariants[variant] : defaultTextColor;
 
   return (
     <TouchableOpacity
       style={[
-        styles.chipButtonBase, // Base style for chip
+        styles.chipButtonBase,
         { borderColor: chipColor },
-        disabled && styles.disabledChipButton, // Specific disabled style for chip if needed
-        style, // Allow overriding with external styles
+        disabled && styles.disabledChipButton,
+        style,
       ]}
       onPress={!disabled ? onPress : undefined}
       activeOpacity={disabled ? 1 : 0.7}
@@ -204,7 +196,7 @@ export const ChipButton = ({
         style={[
           styles.chipButtonText,
           { color: chipColor },
-          disabled && styles.disabledChipButtonText, // Specific disabled text style
+          disabled && styles.disabledChipButtonText,
         ]}
       >
         {title.toUpperCase()}
@@ -256,43 +248,37 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: ui.disabled.background,
-    borderColor: ui.disabled.background, // Ensure border also changes for outlined disabled
+    borderColor: ui.disabled.background,
   },
   disabledButtonText: {
     color: ui.disabled.text,
   },
-  // ChipButton specific styles
   chipButtonBase: {
     borderWidth: 1,
-    borderRadius: 16, // More rounded for chip-like appearance
+    borderRadius: 16,
     paddingVertical: 6,
-    paddingHorizontal: 12, // Adjusted from 10 to 12 for a bit more space
+    paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    // minWidth: 0, // Let it size naturally or set a small minWidth if preferred
   },
   chipButtonText: {
-    fontWeight: '600', // Can be adjusted if a lighter font is preferred
-    fontSize: 13, // Smaller font size
-    textTransform: 'uppercase', // Already handled by .toUpperCase() on title, but good for explicitness
+    fontWeight: '600',
+    fontSize: 13,
+    textTransform: 'uppercase',
   },
-  disabledChipButton: { // If specific disabled style for chip is needed
-    backgroundColor: 'transparent', // Keep outline style
+  disabledChipButton: {
+    backgroundColor: 'transparent',
     borderColor: ui.disabled.background,
   },
-  disabledChipButtonText: { // If specific disabled text style for chip is needed
+  disabledChipButtonText: {
     color: ui.disabled.text,
   },
 });
 
-// Icon Button
 export interface IconButtonProps extends TouchableOpacityProps {
   iconName: React.ComponentProps<typeof MaterialIcons>['name'];
   iconSize?: number;
   iconColor?: string;
-  // onPress is part of TouchableOpacityProps
-  // disabled is part of TouchableOpacityProps
-  // style is part of TouchableOpacityProps (for the TouchableOpacity container)
 }
 
 export function IconButton({
@@ -301,8 +287,8 @@ export function IconButton({
   iconColor,
   style,
   disabled,
-  onPress, // Explicitly destructure onPress to pass to TouchableOpacity
-  ...props // Pass other TouchableOpacityProps
+  onPress,
+  ...props
 }: IconButtonProps) {
   const defaultIconColor = useThemeColor({}, 'icon');
   const actualIconColor = iconColor || defaultIconColor;

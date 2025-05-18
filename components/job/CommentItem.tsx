@@ -4,8 +4,7 @@ import { formatDistanceToNowStrict } from 'date-fns';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { User } from '@/types'; // Corrected import path for User
-import { JobComment } from '@/types'; // Import JobComment
+import { JobComment } from '@/types';
 import { buttonVariants } from '@/constants/Colors';
 
 interface CommentItemProps {
@@ -23,7 +22,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 }) => {
   const isOwnComment = comment.User?.id === currentUserId;
   const iconColor = useThemeColor({}, 'icon');
-  const deleteIconColor = buttonVariants.error; // Use directly from constants
+  const deleteIconColor = buttonVariants.error;
 
 
   const handleEdit = () => {
@@ -59,15 +58,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 8, // Reduced padding
-    marginVertical: 4, // Reduced vertical margin
+    padding: 8,
+    marginVertical: 4,
     borderRadius: 8,
-    // Add shadow or border based on theme/globalStyles.card if desired
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4, // Reduced margin
+    marginBottom: 4,
   },
   userName: {
     fontWeight: 'bold',
@@ -77,19 +75,19 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   commentText: {
-    fontSize: 13, // Reduced font size
-    lineHeight: 18, // Reduced line height
+    fontSize: 13,
+    lineHeight: 18,
   },
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 6, // Reduced margin
+    marginTop: 6,
   },
-  actionButton: { // This style is no longer used directly by buttons, but iconButton is new
+  actionButton: {
     marginLeft: 10,
   },
   iconButton: {
-    padding: 3, // Reduced padding
+    padding: 3,
     marginLeft: 10,
   }
 });

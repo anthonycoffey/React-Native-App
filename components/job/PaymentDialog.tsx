@@ -1,10 +1,8 @@
 import React from 'react';
-import { Text, View, Alert } from 'react-native'; // Added Alert
+import { Text, View, Alert } from 'react-native';
 import CashPaymentForm from './CashPaymentForm';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
+import { apiService, HttpError } from '@/utils/ApiService';
 import { dollarsToCents } from '@/utils/money';
-// Removed AxiosError from '@/types' as it's no longer used directly here. 
-// If it was part of a larger type definition in types.ts, that might need adjustment later if it was specific to Axios.
 import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = {
@@ -44,7 +42,6 @@ export default function PaymentDialog({
         console.error('  An unexpected error occurred:', error);
         Alert.alert('Payment Error', 'An unexpected error occurred while recording cash payment.');
       }
-      // hidePaymentDialog(); // Optionally hide dialog even on error, or keep it open for retry
     }
   };
 

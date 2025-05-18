@@ -23,7 +23,6 @@ export default function AccountStackLayout() {
       <Stack.Screen name="deposits/index" options={{ title: 'Deposits' }} />
       <Stack.Screen name="deposits/[id]" options={{ title: 'Deposit Details' }} />
       <Stack.Screen name="paychecks/index" options={{ title: 'Paychecks' }} />
-      {/* Add other account-specific screens here if they need custom titles */}
     </Stack>
   );
 }

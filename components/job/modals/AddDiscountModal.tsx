@@ -25,10 +25,7 @@ import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 interface AddDiscountModalProps {
   isVisible: boolean;
   onClose: () => void;
-  onSave: (discountData: {
-    reason: string;
-    amount: number;
-  }) => Promise<void>;
+  onSave: (discountData: { reason: string; amount: number }) => Promise<void>;
   jobId: number;
 }
 
@@ -59,10 +56,8 @@ export default function AddDiscountModal({
     setIsLoading(true);
     try {
       await onSave({ reason: reason.trim(), amount });
-      // onClose(); // Parent will call onClose after successful save and fetch
     } catch (error) {
-      // Error already handled by onSave caller or displayed there
-      // Alert.alert('Error', 'Failed to save discount.');
+      Alert.alert('Error', 'Failed to save discount.');
     } finally {
       setIsLoading(false);
     }
@@ -117,14 +112,14 @@ export default function AddDiscountModal({
             }}
           />
           {reasonError ? (
-            <ErrorText style={styles.errorText}>{reasonError}</ErrorText> // Used ErrorText component
+            <ErrorText style={styles.errorText}>{reasonError}</ErrorText>
           ) : null}
 
           <Text style={[styles.label, { color: getTextColor(theme) }]}>
             Amount
           </Text>
           <CurrencyInput
-            label=""
+            label=''
             value={amount !== null ? (amount / 100).toFixed(2) : ''}
             onChangeText={(text: string) => {
               const cleanedText = text.replace(/[^0-9.]/g, '');
@@ -135,9 +130,6 @@ export default function AddDiscountModal({
                 setAmount(null);
               }
             }}
-            // placeholder prop removed
-            // Ensure CurrencyInput is theme-aware or pass theme props
-            // style prop might be needed for theming if not fully encapsulated
           />
 
           <View style={styles.buttonContainer}>
@@ -151,7 +143,6 @@ export default function AddDiscountModal({
               title='Save Discount'
               onPress={handleSave}
               disabled={isLoading || !reason.trim() || !amount || amount <= 0}
-              // loading prop removed
               style={styles.button}
             />
           </View>
@@ -166,13 +157,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)', // Dimmed background
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalView: {
     margin: 20,
     borderRadius: 10,
     padding: 25,
-    alignItems: 'stretch', // Changed from 'center' for full-width inputs
+    alignItems: 'stretch',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -197,11 +188,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   errorText: {
-    // color: 'red', // ErrorText component handles its own color
     fontSize: 12,
     marginBottom: 10,
-    marginTop: -10, // Keep positioning
-    alignSelf: 'flex-start', // Ensure it aligns with input
+    marginTop: -10,
+    alignSelf: 'flex-start',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -209,7 +199,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    flex: 1, // Each button takes half the space
-    marginHorizontal: 5, // Add some space between buttons
+    flex: 1,
+    marginHorizontal: 5,
   },
 });

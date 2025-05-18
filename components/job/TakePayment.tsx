@@ -32,7 +32,6 @@ export default function TakePayment({
   );
 
   useEffect(() => {
-    // we find sent invoice because pending invoices are marked sent once invoice link has been sent
     const pendingInvoice = job.Invoices?.find(
       (invoice: Invoice) =>
         invoice.status === 'pending' || invoice.status === 'sent'
@@ -61,7 +60,7 @@ export default function TakePayment({
     setPayWithCash(false);
   };
 
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
   
   return (
     <View style={[globalStyles.card, styles.container]}>
@@ -110,44 +109,6 @@ export default function TakePayment({
       )}
 
       <Modal
-        visible={payWithCard}
-        animationType='fade'
-        transparent={true}
-        onRequestClose={() => setPayWithCard(false)}
-      >
-        <View style={styles.modalBackground}>
-          <View style={[
-            styles.modalContent,
-            { backgroundColor: getBackgroundColor(colorScheme) }
-          ]}>
-            <TouchableOpacity
-              onPress={hidePaymentDialog}
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                margin: 10,
-                zIndex: 2,
-              }}
-            >
-              <MaterialIcons name='cancel' size={24} color='red' />
-            </TouchableOpacity>
-
-            <CardTitle>Enter Card Details</CardTitle>
-
-            <PaymentDialog
-              jobId={job.id}
-              paymentType={paymentType}
-              amountToPay={+amountToPay}
-              tipAmount={+tipAmount}
-              fetchJob={fetchJob}
-              hidePaymentDialog={hidePaymentDialog}
-            />
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
         visible={payWithCash}
         animationType='fade'
         transparent={true}
@@ -194,7 +155,6 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -231,7 +191,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50',
   },
   buttonText: {
-    // color is set with lightColor/darkColor props
     fontWeight: 'bold',
     fontSize: 14,
   },
@@ -246,7 +205,6 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '90%',
-    // backgroundColor is set dynamically
     borderRadius: 10,
     padding: 20,
     elevation: 5,

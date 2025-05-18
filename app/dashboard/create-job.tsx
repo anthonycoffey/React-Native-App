@@ -12,11 +12,7 @@ import {
 } from 'react-native';
 import { View, Text } from '@/components/Themed';
 import Card from '@/components/Card';
-import {
-  PrimaryButton,
-  OutlinedButton,
-  SecondaryButton,
-} from '@/components/Buttons';
+import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { CardTitle, LabelText } from '@/components/Typography';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
@@ -38,7 +34,7 @@ import {
   Address,
   JobLineItemCreate,
 } from '@/types';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import DateTimePicker, {
   DateTimePickerEvent,
   DateTimePickerAndroid,
@@ -125,9 +121,6 @@ export default function CreateJobScreen() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // For simplicity, generating on mount. In a real app, might regenerate if user leaves and returns.
-    setPlacesSessionToken(Crypto.randomUUID());
-
     const fetchServices = async () => {
       try {
         const response = await apiService.get<{ data: Service[] }>(
@@ -144,6 +137,16 @@ export default function CreateJobScreen() {
     };
     fetchServices();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setPlacesSessionToken(Crypto.randomUUID());
+
+      return () => {
+        setPlacesSessionToken(undefined);
+      };
+    }, [])
+  );
 
   useEffect(() => {
     if (selectedServiceIdForNewLineItem) {
@@ -202,41 +205,29 @@ export default function CreateJobScreen() {
 
     if (customer.id) {
       await fetchCustomerCars(customer.id);
-      // After fetchCustomerCars, customerCars and isNewCar states are updated by it.
-      // Now, check those states to auto-select or set up for new car.
-      // This relies on fetchCustomerCars having completed and set its states.
-      // A slight delay or checking customerCars directly might be needed if race conditions occur.
-      // For now, assuming fetchCustomerCars updates state synchronously enough for the effect hook on customerCars to run.
-      // Let's refine this by directly using the result of fetchCustomerCars if possible,
-      // or by using an effect that triggers on customerCars change.
-
-      // Simpler: fetchCustomerCars already sets isNewCar. We use that.
-      // If cars were fetched and isNewCar is false, select the first one.
-      // Need to access customerCars state *after* it's set by fetchCustomerCars.
-      // This is tricky because setState is async.
-      // The most robust way is to have fetchCustomerCars return the cars.
-
-      // Let's modify fetchCustomerCars to return the cars, or handle selection within it.
-      // For now, let's assume fetchCustomerCars sets `customerCars` state and `isNewCar` state.
-      // We will add a useEffect to handle auto-selection when customerCars changes.
     } else {
-      setIsNewCar(true); // No customer ID, definitely a new car scenario for this non-existent customer
+      setIsNewCar(true);
     }
   };
 
-  // New useEffect to handle auto-selection of car
   useEffect(() => {
-    if (selectedCustomer && !isNewCustomer && customerCars.length > 0 && !selectedCar) {
-      // If a customer is selected, it's not a new customer, cars are loaded, and no car is yet selected
-      setSelectedCar(customerCars[0]); // Auto-select the first car
-      setIsNewCar(false); // Ensure we are not in new car mode
-    } else if (selectedCustomer && !isNewCustomer && customerCars.length === 0) {
-      // If a customer is selected, not new, but has no cars
-      setIsNewCar(true); // Switch to new car mode
+    if (
+      selectedCustomer &&
+      !isNewCustomer &&
+      customerCars.length > 0 &&
+      !selectedCar
+    ) {
+      setSelectedCar(customerCars[0]);
+      setIsNewCar(false);
+    } else if (
+      selectedCustomer &&
+      !isNewCustomer &&
+      customerCars.length === 0
+    ) {
+      setIsNewCar(true);
       setSelectedCar(null);
     }
   }, [customerCars, selectedCustomer, isNewCustomer]);
-
 
   const fetchCustomerCars = async (customerId: number) => {
     try {
@@ -267,7 +258,6 @@ export default function CreateJobScreen() {
   ];
   const placeholderTextColor = getPlaceholderTextColor(colorScheme);
 
-  // --- Google Places Autocomplete Functions ---
   const fetchAddressSuggestions = async (input: string) => {
     if (
       !input ||
@@ -307,12 +297,12 @@ export default function CreateJobScreen() {
 
   const debouncedFetchAddressSuggestions = useCallback(
     manualDebounce(fetchAddressSuggestions, 700),
-    [GEOCODING_API_KEY, placesSessionToken] // Re-create if key or token changes
+    [GEOCODING_API_KEY, placesSessionToken]
   );
 
   const handleAddressInputChange = (text: string) => {
-    setAddressInput(text); // Update the visual input
-    setAddressForm((prev) => ({ ...prev, address_1: text })); // Keep address_1 in sync for now
+    setAddressInput(text);
+    setAddressForm((prev) => ({ ...prev, address_1: text }));
     debouncedFetchAddressSuggestions(text);
   };
 
@@ -321,9 +311,9 @@ export default function CreateJobScreen() {
       Alert.alert('Error', 'Could not get address details.');
       return;
     }
-    setAddressInput(suggestion.description); // Update input field to selected address
-    setAddressSuggestions([]); // Clear suggestions
-    setIsFetchingAddressSuggestions(true); // Show loading for details fetch
+    setAddressInput(suggestion.description);
+    setAddressSuggestions([]);
+    setIsFetchingAddressSuggestions(true);
 
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${
       suggestion.place_id
@@ -336,8 +326,8 @@ export default function CreateJobScreen() {
       if (data.result && data.result.address_components) {
         const components = data.result.address_components;
         const newAddress: AddressFormData = {
-          address_1: suggestion.description, // Use the formatted suggestion for address_1 initially
-          address_2: '', // Clear address_2
+          address_1: suggestion.description,
+          address_2: '',
           city: '',
           state: '',
           zipcode: undefined,
@@ -357,19 +347,15 @@ export default function CreateJobScreen() {
             newAddress.zipcode = parseInt(component.long_name) || undefined;
         });
 
-        // Refine address_1 if street number and route are found
         if (streetNumber && route) {
           newAddress.address_1 = `${streetNumber} ${route}`;
         } else if (route) {
-          // If only route, use that (e.g. for street names without numbers)
           newAddress.address_1 = route;
         }
-        // If city was part of the suggestion.description but not in components (rare), keep it.
-        // This logic can be further refined based on how structured the address needs to be.
 
         setAddressForm(newAddress);
-        setAddressInput(newAddress.address_1 || suggestion.description); // Update input with more precise address_1
-        setPlacesSessionToken(Crypto.randomUUID()); // Renew session token after a selection
+        setAddressInput(newAddress.address_1 || suggestion.description);
+        setPlacesSessionToken(Crypto.randomUUID());
       } else {
         Alert.alert('Error', 'Could not retrieve address details.');
         console.error(
@@ -385,10 +371,8 @@ export default function CreateJobScreen() {
       setIsFetchingAddressSuggestions(false);
     }
   };
-  // --- End Google Places Autocomplete Functions ---
 
-  // iOS specific handler for the declarative DateTimePicker
-  const handleIosDateTimeChange = (
+  const handleAppleDateTimeChange = (
     event: DateTimePickerEvent,
     selectedDate?: Date
   ) => {
@@ -397,17 +381,17 @@ export default function CreateJobScreen() {
     if (event.type === 'set' && selectedDate) {
       setArrivalTime(selectedDate);
     }
-    // For iOS, the modal dismisses itself, but we manage state
     if (pickerIsCurrentlyVisible) {
       setShowDateTimePicker(false);
     }
   };
 
-  // Android specific handlers using DateTimePickerAndroid (imperative)
-  const handleAndroidTimeChange = (event: DateTimePickerEvent, selectedTime?: Date) => {
+  const handleAndroidTimeChange = (
+    event: DateTimePickerEvent,
+    selectedTime?: Date
+  ) => {
     if (event.type === 'set' && selectedTime) {
-      // arrivalTime should already have the correct date from handleAndroidDateChange's setArrivalTime
-      const finalArrivalTime = new Date(arrivalTime); // Starts with correct date part
+      const finalArrivalTime = new Date(arrivalTime);
       finalArrivalTime.setHours(selectedTime.getHours());
       finalArrivalTime.setMinutes(selectedTime.getMinutes());
       finalArrivalTime.setSeconds(0);
@@ -416,21 +400,22 @@ export default function CreateJobScreen() {
     }
   };
 
-  const handleAndroidDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+  const handleAndroidDateChange = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date
+  ) => {
     if (event.type === 'set' && selectedDate) {
       const newArrivalTime = new Date(arrivalTime);
       newArrivalTime.setFullYear(selectedDate.getFullYear());
       newArrivalTime.setMonth(selectedDate.getMonth());
       newArrivalTime.setDate(selectedDate.getDate());
-      // Update arrivalTime with the new date part immediately, so the time picker uses this context
       setArrivalTime(newArrivalTime);
 
-      // Open the time picker
       DateTimePickerAndroid.open({
         mode: 'time',
-        value: newArrivalTime, // Use the updated date for the time picker's initial value
+        value: newArrivalTime,
         onChange: handleAndroidTimeChange,
-        is24Hour: false, // Adjust as needed, e.g., based on locale
+        is24Hour: false,
       });
     }
   };
@@ -441,10 +426,9 @@ export default function CreateJobScreen() {
         mode: 'date',
         value: arrivalTime,
         onChange: handleAndroidDateChange,
-        // minimumDate, maximumDate props can be added if needed
       });
     } else if (Platform.OS === 'ios') {
-      setShowDateTimePicker(true); // Show the declarative picker for iOS
+      setShowDateTimePicker(true);
     }
   };
 
@@ -475,38 +459,14 @@ export default function CreateJobScreen() {
     setLineItems((prev) => prev.filter((_, i) => i !== index));
   };
 
-const canSubmitForm = () => {
-    console.log('--- Checking canSubmitForm ---');
-
+  const canSubmitForm = () => {
     const customerSelectedOrCreated =
       selectedCustomer ||
       (isNewCustomer && customerForm.firstName && customerForm.phone);
-    console.log('customerSelectedOrCreated:', customerSelectedOrCreated);
-    console.log('selectedCustomer:', selectedCustomer);
-    console.log('isNewCustomer:', isNewCustomer);
-    if (isNewCustomer) {
-      console.log('customerForm.firstName:', customerForm.firstName);
-      console.log('customerForm.phone:', customerForm.phone);
-    }
 
+    const carSelectedOrCreated = selectedCar || isNewCar;
 
-    const carSelectedOrCreated =
-      selectedCar ||
-    isNewCar;
-    console.log('carSelectedOrCreated:', carSelectedOrCreated);
-    console.log('selectedCar:', selectedCar);
-    console.log('isNewCar:', isNewCar);
-
-
-    console.log('addressForm.address_1:', addressForm.address_1);
-    console.log('addressForm.city:', addressForm.city);
-    console.log('addressForm.state:', addressForm.state);
-    console.log('addressForm.zipcode:', addressForm.zipcode);
-    console.log('lineItems.length:', lineItems.length);
-    console.log('currentUser:', currentUser);
-
-
-    const canSubmit = (
+    const canSubmit =
       customerSelectedOrCreated &&
       carSelectedOrCreated &&
       addressForm.address_1 &&
@@ -514,14 +474,10 @@ const canSubmitForm = () => {
       addressForm.state &&
       addressForm.zipcode &&
       lineItems.length > 0 &&
-      currentUser
-    );
-
-    console.log('Overall canSubmitForm result:', canSubmit);
-    console.log('----------------------------');
+      currentUser;
 
     return canSubmit;
- };
+  };
 
   const submitJob = async () => {
     if (!canSubmitForm()) {
@@ -913,11 +869,9 @@ const canSubmitForm = () => {
             value={arrivalTime}
             mode='datetime'
             display='default'
-            onChange={handleIosDateTimeChange}
-            // themeVariant={colorScheme ?? undefined} // Optional: if you want to pass theme
+            onChange={handleAppleDateTimeChange}
           />
         )}
-        {/* Android picker is now opened imperatively, no JSX here */}
       </Card>
 
       <Card style={[!customerSectionActive && styles.disabledCard]}>
@@ -951,17 +905,12 @@ const canSubmitForm = () => {
               onPress={() => {
                 setSelectedCar(null);
                 setCarForm({});
-                // If customerCars has items, setting selectedCar to null will
-                // naturally lead to the list being shown (as isNewCar should be false).
-                // If customerCars is empty, it will lead to new car form.
-                // We ensure isNewCar is false to attempt showing the list first.
-                setIsNewCar(false); 
+                setIsNewCar(false);
               }}
             />
           </View>
-        ) : isNewCar || customerCars.length === 0 ? ( // No car selected, AND (isNewCar mode OR no cars for customer)
+        ) : isNewCar || customerCars.length === 0 ? (
           <View>
-            {/* New Car Form */}
             <LabelText>Make</LabelText>
             <TextInput
               style={themedInputStyle}
@@ -1036,20 +985,26 @@ const canSubmitForm = () => {
               maxLength={17}
               editable={!loading}
             />
-            {customerCars.length > 0 && !selectedCar && ( // Show if in new car form but existing cars are available
-              <OutlinedButton
-                title='Select Existing Car'
-                onPress={() => {
-                  setIsNewCar(false); // Switch to car list view
-                  setCarForm({}); // Clear new car form
-                }}
-                style={{ marginTop: 10 }}
-              />
-            )}
+            {customerCars.length > 0 &&
+              !selectedCar && (
+                <OutlinedButton
+                  title='Select Existing Car'
+                  onPress={() => {
+                    setIsNewCar(false);
+                    setCarForm({});
+                  }}
+                  style={{ marginTop: 10 }}
+                />
+              )}
           </View>
-        ) : ( // No car selected, not in new car mode, and customer HAS cars -> Show car list
+        ) : (
           <View>
-            <Text style={[styles.subText, { color: getTextColor(colorScheme), marginBottom:10 }]}>
+            <Text
+              style={[
+                styles.subText,
+                { color: getTextColor(colorScheme), marginBottom: 10 },
+              ]}
+            >
               Select a vehicle:
             </Text>
             {customerCars.filter(Boolean).map((car: Car) => {
@@ -1058,11 +1013,12 @@ const canSubmitForm = () => {
                 <TouchableOpacity
                   key={carId}
                   style={[
-                  styles.listItem,
-                  { borderBottomColor: getBorderColor(colorScheme) },
-                  // Apply selected style dynamically
-                  (selectedCar as Car | null)?.id === car.id && { backgroundColor: getInputBackgroundColor(colorScheme) }
-                ]}
+                    styles.listItem,
+                    { borderBottomColor: getBorderColor(colorScheme) },
+                    (selectedCar as Car | null)?.id === car.id && {
+                      backgroundColor: getInputBackgroundColor(colorScheme),
+                    },
+                  ]}
                   onPress={() => {
                     setSelectedCar(car);
                     setIsNewCar(false);
@@ -1095,7 +1051,7 @@ const canSubmitForm = () => {
           style={themedInputStyle}
           placeholder='Start typing address...'
           placeholderTextColor={placeholderTextColor}
-          value={addressInput} // Use addressInput for visual
+          value={addressInput}
           onChangeText={handleAddressInputChange}
           editable={!loading}
         />
@@ -1195,20 +1151,20 @@ const canSubmitForm = () => {
             >
               <Text
                 style={[
-                  styles.lineItemText, // Existing: flex: 1
-                  { color: getTextColor(colorScheme), minWidth: '50%' }, // Changed: removed width: 100, added minWidth
+                  styles.lineItemText,
+                  { color: getTextColor(colorScheme), minWidth: '50%' },
                 ]}
               >
                 {service?.name || 'Unknown Service'}
               </Text>
               <Text
                 style={[
-                  styles.lineItemText, // Existing: flex: 1
+                  styles.lineItemText,
                   {
                     color: getTextColor(colorScheme),
                     flex: 0,
                     marginHorizontal: 10,
-                  }, // Changed: Added flex: 0 and marginHorizontal
+                  },
                 ]}
               >
                 {centsToDollars(item.price)}
@@ -1262,12 +1218,15 @@ const canSubmitForm = () => {
               },
             ]}
             theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
-            listMode='MODAL' // Changed listMode to MODAL to avoid nested VirtualizedList warning
+            listMode='MODAL'
             searchable={true}
-            searchPlaceholder="Search services..."
-            searchTextInputStyle={{ borderColor: getBorderColor(colorScheme), color: getTextColor(colorScheme) }}
+            searchPlaceholder='Search services...'
+            searchTextInputStyle={{
+              borderColor: getBorderColor(colorScheme),
+              color: getTextColor(colorScheme),
+            }}
             searchPlaceholderTextColor={getPlaceholderTextColor(colorScheme)}
-            zIndex={3000} // zIndex might be less critical in MODAL mode, but keeping for safety
+            zIndex={3000}
             zIndexInverse={1000}
           />
         </View>
@@ -1387,7 +1346,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
   },
-  // selectedItem style removed as it's now applied dynamically
   lineItemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1402,7 +1360,6 @@ const styles = StyleSheet.create({
   dropdown: {},
   dropdownContainer: {},
   suggestionsContainer: {
-    // Styles for the suggestions dropdown container
     borderWidth: 1,
     borderRadius: 4,
     marginTop: 2,

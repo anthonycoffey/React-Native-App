@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  // Layout styles
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -30,8 +29,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
   },
-
-  // Card and container styles
   card: {
     padding: 10,
     marginVertical: 10,
@@ -49,8 +46,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-
-  // Form elements
   input: {
     color: '#0e0d0d',
     padding: 10,
@@ -93,8 +88,6 @@ const styles = StyleSheet.create({
     right: 15,
     top: 15,
   },
-
-  // Text styles
   label: {
     fontWeight: 'bold',
     fontSize: 12,
@@ -123,8 +116,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginBottom: 15,
   },
-
-  // Icon styles
   iconContainer: {
     width: 100,
     height: 100,
@@ -134,8 +125,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-
-  // Map related styles
   openInMaps: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -162,8 +151,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-
-  // Button styles
   button: {
     marginTop: 16,
     width: '100%',
@@ -179,8 +166,6 @@ const styles = StyleSheet.create({
   clockOutButton: {
     backgroundColor: '#FF5722',
   },
-
-  // Misc
   separator: {
     height: 1,
     backgroundColor: '#e0e0e0',

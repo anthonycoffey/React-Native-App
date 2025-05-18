@@ -12,7 +12,7 @@ import { getBorderColor } from '@/hooks/useThemeColor';
 
 export default function JobActivityLog(props: { job: Job }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
 
   return (
     <View style={[globalStyles.card, styles.container]}>
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -79,7 +78,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   toggleButtonText: {
-    // color is set dynamically
     fontSize: 16,
     textAlign: 'center',
   },
@@ -89,7 +87,6 @@ const styles = StyleSheet.create({
   logItem: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    // borderBottomColor is set dynamically
   },
   logText: {
     fontSize: 14,
@@ -97,7 +94,6 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: 'center',
     padding: 10,
-    // color is set dynamically
     fontStyle: 'italic',
   },
 });

@@ -20,7 +20,7 @@ import Discounts from '@/components/job/Discounts';
 import JobReferralCode from '@/components/job/JobReferralCode';
 import ArrivalTime from '@/components/job/ArrivalTime';
 import TakePayment from '@/components/job/TakePayment';
-import JobPaymentsList from '@/components/job/JobPaymentsList'; // Import JobPaymentsList component
+import JobPaymentsList from '@/components/job/JobPaymentsList';
 import JobFiles from '@/components/job/JobFiles';
 import JobComments from '@/components/job/JobComments';
 import { View as ThemedView } from '@/components/Themed';

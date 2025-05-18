@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Text as ThemedText } from '@/components/Themed';
 import Colors from '@/constants/Colors';
-import { useColorScheme } from './useColorScheme';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 type TypographyProps = {
   children: React.ReactNode;
@@ -10,9 +10,6 @@ type TypographyProps = {
 };
 
 export const LabelText = ({ children, style }: TypographyProps) => {
-  // ThemedText will handle its own color based on the theme.
-  // No need to explicitly set textColor here if we want standard text color.
-  // If a specific label color different from default text is desired, it should be in Colors.ts
   return <ThemedText style={[styles.label, style]}>{children}</ThemedText>;
 };
 
@@ -25,7 +22,11 @@ export const CardTitle = ({ children, style }: TypographyProps) => {
 };
 
 export const ErrorText = ({ children, style }: TypographyProps) => {
-  return <ThemedText style={[styles.error, style]}>{children}</ThemedText>;
+  const errorTextColor = useThemeColor(
+    { light: Colors.light.errorText, dark: Colors.dark.errorText },
+    'errorText'
+  );
+  return <ThemedText style={[styles.errorBase, { color: errorTextColor }, style]}>{children}</ThemedText>;
 };
 
 export const MenuText = ({ children, style }: TypographyProps) => {
@@ -49,8 +50,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
   },
-  error: {
-    color: 'red',
+  errorBase: {
     fontSize: 14,
     letterSpacing: 0.4,
     lineHeight: 18,

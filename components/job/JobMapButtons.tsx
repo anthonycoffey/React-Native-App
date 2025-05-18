@@ -44,7 +44,6 @@ export default function JobMapButtons({ job }: Props) {
             title: `Job #${job.id}`,
             googleForceLatLon: true,
             appsWhiteList: ['google-maps', 'apple-maps'],
-            directionsMode: 'driving',
           });
 
           setMapApps(apps);

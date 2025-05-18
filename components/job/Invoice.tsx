@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { centsToDollars } from '@/utils/money';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
+import { apiService, HttpError } from '@/utils/ApiService';
 import { Invoice, Job } from '@/types';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
@@ -212,12 +212,10 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     elevation: 4,
     borderRadius: 8,
-    // backgroundColor is now handled by ThemedView
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -231,7 +229,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderWidth: 1,
-    // borderColor is set dynamically
     borderRadius: 10,
   },
   invoiceId: {
@@ -261,7 +258,6 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    // backgroundColor is set dynamically
     borderRadius: 8,
     padding: 20,
     elevation: 5,
@@ -283,7 +279,6 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    // borderColor is set dynamically
     borderRadius: 4,
     padding: 10,
     marginBottom: 15,
@@ -294,16 +289,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   cancelButton: {
-    // backgroundColor is set dynamically
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 4,
     borderWidth: 1,
-    // borderColor is set dynamically
   },
-  cancelButtonText: {
-    // color is set dynamically
-  },
+  cancelButtonText: {},
   confirmButton: {
     backgroundColor: '#0a7ea4',
     paddingVertical: 10,

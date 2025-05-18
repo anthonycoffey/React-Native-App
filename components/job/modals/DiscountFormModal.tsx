@@ -13,7 +13,7 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import { ApiDiscountCode, NewDiscountData } from '@/types';
 import { apiService } from '@/utils/ApiService';
-import { centsToDollars, dollarsToCents, formatPrice } from '@/utils/money';
+import { centsToDollars, formatPrice } from '@/utils/money';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
   getBackgroundColor,
@@ -27,14 +27,13 @@ import { PrimaryButton, SecondaryButton } from '@/components/Buttons';
 import CurrencyInput from '@/components/CurrencyInput';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle, LabelText } from '@/components/Typography';
-import Chip from '@/components/Chip';
 
 interface DiscountFormModalProps {
   isVisible: boolean;
   onClose: () => void;
-  jobTotal: number; // Total before this discount, in cents
+  jobTotal: number;
   onSubmit: (discountData: NewDiscountData) => Promise<void>;
-  isLoading: boolean; // Parent loading state for submit
+  isLoading: boolean;
   jobId: number;
 }
 
@@ -57,7 +56,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
 
   const [discountType, setDiscountType] = useState<DiscountType>('fixed');
   const [reason, setReason] = useState('');
-  const [amount, setAmount] = useState<number>(0); // In cents
+  const [amount, setAmount] = useState<number>(0);
   const [percentOff, setPercentOff] = useState<string>('0');
 
   const [selectedDiscountCodeId, setSelectedDiscountCodeId] = useState<
@@ -83,7 +82,6 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
 
   useEffect(() => {
     if (isVisible) {
-      // Reset form on open
       setDiscountType('fixed');
       setReason('');
       setAmount(0);
@@ -129,12 +127,9 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
           setPercentOff('0');
         } else {
           setPercentOff(selectedCode.amount.toString());
-          // Amount will be calculated by percentOff watcher
         }
       }
     } else {
-      // If no code is selected, allow manual input (reset if needed or keep user input)
-      // For simplicity, let's reset reason if it was auto-filled by a code
       if (reason.startsWith('Discount Code:')) {
         setReason('');
       }
@@ -150,7 +145,6 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
         setAmount(0);
       }
     }
-    // If discountType is 'fixed', amount is set directly by CurrencyInput or by discount code
   }, [percentOff, discountType, jobTotal]);
 
   const calculatedDiscountAmount = useMemo(() => {
@@ -247,7 +241,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
                   setItems={setDiscountCodeOptions}
                   placeholder='Select a discount code'
                   searchable={true}
-                  listMode='MODAL' // Or "FLATLIST"
+                  listMode='MODAL'
                   style={[
                     styles.dropdown,
                     {
@@ -266,8 +260,6 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
                     color: getTextColor(theme),
                   }}
                   searchPlaceholderTextColor={getPlaceholderTextColor(theme)}
-                  // arrowIconStyle={{ tintColor: getIconColor(theme) }} // Removed tintColor
-                  // tickIconStyle={{ tintColor: getIconColor(theme) }} // Removed tintColor
                   theme={theme === 'dark' ? 'DARK' : 'LIGHT'}
                   zIndex={3000}
                   zIndexInverse={1000}
@@ -326,8 +318,6 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
                   backgroundColor: getInputBackgroundColor(theme),
                   borderColor: getBorderColor(theme),
                 }}
-                // arrowIconStyle={{ tintColor: getIconColor(theme) }} // Removed tintColor
-                // tickIconStyle={{ tintColor: getIconColor(theme) }} // Removed tintColor
                 theme={theme === 'dark' ? 'DARK' : 'LIGHT'}
                 zIndex={2000}
                 zIndexInverse={2000}
@@ -463,7 +453,6 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
                 title='Add Discount'
                 onPress={handleSubmit}
                 style={{ flex: 1, marginLeft: 8 }}
-                // isLoading={parentIsLoading} // Removed isLoading prop
                 disabled={
                   parentIsLoading ||
                   calculatedDiscountAmount <= 0 ||
@@ -490,7 +479,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 10,
     padding: 20,
-    alignItems: 'stretch', // Changed from center
+    alignItems: 'stretch',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -513,16 +502,10 @@ const styles = StyleSheet.create({
   },
   formGroup: {
     marginBottom: 15,
-    zIndex: 1, // For DropDownPicker
+    zIndex: 1,
   },
-  textInput: {
-    // Using globalStyles.input for base, add specific overrides if needed
-    // Ensure height, padding, etc. are consistent
-  },
-  dropdown: {
-    // Specific styles for DropDownPicker container
-    // Ensure it matches textInput height and style
-  },
+  textInput: {},
+  dropdown: {},
   summaryBox: {
     marginTop: 15,
     marginBottom: 20,
@@ -554,7 +537,7 @@ const styles = StyleSheet.create({
   modalActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 'auto', // Push to bottom
+    marginTop: 'auto',
     paddingTop: 10,
   },
 });

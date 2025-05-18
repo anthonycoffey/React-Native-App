@@ -73,7 +73,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
             onChangeText={setCommentText}
             multiline
             numberOfLines={4}
-            textAlignVertical="top" // for Android
+            textAlignVertical="top"
           />
           <View style={styles.buttonContainer}>
             <OutlinedButton title="Cancel" onPress={onClose} style={styles.button} variant="error" />
