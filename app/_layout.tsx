@@ -40,7 +40,7 @@ export default function RootLayout() {
             value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
           >
             <Stack>
-              <Stack.Screen name='dashboard' options={{ headerShown: false }} />
+              <Stack.Screen name='dashboard' options={{ headerShown: false , title: 'Dashboard'}} />
               <Stack.Screen
                 name='job/[id]'
                 options={({ route }) => ({

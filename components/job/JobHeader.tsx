@@ -51,7 +51,7 @@ export default function JobHeader({ job, id }: Props) {
         <Text>{formatDateTime(job.arrivalTime)}</Text>
       </View>
 
-      <View style={[styles.infoRow, styles.marginBottom]}>
+      <View style={[styles.infoRow]}>
         <MaterialIcons
           name='location-pin'
           size={20}
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 0,
+    margin: 0,
   },
   chipContainerStyle: {
     marginTop: 4,

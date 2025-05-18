@@ -1,8 +1,8 @@
-import React from "react";
-import { StyleSheet, ViewStyle } from "react-native";
-import { Text, View as ThemedView } from "@/components/Themed";
-import { useColorScheme } from "./useColorScheme";
-import Colors from "@/constants/Colors";
+import React from 'react';
+import { StyleSheet, ViewStyle } from 'react-native';
+import { Text, View as ThemedView } from '@/components/Themed';
+import { useColorScheme } from './useColorScheme';
+import Colors from '@/constants/Colors';
 
 type Props = {
   children: string;
@@ -13,18 +13,28 @@ export default function Chip({ children, style }: Props) {
   const theme = useColorScheme() ?? 'light';
 
   const removeDash = (str: string) => {
-    return typeof str === 'string' ? str.replace(/-/g, " ").toUpperCase() : str;
+    return typeof str === 'string' ? str.replace(/-/g, ' ').toUpperCase() : str;
   };
 
-  const chipBackgroundColor = theme === 'light' ? Colors.light.tabIconDefault : Colors.dark.tabIconDefault;
+  const chipBackgroundColor =
+    theme === 'light' ? Colors.light.background : Colors.dark.background;
+  const chipBorderColor =
+    theme === 'light' ? Colors.light.borderColor : Colors.dark.borderColor;
   const chipTextColor = Colors[theme].text;
 
   return (
-    <ThemedView style={[
-      styles.chipContainer,
-      { backgroundColor: chipBackgroundColor },
-      style
-    ]}>
+    <ThemedView
+      style={[
+        styles.chipContainer,
+        {
+          backgroundColor: chipBackgroundColor,
+          borderColor: chipBorderColor,
+          borderWidth: 1,
+          borderStyle: 'solid',
+        },
+        style,
+      ]}
+    >
       <Text style={[styles.chipText, { color: chipTextColor }]}>
         {removeDash(children)}
       </Text>
@@ -43,8 +53,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   chipText: {
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: 12,
     letterSpacing: 0.5,
-  }
+  },
 });

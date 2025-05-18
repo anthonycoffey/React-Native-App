@@ -52,18 +52,28 @@ export default function LoginScreen() {
     setError(null);
 
     try {
-      const response = await apiService.post<{ token: string }>(`/users/login`, {
-        email,
-        password,
-      });
-      
+      const response = await apiService.post<{ token: string }>(
+        `/users/login`,
+        {
+          email,
+          password,
+        }
+      );
+
       if (response?.token && signIn) {
         await signIn(response.token);
       } else if (!signIn) {
-        console.error('Login error: signIn function is not available from AuthContext.');
-        setError('Login service is currently unavailable. Please try again later.');
+        console.error(
+          'Login error: signIn function is not available from AuthContext.'
+        );
+        setError(
+          'Login service is currently unavailable. Please try again later.'
+        );
       } else {
-        console.error('Login error: Invalid response format - token missing.', response);
+        console.error(
+          'Login error: Invalid response format - token missing.',
+          response
+        );
         setError('Login failed due to an unexpected server response.');
       }
     } catch (error) {
@@ -74,11 +84,15 @@ export default function LoginScreen() {
         } else if (error.status >= 500) {
           setError('Server error. Please try again later.');
         } else {
-          const message = error.body?.message || 'Login failed. Please check your credentials and try again.';
+          const message =
+            error.body?.message ||
+            'Login failed. Please check your credentials and try again.';
           setError(message);
         }
       } else {
-        setError('Unable to connect or an unexpected error occurred. Please try again later.');
+        setError(
+          'Unable to connect or an unexpected error occurred. Please try again later.'
+        );
       }
     } finally {
       setIsLoading(false);
@@ -93,7 +107,10 @@ export default function LoginScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={loginStyles.innerContainer}>
           <View style={loginStyles.logoContainer}>
-            <Image style={loginStyles.logo} source={require('../assets/icon.png')} />
+            <Image
+              style={loginStyles.logo}
+              source={require('../assets/icon.png')}
+            />
           </View>
 
           <Text type='title' style={[globalStyles.title, loginStyles.title]}>
@@ -122,7 +139,10 @@ export default function LoginScreen() {
               autoCapitalize='none'
               autoCorrect={false}
             />
-            <TouchableOpacity onPress={toggleVisibility} style={globalStyles.eyeIcon}>
+            <TouchableOpacity
+              onPress={toggleVisibility}
+              style={globalStyles.eyeIcon}
+            >
               <MaterialIcons
                 name={isVisible ? 'visibility-off' : 'visibility'}
                 size={20}
@@ -132,7 +152,12 @@ export default function LoginScreen() {
           </View>
 
           {error && (
-            <View style={[loginStyles.errorContainerLayout, { backgroundColor: errorContainerBackgroundColor }]}>
+            <View
+              style={[
+                loginStyles.errorContainerLayout,
+                { backgroundColor: errorContainerBackgroundColor },
+              ]}
+            >
               <ErrorText>{error}</ErrorText>
             </View>
           )}
@@ -159,9 +184,11 @@ const loginStyles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+    backgroundColor: '#252d3a',
   },
   logoContainer: {
     alignItems: 'center',
+    backgroundColor: '#252d3a',
     marginBottom: 40,
   },
   logo: {

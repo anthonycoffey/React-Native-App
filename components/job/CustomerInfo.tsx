@@ -9,6 +9,7 @@ import {
   getInputBackgroundColor,
   getTextColor,
   getIconColor,
+  getBorderColor,
 } from '@/hooks/useThemeColor';
 import EditNameModal from './modals/EditNameModal';
 import EditAddressModal from './modals/EditAddressModal';
@@ -60,10 +61,10 @@ export default function CustomerInfo({
 
   const inputStyles = [
     globalStyles.input,
-    styles.inputReadOnly,
     {
       backgroundColor: getInputBackgroundColor(colorScheme),
       color: getTextColor(colorScheme),
+      borderColor: getBorderColor(colorScheme),
     },
   ];
 
