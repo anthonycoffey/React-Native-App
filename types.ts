@@ -77,6 +77,19 @@ export interface Job extends BaseEntity {
   Invoices?: Invoice[];
   JobFiles?: JobFile[];
   JobComments?: JobComment[]; // Added JobComments
+  referralCode?: string | null; // Added for job-specific referral code
+  Payments?: Payment[]; // Added for list of payments
+}
+
+export interface Payment extends BaseEntity {
+  JobId: number;
+  type: 'cash' | 'card' | string; // Payment method
+  amount: number; // Amount in cents
+  tip?: number; // Optional tip in cents
+  status?: string; // e.g., 'succeeded', 'pending', 'failed'
+  transactionId?: string | null; // Optional transaction ID from payment gateway
+  paymentIntentId?: string | null; // Optional payment intent ID
+  notes?: string | null; // Optional notes about the payment
 }
 
 export interface JobComment extends BaseEntity {
