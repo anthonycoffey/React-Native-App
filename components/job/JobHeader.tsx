@@ -13,19 +13,19 @@ import { getIconColor } from '@/hooks/useThemeColor';
 type Props = { job: Job; id: number };
 
 export default function JobHeader({ job, id }: Props) {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light'; // Ensure a default value
   const iconColor = getIconColor(colorScheme);
   
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={globalStyles.label}>
-          {job?.arrivalTime && formatDateTime(job.arrivalTime)}
+          Created: {formatDateTime(job.createdAt)}
         </Text>
         <Text style={globalStyles.label}>J-{id}</Text>
       </View>
 
-      <View style={globalStyles.chipContainer}>
+      <View style={[globalStyles.chipContainer, styles.chipContainerStyle]}>
         <Chip>{job.status.toUpperCase()}</Chip>
         <Chip>{job.paymentStatus.toUpperCase()}</Chip>
       </View>
@@ -74,6 +74,11 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 8, // Add some space below the header row
+  },
+  chipContainerStyle: { // Added to give some margin if needed
+    marginTop: 4,
+    marginBottom: 8,
   },
   infoRow: {
     flexDirection: 'row',

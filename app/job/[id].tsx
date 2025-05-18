@@ -16,8 +16,11 @@ import { JobProxy } from '@/components/job/JobProxy';
 import Invoice from '@/components/job/Invoice';
 import JobDetailsAndMapButtons from '@/components/job/JobDetailsAndMapButtons';
 import JobLineItems from '@/components/job/JobLineItems';
+import Discounts from '@/components/job/Discounts';
+import JobReferralCode from '@/components/job/JobReferralCode';
 import ArrivalTime from '@/components/job/ArrivalTime';
 import TakePayment from '@/components/job/TakePayment';
+import JobPaymentsList from '@/components/job/JobPaymentsList'; // Import JobPaymentsList component
 import JobFiles from '@/components/job/JobFiles';
 import JobComments from '@/components/job/JobComments';
 import { View as ThemedView } from '@/components/Themed';
@@ -136,8 +139,11 @@ export default function JobPage() {
               fetchJob={fetchJob}
             />
             <JobLineItems job={job} fetchJob={fetchJob} />
+            <Discounts job={job} fetchJob={fetchJob} />
+            <JobReferralCode job={job} fetchJob={fetchJob} />
             <Invoice job={job} fetchJob={fetchJob} />
             <TakePayment job={job} fetchJob={fetchJob} />
+            <JobPaymentsList job={job} /> {/* Add JobPaymentsList component */}
             <JobFiles job={job} fetchJob={fetchJob} />
             <JobComments
               jobId={job.id}
