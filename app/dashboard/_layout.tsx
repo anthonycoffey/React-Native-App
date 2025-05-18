@@ -97,14 +97,12 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* Screen to hide from tab bar but make available for navigation */}
       <Tabs.Screen
         name='create-job'
         options={{
           href: null,
         }}
       />
-      {/* Screens under account to hide from tab bar but make available for navigation */}
       <Tabs.Screen
         name='account/cash'
         options={{

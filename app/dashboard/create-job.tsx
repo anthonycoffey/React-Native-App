@@ -4,15 +4,14 @@ import {
   StyleSheet,
   TextInput,
   Alert,
-  // View, // Will be replaced by Card for card sections
   Modal,
   TouchableOpacity,
   Platform,
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { View, Text } from '@/components/Themed'; // Keep Themed View for non-card elements
-import Card from '@/components/Card'; // Import the new Card component
+import { View, Text } from '@/components/Themed';
+import Card from '@/components/Card';
 import {
   PrimaryButton,
   OutlinedButton,
@@ -920,16 +919,16 @@ export default function CreateJobScreen() {
             >
               <Text
                 style={[
-                  styles.lineItemText,
-                  { color: getTextColor(colorScheme), width: 100 },
+                  styles.lineItemText, // Existing: flex: 1
+                  { color: getTextColor(colorScheme), minWidth: '50%' }, // Changed: removed width: 100, added minWidth
                 ]}
               >
                 {service?.name || 'Unknown Service'}
               </Text>
               <Text
                 style={[
-                  styles.lineItemText,
-                  { color: getTextColor(colorScheme) },
+                  styles.lineItemText, // Existing: flex: 1
+                  { color: getTextColor(colorScheme), flex: 0, marginHorizontal: 10 }, // Changed: Added flex: 0 and marginHorizontal
                 ]}
               >
                 {centsToDollars(item.price)}

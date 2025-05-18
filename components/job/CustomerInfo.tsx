@@ -139,7 +139,6 @@ export default function CustomerInfo({
 
   return (
     <View style={styles.container}>
-      {/* Customer Name */}
       <View style={styles.fieldContainer}>
         <View style={styles.labelContainer}>
           <Text style={globalStyles.label}>Customer Name</Text>
@@ -153,7 +152,6 @@ export default function CustomerInfo({
         <TextInput editable={false} value={customerName} style={inputStyles} />
       </View>
 
-      {/* Customer Email */}
       <View style={styles.fieldContainer}>
         <View style={styles.labelContainer}>
           <Text style={globalStyles.label}>Customer Email</Text>
@@ -167,7 +165,6 @@ export default function CustomerInfo({
         <TextInput editable={false} value={customerEmail} style={inputStyles} />
       </View>
 
-      {/* Car */}
       <View style={styles.fieldContainer}>
         <View style={styles.labelContainer}>
           <Text style={globalStyles.label}>Car</Text>
@@ -185,7 +182,6 @@ export default function CustomerInfo({
         />
       </View>
 
-      {/* Address */}
       <View style={styles.fieldContainer}>
         <View style={styles.labelContainer}>
           <Text style={globalStyles.label}>Address</Text>
@@ -204,7 +200,6 @@ export default function CustomerInfo({
         />
       </View>
 
-      {/* Modals */}
       <EditNameModal
         visible={isEditNameModalVisible}
         currentName={customerName}

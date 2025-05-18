@@ -366,8 +366,6 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
           style={{ marginBottom: 10 }} // Add some margin if needed
         />
 
-        {/* Removed section for displaying selected files before upload */}
-        {/* Removed the second upload button */}
 
         {loadingFiles ? (
           <View style={styles.loadingContainer}>

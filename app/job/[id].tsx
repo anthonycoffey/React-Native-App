@@ -143,7 +143,7 @@ export default function JobPage() {
             <JobReferralCode job={job} fetchJob={fetchJob} />
             <Invoice job={job} fetchJob={fetchJob} />
             <TakePayment job={job} fetchJob={fetchJob} />
-            <JobPaymentsList job={job} /> {/* Add JobPaymentsList component */}
+            <JobPaymentsList job={job} />
             <JobFiles job={job} fetchJob={fetchJob} />
             <JobComments
               jobId={job.id}
