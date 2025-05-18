@@ -89,9 +89,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name='account' // This should match the filename app/dashboard/account.tsx
+        name='account' // This now refers to app/dashboard/account/_layout.tsx
         options={{
           title: 'My Account',
+          headerShown: false, // The header will be provided by the nested Stack navigator
           tabBarIcon: ({ color }) => (
             <TabBarIcon name='account-circle' color={color} />
           ),
@@ -100,33 +101,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name='create-job'
         options={{
+          // This screen remains hidden from tabs, typically used for modal or full-screen presentation
           href: null,
         }}
       />
-      <Tabs.Screen
-        name='account/cash'
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name='account/deposits/index'
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name='account/deposits/[id]'
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name='account/paychecks/index'
-        options={{
-          href: null,
-        }}
-      />
+      {/* Removed account/cash, account/deposits/*, account/paychecks/* as they are now part of the 'account' stack */}
     </Tabs>
   );
 }

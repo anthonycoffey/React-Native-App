@@ -47,7 +47,7 @@ export default function SingleDepositScreen() {
   const loadDepositDetails = async () => {
     setLoading(true);
     try {
-      const response = await apiService.get<SingleDeposit>(`/cash-deposits/${id}`);
+      const response = await apiService.get<SingleDeposit>(`/cash/deposits/${id}`);
       setDeposit(response);
     } catch (error) {
       console.error(`Failed to load deposit ${id}:`, error);
@@ -85,7 +85,10 @@ export default function SingleDepositScreen() {
   }
 
   return (
-    <ScrollView style={[globalStyles.container, { backgroundColor: getBackgroundColor(colorScheme) }]}>
+    <ScrollView 
+      style={[{ flex: 1 }, { backgroundColor: getBackgroundColor(colorScheme) }]}
+      contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 10 }}
+    >
       <Text style={globalStyles.title}>Deposit Details: CD-{deposit.id}</Text>
       
       <Card>

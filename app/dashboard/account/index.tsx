@@ -23,9 +23,9 @@ interface AccountDetails {
 }
 
 export default function AccountScreen() {
-  const { signOut } = useAuth();
+  const authContext = useAuth(); // Get the full context
   const colorScheme = useColorScheme() ?? 'light';
-  const authContext = useAuth();
+  // const authContext = useAuth(); // Already got it above
   const [accountDetails, setAccountDetails] = useState<AccountDetails | null>(
     null
   );
@@ -55,7 +55,13 @@ export default function AccountScreen() {
   const handleLogout = () => {
     try {
       router.replace('/');
-      signOut();
+      if (authContext) {
+        authContext.signOut();
+      } else {
+        console.error('AuthContext not available for logout');
+        // Optionally, still try to navigate or show an error
+        // router.replace('/login'); // Fallback if authContext is somehow null
+      }
     } catch (error) {
       console.error('Logout error:', error);
     }
