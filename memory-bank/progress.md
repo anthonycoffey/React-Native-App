@@ -56,6 +56,9 @@ This document tracks what works, what's left to build, the current status, known
     - Integrated modals and API save logic (including for email) into `CustomerInfo.tsx`. Service Address updates now use `PATCH /jobs/:id` with the full job object.
     - Ensured `fetchJob` prop is correctly passed and typed through `JobDetailsAndMapButtons.tsx`.
     - Adhered to theming guidelines for all new UI, including ensuring full-width text inputs in `EditNameModal` and `EditEmailModal` for consistency.
+- **Comment Item Condensed Layout:**
+    - Updated `components/job/CommentItem.tsx` to reduce padding, margins, font sizes, and line heights for a more compact appearance.
+    - Corrected the import path for the `User` type in `components/job/CommentItem.tsx` from `contexts/AuthContext` to `types`, resolving a TypeScript error.
 
 ## What's Left to Build
 

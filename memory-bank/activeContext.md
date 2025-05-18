@@ -66,6 +66,9 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - All new UI elements adhere to the established theming strategy.
     - API calls for saving data use `utils/ApiService.ts` and `Alert.alert` for notifications. Service Address updates are now sent to `PATCH /jobs/:id` with the full job object, instead of `PATCH /address/:addressId`.
     - Refined styling in `EditNameModal.tsx` and `EditEmailModal.tsx` to ensure full-width text inputs, consistent with `CommentModal.tsx`, by adjusting `modalView.alignItems` to `stretch`.
+- **Updated `components/job/CommentItem.tsx` for Condensed Layout:**
+    - Reduced padding, margins, font sizes, and line heights to make individual comments take up less vertical space.
+    - Corrected the import path for the `User` type from `contexts/AuthContext` to `types` to resolve a TypeScript error.
 
 ## Next Steps
 

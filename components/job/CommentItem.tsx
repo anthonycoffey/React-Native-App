@@ -4,7 +4,7 @@ import { formatDistanceToNowStrict } from 'date-fns';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { User } from '@/contexts/AuthContext'; // Changed from UserContext
+import { User } from '@/types'; // Corrected import path for User
 import { JobComment } from '@/types'; // Import JobComment
 import { buttonVariants } from '@/constants/Colors';
 
@@ -59,15 +59,15 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 12,
-    marginVertical: 8,
+    padding: 8, // Reduced padding
+    marginVertical: 4, // Reduced vertical margin
     borderRadius: 8,
     // Add shadow or border based on theme/globalStyles.card if desired
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: 4, // Reduced margin
   },
   userName: {
     fontWeight: 'bold',
@@ -77,19 +77,19 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   commentText: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 13, // Reduced font size
+    lineHeight: 18, // Reduced line height
   },
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 10,
+    marginTop: 6, // Reduced margin
   },
   actionButton: { // This style is no longer used directly by buttons, but iconButton is new
     marginLeft: 10,
   },
   iconButton: {
-    padding: 5,
+    padding: 3, // Reduced padding
     marginLeft: 10,
   }
 });
