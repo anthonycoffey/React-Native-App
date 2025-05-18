@@ -114,6 +114,31 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      {/* Screens under account to hide from tab bar but make available for navigation */}
+      <Tabs.Screen
+        name="account/cash"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="account/deposits/index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="account/deposits/[id]"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="account/paychecks/index"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

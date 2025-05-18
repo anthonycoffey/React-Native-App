@@ -636,7 +636,7 @@ export default function CreateJobScreen() {
                 placeholderStyle={{ color: getPlaceholderTextColor(colorScheme) }}
                 dropDownContainerStyle={[styles.dropdownContainer, { backgroundColor: getInputBackgroundColor(colorScheme), borderColor: getBorderColor(colorScheme) }]}
                 theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
-                listMode="MODAL" // Or "SCROLLVIEW" if preferred
+                listMode="SCROLLVIEW" // Or "SCROLLVIEW" if preferred
                 zIndex={3000} // Ensure dropdown is above other elements
                 zIndexInverse={1000}
             />
