@@ -28,9 +28,11 @@ export interface Customer extends BaseEntity {
   firstName?: string;
   lastName?: string;
   email?: string;
+  phone?: string; // For new customer creation
   defaultPhone?: { number: string };
   defaultPhoneId?: number;
   CustomerPhones?: CustomerPhone[];
+  Cars?: Car[]; // Optional list of cars associated with the customer
 }
 
 export interface CustomerPhone extends BaseEntity {
@@ -113,6 +115,11 @@ export interface JobLineItems extends BaseEntity {
   JobId: number;
   ServiceId: number;
   Service: Service;
+}
+
+export interface JobLineItemCreate {
+  ServiceId: number;
+  price: number; // Price in cents
 }
 
 export interface Service extends BaseEntity {

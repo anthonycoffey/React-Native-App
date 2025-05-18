@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Tabs, useRouter, Redirect } from 'expo-router';
-import { ActivityIndicator, View } from 'react-native';
+import { Tabs, useRouter, Redirect, Link } from 'expo-router';
+import { ActivityIndicator, View, Pressable } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -64,20 +64,20 @@ export default function TabLayout() {
         options={{
           title: 'My Jobs',
           tabBarIcon: ({ color }) => <TabBarIcon name='list' color={color} />,
-          // headerRight: () => (
-          //   <Link href="/newJob" asChild>
-          //     <Pressable>
-          //       {({ pressed }) => (
-          //         <MaterialIcons
-          //           name="add-circle"
-          //           size={25}
-          //           color={Colors[colorScheme ?? 'light'].tint}
-          //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-          //         />
-          //       )}
-          //     </Pressable>
-          //   </Link>
-          // ),
+          headerRight: () => (
+            <Link href="/dashboard/create-job" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <MaterialIcons
+                    name="add-circle-outline"
+                    size={25}
+                    color={Colors[colorScheme ?? 'light'].text} // Use text color for icons in header
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
         }}
       />
       <Tabs.Screen
