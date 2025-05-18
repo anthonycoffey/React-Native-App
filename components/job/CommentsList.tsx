@@ -5,7 +5,7 @@ import CommentItem from './CommentItem';
 import { JobComment } from '@/types';
 import { SecondaryButton } from '@/components/Buttons'; // For pagination buttons
 
-const ITEMS_PER_PAGE = 5; // Or any other desired number
+const ITEMS_PER_PAGE = 3; // Or any other desired number
 
 interface CommentsListProps {
   comments: JobComment[];

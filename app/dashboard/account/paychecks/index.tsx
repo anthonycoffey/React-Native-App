@@ -1,28 +1,28 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text } from '@/components/Themed';
+import { StyleSheet } from 'react-native';
+import { Text, View as ThemedView } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { getBackgroundColor } from '@/hooks/useThemeColor';
 import globalStyles from '@/styles/globalStyles';
-import { useAuth } from '@/contexts/AuthContext'; // To potentially pass userId
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function PaychecksScreen() {
   const authContext = useAuth();
   const userId = authContext?.currentUser?.id;
+  const colorScheme = useColorScheme() ?? 'light';
 
   return (
-    <View style={globalStyles.container}>
+    <ThemedView style={[globalStyles.container, { backgroundColor: getBackgroundColor(colorScheme) }]}>
       <Text style={globalStyles.title}>My Paychecks</Text>
-      {/* TODO: Implement paycheck list component, similar to Vue's MyPaychecks */}
-      {/* This component would likely fetch paychecks for the current user (userId) */}
-      <Text>A list of your paychecks will appear here.</Text>
+      <Text style={{textAlign: 'center', marginTop: 20}}>A list of your paychecks will appear here.</Text>
       {userId ? (
-        <Text>Fetching for user ID: {userId}</Text>
+        <Text style={{textAlign: 'center', marginTop: 10}}>Fetching for user ID: {userId}</Text>
       ) : (
-        <Text>User ID not available.</Text>
+        <Text style={{textAlign: 'center', marginTop: 10}}>User ID not available.</Text>
       )}
-    </View>
+    </ThemedView>
   );
 }
 
 const localStyles = StyleSheet.create({
-  // Add any specific styles for this screen
 });

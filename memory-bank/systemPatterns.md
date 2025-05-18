@@ -51,8 +51,8 @@ This document outlines the system architecture, key technical decisions, design 
                 *   `getButtonBackgroundColor(theme, variant)`
                 *   `getButtonBorderColor(theme, variant)`
             *   Example: `style={{ borderColor: getBorderColor(theme), color: getTextColor(theme) }}`.
-        *   **Color Definitions:** Base color values for light and dark themes are defined in `constants/Colors.ts`. The `useThemeColor` hook and its helpers draw from these definitions.
-        *   **Custom Components:** Reusable custom components (e.g., `PrimaryButton`, `Chip`) are expected to encapsulate their own theme-aware styling using the above mechanisms.
+        *   **Color Definitions:** Base color values for light and dark themes are defined in `constants/Colors.ts` (including a `shadow` property for theme-aware shadows). The `useThemeColor` hook and its helpers draw from these definitions.
+        *   **Custom Components:** Reusable custom components (e.g., `PrimaryButton`, `Chip`, `Card`) are expected to encapsulate their own theme-aware styling using the above mechanisms.
         *   **Global Styles:** `styles/globalStyles.ts` contains reusable StyleSheet objects (e.g., `card`, `input`, `label`) that should also be made theme-aware if they involve colors, or be used in conjunction with themed styles.
     *   **Consistency Goal:** All components should strive to be fully theme-aware. Hardcoded colors should be avoided unless they are universally applicable (e.g., a standard black shadow or a fixed overlay color that works for both themes). Existing components with hardcoded theme-dependent colors should be refactored.
 4.  **Permissions Handling:**
@@ -86,8 +86,9 @@ This document outlines the system architecture, key technical decisions, design 
     *   **Base UI (`components/`):**
         *   `Themed.tsx`: Provides theme-aware `Text` and `View` components.
         *   `Buttons.tsx`: Offers standardized `PrimaryButton`, `SecondaryButton`, `OutlinedButton`, `WarningButton`.
-        *   `Typography.tsx`: Collection of pre-styled text components (e.g., `LabelText`, `HeaderText`, `CardTitle`, `ErrorText`).
+        *   `Typography.tsx`: Collection of pre-styled text components (e.g., `LabelText`, `HeaderText`, `CardTitle`, `ErrorText`). `LabelText` now correctly uses themed text color.
         *   `StyledText.tsx`: Provides `MonoText` for monospaced font rendering.
+        *   `Card.tsx`: (Moved from `components/common/`) Provides a theme-aware card container. Uses page background, theme-aware border (`StyleSheet.hairlineWidth`), and theme-aware shadow for distinction. Standardized padding (15) and marginBottom (15).
         *   `Chip.tsx`: Displays small badge-like information (styling mostly hardcoded).
         *   `CurrencyInput.tsx`: Non-themed currency input field with formatting.
         *   `ExternalLink.tsx`: Handles opening external URLs in an in-app browser (native) or new tab (web).
@@ -110,7 +111,7 @@ This document outlines the system architecture, key technical decisions, design 
     *   **Invoice-Specific UI (`components/job/invoice/`):**
         *   `CurrencyInput.tsx`: A themed version of currency input with formatting logic (potential redundancy with `components/CurrencyInput.tsx`).
     *   **Common Patterns:**
-        *   Many job-specific components are card-like, using `globalStyles.card`.
+        *   Many job-specific components are card-like, using `globalStyles.card` (this should be reviewed/updated to use the new `Card.tsx` where appropriate).
         *   API interactions are common, typically followed by `fetchJob()` to refresh data.
         *   Modals are used for forms (add line item, cancel job) and confirmations.
         *   Extensive use of `useThemeColor` hooks for fine-grained theming of standard components.

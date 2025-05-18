@@ -27,6 +27,8 @@ export default {
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
     borderColor: '#ddd', // Added border color for light theme
+    errorText: buttonVariants.error, // Added error text color
+    shadow: '#000000', // Shadow color for light theme
   },
   dark: {
     text: '#ECEDEE',
@@ -36,5 +38,7 @@ export default {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
     borderColor: '#444', // Added border color for dark theme
+    errorText: buttonVariants.error, // Added error text color
+    shadow: '#333333', // Shadow color for dark theme
   },
 };

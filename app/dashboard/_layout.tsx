@@ -38,7 +38,10 @@ export default function TabLayout() {
   if (!auth || auth.isLoading) {
     return (
       <View style={globalStyles.loadingContainer}>
-        <ActivityIndicator size='large' color={Colors[colorScheme ?? 'light'].tint} />
+        <ActivityIndicator
+          size='large'
+          color={Colors[colorScheme ?? 'light'].tint}
+        />
       </View>
     );
   }
@@ -47,15 +50,11 @@ export default function TabLayout() {
   if (!auth.session && !auth.isLoading) {
     return <Redirect href='/login' />;
   }
-  
-  // If auth is somehow null here despite the check, it's an issue with AuthProvider setup
-  // but the useAuth hook should throw in dev if it's null.
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
         headerShown: headerShown,
       }}
     >
@@ -65,13 +64,13 @@ export default function TabLayout() {
           title: 'My Jobs',
           tabBarIcon: ({ color }) => <TabBarIcon name='list' color={color} />,
           headerRight: () => (
-            <Link href="/dashboard/create-job" asChild>
+            <Link href='/dashboard/create-job' asChild>
               <Pressable>
                 {({ pressed }) => (
                   <MaterialIcons
-                    name="add-circle-outline"
+                    name='add-circle-outline'
                     size={25}
-                    color={Colors[colorScheme ?? 'light'].text} // Use text color for icons in header
+                    color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -90,15 +89,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name='settings'
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name='settings' color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name='account' // This should match the filename app/dashboard/account.tsx
         options={{
           title: 'My Account',
@@ -109,32 +99,32 @@ export default function TabLayout() {
       />
       {/* Screen to hide from tab bar but make available for navigation */}
       <Tabs.Screen
-        name="create-job"
+        name='create-job'
         options={{
           href: null,
         }}
       />
       {/* Screens under account to hide from tab bar but make available for navigation */}
       <Tabs.Screen
-        name="account/cash"
+        name='account/cash'
         options={{
           href: null,
         }}
       />
       <Tabs.Screen
-        name="account/deposits/index"
+        name='account/deposits/index'
         options={{
           href: null,
         }}
       />
       <Tabs.Screen
-        name="account/deposits/[id]"
+        name='account/deposits/[id]'
         options={{
           href: null,
         }}
       />
       <Tabs.Screen
-        name="account/paychecks/index"
+        name='account/paychecks/index'
         options={{
           href: null,
         }}

@@ -36,8 +36,8 @@ export function AuthProvider(props: React.PropsWithChildren) {
   const [[isLoadingSession, session], setSession] = useStorageState('session');
   const [isApiConfigured, setIsApiConfigured] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isUserLoading, setIsUserLoading] = useState(false); // Separate loading for user data
-
+  const [isUserLoading, setIsUserLoading] = useState(false); 
+  
   const fetchUserData = async () => {
     if (!session) {
       setCurrentUser(null);
@@ -97,12 +97,12 @@ export function AuthProvider(props: React.PropsWithChildren) {
   }, [session]);
 
   const signIn = async (token: string) => {
-    await setSession(token);
+    setSession(token);
     router.push('/dashboard');
   };
 
   const signOut = async () => {
-    await setSession(null);
+    setSession(null);
     router.push('/login');
   };
 

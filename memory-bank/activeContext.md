@@ -69,6 +69,12 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
 - **Updated `components/job/CommentItem.tsx` for Condensed Layout:**
     - Reduced padding, margins, font sizes, and line heights to make individual comments take up less vertical space.
     - Corrected the import path for the `User` type from `contexts/AuthContext` to `types` to resolve a TypeScript error.
+- **Refactored and Standardized `Card` Component:**
+    - Relocated `Card.tsx` from `components/common/` to `components/Card.tsx`.
+    - Updated `Card.tsx` to use the standard page background color (`useThemeColor({}, 'background')`), a theme-aware border, and a theme-aware shadow (new `shadow` property added to `constants/Colors.ts`).
+    - Standardized `Card` usage in `app/dashboard/create-job.tsx`, replacing local styles with the shared component.
+    - Updated `app/dashboard/account.tsx` to use the new `Card` import path and ensured its internal text elements correctly use themed colors.
+    - Updated `components/Typography.tsx` (`LabelText`) to rely on `ThemedText` for color, ensuring consistency.
 
 ## Next Steps
 

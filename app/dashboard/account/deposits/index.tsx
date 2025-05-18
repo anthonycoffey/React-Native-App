@@ -1,31 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
-import { Text } from '@/components/Themed';
+import { StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { Text, View as ThemedView } from '@/components/Themed';
+import { useColorScheme } from '@/components/useColorScheme';
+import { getBackgroundColor, getBorderColor } from '@/hooks/useThemeColor';
+import Colors from '@/constants/Colors';
 import globalStyles from '@/styles/globalStyles';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
-import { formatDateTime } from '@/utils/dates'; // Assuming this exists
+import { formatDateTime } from '@/utils/dates';
 import { router } from 'expo-router';
 
-// Types based on Vue component
-interface CashIntakeForDeposit { // Simplified for now
+interface CashIntakeForDeposit {
   id: number | string;
   amount: number;
-  // ... other fields if needed for display in a preview
 }
 interface Deposit {
   id: number | string;
-  amount: number; // in cents
+  amount: number;
   createdAt: string;
-  CashIntakes?: CashIntakeForDeposit[]; // Optional array of associated cash intakes
+  CashIntakes?: CashIntakeForDeposit[];
 }
 
 interface DepositsApiResponse {
-  data: Deposit[]; // Assuming API returns data in a 'data' property
-  // Add other pagination fields if API provides them
+  data: Deposit[];
 }
 
 export default function DepositsListScreen() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const themedActivityIndicatorColor = colorScheme === 'dark' ? Colors.dark.text : Colors.light.tint;
+
   const [deposits, setDeposits] = useState<Deposit[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +39,8 @@ export default function DepositsListScreen() {
   const loadDeposits = async () => {
     setLoading(true);
     try {
-      const response = await apiService.get<DepositsApiResponse>('/account/deposits');
+      const response = await apiService.get<DepositsApiResponse>('/account/cash/deposits');
+      console.log({response})
       setDeposits(response.data || []);
     } catch (error) {
       console.error('Failed to load deposits:', error);
@@ -48,15 +52,15 @@ export default function DepositsListScreen() {
   };
 
   const renderItem = ({ item }: { item: Deposit }) => (
-    <TouchableOpacity 
-      style={localStyles.itemRow}
+    <TouchableOpacity
+      style={[localStyles.itemRow, { borderBottomColor: getBorderColor(colorScheme) }]}
       onPress={() => router.push(`/dashboard/account/deposits/${item.id}`)}
     >
       <Text style={localStyles.itemCellStrong}>Deposit ID: CD-{item.id}</Text>
       <Text style={localStyles.itemCell}>Amount: {centsToDollars(item.amount)}</Text>
       <Text style={localStyles.itemCell}>Date: {formatDateTime(item.createdAt)}</Text>
       {item.CashIntakes && (
-        <Text style={localStyles.itemCellSmall}>
+        <Text style={[localStyles.itemCellSmall, { color: colorScheme === 'dark' ? Colors.dark.text : '#666' }]}>
           ({item.CashIntakes.length} cash intake{item.CashIntakes.length === 1 ? '' : 's'})
         </Text>
       )}
@@ -65,14 +69,14 @@ export default function DepositsListScreen() {
 
   if (loading && deposits.length === 0) {
     return (
-      <View style={[globalStyles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" />
-      </View>
+      <ThemedView style={[globalStyles.container, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
+        <ActivityIndicator size="large" color={themedActivityIndicatorColor} />
+      </ThemedView>
     );
   }
 
   return (
-    <View style={globalStyles.container}>
+    <ThemedView style={[globalStyles.container, { backgroundColor: getBackgroundColor(colorScheme) }]}>
       <Text style={globalStyles.title}>Deposits</Text>
       <FlatList
         data={deposits}
@@ -82,7 +86,7 @@ export default function DepositsListScreen() {
         refreshing={loading}
         onRefresh={loadDeposits}
       />
-    </View>
+    </ThemedView>
   );
 }
 
@@ -90,28 +94,22 @@ const localStyles = StyleSheet.create({
   itemRow: {
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee', // Themed color
   },
   itemCell: {
     fontSize: 14,
     marginBottom: 4,
-    // Themed text color
   },
   itemCellStrong: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 6,
-    // Themed text color
   },
   itemCellSmall: {
     fontSize: 12,
-    color: '#666', // Themed color
-    // Themed text color
   },
   emptyText: {
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
-    // Themed text color
   },
 });

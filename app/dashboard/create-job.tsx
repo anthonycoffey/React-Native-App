@@ -4,13 +4,15 @@ import {
   StyleSheet,
   TextInput,
   Alert,
+  // View, // Will be replaced by Card for card sections
   Modal,
   TouchableOpacity,
   Platform,
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { View, Text } from '@/components/Themed';
+import { View, Text } from '@/components/Themed'; // Keep Themed View for non-card elements
+import Card from '@/components/Card'; // Import the new Card component
 import {
   PrimaryButton,
   OutlinedButton,
@@ -24,6 +26,7 @@ import {
   getBorderColor,
   getPlaceholderTextColor,
   getBackgroundColor,
+  useThemeColor,
 } from '@/hooks/useThemeColor';
 import globalStyles from '@/styles/globalStyles';
 import { useAuth } from '@/contexts/AuthContext';
@@ -40,14 +43,13 @@ import { useRouter } from 'expo-router';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import { format, addMinutes, formatDistanceToNow, parseISO } from 'date-fns'; // Added parseISO
+import { format, addMinutes, formatDistanceToNow } from 'date-fns';
 import DropDownPicker from 'react-native-dropdown-picker';
-import CurrencyInput from '@/components/job/invoice/CurrencyInput'; 
+import Colors from '@/constants/Colors';
+import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 import { centsToDollars, dollarsToCents } from '@/utils/money';
 import { MaterialIcons } from '@expo/vector-icons';
 
-
-// Manual debounce implementation
 const manualDebounce = (func: (...args: any[]) => void, delay: number) => {
   let timeoutId: number | null = null;
   return (...args: any[]) => {
@@ -73,7 +75,8 @@ type AddressFormData = Partial<
 export default function CreateJobScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
-  const { currentUser } = useAuth();
+  const auth = useAuth();
+  const currentUser = auth?.currentUser;
 
   const [customerSearchQuery, setCustomerSearchQuery] = useState('');
   const [searchedCustomers, setSearchedCustomers] = useState<Customer[]>([]);
@@ -83,6 +86,7 @@ export default function CreateJobScreen() {
   const [customerForm, setCustomerForm] = useState<CustomerFormData>({});
   const [isNewCustomer, setIsNewCustomer] = useState(false);
   const [customerModalVisible, setCustomerModalVisible] = useState(false);
+  const [newCustomerModalVisible, setNewCustomerModalVisible] = useState(false);
   const [isSearchingCustomers, setIsSearchingCustomers] = useState(false);
 
   const [arrivalTime, setArrivalTime] = useState<Date>(
@@ -100,7 +104,8 @@ export default function CreateJobScreen() {
   const [lineItems, setLineItems] = useState<JobLineItemCreate[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
-  const [selectedServiceIdForNewLineItem, setSelectedServiceIdForNewLineItem] = useState<number | null>(null);
+  const [selectedServiceIdForNewLineItem, setSelectedServiceIdForNewLineItem] =
+    useState<number | null>(null);
   const [currentLineItemPrice, setCurrentLineItemPrice] = useState('0.00');
   const [allServicesForDropdown, setAllServicesForDropdown] = useState<
     { label: string; value: number }[]
@@ -129,15 +134,16 @@ export default function CreateJobScreen() {
 
   useEffect(() => {
     if (selectedServiceIdForNewLineItem) {
-      const service = services.find(s => s.id === selectedServiceIdForNewLineItem);
+      const service = services.find(
+        (s) => s.id === selectedServiceIdForNewLineItem
+      );
       if (service) {
-        setCurrentLineItemPrice(centsToDollars(service.price));
+        setCurrentLineItemPrice(centsToDollars(service.price, 'numeric'));
       }
     } else {
       setCurrentLineItemPrice('0.00');
     }
   }, [selectedServiceIdForNewLineItem, services]);
-
 
   const debouncedSearch = useCallback(
     manualDebounce(async (query: string) => {
@@ -148,10 +154,11 @@ export default function CreateJobScreen() {
       }
       setIsSearchingCustomers(true);
       try {
-        const response = await apiService.get<{ data: Customer[] }>(
+        const response: Customer[] = await apiService.get(
           `/customers/search?q=${encodeURIComponent(query)}`
         );
-        setSearchedCustomers(response.data);
+
+        setSearchedCustomers(response);
       } catch (error) {
         console.error('Failed to search customers:', error);
         Alert.alert('Error', 'Failed to search customers.');
@@ -160,23 +167,23 @@ export default function CreateJobScreen() {
         setIsSearchingCustomers(false);
       }
     }, 500),
-    [colorScheme] 
+    [colorScheme]
   );
 
   const handleCustomerSearch = (query: string) => {
     setCustomerSearchQuery(query);
     debouncedSearch(query);
   };
-  
+
   const handleSelectSearchedCustomer = (customer: Customer) => {
     setSelectedCustomer(customer);
-    setCustomerForm({}); 
+    setCustomerForm({});
     setIsNewCustomer(false);
     setCustomerModalVisible(false);
     setCustomerSearchQuery('');
     setSearchedCustomers([]);
     if (customer.id) {
-        fetchCustomerCars(customer.id);
+      fetchCustomerCars(customer.id);
     }
     setSelectedCar(null);
     setCarForm({});
@@ -185,17 +192,19 @@ export default function CreateJobScreen() {
 
   const fetchCustomerCars = async (customerId: number) => {
     try {
-        const detailedCustomer = await apiService.get<Customer>(`/customers/${customerId}`);
-        setCustomerCars(detailedCustomer.Cars || []);
-        if ((detailedCustomer.Cars || []).length === 0) {
-            setIsNewCar(true); 
-        } else {
-            setIsNewCar(false);
-        }
+      const detailedCustomer = await apiService.get<Customer>(
+        `/customers/${customerId}`
+      );
+      setCustomerCars(detailedCustomer.Cars || []);
+      if ((detailedCustomer.Cars || []).length === 0) {
+        setIsNewCar(true);
+      } else {
+        setIsNewCar(false);
+      }
     } catch (error) {
-        console.error("Failed to fetch customer cars:", error);
-        setCustomerCars([]); 
-        setIsNewCar(true); 
+      console.error('Failed to fetch customer cars:', error);
+      setCustomerCars([]);
+      setIsNewCar(true);
     }
   };
 
@@ -230,24 +239,35 @@ export default function CreateJobScreen() {
       return;
     }
     const priceInCents = dollarsToCents(priceAsNumber);
-    if (isNaN(priceInCents) || priceInCents < 0) { // Should not happen if parseFloat worked
+    if (isNaN(priceInCents) || priceInCents < 0) {
       Alert.alert('Error', 'Please enter a valid price.');
       return;
     }
-    setLineItems(prev => [...prev, { ServiceId: selectedServiceIdForNewLineItem, price: priceInCents }]);
+    setLineItems((prev) => [
+      ...prev,
+      { ServiceId: selectedServiceIdForNewLineItem, price: priceInCents },
+    ]);
     setSelectedServiceIdForNewLineItem(null);
     setCurrentLineItemPrice('0.00');
   };
 
   const handleRemoveLineItem = (index: number) => {
-    setLineItems(prev => prev.filter((_, i) => i !== index));
+    setLineItems((prev) => prev.filter((_, i) => i !== index));
   };
 
-
   const canSubmitForm = () => {
-    const customerSelectedOrCreated = selectedCustomer || (isNewCustomer && customerForm.firstName && customerForm.phone);
-    const carSelectedOrCreated = selectedCar || (isNewCar && carForm.make && carForm.model && carForm.year && carForm.color && carForm.plate);
-    
+    const customerSelectedOrCreated =
+      selectedCustomer ||
+      (isNewCustomer && customerForm.firstName && customerForm.phone);
+    const carSelectedOrCreated =
+      selectedCar ||
+      (isNewCar &&
+        carForm.make &&
+        carForm.model &&
+        carForm.year &&
+        carForm.color &&
+        carForm.plate);
+
     return (
       customerSelectedOrCreated &&
       carSelectedOrCreated &&
@@ -256,7 +276,7 @@ export default function CreateJobScreen() {
       addressForm.state &&
       addressForm.zipcode &&
       lineItems.length > 0 &&
-      currentUser 
+      currentUser
     );
   };
 
@@ -273,27 +293,30 @@ export default function CreateJobScreen() {
     setLoading(true);
 
     const jobPayload: any = {
-        assignedTechnicianId: currentUser.id,
-        Address: { ...addressForm },
-        JobLineItems: lineItems.map(li => ({ ServiceId: li.ServiceId, price: li.price })),
-        arrivalTime: arrivalTime.toISOString(),
-        notes: notes,
-      };
-  
+      assignedTechnicianId: currentUser.id,
+      Address: { ...addressForm },
+      JobLineItems: lineItems.map((li) => ({
+        ServiceId: li.ServiceId,
+        price: li.price,
+      })),
+      arrivalTime: arrivalTime.toISOString(),
+      notes: notes,
+    };
+
+    if (selectedCustomer) {
+      jobPayload.CustomerId = selectedCustomer.id;
+    } else if (isNewCustomer) {
+      jobPayload.NewCustomer = customerForm;
+    }
+
+    if (selectedCar) {
+      jobPayload.CarId = selectedCar.id;
+    } else if (isNewCar) {
+      jobPayload.NewCar = carForm;
       if (selectedCustomer) {
-        jobPayload.CustomerId = selectedCustomer.id;
-      } else if (isNewCustomer) {
-        jobPayload.NewCustomer = customerForm;
+        jobPayload.NewCar.CustomerId = selectedCustomer.id;
       }
-  
-      if (selectedCar) {
-        jobPayload.CarId = selectedCar.id;
-      } else if (isNewCar) {
-        jobPayload.NewCar = carForm;
-        if (selectedCustomer) { 
-          jobPayload.NewCar.CustomerId = selectedCustomer.id;
-        }
-      }
+    }
 
     try {
       const newJob = await apiService.post<Job>('/jobs', jobPayload);
@@ -313,31 +336,52 @@ export default function CreateJobScreen() {
 
   const customerSectionActive = selectedCustomer || isNewCustomer;
 
+  const handleSaveNewCustomer = () => {
+    if (!customerForm.firstName || !customerForm.phone) {
+      Alert.alert(
+        'Validation Error',
+        'First name and phone number are required for a new customer.'
+      );
+      return;
+    }
+    setIsNewCustomer(true);
+    setSelectedCustomer(null);
+    setNewCustomerModalVisible(false);
+  };
+
+  const handleCancelNewCustomerModal = () => {
+    setCustomerForm({});
+    setNewCustomerModalVisible(false);
+  };
+
   return (
     <ScrollView
       style={[
         styles.container,
         { backgroundColor: getBackgroundColor(colorScheme) },
       ]}
-      keyboardShouldPersistTaps="handled"
-      nestedScrollEnabled={true} // Important for DropDownPicker inside ScrollView
+      keyboardShouldPersistTaps='handled'
+      nestedScrollEnabled={true}
     >
-      <Text style={[styles.header, { color: getTextColor(colorScheme) }]}>Create New Job</Text>
+      <Text style={[styles.header, { color: getTextColor(colorScheme) }]}>
+        Create New Job
+      </Text>
 
-      <View style={[styles.card, { backgroundColor: getInputBackgroundColor(colorScheme) }]}>
+      <Card>
         <CardTitle>Customer</CardTitle>
         {!selectedCustomer && !isNewCustomer && (
           <View style={styles.buttonRow}>
             <PrimaryButton
               title='New Customer'
               onPress={() => {
-                setIsNewCustomer(true);
-                setSelectedCustomer(null);
                 setCustomerForm({});
-                setCustomerCars([]); 
-                setSelectedCar(null); 
-                setCarForm({}); 
-                setIsNewCar(true); 
+                setSelectedCustomer(null);
+                setIsNewCustomer(false);
+                setCustomerCars([]);
+                setSelectedCar(null);
+                setCarForm({});
+                setIsNewCar(true);
+                setNewCustomerModalVisible(true);
               }}
               style={styles.flexButton}
             />
@@ -354,9 +398,208 @@ export default function CreateJobScreen() {
           </View>
         )}
 
-        {isNewCustomer && !selectedCustomer && (
+        {isNewCustomer && !selectedCustomer && customerForm.firstName && (
           <View>
-            <LabelText>First Name</LabelText>
+            <Text
+              style={[
+                styles.customerDetailText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              New Customer:
+            </Text>
+            <Text
+              style={[
+                styles.customerDetailText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              Name: {customerForm.firstName} {customerForm.lastName || ''}
+            </Text>
+            <Text
+              style={[
+                styles.customerDetailText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              Email: {customerForm.email || 'N/A'}
+            </Text>
+            <Text
+              style={[
+                styles.customerDetailText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              Phone: {customerForm.phone || 'N/A'}
+            </Text>
+            <View style={styles.buttonRow}>
+              <OutlinedButton
+                title='Edit New Customer'
+                onPress={() => setNewCustomerModalVisible(true)}
+                style={styles.flexButton}
+              />
+              <View style={{ width: 10 }} />
+              <OutlinedButton
+                title='Clear New Customer'
+                variant='error'
+                onPress={() => {
+                  setIsNewCustomer(false);
+                  setCustomerForm({});
+                }}
+                style={styles.flexButton}
+              />
+            </View>
+          </View>
+        )}
+
+        {selectedCustomer && (
+          <View>
+            <Text
+              style={[
+                styles.customerDetailText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              Name: {selectedCustomer.firstName} {selectedCustomer.lastName}
+            </Text>
+            <Text
+              style={[
+                styles.customerDetailText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              Email: {selectedCustomer.email || 'N/A'}
+            </Text>
+            <Text
+              style={[
+                styles.customerDetailText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              Phone:{' '}
+              {selectedCustomer.phone ||
+                selectedCustomer.defaultPhone?.number ||
+                'N/A'}
+            </Text>
+            <View style={styles.buttonRow}>
+              <OutlinedButton
+                title='Change to New Customer'
+                onPress={() => {
+                  setCustomerForm({});
+                  setSelectedCustomer(null);
+                  setIsNewCustomer(false);
+                  setNewCustomerModalVisible(true);
+                }}
+                style={styles.flexButton}
+              />
+              <View style={{ width: 10 }} />
+              <OutlinedButton
+                title='Clear'
+                onPress={() => {
+                  setSelectedCustomer(null);
+                  setCustomerForm({});
+                  setIsNewCustomer(false);
+                  setCustomerCars([]);
+                  setSelectedCar(null);
+                  setCarForm({});
+                  setIsNewCar(false);
+                }}
+                style={styles.flexButton}
+              />
+            </View>
+          </View>
+        )}
+      </Card>
+
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={customerModalVisible}
+        onRequestClose={() => setCustomerModalVisible(false)}
+      >
+        <View style={styles.modalCenteredView}>
+          <View
+            style={[
+              styles.modalView,
+              { backgroundColor: getBackgroundColor(colorScheme) },
+            ]}
+          >
+            <CardTitle>Search Existing Customer</CardTitle>
+            <TextInput
+              style={themedInputStyle}
+              placeholder='Search by name or phone (min 2 chars)'
+              placeholderTextColor={placeholderTextColor}
+              value={customerSearchQuery}
+              onChangeText={handleCustomerSearch}
+              autoFocus
+            />
+            {isSearchingCustomers && (
+              <ActivityIndicator
+                style={{ marginVertical: 10 }}
+                color={
+                  colorScheme === 'dark' ? Colors.dark.text : Colors.light.text
+                }
+              />
+            )}
+            <FlatList
+              data={searchedCustomers}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.searchResultItem,
+                    { borderBottomColor: getBorderColor(colorScheme) },
+                  ]}
+                  onPress={() => handleSelectSearchedCustomer(item)}
+                >
+                  <Text style={{ color: getTextColor(colorScheme) }}>
+                    {item.firstName} {item.lastName} (
+                    {item.defaultPhone?.number || item.phone || 'No phone'})
+                  </Text>
+                </TouchableOpacity>
+              )}
+              ListEmptyComponent={
+                !isSearchingCustomers && customerSearchQuery.length > 1 ? (
+                  <Text
+                    style={{
+                      color: getTextColor(colorScheme),
+                      textAlign: 'center',
+                      marginVertical: 10,
+                    }}
+                  >
+                    No customers found.
+                  </Text>
+                ) : null
+              }
+              style={{ maxHeight: 200 }}
+            />
+            <PrimaryButton
+              title='Close'
+              onPress={() => setCustomerModalVisible(false)}
+              style={{ marginTop: 15 }}
+            />
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={newCustomerModalVisible}
+        onRequestClose={handleCancelNewCustomerModal}
+      >
+        <View style={styles.modalCenteredView}>
+          <View
+            style={[
+              styles.modalView,
+              { backgroundColor: getBackgroundColor(colorScheme) },
+            ]}
+          >
+            <CardTitle>Add New Customer</CardTitle>
+            <LabelText>
+              First Name{' '}
+              <Text style={{ color: useThemeColor({}, 'errorText') }}>*</Text>
+            </LabelText>
             <TextInput
               style={themedInputStyle}
               placeholder='Enter first name'
@@ -391,7 +634,10 @@ export default function CreateJobScreen() {
               autoCapitalize='none'
               editable={!loading}
             />
-            <LabelText>Phone Number</LabelText>
+            <LabelText>
+              Phone Number{' '}
+              <Text style={{ color: useThemeColor({}, 'errorText') }}>*</Text>
+            </LabelText>
             <TextInput
               style={themedInputStyle}
               placeholder='Enter phone number'
@@ -406,121 +652,24 @@ export default function CreateJobScreen() {
               keyboardType='phone-pad'
               editable={!loading}
             />
-            <OutlinedButton
-              title='Cancel New Customer'
-              onPress={() => {
-                setIsNewCustomer(false);
-                setCustomerForm({});
-              }}
-            />
-          </View>
-        )}
-
-        {selectedCustomer && (
-          <View>
-            <Text style={[styles.customerDetailText, { color: getTextColor(colorScheme) }]}>
-              Name: {selectedCustomer.firstName} {selectedCustomer.lastName}
-            </Text>
-            <Text style={[styles.customerDetailText, { color: getTextColor(colorScheme) }]}>
-              Email: {selectedCustomer.email || 'N/A'}
-            </Text>
-            <Text style={[styles.customerDetailText, { color: getTextColor(colorScheme) }]}>
-              Phone:{' '}
-              {selectedCustomer.phone ||
-                selectedCustomer.defaultPhone?.number ||
-                'N/A'}
-            </Text>
             <View style={styles.buttonRow}>
               <OutlinedButton
-                title='Edit'
-                onPress={() => {
-                  setCustomerForm({
-                    firstName: selectedCustomer.firstName,
-                    lastName: selectedCustomer.lastName,
-                    email: selectedCustomer.email,
-                    phone:
-                      selectedCustomer.phone ||
-                      selectedCustomer.defaultPhone?.number,
-                  });
-                  setSelectedCustomer(null);
-                  setIsNewCustomer(true);
-                }}
+                title='Cancel'
+                onPress={handleCancelNewCustomerModal}
                 style={styles.flexButton}
               />
               <View style={{ width: 10 }} />
-              <OutlinedButton
-                title='Clear'
-                onPress={() => {
-                  setSelectedCustomer(null);
-                  setCustomerForm({});
-                  setIsNewCustomer(false);
-                  setCustomerCars([]);
-                  setSelectedCar(null);
-                  setCarForm({});
-                  setIsNewCar(false);
-                }}
+              <PrimaryButton
+                title='Save Customer'
+                onPress={handleSaveNewCustomer}
                 style={styles.flexButton}
               />
             </View>
           </View>
-        )}
-      </View>
-
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={customerModalVisible}
-        onRequestClose={() => setCustomerModalVisible(false)}
-      >
-        <View style={styles.modalCenteredView}>
-          <View
-            style={[
-              styles.modalView,
-              { backgroundColor: getBackgroundColor(colorScheme) },
-            ]}
-          >
-            <CardTitle>Search Existing Customer</CardTitle>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='Search by name or phone (min 2 chars)'
-              placeholderTextColor={placeholderTextColor}
-              value={customerSearchQuery}
-              onChangeText={handleCustomerSearch}
-              autoFocus
-            />
-            {isSearchingCustomers && <ActivityIndicator style={{ marginVertical: 10 }} />}
-            <FlatList
-              data={searchedCustomers}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[styles.searchResultItem, { borderBottomColor: getBorderColor(colorScheme) }]}
-                  onPress={() => handleSelectSearchedCustomer(item)}
-                >
-                  <Text style={{ color: getTextColor(colorScheme) }}>
-                    {item.firstName} {item.lastName} ({item.defaultPhone?.number || item.phone || 'No phone'})
-                  </Text>
-                </TouchableOpacity>
-              )}
-              ListEmptyComponent={
-                !isSearchingCustomers && customerSearchQuery.length > 1 ? (
-                  <Text style={{ color: getTextColor(colorScheme), textAlign: 'center', marginVertical: 10 }}>
-                    No customers found.
-                  </Text>
-                ) : null
-              }
-              style={{ maxHeight: 200 }} 
-            />
-            <PrimaryButton
-              title='Close'
-              onPress={() => setCustomerModalVisible(false)}
-              style={{ marginTop: 15 }}
-            />
-          </View>
         </View>
       </Modal>
 
-      <View style={[styles.card, { backgroundColor: getInputBackgroundColor(colorScheme) }]}>
+      <Card>
         <CardTitle>Arrival Time</CardTitle>
         <TouchableOpacity onPress={() => setShowDateTimePicker(true)}>
           <Text style={themedInputStyle}>
@@ -538,132 +687,334 @@ export default function CreateJobScreen() {
             onChange={handleDateTimeChange}
           />
         )}
-      </View>
+      </Card>
 
-      <View
-        style={[
-          styles.card, { backgroundColor: getInputBackgroundColor(colorScheme) },
-          !customerSectionActive && styles.disabledCard,
-        ]}
-      >
+      <Card style={[!customerSectionActive && styles.disabledCard]}>
         <CardTitle>Car Details</CardTitle>
         {!customerSectionActive ? (
-          <Text style={{color: getTextColor(colorScheme)}}>Please select or create a customer first.</Text>
+          <Text style={{ color: getTextColor(colorScheme) }}>
+            Please select or create a customer first.
+          </Text>
         ) : selectedCar ? (
           <View>
-            <Text style={[styles.customerDetailText, { color: getTextColor(colorScheme) }]}>
-              {selectedCar.year} {selectedCar.make} {selectedCar.model} ({selectedCar.color})
+            <Text
+              style={[
+                styles.customerDetailText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              {selectedCar.year} {selectedCar.make} {selectedCar.model} (
+              {selectedCar.color})
             </Text>
-            <Text style={[styles.customerDetailText, { color: getTextColor(colorScheme) }]}>
-              Plate: {selectedCar.plate} {selectedCar.vin && `VIN: ${selectedCar.vin}`}
+            <Text
+              style={[
+                styles.customerDetailText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              Plate: {selectedCar.plate}{' '}
+              {selectedCar.vin && `VIN: ${selectedCar.vin}`}
             </Text>
-            <OutlinedButton title="Clear Car" onPress={() => { setSelectedCar(null); setCarForm({}); setIsNewCar(true); }} />
+            <OutlinedButton
+              title='Clear Car'
+              onPress={() => {
+                setSelectedCar(null);
+                setCarForm({});
+                setIsNewCar(true);
+              }}
+            />
           </View>
         ) : isNewCar || customerCars.length === 0 ? (
           <View>
             <LabelText>Make</LabelText>
-            <TextInput style={themedInputStyle} placeholder="e.g., Toyota" value={carForm.make || ''} onChangeText={text => setCarForm(prev => ({...prev, make: text}))} editable={!loading} />
+            <TextInput
+              style={themedInputStyle}
+              placeholder='e.g., Toyota'
+              placeholderTextColor={placeholderTextColor}
+              value={carForm.make || ''}
+              onChangeText={(text) =>
+                setCarForm((prev) => ({ ...prev, make: text }))
+              }
+              editable={!loading}
+            />
             <LabelText>Model</LabelText>
-            <TextInput style={themedInputStyle} placeholder="e.g., Camry" value={carForm.model || ''} onChangeText={text => setCarForm(prev => ({...prev, model: text}))} editable={!loading} />
+            <TextInput
+              style={themedInputStyle}
+              placeholder='e.g., Camry'
+              placeholderTextColor={placeholderTextColor}
+              value={carForm.model || ''}
+              onChangeText={(text) =>
+                setCarForm((prev) => ({ ...prev, model: text }))
+              }
+              editable={!loading}
+            />
             <LabelText>Year</LabelText>
-            <TextInput style={themedInputStyle} placeholder="e.g., 2021" value={carForm.year?.toString() || ''} onChangeText={text => setCarForm(prev => ({...prev, year: parseInt(text.replace(/[^0-9]/g, '')) || undefined }))} keyboardType="number-pad" maxLength={4} editable={!loading} />
+            <TextInput
+              style={themedInputStyle}
+              placeholder='e.g., 2021'
+              placeholderTextColor={placeholderTextColor}
+              value={carForm.year?.toString() || ''}
+              onChangeText={(text) =>
+                setCarForm((prev) => ({
+                  ...prev,
+                  year: parseInt(text.replace(/[^0-9]/g, '')) || undefined,
+                }))
+              }
+              keyboardType='number-pad'
+              maxLength={4}
+              editable={!loading}
+            />
             <LabelText>Color</LabelText>
-            <TextInput style={themedInputStyle} placeholder="e.g., Blue" value={carForm.color || ''} onChangeText={text => setCarForm(prev => ({...prev, color: text}))} editable={!loading} />
+            <TextInput
+              style={themedInputStyle}
+              placeholder='e.g., Blue'
+              placeholderTextColor={placeholderTextColor}
+              value={carForm.color || ''}
+              onChangeText={(text) =>
+                setCarForm((prev) => ({ ...prev, color: text }))
+              }
+              editable={!loading}
+            />
             <LabelText>License Plate</LabelText>
-            <TextInput style={themedInputStyle} placeholder="Enter license plate" value={carForm.plate || ''} onChangeText={text => setCarForm(prev => ({...prev, plate: text}))} autoCapitalize="characters" editable={!loading} />
+            <TextInput
+              style={themedInputStyle}
+              placeholder='Enter license plate'
+              placeholderTextColor={placeholderTextColor}
+              value={carForm.plate || ''}
+              onChangeText={(text) =>
+                setCarForm((prev) => ({ ...prev, plate: text }))
+              }
+              autoCapitalize='characters'
+              editable={!loading}
+            />
             <LabelText>VIN (Optional)</LabelText>
-            <TextInput style={themedInputStyle} placeholder="Enter VIN" value={carForm.vin || ''} onChangeText={text => setCarForm(prev => ({...prev, vin: text}))} autoCapitalize="characters" maxLength={17} editable={!loading} />
-            {customerCars.length > 0 && <OutlinedButton title="Cancel New Car" onPress={() => setIsNewCar(false)} />}
+            <TextInput
+              style={themedInputStyle}
+              placeholder='Enter VIN'
+              placeholderTextColor={placeholderTextColor}
+              value={carForm.vin || ''}
+              onChangeText={(text) =>
+                setCarForm((prev) => ({ ...prev, vin: text }))
+              }
+              autoCapitalize='characters'
+              maxLength={17}
+              editable={!loading}
+            />
+            {customerCars.length > 0 && (
+              <OutlinedButton
+                title='Cancel New Car'
+                onPress={() => setIsNewCar(false)}
+              />
+            )}
           </View>
         ) : (
           <View>
-            {customerCars.map(car => (
-              <TouchableOpacity 
-                key={car.id} 
-                style={[styles.listItem, { borderBottomColor: getBorderColor(colorScheme) }]}
-                onPress={() => { setSelectedCar(car); setIsNewCar(false); setCarForm({}); }}
+            {customerCars.map((car) => (
+              <TouchableOpacity
+                key={car.id}
+                style={[
+                  styles.listItem,
+                  { borderBottomColor: getBorderColor(colorScheme) },
+                ]}
+                onPress={() => {
+                  setSelectedCar(car);
+                  setIsNewCar(false);
+                  setCarForm({});
+                }}
               >
-                <Text style={{color: getTextColor(colorScheme)}}>{car.year} {car.make} {car.model} - {car.plate}</Text>
+                <Text style={{ color: getTextColor(colorScheme) }}>
+                  {car.year} {car.make} {car.model} - {car.plate}
+                </Text>
               </TouchableOpacity>
             ))}
-            <PrimaryButton title="Add New Vehicle" onPress={() => { setIsNewCar(true); setSelectedCar(null); setCarForm({}); }} style={{marginTop: 10}} />
+            <PrimaryButton
+              title='Add New Vehicle'
+              onPress={() => {
+                setIsNewCar(true);
+                setSelectedCar(null);
+                setCarForm({});
+              }}
+              style={{ marginTop: 10 }}
+            />
           </View>
         )}
-      </View>
+      </Card>
 
-      <View style={[styles.card, { backgroundColor: getInputBackgroundColor(colorScheme) }]}>
+      <Card>
         <CardTitle>Service Address</CardTitle>
         <LabelText>Address Line 1</LabelText>
-        <TextInput style={themedInputStyle} placeholder="Enter address line 1" value={addressForm.address_1 || ''} onChangeText={text => setAddressForm(prev => ({...prev, address_1: text}))} editable={!loading} />
+        <TextInput
+          style={themedInputStyle}
+          placeholder='Enter address line 1'
+          placeholderTextColor={placeholderTextColor}
+          value={addressForm.address_1 || ''}
+          onChangeText={(text) =>
+            setAddressForm((prev) => ({ ...prev, address_1: text }))
+          }
+          editable={!loading}
+        />
         <LabelText>Address Line 2 (Optional)</LabelText>
-        <TextInput style={themedInputStyle} placeholder="Enter address line 2" value={addressForm.address_2 || ''} onChangeText={text => setAddressForm(prev => ({...prev, address_2: text}))} editable={!loading} />
+        <TextInput
+          style={themedInputStyle}
+          placeholder='Enter address line 2'
+          placeholderTextColor={placeholderTextColor}
+          value={addressForm.address_2 || ''}
+          onChangeText={(text) =>
+            setAddressForm((prev) => ({ ...prev, address_2: text }))
+          }
+          editable={!loading}
+        />
         <LabelText>City</LabelText>
-        <TextInput style={themedInputStyle} placeholder="Enter city" value={addressForm.city || ''} onChangeText={text => setAddressForm(prev => ({...prev, city: text}))} editable={!loading} />
+        <TextInput
+          style={themedInputStyle}
+          placeholder='Enter city'
+          placeholderTextColor={placeholderTextColor}
+          value={addressForm.city || ''}
+          onChangeText={(text) =>
+            setAddressForm((prev) => ({ ...prev, city: text }))
+          }
+          editable={!loading}
+        />
         <LabelText>State</LabelText>
-        <TextInput style={themedInputStyle} placeholder="e.g., CA" value={addressForm.state || ''} onChangeText={text => setAddressForm(prev => ({...prev, state: text.toUpperCase()}))} autoCapitalize="characters" maxLength={2} editable={!loading} />
+        <TextInput
+          style={themedInputStyle}
+          placeholder='e.g., CA'
+          placeholderTextColor={placeholderTextColor}
+          value={addressForm.state || ''}
+          onChangeText={(text) =>
+            setAddressForm((prev) => ({ ...prev, state: text.toUpperCase() }))
+          }
+          autoCapitalize='characters'
+          maxLength={2}
+          editable={!loading}
+        />
         <LabelText>Zipcode</LabelText>
-        <TextInput style={themedInputStyle} placeholder="Enter zipcode" value={addressForm.zipcode?.toString() || ''} onChangeText={text => setAddressForm(prev => ({...prev, zipcode: parseInt(text.replace(/[^0-9]/g, '')) || undefined}))} keyboardType="number-pad" maxLength={5} editable={!loading} />
-      </View>
+        <TextInput
+          style={themedInputStyle}
+          placeholder='Enter zipcode'
+          placeholderTextColor={placeholderTextColor}
+          value={addressForm.zipcode?.toString() || ''}
+          onChangeText={(text) =>
+            setAddressForm((prev) => ({
+              ...prev,
+              zipcode: parseInt(text.replace(/[^0-9]/g, '')) || undefined,
+            }))
+          }
+          keyboardType='number-pad'
+          maxLength={5}
+          editable={!loading}
+        />
+      </Card>
 
-      <View style={[styles.card, { backgroundColor: getInputBackgroundColor(colorScheme), zIndex: 1000 }]}>
+      <Card>
         <CardTitle>Line Items</CardTitle>
         {lineItems.map((item, index) => {
-          const service = services.find(s => s.id === item.ServiceId);
+          const service = services.find((s) => s.id === item.ServiceId);
           return (
-            <View key={index} style={styles.lineItemRow}>
-              <Text style={[styles.lineItemText, {color: getTextColor(colorScheme)}]}>{service?.name || 'Unknown Service'}</Text>
-              <Text style={[styles.lineItemText, {color: getTextColor(colorScheme)}]}>{centsToDollars(item.price)}</Text>
+            <View
+              key={index}
+              style={[
+                styles.lineItemRow,
+                { borderBottomColor: getBorderColor(colorScheme) },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.lineItemText,
+                  { color: getTextColor(colorScheme), width: 100 },
+                ]}
+              >
+                {service?.name || 'Unknown Service'}
+              </Text>
+              <Text
+                style={[
+                  styles.lineItemText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                {centsToDollars(item.price)}
+              </Text>
               <TouchableOpacity onPress={() => handleRemoveLineItem(index)}>
-                <MaterialIcons name="delete" size={24} color={getTextColor(colorScheme)} />
+                <MaterialIcons
+                  name='delete'
+                  size={24}
+                  color={getTextColor(colorScheme)}
+                />
               </TouchableOpacity>
             </View>
           );
         })}
-        {lineItems.length === 0 && <Text style={{color: getTextColor(colorScheme), textAlign: 'center', marginVertical: 10}}>No services added yet.</Text>}
-        
-        <View style={{marginTop: 15}}>
-            <LabelText>Service</LabelText>
-            <DropDownPicker
-                open={serviceDropdownOpen}
-                value={selectedServiceIdForNewLineItem}
-                items={allServicesForDropdown}
-                setOpen={setServiceDropdownOpen}
-                setValue={setSelectedServiceIdForNewLineItem}
-                setItems={setAllServicesForDropdown}
-                placeholder="Choose a service..."
-                style={[styles.dropdown, { backgroundColor: getInputBackgroundColor(colorScheme), borderColor: getBorderColor(colorScheme) }]}
-                textStyle={{ color: getTextColor(colorScheme) }}
-                placeholderStyle={{ color: getPlaceholderTextColor(colorScheme) }}
-                dropDownContainerStyle={[styles.dropdownContainer, { backgroundColor: getInputBackgroundColor(colorScheme), borderColor: getBorderColor(colorScheme) }]}
-                theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
-                listMode="SCROLLVIEW" // Or "SCROLLVIEW" if preferred
-                zIndex={3000} // Ensure dropdown is above other elements
-                zIndexInverse={1000}
-            />
+        {lineItems.length === 0 && (
+          <Text
+            style={{
+              color: getTextColor(colorScheme),
+              textAlign: 'center',
+              marginVertical: 10,
+            }}
+          >
+            No services added yet.
+          </Text>
+        )}
+
+        <View style={{ marginTop: 15 }}>
+          <LabelText>Service</LabelText>
+          <DropDownPicker
+            open={serviceDropdownOpen}
+            value={selectedServiceIdForNewLineItem}
+            items={allServicesForDropdown}
+            setOpen={setServiceDropdownOpen}
+            setValue={setSelectedServiceIdForNewLineItem}
+            setItems={setAllServicesForDropdown}
+            placeholder='Choose a service...'
+            style={[
+              styles.dropdown,
+              {
+                backgroundColor: getInputBackgroundColor(colorScheme),
+                borderColor: getBorderColor(colorScheme),
+              },
+            ]}
+            textStyle={{ color: getTextColor(colorScheme) }}
+            placeholderStyle={{ color: getPlaceholderTextColor(colorScheme) }}
+            dropDownContainerStyle={[
+              styles.dropdownContainer,
+              {
+                backgroundColor: getInputBackgroundColor(colorScheme),
+                borderColor: getBorderColor(colorScheme),
+              },
+            ]}
+            theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
+            listMode='SCROLLVIEW'
+            zIndex={3000}
+            zIndexInverse={1000}
+          />
         </View>
 
-        <View style={{marginTop: serviceDropdownOpen ? 150 : 15}}> {/* Adjust margin if dropdown is open */}
-            <CurrencyInput
-                label="Price ($USD)"
-                value={currentLineItemPrice}
-                onChangeText={setCurrentLineItemPrice}
-                editable={!loading}
-                // Pass theme-related props if CurrencyInput supports them, or wrap it
-            />
+        <View style={{ marginTop: serviceDropdownOpen ? 150 : 15 }}>
+          <CurrencyInput
+            label='Price ($USD)'
+            value={currentLineItemPrice}
+            onChangeText={setCurrentLineItemPrice}
+            editable={!loading}
+          />
         </View>
-        <PrimaryButton title="Add Service Item" onPress={handleAddLineItem} style={{marginTop: 10}} disabled={!selectedServiceIdForNewLineItem || loading} />
-      </View>
+        <PrimaryButton
+          title='Add Service Item'
+          onPress={handleAddLineItem}
+          style={{ marginTop: 10 }}
+          disabled={!selectedServiceIdForNewLineItem || loading}
+        />
+      </Card>
 
-      <View style={[styles.card, { backgroundColor: getInputBackgroundColor(colorScheme) }]}>
+      <Card>
         <CardTitle>Technician</CardTitle>
-        <Text style={{color: getTextColor(colorScheme)}}>
+        <Text style={{ color: getTextColor(colorScheme) }}>
           {currentUser
             ? currentUser.firstName + ' ' + currentUser.lastName
             : 'Loading...'}
         </Text>
-      </View>
+      </Card>
 
-      <View style={[styles.card, { backgroundColor: getInputBackgroundColor(colorScheme) }]}>
+      <Card>
         <CardTitle>Additional Info</CardTitle>
         <TextInput
           value={notes}
@@ -675,7 +1026,7 @@ export default function CreateJobScreen() {
           numberOfLines={4}
           editable={!loading}
         />
-      </View>
+      </Card>
 
       <PrimaryButton
         title={loading ? 'Creating Job...' : 'Create Job'}
@@ -697,18 +1048,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
   },
-  card: {
-    marginHorizontal: 15,
-    marginBottom: 15,
-    padding: 15,
-    borderRadius: 8,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-  },
+  // card: { // This style is now handled by the Card component
+  //   marginHorizontal: 15,
+  //   marginBottom: 15,
+  //   padding: 15,
+  //   borderRadius: 8,
+  //   elevation: 2,
+  //   shadowColor: '#000',
+  //   shadowOffset: { width: 0, height: 1 },
+  //   shadowOpacity: 0.2,
+  //   shadowRadius: 1.41,
+  // },
   disabledCard: {
+    // Keep this for applying opacity to the Card component
     opacity: 0.5,
   },
   textArea: {
@@ -770,16 +1122,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    // borderBottomColor will be set dynamically or by a Themed.View
   },
   lineItemText: {
     fontSize: 16,
     flex: 1,
   },
-  dropdown: {
-    // backgroundColor and borderColor are set inline
-  },
-  dropdownContainer: {
-    // backgroundColor and borderColor are set inline
-  },
+  dropdown: {},
+  dropdownContainer: {},
 });

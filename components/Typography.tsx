@@ -10,10 +10,10 @@ type TypographyProps = {
 };
 
 export const LabelText = ({ children, style }: TypographyProps) => {
-  const colorScheme = useColorScheme();
-  const textColor = colorScheme === 'dark' ? Colors.dark.text : '#424242';
-  
-  return <ThemedText style={[styles.label, { color: textColor }, style]}>{children}</ThemedText>;
+  // ThemedText will handle its own color based on the theme.
+  // No need to explicitly set textColor here if we want standard text color.
+  // If a specific label color different from default text is desired, it should be in Colors.ts
+  return <ThemedText style={[styles.label, style]}>{children}</ThemedText>;
 };
 
 export const HeaderText = ({ children, style }: TypographyProps) => {

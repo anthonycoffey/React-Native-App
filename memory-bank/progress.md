@@ -59,6 +59,12 @@ This document tracks what works, what's left to build, the current status, known
 - **Comment Item Condensed Layout:**
     - Updated `components/job/CommentItem.tsx` to reduce padding, margins, font sizes, and line heights for a more compact appearance.
     - Corrected the import path for the `User` type in `components/job/CommentItem.tsx` from `contexts/AuthContext` to `types`, resolving a TypeScript error.
+- **Card Component Standardization:**
+    - Relocated `Card.tsx` to `components/Card.tsx` (from `components/common/`).
+    - Refactored `Card.tsx` for consistent theming: uses page background, theme-aware border, and theme-aware shadow (new `shadow` color added to `constants/Colors.ts`).
+    - Standardized `Card` usage in `app/dashboard/create-job.tsx` by replacing local card styles.
+    - Updated `app/dashboard/account.tsx` to use the new `Card` import and ensured its internal text elements are themed correctly.
+    - Ensured `LabelText` in `components/Typography.tsx` uses themed text color.
 
 ## What's Left to Build
 
