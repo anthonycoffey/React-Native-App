@@ -4,11 +4,7 @@ import { View as ThemedView, ViewProps } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useThemeColor, getBorderColor } from '@/hooks/useThemeColor';
 
-export interface CardProps extends ViewProps {
-  // Add any specific card props if needed in the future
-}
-
-const Card: React.FC<CardProps> = ({ style, children, ...otherProps }) => {
+const Card: React.FC<ViewProps> = ({ style, children, ...otherProps }) => {
   const colorScheme = useColorScheme() ?? 'light';
   const cardBackgroundColor = useThemeColor({}, 'background');
   const cardBorderColor = getBorderColor(colorScheme);

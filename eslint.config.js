@@ -1,5 +1,10 @@
 // https://docs.expo.dev/guides/using-eslint/
-module.exports = {
-  extends: 'expo',
-  ignorePatterns: ['/dist/*'],
-};
+const { defineConfig } = require('eslint/config');
+const expoConfig = require("eslint-config-expo/flat");
+
+module.exports = defineConfig([
+  expoConfig,
+  {
+    ignores: ["dist/*"],
+  }
+]);

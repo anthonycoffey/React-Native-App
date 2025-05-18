@@ -1,8 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, FlatList, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  StyleSheet,
+  FlatList,
+  Alert,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getBackgroundColor, getBorderColor, getTextColor } from '@/hooks/useThemeColor';
+import {
+  getBackgroundColor,
+  getBorderColor,
+  getTextColor,
+} from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
 import Card from '@/components/Card';
 import globalStyles from '@/styles/globalStyles';
@@ -45,24 +55,18 @@ interface SingleDeposit {
 export default function SingleDepositScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme() ?? 'light';
-  const themedActivityIndicatorColor = colorScheme === 'dark' ? Colors.dark.text : Colors.light.tint;
+  const themedActivityIndicatorColor =
+    colorScheme === 'dark' ? Colors.dark.text : Colors.light.tint;
 
   const [deposit, setDeposit] = useState<SingleDeposit | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (id) {
-      loadDepositDetails();
-    } else {
-      Alert.alert("Error", "Deposit ID is missing.");
-      setLoading(false);
-    }
-  }, [id]);
-
-  const loadDepositDetails = async () => {
+  const loadDepositDetails = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await apiService.get<SingleDeposit>(`/cash/deposits/${id}`);
+      const response = await apiService.get<SingleDeposit>(
+        `/cash/deposits/${id}`
+      );
       setDeposit(response);
     } catch (error) {
       console.error(`Failed to load deposit ${id}:`, error);
@@ -71,10 +75,28 @@ export default function SingleDepositScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
-  const renderCashIntakeItem = ({ item }: { item: CashIntakeForSingleDeposit }) => (
-    <ThemedView style={[localStyles.intakeItemRow, { borderBottomColor: getBorderColor(colorScheme) }]}>
+  useEffect(() => {
+    if (id) {
+      loadDepositDetails();
+    } else {
+      Alert.alert('Error', 'Deposit ID is missing.');
+      setLoading(false);
+    }
+  }, [id, loadDepositDetails]);
+
+  const renderCashIntakeItem = ({
+    item,
+  }: {
+    item: CashIntakeForSingleDeposit;
+  }) => (
+    <ThemedView
+      style={[
+        localStyles.intakeItemRow,
+        { borderBottomColor: getBorderColor(colorScheme) },
+      ]}
+    >
       <Text>Amount: {centsToDollars(item.amount)}</Text>
       <Text>Owed: {centsToDollars(item.owed)}</Text>
       <Text>Date: {formatDateTime(item.createdAt)}</Text>
@@ -84,7 +106,17 @@ export default function SingleDepositScreen() {
 
   if (loading) {
     return (
-      <ThemedView style={[globalStyles.container, { justifyContent: 'center', alignItems: 'center', flex: 1, backgroundColor: getBackgroundColor(colorScheme) }]}>
+      <ThemedView
+        style={[
+          globalStyles.container,
+          {
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 1,
+            backgroundColor: getBackgroundColor(colorScheme),
+          },
+        ]}
+      >
         <ActivityIndicator size="large" color={themedActivityIndicatorColor} />
       </ThemedView>
     );
@@ -92,36 +124,65 @@ export default function SingleDepositScreen() {
 
   if (!deposit) {
     return (
-      <ThemedView style={[globalStyles.container, { backgroundColor: getBackgroundColor(colorScheme), justifyContent: 'center', alignItems: 'center', flex:1 }]}>
+      <ThemedView
+        style={[
+          globalStyles.container,
+          {
+            backgroundColor: getBackgroundColor(colorScheme),
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 1,
+          },
+        ]}
+      >
         <Text style={globalStyles.title}>Deposit Not Found</Text>
-        <Text style={{ textAlign: 'center' }}>Could not load details for deposit CD-{id}.</Text>
+        <Text style={{ textAlign: 'center' }}>
+          Could not load details for deposit CD-{id}.
+        </Text>
       </ThemedView>
     );
   }
 
   return (
-    <ScrollView 
-      style={[{ flex: 1 }, { backgroundColor: getBackgroundColor(colorScheme) }]}
-      contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 10 }}
+    <ScrollView
+      style={[
+        { flex: 1 },
+        { backgroundColor: getBackgroundColor(colorScheme) },
+      ]}
+      contentContainerStyle={{
+        flexGrow: 1,
+        justifyContent: 'center',
+        padding: 10,
+      }}
     >
       <Text style={globalStyles.title}>Deposit Details: CD-{deposit.id}</Text>
-      
+
       <Card>
-        <Text style={[localStyles.label, { color: getTextColor(colorScheme) }]}>Deposited Amount:</Text>
-        <Text style={[localStyles.value, { color: getTextColor(colorScheme) }]}>{centsToDollars(deposit.amount)}</Text>
-        
-        <Text style={[localStyles.label, { color: getTextColor(colorScheme) }]}>Date:</Text>
-        <Text style={[localStyles.value, { color: getTextColor(colorScheme) }]}>{formatDateTime(deposit.createdAt)}</Text>
+        <Text style={[localStyles.label, { color: getTextColor(colorScheme) }]}>
+          Deposited Amount:
+        </Text>
+        <Text style={[localStyles.value, { color: getTextColor(colorScheme) }]}>
+          {centsToDollars(deposit.amount)}
+        </Text>
+
+        <Text style={[localStyles.label, { color: getTextColor(colorScheme) }]}>
+          Date:
+        </Text>
+        <Text style={[localStyles.value, { color: getTextColor(colorScheme) }]}>
+          {formatDateTime(deposit.createdAt)}
+        </Text>
       </Card>
 
       <Card>
-        <Text style={globalStyles.subtitle}>Cash Intakes ({deposit.CashIntakes?.length || 0})</Text>
+        <Text style={globalStyles.subtitle}>
+          Cash Intakes ({deposit.CashIntakes?.length || 0})
+        </Text>
         {deposit.CashIntakes && deposit.CashIntakes.length > 0 ? (
           <FlatList
             data={deposit.CashIntakes}
             renderItem={renderCashIntakeItem}
             keyExtractor={(item) => item.id.toString()}
-            scrollEnabled={false} 
+            scrollEnabled={false}
           />
         ) : (
           <Text>No cash intakes associated with this deposit.</Text>

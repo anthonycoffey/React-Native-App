@@ -26,7 +26,7 @@ interface AccountDetails {
 }
 
 export default function AccountScreen() {
-  const authContext = useAuth();
+  const auth = useAuth();
   const colorScheme = useColorScheme() ?? 'light';
   const [accountDetails, setAccountDetails] = useState<AccountDetails | null>(
     null
@@ -35,7 +35,7 @@ export default function AccountScreen() {
 
   useEffect(() => {
     const fetchAccountDetails = async () => {
-      if (!authContext || !authContext.currentUser) {
+      if (!auth || !auth.currentUser) {
         setIsLoading(false);
         return;
       }
@@ -52,13 +52,13 @@ export default function AccountScreen() {
     };
 
     fetchAccountDetails();
-  }, [authContext?.currentUser]);
+  }, [auth]);
 
   const handleLogout = () => {
     try {
       router.replace('/');
-      if (authContext) {
-        authContext.signOut();
+      if (auth) {
+        auth.signOut();
       } else {
         router.replace('/login');
       }

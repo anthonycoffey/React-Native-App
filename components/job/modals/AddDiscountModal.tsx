@@ -58,6 +58,7 @@ export default function AddDiscountModal({
       await onSave({ reason: reason.trim(), amount });
     } catch (error) {
       Alert.alert('Error', 'Failed to save discount.');
+      console.log('Error saving discount:', error);
     } finally {
       setIsLoading(false);
     }

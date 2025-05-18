@@ -37,9 +37,7 @@ const FileViewerModal = ({
   file: JobFile | null;
   onClose: () => void;
 }) => {
-  if (!file) return null;
-
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
   const styles = StyleSheet.create({
     modalContainer: {
       flex: 1,
@@ -77,6 +75,8 @@ const FileViewerModal = ({
     },
   });
 
+  if (!file) return null;
+
   return (
     <Modal
       animationType='slide'
@@ -100,7 +100,7 @@ const FileViewerModal = ({
             <ThemedText>Cannot preview this file type.</ThemedText>
           )}
           <PrimaryButton
-            title="Close"
+            title='Close'
             onPress={onClose}
             style={{ marginTop: 15 }}
           />
@@ -114,7 +114,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [isViewerModalVisible, setIsViewerModalVisible] = useState(false);
   const [fileToView, setFileToView] = useState<JobFile | null>(null);
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
 
   const styles = StyleSheet.create({
     container: {
@@ -182,7 +182,11 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
         type: ['&ast;/*'],
       });
 
-      if (result.canceled === false && result.assets && result.assets.length > 0) {
+      if (
+        result.canceled === false &&
+        result.assets &&
+        result.assets.length > 0
+      ) {
         await handleFileUploadInternal(result.assets);
       }
     } catch (err) {
@@ -191,7 +195,9 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     }
   };
 
-  const handleFileUploadInternal = async (assetsToUpload: DocumentPicker.DocumentPickerAsset[]) => {
+  const handleFileUploadInternal = async (
+    assetsToUpload: DocumentPicker.DocumentPickerAsset[]
+  ) => {
     if (!assetsToUpload || assetsToUpload.length === 0) {
       return;
     }
@@ -216,11 +222,19 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     } catch (error) {
       console.error('Upload error:');
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-        Alert.alert('Upload Error', `Failed to upload files. Server said: ${error.body?.message || error.message}`);
+        console.error(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
+        Alert.alert(
+          'Upload Error',
+          `Failed to upload files. Server said: ${error.body?.message || error.message}`
+        );
       } else {
         console.error('  An unexpected error occurred:', error);
-        Alert.alert('Upload Error', 'An unexpected error occurred while uploading files.');
+        Alert.alert(
+          'Upload Error',
+          'An unexpected error occurred while uploading files.'
+        );
       }
     } finally {
       setLoadingFiles(false);
@@ -236,11 +250,19 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     } catch (error) {
       console.error('Delete error:');
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-        Alert.alert('Delete Error', `Failed to delete file. Server said: ${error.body?.message || error.message}`);
+        console.error(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
+        Alert.alert(
+          'Delete Error',
+          `Failed to delete file. Server said: ${error.body?.message || error.message}`
+        );
       } else {
         console.error('  An unexpected error occurred:', error);
-        Alert.alert('Delete Error', 'An unexpected error occurred while deleting file.');
+        Alert.alert(
+          'Delete Error',
+          'An unexpected error occurred while deleting file.'
+        );
       }
     } finally {
       setLoadingFiles(false);
@@ -288,10 +310,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
                 style={styles.filePreviewContainer}
                 onPress={() => viewFile(file)}
               >
-                <Image
-                  source={{ uri: file.url }}
-                  style={styles.imagePreview}
-                />
+                <Image source={{ uri: file.url }} style={styles.imagePreview} />
                 <ThemedText
                   style={styles.fileName}
                   numberOfLines={2}
@@ -301,7 +320,16 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
                 </ThemedText>
                 <TouchableOpacity
                   onPress={() => promptDeleteFile(file)}
-                  style={[styles.deleteButton, { position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 12 }]}
+                  style={[
+                    styles.deleteButton,
+                    {
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      backgroundColor: 'rgba(0,0,0,0.5)',
+                      borderRadius: 12,
+                    },
+                  ]}
                 >
                   <MaterialIcons name='close' size={18} color='#fff' />
                 </TouchableOpacity>
@@ -340,7 +368,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
 
       <View style={styles.uploadSection}>
         <PrimaryButton
-          title="Upload File(s)"
+          title='Upload File(s)'
           onPress={pickDocument}
           disabled={loadingFiles}
           style={{ marginBottom: 10 }}

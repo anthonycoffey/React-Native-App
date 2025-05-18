@@ -50,7 +50,6 @@ export default function CustomerInfo({
     useState(false);
   const [isEditCarModalVisible, setIsEditCarModalVisible] = useState(false);
 
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setCustomerName(job.Customer?.fullName || '');

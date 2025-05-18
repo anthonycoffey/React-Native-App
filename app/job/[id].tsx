@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { Job } from '@/types';
 import JobStatus from '@/components/job/JobStatus';
@@ -30,7 +30,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 function LoadingSpinner(props: { loading: boolean }) {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
   const spinnerColor = colorScheme === 'dark' ? Colors.dark.tint : '#0a7ea4';
 
   return (
@@ -47,23 +47,12 @@ function LoadingSpinner(props: { loading: boolean }) {
 export default function JobPage() {
   const { id: jobIdParam } = useLocalSearchParams<{ id: string }>();
   const jobId = jobIdParam ? parseInt(jobIdParam, 10) : null;
-
-  const router = useRouter();
   const auth = useAuth();
-
-  if (!auth) {
-    return (
-      <ThemedView style={styles.loadingContainer}>
-        <ActivityIndicator size='large' color={Colors.light.tint} />
-      </ThemedView>
-    );
-  }
-  const { currentUser, isUserLoading: isAuthUserLoading } = auth;
+  const currentUser = auth?.currentUser;
   const currentUserId = currentUser?.id;
 
   const [loading, setLoading] = useState<boolean>(true);
   const [job, setJob] = useState<Job | null>(null);
-  const colorScheme = useColorScheme();
 
   const fetchJob = useCallback(async () => {
     if (!jobId) {
@@ -113,6 +102,14 @@ export default function JobPage() {
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size='large' />
         </ThemedView>
+      </ThemedView>
+    );
+  }
+
+  if (!auth) {
+    return (
+      <ThemedView style={styles.loadingContainer}>
+        <ActivityIndicator size='large' color={Colors.light.tint} />
       </ThemedView>
     );
   }

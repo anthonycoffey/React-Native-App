@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  Alert,
-  TouchableOpacity,
-  Modal,
-} from 'react-native';
+import { StyleSheet, Alert, TouchableOpacity, Modal } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { centsToDollars } from '@/utils/money';
@@ -17,18 +12,14 @@ import {
   OutlinedButton,
   PrimaryButton,
 } from '@/components/Buttons';
-import {
-  Job,
-  JobLineItems as JobLineItemsType,
-  Service,
-} from '@/types';
+import { Job, JobLineItems as JobLineItemsType, Service } from '@/types';
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import { 
-  getBackgroundColor, 
-  getBorderColor, 
-  getTextColor, 
-  getInputBackgroundColor 
+import {
+  getBackgroundColor,
+  getBorderColor,
+  getTextColor,
+  getInputBackgroundColor,
 } from '@/hooks/useThemeColor';
 
 type Props = {
@@ -61,7 +52,9 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await apiService.get<{ data: Service[] }>('/services?limit=all');
+        const response = await apiService.get<{ data: Service[] }>(
+          '/services?limit=all'
+        );
         const fetchedServices = response.data;
         setServices(fetchedServices);
         const items = fetchedServices.map((service: Service) => ({
@@ -72,11 +65,19 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       } catch (error) {
         console.error('Failed to fetch services:');
         if (error instanceof HttpError) {
-          console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-          Alert.alert('Error', `Failed to load services. Server said: ${error.body?.message || error.message}`);
+          console.error(
+            `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+          );
+          Alert.alert(
+            'Error',
+            `Failed to load services. Server said: ${error.body?.message || error.message}`
+          );
         } else {
           console.error('  An unexpected error occurred:', error);
-          Alert.alert('Error', 'An unexpected error occurred while loading services.');
+          Alert.alert(
+            'Error',
+            'An unexpected error occurred while loading services.'
+          );
         }
       }
     };
@@ -103,11 +104,19 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         } catch (error) {
           console.error('Failed to add line item:');
           if (error instanceof HttpError) {
-            console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-            Alert.alert('Error', `Failed to add line item. Server said: ${error.body?.message || error.message}`);
+            console.error(
+              `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+            );
+            Alert.alert(
+              'Error',
+              `Failed to add line item. Server said: ${error.body?.message || error.message}`
+            );
           } else {
             console.error('  An unexpected error occurred:', error);
-            Alert.alert('Error', 'An unexpected error occurred while adding line item.');
+            Alert.alert(
+              'Error',
+              'An unexpected error occurred while adding line item.'
+            );
           }
         }
       }
@@ -132,11 +141,19 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
             } catch (error) {
               console.error('Failed to delete line item:');
               if (error instanceof HttpError) {
-                console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-                Alert.alert('Error', `Failed to delete line item. Server said: ${error.body?.message || error.message}`);
+                console.error(
+                  `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+                );
+                Alert.alert(
+                  'Error',
+                  `Failed to delete line item. Server said: ${error.body?.message || error.message}`
+                );
               } else {
                 console.error('  An unexpected error occurred:', error);
-                Alert.alert('Error', 'An unexpected error occurred while deleting line item.');
+                Alert.alert(
+                  'Error',
+                  'An unexpected error occurred while deleting line item.'
+                );
               }
             }
           },
@@ -151,8 +168,8 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
     setSelectedServiceId(null);
   };
 
-  const colorScheme = useColorScheme();
-  
+  const colorScheme = useColorScheme() ?? 'light';
+
   return (
     <View style={[globalStyles.card, styles.container]}>
       <CardTitle>Services</CardTitle>
@@ -160,10 +177,13 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       {job.JobLineItems && job.JobLineItems.length > 0 ? (
         job.JobLineItems.map((item) =>
           item && item.Service ? (
-            <View key={item.id.toString()} style={[
-              styles.lineItem, 
-              { borderBottomColor: getBorderColor(colorScheme ?? 'light') }
-            ]}>
+            <View
+              key={item.id.toString()}
+              style={[
+                styles.lineItem,
+                { borderBottomColor: getBorderColor(colorScheme ?? 'light') },
+              ]}
+            >
               <Text
                 style={styles.serviceName}
                 numberOfLines={1}
@@ -184,10 +204,12 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           ) : null
         )
       ) : (
-        <Text style={[
-          styles.emptyText, 
-          { color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#666' }
-        ]}>
+        <Text
+          style={[
+            styles.emptyText,
+            { color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#666' },
+          ]}
+        >
           No services added yet.
         </Text>
       )}
@@ -198,15 +220,22 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
             style={styles.addButton}
             onPress={() => setShowModal(true)}
           >
-            <MaterialIcons 
-              name='add-circle' 
-              size={24} 
-              color={(colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'}
+            <MaterialIcons
+              name='add-circle'
+              size={24}
+              color={
+                (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'
+              }
             />
-            <Text style={[
-              styles.addButtonText,
-              { color: (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4' }
-            ]}>
+            <Text
+              style={[
+                styles.addButtonText,
+                {
+                  color:
+                    (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4',
+                },
+              ]}
+            >
               Add Service
             </Text>
           </TouchableOpacity>
@@ -232,10 +261,12 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         onRequestClose={() => setShowModal(false)}
       >
         <View style={styles.modalBackground}>
-          <View style={[
-            styles.modalContent,
-            { backgroundColor: getBackgroundColor(colorScheme ?? 'light') }
-          ]}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: getBackgroundColor(colorScheme ?? 'light') },
+            ]}
+          >
             <CardTitle>Add Line Item</CardTitle>
 
             <View style={styles.formContainer}>
@@ -250,19 +281,26 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                 placeholder='Choose a service...'
                 style={[
                   styles.dropdown,
-                  { 
-                    backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'),
-                    borderColor: getBorderColor(colorScheme ?? 'light')
-                  }
+                  {
+                    backgroundColor: getInputBackgroundColor(
+                      colorScheme ?? 'light'
+                    ),
+                    borderColor: getBorderColor(colorScheme ?? 'light'),
+                  },
                 ]}
                 textStyle={{ color: getTextColor(colorScheme ?? 'light') }}
-                placeholderStyle={{ color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#687076' }}
+                placeholderStyle={{
+                  color:
+                    (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#687076',
+                }}
                 dropDownContainerStyle={[
                   styles.dropdownContainer,
-                  { 
-                    backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'),
-                    borderColor: getBorderColor(colorScheme ?? 'light')
-                  }
+                  {
+                    backgroundColor: getInputBackgroundColor(
+                      colorScheme ?? 'light'
+                    ),
+                    borderColor: getBorderColor(colorScheme ?? 'light'),
+                  },
                 ]}
                 theme={(colorScheme ?? 'light') === 'dark' ? 'DARK' : 'LIGHT'}
               />
@@ -371,8 +409,7 @@ const styles = StyleSheet.create({
   dropdown: {
     borderRadius: 5,
   },
-  dropdownContainer: {
-  },
+  dropdownContainer: {},
   spacer: {
     height: 15,
   },

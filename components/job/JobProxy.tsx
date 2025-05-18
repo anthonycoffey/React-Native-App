@@ -69,6 +69,7 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
         await Linking.openURL(`sms:${job.proxy.ProxyNumber.number}`);
       } catch (error) {
         Alert.alert('Error', 'Could not open SMS app.');
+        console.log('Error opening SMS app:', error);
       }
     }
   };
@@ -79,6 +80,7 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
         await Linking.openURL(`tel:${job.proxy.ProxyNumber.number}`);
       } catch (error) {
         Alert.alert('Error', 'Could not open phone app.');
+        console.log('Error opening phone app:', error);
       }
     }
   };
@@ -101,6 +103,7 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
       Alert.alert('Success', 'Successfully set up proxy');
     } catch (error) {
       Alert.alert('Error', 'Failed to set up proxy. Please try again.');
+      console.log('Error setting up proxy:', error);
     } finally {
       setLoadingProxy(false);
     }
@@ -115,6 +118,7 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
       Alert.alert('Success', 'Proxy ended successfully');
     } catch (error) {
       Alert.alert('Error', 'Failed to end proxy. Please try again.');
+      console.log('Error ending proxy:', error);
     } finally {
       setLoadingProxy(false);
     }
@@ -142,6 +146,7 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
       Alert.alert('Success', 'Phone added successfully');
     } catch (error) {
       Alert.alert('Error', 'Failed to add phone. Please try again.');
+      console.log('Error adding phone:', error);
     } finally {
       setLoadingAddPhone(false);
     }

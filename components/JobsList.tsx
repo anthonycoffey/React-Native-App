@@ -35,7 +35,7 @@ const ListEmptyComponent = () => {
         <Text style={styles.emoji}>🎉</Text>
       </View>
       <Text type='subtitle' style={styles.emptyTitle}>
-        Looks like you're all caught up!
+        Looks like you are all caught up!
       </Text>
       <Text style={styles.emptyText}>
         No jobs found. Swipe down to refresh, and view new job assignments!

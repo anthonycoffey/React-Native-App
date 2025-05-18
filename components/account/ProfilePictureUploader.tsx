@@ -31,7 +31,6 @@ export default function ProfilePictureUploader() {
 
   const {
     currentUser,
-    fetchCurrentUser,
     isUserLoading: isAuthUserLoading,
   } = authContext;
 

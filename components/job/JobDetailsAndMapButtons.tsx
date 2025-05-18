@@ -12,7 +12,6 @@ import globalStyles from '@/styles/globalStyles';
 import geocodeAddress from '@/utils/geocode';
 import { location, Job, availableAppsProps } from '@/types';
 import { View, Text } from '@/components/Themed';
-import { useColorScheme } from '@/components/useColorScheme';
 
 type Props = {
   job: Job;
@@ -70,7 +69,6 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
     })();
   }, [location]);
 
-  const colorScheme = useColorScheme();
 
   return (
     <View style={[globalStyles.card, styles.container]}>

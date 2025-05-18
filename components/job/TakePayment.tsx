@@ -20,7 +20,6 @@ export default function TakePayment({
   job,
   fetchJob,
 }: Props): React.JSX.Element {
-  const [payWithCard, setPayWithCard] = useState<boolean>(false);
   const [payWithCash, setPayWithCash] = useState<boolean>(false);
   const [paymentType, setPaymentType] = useState<'cash' | 'card'>('card');
   const [amountToPay, setAmountToPay] = useState<string>('');
@@ -56,7 +55,6 @@ export default function TakePayment({
   }, [amountToPay, tipAmount]);
 
   const hidePaymentDialog = () => {
-    setPayWithCard(false);
     setPayWithCash(false);
   };
 

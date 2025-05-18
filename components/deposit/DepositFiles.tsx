@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { apiService, HttpError } from '@/utils/ApiService';
-import { MaterialIcons } from '@expo/vector-icons';
 import { Text as ThemedText, View as ThemedView } from '@/components/Themed';
 import { PrimaryButton } from '@/components/Buttons';
 import Colors from '@/constants/Colors';
@@ -47,7 +46,7 @@ const FileViewerModal = ({
   file: CashDepositFile | null;
   onClose: () => void;
 }) => {
-  if (!file) return null;
+
 
   const colorScheme = useColorScheme() ?? 'light';
   const styles = StyleSheet.create({
@@ -71,6 +70,8 @@ const FileViewerModal = ({
       marginBottom: 20,
     },
   });
+
+  if (!file) return null;
 
   return (
     <Modal

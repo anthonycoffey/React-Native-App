@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -49,17 +49,30 @@ import * as Crypto from 'expo-crypto';
 
 const GEOCODING_API_KEY = process.env.EXPO_PUBLIC_GEOCODING_API_KEY;
 
-const manualDebounce = (func: (...args: any[]) => void, delay: number) => {
-  let timeoutId: number | null = null;
-  return (...args: any[]) => {
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
-};
+// Custom hook for debouncing
+function useDebounce<T extends (...args: any[]) => any>(
+  callback: T,
+  delay: number
+): (...args: Parameters<T>) => void {
+  const callbackRef = useRef<T>(callback);
+
+  // Update ref when callback changes
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  return useMemo(() => {
+    let timerId: number | null = null;
+    return (...args: Parameters<T>) => {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+      timerId = setTimeout(() => {
+        callbackRef.current(...args);
+      }, delay);
+    };
+  }, [delay]);
+}
 
 type CustomerFormData = Partial<
   Pick<Customer, 'firstName' | 'lastName' | 'email' | 'phone'>
@@ -161,30 +174,28 @@ export default function CreateJobScreen() {
     }
   }, [selectedServiceIdForNewLineItem, services]);
 
-  const debouncedSearch = useCallback(
-    manualDebounce(async (query: string) => {
-      if (query.trim().length < 2) {
-        setSearchedCustomers([]);
-        setIsSearchingCustomers(false);
-        return;
-      }
-      setIsSearchingCustomers(true);
-      try {
-        const response: Customer[] = await apiService.get(
-          `/customers/search?q=${encodeURIComponent(query)}`
-        );
+  const searchLogic = useCallback(async (query: string) => {
+    if (query.trim().length < 2) {
+      setSearchedCustomers([]);
+      setIsSearchingCustomers(false);
+      return;
+    }
+    setIsSearchingCustomers(true);
+    try {
+      const response: Customer[] = await apiService.get(
+        `/customers/search?q=${encodeURIComponent(query)}`
+      );
+      setSearchedCustomers(response);
+    } catch (error) {
+      console.error('Failed to search customers:', error);
+      Alert.alert('Error', 'Failed to search customers.');
+      setSearchedCustomers([]);
+    } finally {
+      setIsSearchingCustomers(false);
+    }
+  }, []); // All dependencies (setters, apiService, Alert) are stable
 
-        setSearchedCustomers(response);
-      } catch (error) {
-        console.error('Failed to search customers:', error);
-        Alert.alert('Error', 'Failed to search customers.');
-        setSearchedCustomers([]);
-      } finally {
-        setIsSearchingCustomers(false);
-      }
-    }, 500),
-    [colorScheme]
-  );
+  const debouncedSearch = useDebounce(searchLogic, 500);
 
   const handleCustomerSearch = (query: string) => {
     setCustomerSearchQuery(query);
@@ -227,7 +238,7 @@ export default function CreateJobScreen() {
       setIsNewCar(true);
       setSelectedCar(null);
     }
-  }, [customerCars, selectedCustomer, isNewCustomer]);
+  }, [customerCars, selectedCustomer, isNewCustomer, selectedCar]);
 
   const fetchCustomerCars = async (customerId: number) => {
     try {
@@ -258,7 +269,7 @@ export default function CreateJobScreen() {
   ];
   const placeholderTextColor = getPlaceholderTextColor(colorScheme);
 
-  const fetchAddressSuggestions = async (input: string) => {
+  const fetchAddressSuggestionsCore = useCallback(async (input: string) => {
     if (
       !input ||
       input.trim().length < 3 ||
@@ -293,11 +304,11 @@ export default function CreateJobScreen() {
     } finally {
       setIsFetchingAddressSuggestions(false);
     }
-  };
+  }, [placesSessionToken]); // GEOCODING_API_KEY is stable, setters are stable.
 
-  const debouncedFetchAddressSuggestions = useCallback(
-    manualDebounce(fetchAddressSuggestions, 700),
-    [GEOCODING_API_KEY, placesSessionToken]
+  const debouncedFetchAddressSuggestions = useDebounce(
+    fetchAddressSuggestionsCore,
+    700
   );
 
   const handleAddressInputChange = (text: string) => {

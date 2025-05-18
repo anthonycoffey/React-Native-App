@@ -17,7 +17,7 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
   const auth = useAuth();
   const router = useRouter();
   const headerShown = useClientOnlyValue(false, true);

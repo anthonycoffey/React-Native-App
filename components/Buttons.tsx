@@ -97,7 +97,7 @@ export const OutlinedButton = ({
   disabled,
   ...props
 }: ButtonProps & { disabled?: boolean }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
   const defaultTextColor =
     colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
 
@@ -174,7 +174,7 @@ export const ChipButton = ({
   disabled,
   ...props
 }: ButtonProps & { disabled?: boolean }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
   const defaultTextColor =
     colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
 

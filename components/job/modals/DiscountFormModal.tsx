@@ -134,7 +134,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
         setReason('');
       }
     }
-  }, [selectedDiscountCodeId, availableDiscountCodes]);
+  }, [selectedDiscountCodeId, availableDiscountCodes, reason]);
 
   useEffect(() => {
     if (discountType === 'percent') {

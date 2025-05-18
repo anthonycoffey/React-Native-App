@@ -9,10 +9,7 @@ import { CardTitle } from '@/components/Typography';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import {
-  getBorderColor,
-  getTextColor
-} from '@/hooks/useThemeColor';
+import { getBorderColor, getTextColor } from '@/hooks/useThemeColor';
 
 type ArrivalTimeProps = {
   timestamp?: string;
@@ -29,9 +26,7 @@ export default function ArrivalTime({
   const [time, setTime] = useState<string>('');
   const [updated, setUpdated] = useState<boolean>(false);
 
-  if (!timestamp) {
-    return null;
-  }
+  const colorScheme = useColorScheme() ?? 'light';
 
   const localeDateString = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -57,6 +52,10 @@ export default function ArrivalTime({
     }
   };
 
+  if (!timestamp) {
+    return null;
+  }
+
   const updateArrivalTime = async () => {
     let arrivalTime = ``;
     if (date && time) {
@@ -79,17 +78,23 @@ export default function ArrivalTime({
         setUpdated(false);
         console.error('Failed to update arrival time:');
         if (error instanceof HttpError) {
-          console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-          Alert.alert('Error', `Failed to update arrival time. Server said: ${error.body?.message || error.message}`);
+          console.error(
+            `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+          );
+          Alert.alert(
+            'Error',
+            `Failed to update arrival time. Server said: ${error.body?.message || error.message}`
+          );
         } else {
           console.error('  An unexpected error occurred:', error);
-          Alert.alert('Error', 'An unexpected error occurred while updating arrival time.');
+          Alert.alert(
+            'Error',
+            'An unexpected error occurred while updating arrival time.'
+          );
         }
       }
     }
   };
-
-  const colorScheme = useColorScheme();
 
   return (
     <View style={[globalStyles.card, styles.container]}>
@@ -114,23 +119,32 @@ export default function ArrivalTime({
 
         {Platform.OS === 'android' && (
           <View style={styles.androidContainer}>
-            <View style={[
-              styles.displayTimeContainer,
-              {
-                backgroundColor: (colorScheme ?? 'light') === 'dark' ? 'rgba(50, 50, 50, 0.5)' : 'rgba(224, 224, 224, 0.3)',
-                borderColor: getBorderColor(colorScheme ?? 'light')
-              }
-            ]}>
-              <Text style={[
-                styles.displayTime,
-                { color: getTextColor(colorScheme ?? 'light') }
-              ]}>
+            <View
+              style={[
+                styles.displayTimeContainer,
+                {
+                  backgroundColor:
+                    (colorScheme ?? 'light') === 'dark'
+                      ? 'rgba(50, 50, 50, 0.5)'
+                      : 'rgba(224, 224, 224, 0.3)',
+                  borderColor: getBorderColor(colorScheme ?? 'light'),
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.displayTime,
+                  { color: getTextColor(colorScheme ?? 'light') },
+                ]}
+              >
                 {date ? localeDateString(date) : localeDateString(timestamp)}
               </Text>
-              <Text style={[
-                styles.displayTime,
-                { color: getTextColor(colorScheme ?? 'light') }
-              ]}>
+              <Text
+                style={[
+                  styles.displayTime,
+                  { color: getTextColor(colorScheme ?? 'light') },
+                ]}
+              >
                 {time
                   ? new Date(time).toLocaleTimeString()
                   : new Date(timestamp).toLocaleTimeString()}

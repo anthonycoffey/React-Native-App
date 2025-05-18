@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  View,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -14,7 +13,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiService, HttpError } from '@/utils/ApiService';
-import { Text, View as ThemedView } from '@/components/Themed';
+import { Text, View } from '@/components/Themed';
 import { PrimaryButton } from '@/components/Buttons';
 import globalStyles from '@/styles/globalStyles';
 import { ErrorText } from '@/components/Typography';
