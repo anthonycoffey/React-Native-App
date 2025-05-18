@@ -63,7 +63,8 @@
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
         "NSLocationAlwaysUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
         "NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["location"]
       }
     },
     "android": {
@@ -97,7 +98,7 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
           "isAndroidBackgroundLocationEnabled": true,
-          "isAndroidForegroundServiceEnabled": true
+          "isIosBackgroundLocationEnabled": true
         }
       ]
     ],

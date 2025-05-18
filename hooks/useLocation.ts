@@ -1,9 +1,36 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import * as Location from 'expo-location';
-import { LocationObject, LocationSubscription } from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
+import { LocationObject } from 'expo-location'; // LocationSubscription removed
 import { router } from 'expo-router';
-import { apiService, HttpError } from '@/utils/ApiService';
+import { apiService } from '@/utils/ApiService'; // HttpError removed if not used elsewhere
 import { useUser } from '@/contexts/UserContext';
+
+const LOCATION_TASK_NAME = 'background-location-task';
+
+TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
+  if (error) {
+    // console.error('Background Location Task Error:', error.message); // Removed console.log
+    return;
+  }
+  if (data) {
+    const { locations } = data as { locations: Location.LocationObject[] };
+    if (locations && locations.length > 0) {
+      for (const loc of locations) {
+        try {
+          await apiService.post('/user/geolocation', {
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+            accuracy: loc.coords.accuracy,
+            timestamp: loc.timestamp,
+          });
+        } catch (apiError) {
+          // console.error('Background Location Task: Failed to send location to server.', apiError); // Removed console.log
+        }
+      }
+    }
+  }
+});
 
 export default function useLocation(skipRedirect = false) {
   const [location, setLocation] = useState<LocationObject | null>(null);
@@ -12,123 +39,98 @@ export default function useLocation(skipRedirect = false) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { isClockedIn } = useUser();
 
-  const locationSubscriptionRef = useRef<LocationSubscription | null>(null);
-  const lastApiCallTimeRef = useRef<number>(0); // To help in logs if needed
+  // locationSubscriptionRef and lastApiCallTimeRef are removed as they are no longer used
+  // const locationSubscriptionRef = useRef<LocationSubscription | null>(null);
+  // const lastApiCallTimeRef = useRef<number>(0);
 
-  const UPDATE_INTERVAL = 1000; // For watchPositionAsync and as a general target
+  const UPDATE_INTERVAL = 1000; // This might still be relevant for task options
 
   const checkPermissions = useCallback(async () => {
-    console.log('useLocation: Checking permissions...');
     try {
       const { status: foregroundStatus } =
         await Location.getForegroundPermissionsAsync();
-      console.log('useLocation: Foreground status:', foregroundStatus);
-      if (foregroundStatus === 'granted') {
+
+      if (foregroundStatus !== 'granted') {
+        setHasPermission(false);
+        setErrorMsg('Foreground location permission is required.');
+        if (!skipRedirect) {
+          router.replace('/location-permission');
+        }
+        return false;
+      }
+
+      const { status: backgroundStatus } =
+        await Location.requestBackgroundPermissionsAsync();
+
+      if (backgroundStatus === 'granted') {
         setHasPermission(true);
+        setErrorMsg(null);
         return true;
       } else {
         setHasPermission(false);
+        setErrorMsg('Background location permission is required for continuous tracking.');
         if (!skipRedirect) {
-          console.log('useLocation: No permission, redirecting to /location-permission');
           router.replace('/location-permission');
         }
         return false;
       }
     } catch (error) {
-      console.error('useLocation: Error checking permissions:', error);
+      // console.error('useLocation: Error checking permissions:', error); // Removed console.log
       setErrorMsg('Failed to check location permissions');
       setHasPermission(false);
       return false;
     }
   }, [skipRedirect]);
 
-  const updateServerLocation = useCallback(
+  const updateServerLocation = useCallback( // This function might still be used by refreshLocation
     async (locationData: LocationObject) => {
-      console.log('useLocation: updateServerLocation called. isClockedIn:', isClockedIn, 'Timestamp:', locationData.timestamp);
-
       if (!isClockedIn) {
-        console.log('useLocation: Not clocked in, skipping API call.');
         return;
       }
-
       try {
-        console.log('useLocation: Attempting API POST /user/geolocation with data:', {
-          latitude: locationData.coords.latitude,
-          longitude: locationData.coords.longitude,
-          accuracy: locationData.coords.accuracy,
-          timestamp: locationData.timestamp,
-        });
-
         await apiService.post('/user/geolocation', {
           latitude: locationData.coords.latitude,
           longitude: locationData.coords.longitude,
           accuracy: locationData.coords.accuracy,
           timestamp: locationData.timestamp,
         });
-        
-        lastApiCallTimeRef.current = Date.now();
-        console.log('useLocation: API POST /user/geolocation successful.');
       } catch (error) {
-        console.error('useLocation: Error API POST /user/geolocation:', error);
-        if (error instanceof HttpError) {
-          console.error(
-            `useLocation: HTTP Error - Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
-          );
-        } else {
-          console.error('useLocation: Non-HTTP error during API call:', error);
-        }
+        // console.error('useLocation: Error API POST /user/geolocation:', error); // Removed console.log
+        // HttpError specific logging removed
       }
     },
     [isClockedIn]
   );
 
-  const stopLocationUpdates = useCallback(() => {
-    if (locationSubscriptionRef.current) {
-      console.log('useLocation: Stopping location updates subscription.');
-      locationSubscriptionRef.current.remove();
-      locationSubscriptionRef.current = null;
+  const stopLocationUpdates = useCallback(async () => {
+    try {
+      const isTracking = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
+      if (isTracking) {
+        await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+      }
+    } catch (error) {
+      // console.error('useLocation: Error stopping background location updates:', error); // Removed console.log
     }
   }, []);
 
-  const startLocationUpdates = useCallback(() => {
-    // This check is important: if already running, don't start another.
-    // The controlling useEffect should handle stopping first if a restart is needed.
-    if (locationSubscriptionRef.current) {
-      console.log('useLocation: startLocationUpdates called, but subscription already exists. Skipping.');
-      return;
-    }
-
-    console.log('useLocation: Attempting to start location updates. isClockedIn:', isClockedIn, 'hasPermission:', hasPermission);
+  const startLocationUpdates = useCallback(async () => {
     if (!isClockedIn || !hasPermission) {
-      console.log('useLocation: Conditions not met to start (not clockedIn or no permission). Ensuring stopped.');
-      stopLocationUpdates(); // Ensure it's stopped if conditions aren't met
+      await stopLocationUpdates();
       return;
     }
 
-    const setupWatch = async () => {
-      try {
-        console.log('useLocation: Calling Location.watchPositionAsync...');
-        locationSubscriptionRef.current = await Location.watchPositionAsync(
-          {
-            accuracy: Location.Accuracy.Balanced,
-            timeInterval: UPDATE_INTERVAL,
-            distanceInterval: 0, // Ensure updates are time-based
-          },
-          (newLocation) => {
-            console.log('useLocation: watchPositionAsync CALLBACK FIRED. Timestamp:', newLocation.timestamp);
-            setLocation(newLocation); // Update local state
-            updateServerLocation(newLocation); // Attempt to update server
-          }
-        );
-        console.log('useLocation: Location.watchPositionAsync started successfully.');
-      } catch (error) {
-        console.error('useLocation: Error setting up Location.watchPositionAsync:', error);
-        setErrorMsg('Failed to set up location updates');
-      }
-    };
-
-    setupWatch();
-  }, [hasPermission, isClockedIn, stopLocationUpdates, updateServerLocation]);
+    try {
+      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+        accuracy: Location.Accuracy.Balanced,
+        timeInterval: UPDATE_INTERVAL,
+        distanceInterval: 0,
+        showsBackgroundLocationIndicator: true,
+      });
+    } catch (error) {
+      // console.error('useLocation: Error starting background location updates:', error); // Removed console.log
+      setErrorMsg('Failed to start background location updates.');
+    }
+  }, [hasPermission, isClockedIn, stopLocationUpdates]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -140,43 +142,45 @@ export default function useLocation(skipRedirect = false) {
   }, [checkPermissions]);
 
   useEffect(() => {
-    console.log('useLocation: Effect for managing updates triggered. isClockedIn:', isClockedIn, 'hasPermission:', hasPermission);
-    if (isClockedIn && hasPermission) {
-      console.log('useLocation: Conditions met (isClockedIn && hasPermission). Stopping (if active) and starting updates.');
-      stopLocationUpdates(); // Explicitly stop before starting to ensure fresh subscription
-      startLocationUpdates();
-    } else {
-      console.log('useLocation: Conditions NOT met (isClockedIn && hasPermission). Ensuring updates are stopped.');
-      stopLocationUpdates();
-    }
+    const manageUpdates = async () => {
+      if (isClockedIn && hasPermission) {
+        await stopLocationUpdates(); 
+        await startLocationUpdates();
+      } else {
+        await stopLocationUpdates();
+      }
+    };
+    manageUpdates();
   }, [isClockedIn, hasPermission, startLocationUpdates, stopLocationUpdates]);
 
   useEffect(() => {
-    // Cleanup on unmount
     return () => {
-      console.log('useLocation: Hook unmounting. Stopping location updates.');
-      stopLocationUpdates();
+      // Ensure updates are stopped on unmount
+      // stopLocationUpdates is async, but cleanup functions should be synchronous.
+      // This might require a different pattern if cleanup truly needs to be async,
+      // but for stopping location updates, firing it off is usually sufficient.
+      Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME).then(isTracking => {
+        if (isTracking) {
+          Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+        }
+      });
     };
-  }, [stopLocationUpdates]);
+  }, []); // Removed stopLocationUpdates from dependency array to avoid re-running cleanup
 
-  // refreshLocation might be useful for a manual trigger, keeping it simple.
   const refreshLocation = useCallback(async () => {
     if (!isClockedIn || !hasPermission) {
-      console.log('useLocation: refreshLocation called, but not clocked in or no permission.');
       return null;
     }
     setIsLoading(true);
     try {
-      console.log('useLocation: Manually refreshing location...');
       const currentLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
       setLocation(currentLocation);
-      console.log('useLocation: Manual refresh got location. Timestamp:', currentLocation.timestamp);
-      await updateServerLocation(currentLocation); // Attempt to update server
+      await updateServerLocation(currentLocation);
       return currentLocation;
     } catch (error) {
-      console.error('useLocation: Error during manual refreshLocation:', error);
+      // console.error('useLocation: Error during manual refreshLocation:', error); // Removed console.log
       setErrorMsg('Failed to get location on refresh');
       return null;
     } finally {

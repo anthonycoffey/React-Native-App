@@ -10,6 +10,7 @@ This document details the technologies used, development setup, technical constr
 - **Navigation:** Expo Router (File System Based)
 - **State Management:** React Context API
 - **Secure Storage:** `expo-secure-store`
+- **Background Task Management:** `expo-task-manager` (used for background location updates)
 - **Package Manager:** NPM (officially recommended by Expo for this project)
 - **Build & Deployment:** EAS Build, EAS Update
 - **Testing:** Jest (implied by `npm test` script)
@@ -48,6 +49,7 @@ This document details the technologies used, development setup, technical constr
 
 - Refer to `package.json` for a full list of dependencies.
   - `expo-crypto`: Provides cryptographic functionalities, including UUID generation for Google Places API session tokens.
+  - `expo-task-manager`: Enables defining and managing tasks that can run in the background, such as location tracking.
 
 ## Tool Usage Patterns
 

@@ -98,6 +98,19 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - This involves separate chained calls for date and then time selection on Android.
     - For iOS, the existing declarative `DateTimePicker` with `mode="datetime"` is retained.
     - This change aims to provide a more stable date/time picking experience on Android and resolve the "Cannot read property 'dismiss' of undefined" error.
+- **Fixed Location Update Interval in `hooks/useLocation.ts`:**
+    - Identified that the `apiService.post('/user/geolocation', ...)` call was not repeating at the intended `UPDATE_INTERVAL`.
+    - The issue was caused by `pendingUpdateRef.current` being reset with a 1-second delay via `setTimeout` in the `finally` block of `updateServerLocation`.
+    - Modified `updateServerLocation` to reset `pendingUpdateRef.current = false` immediately within the `finally` block, removing the `setTimeout`. This allows subsequent location updates from `watchPositionAsync` to proceed without unnecessary skips, ensuring the API call frequency aligns better with `UPDATE_INTERVAL`.
+- **Implemented Background Location Tracking using `expo-task-manager`:**
+    - Installed `expo-task-manager` package.
+    - Modified `hooks/useLocation.ts`:
+        - Added `TaskManager.defineTask` at the top level to define `background-location-task`. This task handles sending location updates to the `/user/geolocation` API endpoint.
+        - Updated `checkPermissions` to request and verify both foreground and background location permissions.
+        - Replaced `Location.watchPositionAsync` with `Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, ...)` to initiate background-capable location tracking.
+        - Updated `stopLocationUpdates` to use `Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME)`.
+        - Removed all `console.log` statements and minimized comments as requested.
+    - Confirmed `app.json` already had necessary configurations for background location modes on iOS and Android.
 
 ## Next Steps
 

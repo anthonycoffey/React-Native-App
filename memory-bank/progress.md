@@ -80,6 +80,11 @@ This document tracks what works, what's left to build, the current status, known
     - This involves a two-step process for Android users: selecting the date, then selecting the time, with separate handlers (`handleAndroidDateChange`, `handleAndroidTimeChange`).
     - The iOS implementation remains a single declarative `DateTimePicker` with `mode="datetime"`.
     - This change, mirroring the pattern in `components/job/ArrivalTime.tsx`, is intended to resolve the "Cannot read property 'dismiss' of undefined" error on Android by providing a more stable interaction with the native date/time pickers.
+- **Background Location Tracking:**
+    - Implemented background location tracking using `expo-task-manager`.
+    - Installed `expo-task-manager`.
+    - Modified `hooks/useLocation.ts` to define a background task (`background-location-task`) for sending location updates, updated permission requests for background access, and switched from `watchPositionAsync` to `startLocationUpdatesAsync` and `stopLocationUpdatesAsync`.
+    - Ensured `app.json` was already correctly configured for background location.
 
 ## What's Left to Build
 

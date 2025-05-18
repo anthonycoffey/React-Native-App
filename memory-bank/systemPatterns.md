@@ -56,7 +56,8 @@ This document outlines the system architecture, key technical decisions, design 
         *   **Global Styles:** `styles/globalStyles.ts` contains reusable StyleSheet objects (e.g., `card`, `input`, `label`) that should also be made theme-aware if they involve colors, or be used in conjunction with themed styles.
     *   **Consistency Goal:** All components should strive to be fully theme-aware. Hardcoded colors should be avoided unless they are universally applicable (e.g., a standard black shadow or a fixed overlay color that works for both themes). Existing components with hardcoded theme-dependent colors should be refactored.
 4.  **Permissions Handling:**
-    *   Utilizes Expo's permission modules (e.g., `expo-location` for location, `expo-document-picker` for file access). `hooks/useLocation.ts` likely handles location permissions and tracking.
+    *   Utilizes Expo's permission modules (e.g., `expo-location` for location, `expo-document-picker` for file access). `hooks/useLocation.ts` handles location permissions and tracking.
+    *   Background location tracking is implemented using `expo-task-manager` in conjunction with `expo-location`. A defined task (`background-location-task` in `hooks/useLocation.ts`) handles location updates when the app is in the background.
 5.  **Offline Support:**
     *   Currently, no explicit offline support strategy is documented. Assumed to require network connectivity for most operations. *(To be confirmed/detailed)*
 
