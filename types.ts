@@ -256,3 +256,7 @@ export interface NewDiscountData {
   reason: string;
   DiscountCodeId?: number | null;
 }
+
+export type JobScreenParams = {
+  id: string;
+};

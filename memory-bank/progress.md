@@ -75,6 +75,11 @@ This document tracks what works, what's left to build, the current status, known
     - Updated `app/dashboard/create-job.tsx` to use `Crypto.randomUUID()` for session tokens.
     - Custom implementation for Google Places Autocomplete and Details APIs using `fetch` and a `View` with `.map()` for suggestions is in place.
     - Changed Service `DropDownPicker`'s `listMode` to `'MODAL'` to address nested VirtualizedList warning.
+- **DateTimePicker Refactor for Job Creation (Android Stability):**
+    - The `DateTimePicker` in `app/dashboard/create-job.tsx` was refactored to use the imperative `DateTimePickerAndroid.open()` API for Android.
+    - This involves a two-step process for Android users: selecting the date, then selecting the time, with separate handlers (`handleAndroidDateChange`, `handleAndroidTimeChange`).
+    - The iOS implementation remains a single declarative `DateTimePicker` with `mode="datetime"`.
+    - This change, mirroring the pattern in `components/job/ArrivalTime.tsx`, is intended to resolve the "Cannot read property 'dismiss' of undefined" error on Android by providing a more stable interaction with the native date/time pickers.
 
 ## What's Left to Build
 

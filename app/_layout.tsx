@@ -11,6 +11,7 @@ import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { UserProvider } from '@/contexts/UserContext';
+import { JobScreenParams } from '../types';
 import { useColorScheme } from '@/components/useColorScheme';
 
 export { ErrorBoundary } from 'expo-router';
@@ -42,9 +43,11 @@ export default function RootLayout() {
               <Stack.Screen name='dashboard' options={{ headerShown: false }} />
               <Stack.Screen
                 name='job/[id]'
-                options={{ title: 'Job Details' }}
+                options={({ route }) => ({
+                  title: `Job: ${(route.params as JobScreenParams)?.id}`,
+                  headerBackVisible: true,
+                })}
               />
-
               <Stack.Screen name='login' options={{ headerShown: false }} />
               <Stack.Screen
                 name='location-permission'

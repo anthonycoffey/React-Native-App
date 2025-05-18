@@ -93,6 +93,11 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - Retained custom logic for fetching suggestions (Google Places Autocomplete API) and details (Google Places Details API) via `fetch`.
     - Suggestions are displayed in a `View` with `.map()`, replacing the `FlatList` to avoid the nested VirtualizedList warning.
     - Changed the Service `DropDownPicker`'s `listMode` to `'MODAL'` to also avoid the nested VirtualizedList warning.
+- **Refactored DateTimePicker for Job Creation:**
+    - Updated `app/dashboard/create-job.tsx` to use the imperative `DateTimePickerAndroid.open()` API for Android, similar to the pattern in `components/job/ArrivalTime.tsx`.
+    - This involves separate chained calls for date and then time selection on Android.
+    - For iOS, the existing declarative `DateTimePicker` with `mode="datetime"` is retained.
+    - This change aims to provide a more stable date/time picking experience on Android and resolve the "Cannot read property 'dismiss' of undefined" error.
 
 ## Next Steps
 
