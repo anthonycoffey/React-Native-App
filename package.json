@@ -59,7 +59,8 @@
     "react-native-svg": "15.11.2",
     "react-native-web": "~0.20.0",
     "yup": "^1.6.1",
-    "expo-task-manager": "~13.1.5"
+    "expo-task-manager": "~13.1.5",
+    "expo-dev-client": "~5.1.8"
   },
   "devDependencies": {
     "@babel/core": "^7.27.1",
