@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, Alert } from 'react-native'; // Added Alert
+import { StyleSheet } from 'react-native';
 import { View } from '@/components/Themed';
 import JobsList from '@/components/JobsList';
-import { apiService, HttpError } from '@/utils/ApiService'; // Import new apiService and HttpError
+import { apiService, HttpError } from '@/utils/ApiService';
 import { Job } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function JobsScreen() {
-  const auth = useAuth(); // Get the whole auth object
-  const session = auth?.session; // Safely access session
+  const auth = useAuth();
+  const session = auth?.session;
   const [loading, setLoading] = useState<boolean>(true);
   const [jobs, setJobs] = useState<Job[]>([]);
 
   // Simplified fetch jobs function
   const fetchJobs = useCallback(async () => {
     if (!session) {
-      setJobs([]); // Clear jobs if no session
+      setJobs([]);
       setLoading(false);
       return;
     }
@@ -26,18 +26,15 @@ export default function JobsScreen() {
       const fetchedJobs = await apiService.get<Job[]>(
         '/jobs/mine?sortBy=-arrivalTime&scope=active'
       );
-      setJobs(fetchedJobs || []); // Ensure jobs is an array even if response is null/undefined
+      setJobs(fetchedJobs || []);
     } catch (error) {
       console.error('Error fetching jobs:');
       if (error instanceof HttpError) {
         console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-        // Optionally alert the user, or handle silently
-        // Alert.alert('Error', `Failed to load jobs. Server said: ${error.body?.message || error.message}`);
       } else {
         console.error('  An unexpected error occurred:', error);
-        // Alert.alert('Error', 'An unexpected error occurred while loading jobs.');
       }
-      setJobs([]); // Clear jobs on error
+      setJobs([]);
     } finally {
       setLoading(false);
     }

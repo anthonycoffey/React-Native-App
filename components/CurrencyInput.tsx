@@ -2,7 +2,6 @@ import React from "react";
 import { View, TextInput, StyleSheet, Text, TextInputProps } from "react-native";
 import { useColorScheme } from '@/components/useColorScheme';
 import { 
-  useThemeColor, 
   getBorderColor, 
   getPlaceholderTextColor, 
   getInputBackgroundColor,

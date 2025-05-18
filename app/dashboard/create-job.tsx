@@ -41,7 +41,7 @@ import {
 import { useRouter } from 'expo-router';
 import DateTimePicker, {
   DateTimePickerEvent,
-  DateTimePickerAndroid, // Added for Android imperative API
+  DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
 import { format, addMinutes, formatDistanceToNow } from 'date-fns';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -49,7 +49,7 @@ import Colors from '@/constants/Colors';
 import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 import { centsToDollars, dollarsToCents } from '@/utils/money';
 import { MaterialIcons } from '@expo/vector-icons';
-import * as Crypto from 'expo-crypto'; // For session token
+import * as Crypto from 'expo-crypto';
 
 const GEOCODING_API_KEY = process.env.EXPO_PUBLIC_GEOCODING_API_KEY;
 
@@ -103,7 +103,7 @@ export default function CreateJobScreen() {
   const [isNewCar, setIsNewCar] = useState(false);
 
   const [addressForm, setAddressForm] = useState<AddressFormData>({});
-  const [addressInput, setAddressInput] = useState(''); // For the address text input
+  const [addressInput, setAddressInput] = useState('');
   const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
   const [isFetchingAddressSuggestions, setIsFetchingAddressSuggestions] =
     useState(false);
@@ -125,7 +125,6 @@ export default function CreateJobScreen() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Generate a session token when the component mounts or screen focuses
     // For simplicity, generating on mount. In a real app, might regenerate if user leaves and returns.
     setPlacesSessionToken(Crypto.randomUUID());
 

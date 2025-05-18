@@ -6,14 +6,14 @@ import {
   Alert,
   ActivityIndicator,
   Modal,
-  View, // Added standard View
+  View,
 } from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getBackgroundColor, getBorderColor, getTextColor, useThemeColor, getIconColor } from '@/hooks/useThemeColor'; // Added getIconColor
+import { getBackgroundColor, getBorderColor, getTextColor, getIconColor } from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
 import globalStyles from '@/styles/globalStyles';
-import { MaterialIcons } from '@expo/vector-icons'; // Added MaterialIcons
+import { MaterialIcons } from '@expo/vector-icons';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
 import { formatDateTime } from '@/utils/dates';
@@ -123,7 +123,6 @@ export default function CashManagementScreen() {
     const itemRowDynamicStyle = [
       localStyles.itemRow,
       { borderBottomColor: getBorderColor(colorScheme) },
-      // isSelected && { backgroundColor: colorScheme === 'dark' ? Colors.dark.tint + '40' : Colors.light.tint + '40' }, // Removed background highlight
     ];
 
     const checkboxIconName = isSelected ? 'check-box' : 'check-box-outline-blank';
@@ -202,7 +201,7 @@ export default function CashManagementScreen() {
             <CurrencyInput
               label='Deposit Amount (USD)'
               value={(newDepositAmount / 100).toFixed(2)}
-              placeholder="0.00" // Added placeholder for consistency, though value is usually set
+              placeholder="0.00"
               onChangeText={(text: string) => {
                 const numericValue = parseFloat(text.replace(/[^0-9.]/g, ''));
                 setNewDepositAmount(
@@ -251,10 +250,9 @@ const localStyles = StyleSheet.create({
   itemTextContainer: {
     flex: 1,
   },
-  // itemSelected: {}, // No longer used
   itemCell: {
     fontSize: 14,
-    marginBottom: 2, // Added for spacing between text lines
+    marginBottom: 2,
   },
   emptyText: {
     textAlign: 'center',

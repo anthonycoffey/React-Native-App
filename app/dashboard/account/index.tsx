@@ -12,7 +12,6 @@ import { centsToDollars } from '@/utils/money';
 import {
   OutlinedButton,
   PrimaryButton,
-  SecondaryButton,
 } from '@/components/Buttons';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,9 +26,8 @@ interface AccountDetails {
 }
 
 export default function AccountScreen() {
-  const authContext = useAuth(); // Get the full context
+  const authContext = useAuth();
   const colorScheme = useColorScheme() ?? 'light';
-  // const authContext = useAuth(); // Already got it above
   const [accountDetails, setAccountDetails] = useState<AccountDetails | null>(
     null
   );
@@ -62,9 +60,7 @@ export default function AccountScreen() {
       if (authContext) {
         authContext.signOut();
       } else {
-        console.error('AuthContext not available for logout');
-        // Optionally, still try to navigate or show an error
-        // router.replace('/login'); // Fallback if authContext is somehow null
+        router.replace('/login');
       }
     } catch (error) {
       console.error('Logout error:', error);

@@ -6,11 +6,10 @@ import {
   StyleSheet,
   TextInput,
   Alert,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { CardTitle, ErrorText } from '@/components/Typography'; // Added ErrorText
+import { CardTitle, ErrorText } from '@/components/Typography';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -21,7 +20,7 @@ import {
   getInputBackgroundColor,
   getPlaceholderTextColor,
 } from '@/hooks/useThemeColor';
-import CurrencyInput from '@/components/job/invoice/CurrencyInput'; // Assuming this is the themed one
+import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 
 interface AddDiscountModalProps {
   isVisible: boolean;
@@ -30,7 +29,7 @@ interface AddDiscountModalProps {
     reason: string;
     amount: number;
   }) => Promise<void>;
-  jobId: number; // Or pass the full job object if more context is needed
+  jobId: number;
 }
 
 export default function AddDiscountModal({
@@ -40,7 +39,7 @@ export default function AddDiscountModal({
   jobId,
 }: AddDiscountModalProps) {
   const [reason, setReason] = useState('');
-  const [amount, setAmount] = useState<number | null>(null); // CurrencyInput might handle number directly
+  const [amount, setAmount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [reasonError, setReasonError] = useState('');
 
@@ -125,10 +124,9 @@ export default function AddDiscountModal({
             Amount
           </Text>
           <CurrencyInput
-            label="" // CurrencyInput expects a label, provide an empty one if not visually needed here
-            value={amount !== null ? (amount / 100).toFixed(2) : ''} // Pass string value
+            label=""
+            value={amount !== null ? (amount / 100).toFixed(2) : ''}
             onChangeText={(text: string) => {
-              // Parse the string (e.g., "10.50") back to cents
               const cleanedText = text.replace(/[^0-9.]/g, '');
               const floatValue = parseFloat(cleanedText);
               if (!isNaN(floatValue)) {

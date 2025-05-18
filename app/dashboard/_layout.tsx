@@ -9,7 +9,6 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useAuth } from '@/contexts/AuthContext';
 import globalStyles from '@/styles/globalStyles';
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof MaterialIcons>['name'];
   color: string;
@@ -19,20 +18,19 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const auth = useAuth(); // Get the whole context
+  const auth = useAuth();
   const router = useRouter();
   const headerShown = useClientOnlyValue(false, true);
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    // Ensure auth context is available before checking session and isLoading
     if (auth && !auth.isLoading && !auth.session) {
       const redirectTimeout = setTimeout(() => {
         router.replace('/login');
       }, 0);
       return () => clearTimeout(redirectTimeout);
     }
-  }, [auth, router]); // Depend on the whole auth context or specific fields
+  }, [auth, router]);
 
   // Show loading spinner while checking auth or if auth context is not yet available
   if (!auth || auth.isLoading) {
@@ -89,10 +87,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name='account' // This now refers to app/dashboard/account/_layout.tsx
+        name='account'
         options={{
           title: 'My Account',
-          headerShown: false, // The header will be provided by the nested Stack navigator
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarIcon name='account-circle' color={color} />
           ),
@@ -102,11 +100,9 @@ export default function TabLayout() {
         name='create-job'
         options={{
           title: 'Create Job',
-          // This screen remains hidden from tabs, typically used for modal or full-screen presentation
           href: null,
         }}
       />
-      {/* Removed account/cash, account/deposits/*, account/paychecks/* as they are now part of the 'account' stack */}
     </Tabs>
   );
 }
