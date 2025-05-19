@@ -21,7 +21,7 @@ class ApiService {
     this.baseUrl = baseUrl;
   }
 
-  setAuthToken(token: string | null): void {
+  async setAuthToken(token: string | null): Promise<void> {
     this.authToken = token;
   }
 

@@ -16,6 +16,7 @@ type AuthContextType = {
   currentUser: User | null;
   isUserLoading: boolean;
   fetchCurrentUser: () => Promise<void>;
+  isApiAuthReady: boolean;
 };
 
 const AuthContext = React.createContext<AuthContextType | null>(null);
@@ -35,16 +36,19 @@ export function AuthProvider(props: React.PropsWithChildren) {
   const [[isLoadingSession, session], setSession] = useStorageState('session');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(false);
+  const [isApiAuthReady, setIsApiAuthReady] = useState(false);
 
   const fetchAndSetCurrentUser = async (currentSession: string | null) => {
     if (!currentSession) {
       setCurrentUser(null);
       setIsUserLoading(false);
-      apiService.setAuthToken(null);
+      await apiService.setAuthToken(null);
+      setIsApiAuthReady(false);
       return;
     }
 
-    apiService.setAuthToken(currentSession);
+    await apiService.setAuthToken(currentSession);
+    setIsApiAuthReady(true);
     setIsUserLoading(true);
     try {
       const response = await apiService.get<UserApiResponse>('/users/me');
@@ -70,7 +74,10 @@ export function AuthProvider(props: React.PropsWithChildren) {
     if (session) {
       fetchAndSetCurrentUser(session);
     } else {
-      apiService.setAuthToken(null);
+      (async () => {
+        await apiService.setAuthToken(null);
+        setIsApiAuthReady(false);
+      })();
       setCurrentUser(null);
       setIsUserLoading(false);
     }
@@ -78,7 +85,8 @@ export function AuthProvider(props: React.PropsWithChildren) {
 
   const signIn = async (token: string) => {
     setIsUserLoading(true);
-    apiService.setAuthToken(token);
+    await apiService.setAuthToken(token);
+    setIsApiAuthReady(true);
 
     try {
       const response = await apiService.get<UserApiResponse>('/users/me');
@@ -87,7 +95,8 @@ export function AuthProvider(props: React.PropsWithChildren) {
       router.push('/dashboard');
     } catch (error) {
       console.error('[AuthContext] SignIn failed during user data fetch:', error);
-      apiService.setAuthToken(null);
+      await apiService.setAuthToken(null);
+      setIsApiAuthReady(false);
       setCurrentUser(null);
       throw error;
     } finally {
@@ -96,7 +105,8 @@ export function AuthProvider(props: React.PropsWithChildren) {
   };
 
   const signOutAndNavigate = async () => {
-    apiService.setAuthToken(null);
+    await apiService.setAuthToken(null);
+    setIsApiAuthReady(false);
     setCurrentUser(null);
     await setSession(null);
     router.replace('/login');
@@ -114,6 +124,7 @@ export function AuthProvider(props: React.PropsWithChildren) {
     currentUser,
     isUserLoading,
     fetchCurrentUser: () => fetchAndSetCurrentUser(session),
+    isApiAuthReady,
   };
 
   return (

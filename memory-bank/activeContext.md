@@ -29,14 +29,13 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - Added client-side pagination to `CommentsList.tsx`.
 - **Resolved 401 Error for User Fetching:**
     - Introduced an `isApiConfigured` flag in `AuthContext.tsx` to signal when the Axios interceptor is ready.
-    - Resolved an initial 401 error by ensuring `UserContext.tsx` waited for an `isApiConfigured` flag from `AuthContext.tsx`.
+    - Resolved an initial 401 error by ensuring user data fetching waited for the session to be established and the API token to be set in `apiService`.
 - **Architectural Refactor: Migrated User Data Fetching to AuthContext:**
     - To definitively resolve race conditions with user data fetching (`/users/me`), the responsibility for fetching and managing `currentUser` has been moved from `UserContext.tsx` to `AuthContext.tsx`.
     - `AuthContext.tsx` now:
         - Defines a comprehensive `User` interface.
-        - Fetches user data when a session becomes active and `apiService` is configured.
+        - Fetches user data when a `session` becomes active (which also triggers setting the token in `apiService`).
         - Manages `currentUser` and `isUserLoading` states.
-        - The logic for setting `isApiConfigured` (deferred to the next event tick) remains to ensure `apiService` token is set before fetch.
     - `UserContext.tsx` has been simplified to only manage non-authentication-related user state (e.g., `isClockedIn`). It no longer handles `currentUser` or its fetching.
     - Components previously using `currentUser` from `useUser()` (e.g., `app/job/[id].tsx`) have been updated to use `currentUser` from `useAuth()`.
     - This change centralizes authentication and user identity management, providing a more robust and synchronized state.
@@ -144,4 +143,4 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - Job-specific components in `components/job/` are generally well-structured and handle significant pieces of functionality.
     - Some older components or specific style instances are not fully theme-aware and could be refactored for better consistency.
     - Minor redundancies in functionality were noted (e.g., two `CurrencyInput` components, overlapping map button logic), offering future consolidation opportunities.
-- The primary mechanism for resolving the 401 error during user data fetching (`/users/me`) is now the migration of user fetching logic directly into `AuthContext`. This ensures that `apiService` is correctly configured with the session token by `AuthContext` itself before it attempts to fetch user data. The `isApiConfigured` flag and its deferred setting support this by managing the precise timing of when the user fetch occurs relative to token setup.
+- The primary mechanism for resolving potential 401 errors during initial user data fetching (`/users/me`) is the migration of user fetching logic directly into `AuthContext.tsx`. This ensures that `apiService` is correctly configured with the session token (derived from the `session` state) by `AuthContext` itself before it attempts to fetch user data. The presence of a valid `session` is the key condition for proceeding with user data fetching.

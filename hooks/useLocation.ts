@@ -1,18 +1,18 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import { LocationObject } from 'expo-location'; // LocationSubscription removed
+import { LocationObject } from 'expo-location';
 import { router } from 'expo-router';
-import { apiService } from '@/utils/ApiService'; // HttpError removed if not used elsewhere
+import { apiService } from '@/utils/ApiService';
 import { useUser } from '@/contexts/UserContext';
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
 TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   if (error) {
-    // console.error('Background Location Task Error:', error.message); // Removed console.log
     return;
   }
+
   if (data) {
     const { locations } = data as { locations: Location.LocationObject[] };
     if (locations && locations.length > 0) {
@@ -25,7 +25,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
             timestamp: loc.timestamp,
           });
         } catch (apiError) {
-          // console.error('Background Location Task: Failed to send location to server.', apiError); // Removed console.log
+          console.error('Background Location Task: Failed to send location to server.', apiError);
         }
       }
     }
@@ -39,11 +39,7 @@ export default function useLocation(skipRedirect = false) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { isClockedIn } = useUser();
 
-  // locationSubscriptionRef and lastApiCallTimeRef are removed as they are no longer used
-  // const locationSubscriptionRef = useRef<LocationSubscription | null>(null);
-  // const lastApiCallTimeRef = useRef<number>(0);
-
-  const UPDATE_INTERVAL = 1000; // This might still be relevant for task options
+  const UPDATE_INTERVAL = 1000 * 60 * 5;
 
   const checkPermissions = useCallback(async () => {
     try {
@@ -75,14 +71,14 @@ export default function useLocation(skipRedirect = false) {
         return false;
       }
     } catch (error) {
-      // console.error('useLocation: Error checking permissions:', error); // Removed console.log
+      console.error('useLocation: Error checking permissions:', error);
       setErrorMsg('Failed to check location permissions');
       setHasPermission(false);
       return false;
     }
   }, [skipRedirect]);
 
-  const updateServerLocation = useCallback( // This function might still be used by refreshLocation
+  const updateServerLocation = useCallback(
     async (locationData: LocationObject) => {
       if (!isClockedIn) {
         return;
@@ -95,8 +91,7 @@ export default function useLocation(skipRedirect = false) {
           timestamp: locationData.timestamp,
         });
       } catch (error) {
-        // console.error('useLocation: Error API POST /user/geolocation:', error); // Removed console.log
-        // HttpError specific logging removed
+        console.error('useLocation: Error API POST /user/geolocation:', error);
       }
     },
     [isClockedIn]
@@ -109,7 +104,7 @@ export default function useLocation(skipRedirect = false) {
         await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
       }
     } catch (error) {
-      // console.error('useLocation: Error stopping background location updates:', error); // Removed console.log
+      console.error('useLocation: Error stopping background location updates:', error);
     }
   }, []);
 
@@ -123,11 +118,11 @@ export default function useLocation(skipRedirect = false) {
       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
         accuracy: Location.Accuracy.Balanced,
         timeInterval: UPDATE_INTERVAL,
-        distanceInterval: 0,
+        distanceInterval: 1609.34, // 1 mile
         showsBackgroundLocationIndicator: true,
       });
     } catch (error) {
-      // console.error('useLocation: Error starting background location updates:', error); // Removed console.log
+      console.error('useLocation: Error starting background location updates:', error);
       setErrorMsg('Failed to start background location updates.');
     }
   }, [hasPermission, isClockedIn, stopLocationUpdates]);
@@ -155,17 +150,13 @@ export default function useLocation(skipRedirect = false) {
 
   useEffect(() => {
     return () => {
-      // Ensure updates are stopped on unmount
-      // stopLocationUpdates is async, but cleanup functions should be synchronous.
-      // This might require a different pattern if cleanup truly needs to be async,
-      // but for stopping location updates, firing it off is usually sufficient.
       Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME).then(isTracking => {
         if (isTracking) {
           Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
         }
       });
     };
-  }, []); // Removed stopLocationUpdates from dependency array to avoid re-running cleanup
+  }, []);
 
   const refreshLocation = useCallback(async () => {
     if (!isClockedIn || !hasPermission) {
@@ -180,7 +171,7 @@ export default function useLocation(skipRedirect = false) {
       await updateServerLocation(currentLocation);
       return currentLocation;
     } catch (error) {
-      // console.error('useLocation: Error during manual refreshLocation:', error); // Removed console.log
+      console.error('useLocation: Error during manual refreshLocation:', error);
       setErrorMsg('Failed to get location on refresh');
       return null;
     } finally {
@@ -194,6 +185,5 @@ export default function useLocation(skipRedirect = false) {
     hasPermission,
     isLoading,
     refreshLocation,
-    // updateServerLocation, // Not typically exposed directly if managed internally
   };
 }

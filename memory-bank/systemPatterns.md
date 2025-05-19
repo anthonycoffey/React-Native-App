@@ -27,7 +27,7 @@ This document outlines the system architecture, key technical decisions, design 
         *   `react-native-map-link` for integration with map applications.
 2.  **State Management:**
     *   **Global State:** React Context API is used for managing global state:
-        *   `contexts/AuthContext.tsx`: Manages the user's session (authentication token), API readiness status (`isApiConfigured`), and the authenticated user's data (`currentUser`). It fetches user data upon successful session establishment and token configuration in the `apiService`. The `isApiConfigured` flag is set deferred (next event tick) to ensure proper synchronization.
+        *   `contexts/AuthContext.tsx`: Manages the user's `session` (authentication token) and the authenticated user's data (`currentUser`). It fetches user data upon successful establishment of a `session` (which also involves setting the token in `apiService`). The presence of a non-null `session` indicates that the API client is configured with an auth token.
         *   `contexts/UserContext.tsx`: Manages other user-specific states not directly tied to authentication, such as `isClockedIn`.
     *   **Local State:** Standard React component state (`useState`, `useEffect`) is used extensively within components for managing their internal data and lifecycle.
 3.  **Styling & Theming:**

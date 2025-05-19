@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, ActivityIndicator } from 'react-native';
 import { View } from '@/components/Themed';
 import JobsList from '@/components/JobsList';
 import { apiService, HttpError } from '@/utils/ApiService';
@@ -31,9 +31,23 @@ const sortOptions = [
 
 export default function JobsScreen() {
   const auth = useAuth();
-  const session = auth?.session;
   const [loading, setLoading] = useState<boolean>(true);
   const [jobs, setJobs] = useState<Job[]>([]);
+
+  // Handle the case where auth context might not be ready yet
+  if (!auth) {
+    // Optionally, return a loading spinner or null
+    // For simplicity, we'll rely on the existing loading state managed by fetchJobs
+    // but this check prevents accessing auth.isLoading or auth.session if auth is null.
+    // However, the fetchJobs useCallback depends on auth.isLoading and auth.session,
+    // so we must ensure auth is non-null before fetchJobs is defined or called.
+    // A better approach is to return a loading indicator here.
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const [currentScope, setCurrentScope] = useState<string>('active');
   const [currentSortBy, setCurrentSortBy] = useState<string>('-arrivalTime');
@@ -44,7 +58,7 @@ export default function JobsScreen() {
   const theme = useColorScheme() ?? 'light';
 
   const fetchJobs = useCallback(async () => {
-    if (!session) {
+    if (!auth || auth.isLoading || !auth.session || !auth.isApiAuthReady) {
       setJobs([]);
       setLoading(false);
       return;
@@ -72,11 +86,14 @@ export default function JobsScreen() {
     } finally {
       setLoading(false);
     }
-  }, [session, currentScope, currentSortBy]);
+  }, [auth?.session, auth?.isLoading, auth?.isApiAuthReady, currentScope, currentSortBy]);
 
   useEffect(() => {
-    fetchJobs();
-  }, [fetchJobs]);
+    // Ensure auth is available before attempting to fetch
+    if (auth) {
+      fetchJobs();
+    }
+  }, [auth, fetchJobs]); // Add auth to dependency array
 
   const onScopeOpen = useCallback(() => {
     setSortOpen(false);
