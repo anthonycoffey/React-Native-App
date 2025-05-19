@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 8,
   },
   subtitle: {
     marginTop: 20,
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: 4,
     fontSize: 16,
     lineHeight: 24,
   },
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffebee',
     padding: 10,
     borderRadius: 4,
-    marginBottom: 15,
+    marginBottom: 8,
   },
   iconContainer: {
     width: 100,

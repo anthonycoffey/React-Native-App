@@ -114,7 +114,7 @@ export default function LoginScreen() {
           </View>
 
           <Text type='title' style={[globalStyles.title, loginStyles.title]}>
-            Login
+            Sign In
           </Text>
 
           <View style={globalStyles.inputContainer}>
@@ -183,21 +183,24 @@ const loginStyles = StyleSheet.create({
   innerContainer: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
     backgroundColor: '#252d3a',
+    minWidth: '50%',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   logoContainer: {
     alignItems: 'center',
     backgroundColor: '#252d3a',
-    marginBottom: 40,
+    marginBottom: 50,
   },
   logo: {
-    width: 250,
-    height: 250,
+    width: 300,
+    height: 300,
     resizeMode: 'contain',
   },
   title: {
     color: '#fff',
+    marginBottom: 24,
   },
   errorContainerLayout: {
     padding: 10,

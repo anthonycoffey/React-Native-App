@@ -94,7 +94,6 @@ export default function AccountScreen() {
       }}
     >
       <ThemedView style={localStyles.sectionContainer}>
-        <Text style={globalStyles.title}>My Account</Text>
         <Text style={globalStyles.subtitle}>My Avatar</Text>
         <ProfilePictureUploader />
       </ThemedView>
