@@ -23,7 +23,6 @@ This document tracks what works, what's left to build, the current status, known
     - `UserContext.tsx` is simplified, focusing on non-authentication-related user state like `isClockedIn`.
     - Components consuming `currentUser` (e.g., `app/job/[id].tsx`) were updated to use `useAuth()`.
     - This architectural change resolves previous race conditions related to user data fetching and API readiness signaling.
-    - The `isApiConfigured` flag in `AuthContext.tsx` (with deferred setting) remains to ensure proper timing for `apiService` token configuration before the fetch.
 - **Comment Item UI Update:**
     - Modified `components/job/CommentItem.tsx` to replace text-based edit/delete buttons with smaller, iconic `MaterialIcons` buttons (`edit`, `delete`).
     - Ensured icons use appropriate theme-aware colors.
@@ -102,8 +101,6 @@ This document tracks what works, what's left to build, the current status, known
     - Document performance targets or known limitations.
     - List any critical constraints from the backend API.
 - **Populate `Known Issues`:** Document any existing bugs or known problems with the application.
-- **Populate `Evolution of Project Decisions`:** As major decisions are made or changed, document them here.
-- Continuously update all Memory Bank files, especially `activeContext.md` and `progress.md`, as the project evolves and new information becomes available.
 
 ## Current Status
 

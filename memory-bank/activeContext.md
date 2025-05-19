@@ -28,8 +28,7 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - Made the comments section in `app/job/[id].tsx` collapsible.
     - Added client-side pagination to `CommentsList.tsx`.
 - **Resolved 401 Error for User Fetching:**
-    - Introduced an `isApiConfigured` flag in `AuthContext.tsx` to signal when the Axios interceptor is ready.
-    - Resolved an initial 401 error by ensuring user data fetching waited for the session to be established and the API token to be set in `apiService`.
+    - Resolved an initial 401 error by ensuring user data fetching waited for the session to be established and authorization header to be set in `apiService`.
 - **Architectural Refactor: Migrated User Data Fetching to AuthContext:**
     - To definitively resolve race conditions with user data fetching (`/users/me`), the responsibility for fetching and managing `currentUser` has been moved from `UserContext.tsx` to `AuthContext.tsx`.
     - `AuthContext.tsx` now:
@@ -85,6 +84,13 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
         - Manage loading states and API interactions for adding/removing discounts.
         - Use the standard `Card` component for its main layout.
     - Ensured all new components adhere to theming and project patterns.
+- **Added Job Creation page**
+    - Created `app/dashboard/create-job.tsx` for the job creation interface.
+    - Implemented form elements for job details, including customer information, service address, and vehicle details.
+    - Integrated validation and error handling for form submissions.
+    - Integrated Address Autocomplete using Google Places API.
+    - Integrated Date/Time picker for job scheduling.
+    - Integrated Customer Search functionality and New Customer Form to select existing customers or create new ones.
 - **Implemented Custom Address Autocompletion (using `expo-crypto`):**
     - Uninstalled `uuid` and `@types/uuid`.
     - Installed `expo-crypto`.
@@ -114,8 +120,6 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
 ## Next Steps
 
 - **Refine Memory Bank:**
-    - Conduct code reviews of key files (e.g., `utils/api.ts`, component files) to verify and add detail to `systemPatterns.md` (API communication, styling, error handling, form patterns, job listing screen).
-    - Gather more specific details for `techContext.md` (Node.js version, specific IDE extensions, OS version support, performance targets, backend API constraints).
     - Identify and document any `Known Issues`.
 - **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md`.
 - Continuously update all Memory Bank files as new information is gathered or decisions are made.
