@@ -88,7 +88,6 @@ export default function AccountScreen() {
       style={{ flex: 1, backgroundColor: getBackgroundColor(colorScheme) }}
       contentContainerStyle={{
         flexGrow: 1,
-        justifyContent: 'center',
         paddingHorizontal: 10,
         paddingVertical: 20,
       }}
