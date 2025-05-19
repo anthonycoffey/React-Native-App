@@ -89,7 +89,6 @@ export default function AccountScreen() {
       contentContainerStyle={{
         flexGrow: 1,
         paddingHorizontal: 10,
-        paddingVertical: 20,
       }}
     >
       <ThemedView style={localStyles.sectionContainer}>

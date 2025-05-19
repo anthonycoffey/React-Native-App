@@ -169,7 +169,6 @@ export default function JobsList({
 
 const styles = StyleSheet.create({
   listContainer: {
-    padding: 16,
     flexGrow: 1,
     minHeight: 500,
   },

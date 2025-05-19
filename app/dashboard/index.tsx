@@ -8,7 +8,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { LabelText } from '@/components/Typography';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getBorderColor, getInputBackgroundColor, getTextColor, getPlaceholderTextColor } from '@/hooks/useThemeColor';
+import {
+  getBorderColor,
+  getInputBackgroundColor,
+  getTextColor,
+  getPlaceholderTextColor,
+} from '@/hooks/useThemeColor';
 
 const scopeOptions = [
   { label: 'Active Jobs', value: 'active' },
@@ -57,7 +62,9 @@ export default function JobsScreen() {
     } catch (error) {
       console.error('Error fetching jobs:');
       if (error instanceof HttpError) {
-        console.error(`Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        console.error(
+          `Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
       } else {
         console.error('An unexpected error occurred:', error);
       }
@@ -110,11 +117,13 @@ export default function JobsScreen() {
             setOpen={setScopeOpen}
             setValue={setCurrentScope}
             onOpen={onScopeOpen}
-            placeholder="Select a status"
+            placeholder='Select a status'
             zIndex={2000}
             zIndexInverse={1000}
             listMode={Platform.OS === 'ios' ? 'SCROLLVIEW' : 'MODAL'}
+            dropDownDirection='BOTTOM'
             multiple={false}
+            theme={(theme ?? 'light') === 'dark' ? 'DARK' : 'LIGHT'}
             {...dropDownPickerStyles}
           />
         </View>
@@ -127,11 +136,13 @@ export default function JobsScreen() {
             setOpen={setSortOpen}
             setValue={setCurrentSortBy}
             onOpen={onSortOpen}
-            placeholder="Select sort order"
+            placeholder='Select sort order'
             zIndex={1000}
             zIndexInverse={2000}
             listMode={Platform.OS === 'ios' ? 'SCROLLVIEW' : 'MODAL'}
+            dropDownDirection='BOTTOM'
             multiple={false}
+            theme={(theme ?? 'light') === 'dark' ? 'DARK' : 'LIGHT'}
             {...dropDownPickerStyles}
           />
         </View>
@@ -146,11 +157,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   filtersContainer: {
-    paddingHorizontal: 16,
+    flexDirection: 'row',
+    paddingHorizontal: 10, // Reduced padding
     paddingTop: 10,
     paddingBottom: 0,
+    alignItems: 'flex-start',
+    justifyContent: 'space-between', // Distribute space between items
   },
   filterItem: {
+    width: '48%', // Set width to slightly less than 50% to allow for gap
     marginBottom: 5,
   },
   filterLabel: {
