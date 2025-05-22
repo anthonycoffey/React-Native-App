@@ -101,6 +101,12 @@ This document tracks what works, what's left to build, the current status, known
     - Added link to the registration page.
     - Improved theming consistency.
     - Standardized password visibility toggle state and function names to match `app/register.tsx` (`isPasswordVisible`, `togglePasswordVisibility`).
+- **Enhanced Job File Uploads with Camera Integration:**
+    - Installed `expo-camera` dependency.
+    - Created `components/job/CameraCaptureModal.tsx` for direct photo capture.
+    - Modified `components/job/JobFiles.tsx` to include separate icon buttons for camera and file picker, integrating the new camera modal.
+    - Removed all code comments from `components/job/CameraCaptureModal.tsx` and `components/job/JobFiles.tsx`.
+    - Updated `app.json` with the `expo-camera` plugin to handle camera permissions.
 
 ## What's Left to Build
 

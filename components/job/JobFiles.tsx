@@ -16,6 +16,7 @@ import { Text as ThemedText, View as ThemedView } from '@/components/Themed';
 import { PrimaryButton } from '@/components/Buttons';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import CameraCaptureModal from './CameraCaptureModal';
 
 interface FormDataFile {
   uri: string;
@@ -114,6 +115,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [isViewerModalVisible, setIsViewerModalVisible] = useState(false);
   const [fileToView, setFileToView] = useState<JobFile | null>(null);
+  const [isCameraModalVisible, setIsCameraModalVisible] = useState(false);
   const colorScheme = useColorScheme() ?? 'light';
 
   const styles = StyleSheet.create({
@@ -167,26 +169,56 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       paddingTop: 10,
       borderTopWidth: 1,
       borderTopColor: Colors[colorScheme ?? 'light'].borderColor,
-    },
-    loadingContainer: {
-      marginVertical: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
       alignItems: 'center',
     },
+    iconButton: {
+      alignItems: 'center',
+      padding: 10,
+    },
+    iconButtonText: {
+      fontSize: 12,
+      marginTop: 4,
+    },
+    loadingContainer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(255,255,255,0.7)',
+      zIndex: 10,
+    },
   });
+
+  const openCamera = () => {
+    if (loadingFiles) return;
+    setIsCameraModalVisible(true);
+  };
+
+  const handlePictureTaken = async (uri: string, type: string, name: string) => {
+    setIsCameraModalVisible(false);
+    const singleAsset: DocumentPicker.DocumentPickerAsset = {
+      uri,
+      mimeType: type,
+      name,
+      size: 0,
+    };
+    await handleFileUploadInternal([singleAsset]);
+  };
 
   const pickDocument = async () => {
     if (loadingFiles) return;
     try {
       const result = await DocumentPicker.getDocumentAsync({
         multiple: true,
-        type: ['&ast;/*'],
+        type: ['image/*'],
       });
 
-      if (
-        result.canceled === false &&
-        result.assets &&
-        result.assets.length > 0
-      ) {
+      if (result.canceled === false && result.assets && result.assets.length > 0) {
         await handleFileUploadInternal(result.assets);
       }
     } catch (err) {
@@ -205,14 +237,12 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     setLoadingFiles(true);
     const formData = new FormData();
     assetsToUpload.forEach((fileAsset) => {
-      if (fileAsset.uri && fileAsset.name) {
-        const fileToAppend: FormDataFile = {
-          uri: fileAsset.uri,
-          name: fileAsset.name,
-          type: fileAsset.mimeType || 'application/octet-stream',
-        };
-        formData.append('files[]', fileToAppend as any);
-      }
+      const fileToAppend: FormDataFile = {
+        uri: fileAsset.uri,
+        name: fileAsset.name || `file_${Date.now()}`,
+        type: fileAsset.mimeType || 'application/octet-stream',
+      };
+      formData.append('files[]', fileToAppend as any);
     });
 
     try {
@@ -367,28 +397,36 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       )}
 
       <View style={styles.uploadSection}>
-        <PrimaryButton
-          title='Upload File(s)'
-          onPress={pickDocument}
-          disabled={loadingFiles}
-          style={{ marginBottom: 10 }}
-        />
+        <TouchableOpacity style={styles.iconButton} onPress={openCamera} disabled={loadingFiles}>
+          <MaterialIcons name="photo-camera" size={32} color={Colors[colorScheme].text} />
+          <ThemedText style={styles.iconButtonText}>Camera</ThemedText>
+        </TouchableOpacity>
 
-        {loadingFiles ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator
-              size='small'
-              color={Colors[colorScheme ?? 'light'].tint}
-            />
-            <ThemedText>Uploading...</ThemedText>
-          </View>
-        ) : null}
+        <TouchableOpacity style={styles.iconButton} onPress={pickDocument} disabled={loadingFiles}>
+          <MaterialIcons name="folder-open" size={32} color={Colors[colorScheme].text} />
+          <ThemedText style={styles.iconButtonText}>Files</ThemedText>
+        </TouchableOpacity>
       </View>
+
+      {loadingFiles && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator
+            size="large"
+            color={Colors[colorScheme].tint}
+          />
+          <ThemedText>Processing...</ThemedText>
+        </View>
+      )}
 
       <FileViewerModal
         visible={isViewerModalVisible}
         file={fileToView}
         onClose={closeViewerModal}
+      />
+      <CameraCaptureModal
+        visible={isCameraModalVisible}
+        onClose={() => setIsCameraModalVisible(false)}
+        onPictureTaken={handlePictureTaken}
       />
     </ThemedView>
   );

@@ -4,7 +4,7 @@ This document details the current work focus, recent changes, next steps, active
 
 ## Current Work Focus
 
-Implementing Job File Management feature and ongoing Memory Bank refinement.
+Refining Job File Management with camera integration and ensuring robust Memory Bank documentation.
 
 ## Recent Changes
 
@@ -145,12 +145,22 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - Updated `app/login.tsx` and `app/register.tsx` to use this `brand` color for their main background.
     - Corrected styling for password input fields in `app/register.tsx` to ensure proper theme-aware rendering.
     - Ensured both pages are scrollable using `ScrollView`.
+- **Enhanced Job File Uploads with Camera Integration:**
+    - Installed `expo-camera` dependency.
+    - Created `components/job/CameraCaptureModal.tsx` to provide a dedicated camera interface for taking photos. This modal handles camera permissions, displays a preview, and allows capturing a single image.
+    - Modified `components/job/JobFiles.tsx`:
+        - Replaced the single "Upload File(s)" button with two icon buttons: a "camera" icon to launch `CameraCaptureModal.tsx` and a "folder" icon to use the existing `expo-document-picker` functionality.
+        - Integrated the `CameraCaptureModal` and its callback to handle uploading the captured image.
+        - The document picker is now configured to primarily suggest images (`type: ['image/*']`).
+    - Removed all code comments from `components/job/CameraCaptureModal.tsx` and `components/job/JobFiles.tsx` as per user request.
+    - Updated `app.json` by adding the `expo-camera` plugin to ensure correct camera permissions are configured for iOS and Android. The plugin includes a usage description: "Allow $(PRODUCT_NAME) to access your camera to take photos for job documentation."
 
 ## Next Steps
 
-- **Refine Memory Bank:**
-    - Identify and document any `Known Issues`.
-- **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md`.
+- **Finalize Memory Bank Update:** Complete updates to all relevant Memory Bank files (`progress.md`, `systemPatterns.md`, `techContext.md`) to reflect the camera integration.
+- **Testing:** Thoroughly test the new camera upload functionality and existing file picker functionality on both iOS and Android.
+- **Identify and document any `Known Issues`** that arise during testing or further development.
+- **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md` once Memory Bank is up-to-date and current features are stable.
 - Continuously update all Memory Bank files as new information is gathered or decisions are made.
 
 ## Active Decisions & Considerations

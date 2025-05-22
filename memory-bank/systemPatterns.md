@@ -25,6 +25,8 @@ This document outlines the system architecture, key technical decisions, design 
         *   `@react-native-community/datetimepicker` for date/time selection.
         *   `react-native-dropdown-picker` for dropdown/select inputs.
         *   `react-native-map-link` for integration with map applications.
+        *   `expo-camera` for direct camera access and image capture.
+        *   `expo-document-picker` for selecting files from device storage.
 2.  **State Management:**
     *   **Global State:** React Context API is used for managing global state:
         *   `contexts/AuthContext.tsx`: Manages the user's `session` (authentication token) and the authenticated user's data (`currentUser`). It fetches user data upon successful establishment of a `session` (which also involves setting the token in `apiService`). The presence of a non-null `session` indicates that the API client is configured with an auth token.
@@ -56,7 +58,10 @@ This document outlines the system architecture, key technical decisions, design 
         *   **Global Styles:** `styles/globalStyles.ts` contains reusable StyleSheet objects (e.g., `card`, `input`, `label`) that should also be made theme-aware if they involve colors, or be used in conjunction with themed styles.
     *   **Consistency Goal:** All components should strive to be fully theme-aware. Hardcoded colors should be avoided unless they are universally applicable (e.g., a standard black shadow or a fixed overlay color that works for both themes). Existing components with hardcoded theme-dependent colors should be refactored.
 4.  **Permissions Handling:**
-    *   Utilizes Expo's permission modules (e.g., `expo-location` for location, `expo-document-picker` for file access). `hooks/useLocation.ts` handles location permissions and tracking.
+    *   Utilizes Expo's permission modules and plugins:
+        *   `expo-location` (with plugin): For foreground and background location permissions and tracking, managed in `hooks/useLocation.ts`.
+        *   `expo-document-picker`: For file access when selecting documents/images.
+        *   `expo-camera` (with plugin): For camera access permissions, managed within `components/job/CameraCaptureModal.tsx` and configured in `app.json`.
     *   Background location tracking is implemented using `expo-task-manager` in conjunction with `expo-location`. A defined task (`background-location-task` in `hooks/useLocation.ts`) handles location updates when the app is in the background.
 5.  **Offline Support:**
     *   Currently, no explicit offline support strategy is documented. Assumed to require network connectivity for most operations. *(To be confirmed/detailed)*
@@ -117,7 +122,8 @@ This document outlines the system architecture, key technical decisions, design 
         *   `CashPaymentForm.tsx`: Simple confirmation UI for cash payments.
         *   `JobDetailsAndMapButtons.tsx`: Displays customer info and integrates geocoding/map links.
         *   `JobMapButtons.tsx`: Similar to part of `JobDetailsAndMapButtons`, focuses on map app launching. (Potential redundancy noted).
-        *   `JobFiles.tsx`: Manages file uploads, viewing (images), and deletion for a job. Uses `PrimaryButton` and auto-uploads files.
+        *   `CameraCaptureModal.tsx`: A modal component encapsulating `expo-camera` functionality for taking pictures. Handles camera permissions and returns captured image data.
+        *   `JobFiles.tsx`: Manages file uploads, viewing (images), and deletion for a job. Features separate icon buttons for camera capture (launching `CameraCaptureModal`) and file picking (using `expo-document-picker`).
     *   **Invoice-Specific UI (`components/job/invoice/`):**
         *   `CurrencyInput.tsx`: A themed version of currency input with formatting logic (potential redundancy with `components/CurrencyInput.tsx`).
     *   **Common Patterns:**
@@ -142,7 +148,8 @@ This document outlines the system architecture, key technical decisions, design 
     *   Viewing job details (`app/job/[id].tsx`).
     *   Updating job status and syncing with the backend.
     *   Generating invoices and handling payment recording (cash, send invoice link).
+    *   Job file management, including photo uploads via camera and file picker.
 4.  **Future Feature Implementations (requiring careful design):**
-    *   Photo uploads (camera/gallery access, file handling, API integration).
     *   Real-time comments.
     *   Cash management and deposits.
+    *   Video playback for uploaded job files.
