@@ -259,7 +259,7 @@ export default function CreateJobScreen() {
   };
 
   const themedInputStyle = [
-    globalStyles.input,
+    globalStyles.themedFormInput,
     {
       backgroundColor: getInputBackgroundColor(colorScheme),
       color: getTextColor(colorScheme),

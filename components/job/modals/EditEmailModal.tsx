@@ -47,7 +47,7 @@ export default function EditEmailModal({ visible, currentEmail, onClose, onSave 
   };
 
   const themedInputStyle = [
-    globalStyles.input,
+    globalStyles.themedFormInput,
     {
       backgroundColor: bgColor,
       color: getTextColor(colorScheme),

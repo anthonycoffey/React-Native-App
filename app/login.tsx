@@ -35,7 +35,7 @@ export default function LoginScreen() {
   const { email: registeredEmail } = useLocalSearchParams<{ email?: string }>();
   const [email, setEmail] = useState(registeredEmail || '');
   const [password, setPassword] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,8 +60,8 @@ export default function LoginScreen() {
     }
   }, [registeredEmail]);
 
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
   const handleSubmit = async () => {
@@ -202,18 +202,18 @@ export default function LoginScreen() {
                   ]}
                   placeholder='Password'
                   placeholderTextColor={themedPlaceholderTextColor}
-                secureTextEntry={!isVisible}
+                secureTextEntry={!isPasswordVisible}
                 value={password}
                 onChangeText={setPassword}
                 autoCapitalize='none'
                 autoCorrect={false}
               />
               <TouchableOpacity
-                onPress={toggleVisibility}
+                onPress={togglePasswordVisibility}
                 style={globalStyles.eyeIcon}
               >
                 <MaterialIcons
-                  name={isVisible ? 'visibility-off' : 'visibility'}
+                  name={isPasswordVisible ? 'visibility-off' : 'visibility'}
                   size={20}
                   color={iconColor}
                 />

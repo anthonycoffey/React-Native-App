@@ -14,7 +14,9 @@ import { Text } from '@/components/Themed';
 import { apiService } from '@/utils/ApiService';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import globalStyles from '@/styles/globalStyles';
+// globalStyles import might become unused if this is the only usage.
+// Linter will handle if it's truly unused after the change.
+import globalStyles from '@/styles/globalStyles'; 
 import Colors from '@/constants/Colors';
 
 export default function ProfilePictureUploader() {
@@ -119,10 +121,7 @@ export default function ProfilePictureUploader() {
           style={[
             localStyles.avatarPlaceholder,
             {
-              backgroundColor:
-                colorScheme === 'dark'
-                  ? globalStyles.input.borderColor
-                  : '#e0e0e0',
+              backgroundColor: useThemeColor({}, 'borderColor'),
             },
           ]}
         >

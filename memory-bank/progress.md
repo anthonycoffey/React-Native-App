@@ -100,6 +100,7 @@ This document tracks what works, what's left to build, the current status, known
     - Enabled email autofill from registration.
     - Added link to the registration page.
     - Improved theming consistency.
+    - Standardized password visibility toggle state and function names to match `app/register.tsx` (`isPasswordVisible`, `togglePasswordVisibility`).
 
 ## What's Left to Build
 

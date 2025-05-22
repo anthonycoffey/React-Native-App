@@ -139,6 +139,7 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
     - Added functionality to accept an `email` parameter for autofill.
     - Added a navigation link to the new `/register` page.
     - Improved theming consistency.
+    - Standardized password visibility toggle state and function names to match `app/register.tsx` (`isPasswordVisible`, `togglePasswordVisibility`).
 - **Updated Login and Registration Page Styling:**
     - Added a new `brand` color (`#252d3a`) to `constants/Colors.ts`.
     - Updated `app/login.tsx` and `app/register.tsx` to use this `brand` color for their main background.

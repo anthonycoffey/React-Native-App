@@ -5,7 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { centsToDollars } from '@/utils/money';
 import { apiService, HttpError } from '@/utils/ApiService';
 import globalStyles from '@/styles/globalStyles';
-import { CardTitle } from '@/components/Typography';
+import { CardTitle, LabelText } from '@/components/Typography';
 import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 import {
   SecondaryButton,
@@ -270,7 +270,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
             <CardTitle>Add Line Item</CardTitle>
 
             <View style={styles.formContainer}>
-              <Text style={globalStyles.label}>Service</Text>
+              <LabelText>Service</LabelText>
               <DropDownPicker
                 open={dropdownOpen}
                 value={selectedServiceId}

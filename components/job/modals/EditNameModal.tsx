@@ -54,7 +54,7 @@ export default function EditNameModal({
   };
 
   const themedInputStyle = [
-    globalStyles.input,
+    globalStyles.themedFormInput,
     {
       backgroundColor: bgColor,
       color: getTextColor(colorScheme),
