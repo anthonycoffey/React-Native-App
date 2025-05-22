@@ -116,6 +116,34 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
         - Updated `stopLocationUpdates` to use `Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME)`.
         - Removed all `console.log` statements and minimized comments as requested.
     - Confirmed `app.json` already had necessary configurations for background location modes on iOS and Android.
+- **Refactored Styling for Login and Registration Pages:**
+    - Modified `styles/globalStyles.ts`:
+        - Changed `inputContainer` background to `transparent`.
+        - Added new theme-aware structural styles: `themedFormInput`, `themedPasswordInputWrapper`, `themedPasswordTextInput`.
+        - Removed old `input`, `inputPrice` styles and hardcoded color from `label` style.
+    - Updated `app/register.tsx` and `app/login.tsx`:
+        - Consistently used `globalStyles.inputContainer` for input field wrappers.
+        - Applied new global input styles (`themedFormInput`, `themedPasswordInputWrapper`, `themedPasswordTextInput`) with inline themed colors.
+        - Ensured `LabelText` is used for labels where appropriate.
+- **Implemented User Registration:**
+    - Created `app/register.tsx` with a registration form (First Name, Last Name, Email, Phone, Password, Confirm Password).
+    - First Name and Last Name fields are displayed on the same row.
+    - Implemented client-side validation: required fields, password match, strong password policy.
+    - Integrated API call to `POST /users/signup`.
+    - On success, navigates to `/login` with email pre-filled.
+    - Displays API errors.
+    - Added navigation link to login page.
+    - Ensured consistent theming for light/dark modes.
+    - Added `register` screen to `app/_layout.tsx` with `headerShown: false`.
+- **Updated `app/login.tsx`:**
+    - Added functionality to accept an `email` parameter for autofill.
+    - Added a navigation link to the new `/register` page.
+    - Improved theming consistency.
+- **Updated Login and Registration Page Styling:**
+    - Added a new `brand` color (`#252d3a`) to `constants/Colors.ts`.
+    - Updated `app/login.tsx` and `app/register.tsx` to use this `brand` color for their main background.
+    - Corrected styling for password input fields in `app/register.tsx` to ensure proper theme-aware rendering.
+    - Ensured both pages are scrollable using `ScrollView`.
 
 ## Next Steps
 

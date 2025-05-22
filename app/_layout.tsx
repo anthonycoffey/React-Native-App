@@ -49,6 +49,7 @@ export default function RootLayout() {
                 })}
               />
               <Stack.Screen name='login' options={{ headerShown: false }} />
+              <Stack.Screen name='register' options={{ headerShown: false }} />
               <Stack.Screen
                 name='location-permission'
                 options={{ headerShown: false }}
