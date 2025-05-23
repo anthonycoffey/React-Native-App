@@ -10,6 +10,8 @@ This document details the technologies used, development setup, technical constr
 - **Navigation:** Expo Router (File System Based)
 - **State Management:** React Context API
 - **Secure Storage:** `expo-secure-store`
+- **Camera Access:** `expo-camera` (for direct camera interaction)
+- **Document Picking:** `expo-document-picker` (for selecting files from storage)
 - **Background Task Management:** `expo-task-manager` (used for background location updates)
 - **Package Manager:** NPM (officially recommended by Expo for this project)
 - **Build & Deployment:** EAS Build, EAS Update
@@ -48,7 +50,9 @@ This document details the technologies used, development setup, technical constr
 ## Dependencies
 
 - Refer to `package.json` for a full list of dependencies.
+  - `expo-camera`: Provides access to the device camera for capturing photos/videos. Its plugin is used in `app.json` to manage native permissions and usage descriptions.
   - `expo-crypto`: Provides cryptographic functionalities, including UUID generation for Google Places API session tokens.
+  - `expo-document-picker`: Allows users to select documents or files from the device's storage.
   - `expo-task-manager`: Enables defining and managing tasks that can run in the background, such as location tracking.
 
 ## Tool Usage Patterns

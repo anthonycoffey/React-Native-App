@@ -54,10 +54,10 @@ export function AuthProvider(props: React.PropsWithChildren) {
       const response = await apiService.get<UserApiResponse>('/users/me');
       setCurrentUser(response.user);
     } catch (error) {
-      console.error('[AuthContext] Failed to load current user:');
+      console.log('[AuthContext] Failed to load current user:');
       setCurrentUser(null);
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        console.log(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
         if (error.status === 401) {
           console.warn('[AuthContext] Received 401, signing out.');
           await signOutAndNavigate();

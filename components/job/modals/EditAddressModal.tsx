@@ -93,7 +93,7 @@ export default function EditAddressModal({
   const bgColor = getInputBackgroundColor(colorScheme);
 
   const themedInputStyle = [
-    globalStyles.input,
+    globalStyles.themedFormInput,
     {
       backgroundColor: bgColor,
       color: getTextColor(colorScheme),

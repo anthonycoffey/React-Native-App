@@ -46,39 +46,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  input: {
-    color: '#0e0d0d',
-    padding: 10,
-    marginVertical: 5,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  inputPrice: {
-    color: '#0e0d0d',
-    padding: 10,
-    marginVertical: 5,
-    borderColor: '#131313',
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  formInput: {
-    backgroundColor: '#fff',
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-  },
-  passwordInput: {
-    backgroundColor: '#fff',
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingRight: 50,
-  },
+  // input and inputPrice styles removed
   inputContainer: {
-    backgroundColor: '#252d3a',
+    backgroundColor: 'transparent', // Changed from hardcoded '#252d3a'
     marginBottom: 16,
     position: 'relative',
   },
@@ -87,10 +57,34 @@ const styles = StyleSheet.create({
     right: 15,
     top: 15,
   },
-  label: {
+  label: { // Color removed, should be handled by themed LabelText component
     fontWeight: 'bold',
     fontSize: 12,
-    color: '#424242',
+  },
+  // New theme-aware input styles
+  themedFormInput: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 12, // For dynamic height
+    // Theme-dependent backgroundColor, color, borderColor to be applied in component
+  },
+  themedPasswordInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 15, // Padding for the wrapper
+    position: 'relative', // For eyeIcon
+    // Theme-dependent backgroundColor, borderColor to be applied in component
+    // Height will be intrinsic
+  },
+  themedPasswordTextInput: {
+    flex: 1,
+    paddingVertical: 12, // Match themedFormInput's vertical padding for consistent height feel
+    paddingRight: 40,    // Space for icon
+    // Theme-dependent color to be applied in component
+    // No explicit height, no background/border (wrapper handles it)
   },
   title: {
     fontSize: 24,
@@ -99,8 +93,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    marginTop: 20,
-    textAlign: 'center',
     marginBottom: 4,
     fontSize: 16,
     lineHeight: 24,

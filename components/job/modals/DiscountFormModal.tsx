@@ -273,7 +273,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
               </LabelText>
               <TextInput
                 style={[
-                  globalStyles.input,
+                  globalStyles.themedFormInput,
                   styles.textInput,
                   {
                     backgroundColor: getInputBackgroundColor(theme),
@@ -339,7 +339,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
                     }
                   }}
                   style={[
-                    globalStyles.input,
+                    globalStyles.themedFormInput,
                     styles.textInput,
                     {
                       backgroundColor: getInputBackgroundColor(theme),
@@ -357,7 +357,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
                 </LabelText>
                 <TextInput
                   style={[
-                    globalStyles.input,
+                    globalStyles.themedFormInput,
                     styles.textInput,
                     {
                       backgroundColor: getInputBackgroundColor(theme),

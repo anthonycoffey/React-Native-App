@@ -68,7 +68,7 @@ export default function TakePayment({
           <View style={styles.inputsRow}>
             <View style={styles.inputContainer}>
               <CurrencyInput
-                label={'Amount (USD$)'}
+                label={'Amount'}
                 value={amountToPay}
                 readOnly={true}
                 editable={false}
@@ -77,7 +77,7 @@ export default function TakePayment({
             </View>
             <View style={styles.inputContainer}>
               <CurrencyInput
-                label={'Tip (USD$)'}
+                label={'Tip'}
                 value={tipAmount}
                 onChangeText={(value: string) => setTipAmount(value)}
               />

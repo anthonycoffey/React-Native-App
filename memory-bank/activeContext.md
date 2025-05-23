@@ -4,7 +4,7 @@ This document details the current work focus, recent changes, next steps, active
 
 ## Current Work Focus
 
-Implementing Job File Management feature and ongoing Memory Bank refinement.
+Refining Job File Management with camera integration and ensuring robust Memory Bank documentation.
 
 ## Recent Changes
 
@@ -116,12 +116,51 @@ Implementing Job File Management feature and ongoing Memory Bank refinement.
         - Updated `stopLocationUpdates` to use `Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME)`.
         - Removed all `console.log` statements and minimized comments as requested.
     - Confirmed `app.json` already had necessary configurations for background location modes on iOS and Android.
+- **Refactored Styling for Login and Registration Pages:**
+    - Modified `styles/globalStyles.ts`:
+        - Changed `inputContainer` background to `transparent`.
+        - Added new theme-aware structural styles: `themedFormInput`, `themedPasswordInputWrapper`, `themedPasswordTextInput`.
+        - Removed old `input`, `inputPrice` styles and hardcoded color from `label` style.
+    - Updated `app/register.tsx` and `app/login.tsx`:
+        - Consistently used `globalStyles.inputContainer` for input field wrappers.
+        - Applied new global input styles (`themedFormInput`, `themedPasswordInputWrapper`, `themedPasswordTextInput`) with inline themed colors.
+        - Ensured `LabelText` is used for labels where appropriate.
+- **Implemented User Registration:**
+    - Created `app/register.tsx` with a registration form (First Name, Last Name, Email, Phone, Password, Confirm Password).
+    - First Name and Last Name fields are displayed on the same row.
+    - Implemented client-side validation: required fields, password match, strong password policy.
+    - Integrated API call to `POST /users/signup`.
+    - On success, navigates to `/login` with email pre-filled.
+    - Displays API errors.
+    - Added navigation link to login page.
+    - Ensured consistent theming for light/dark modes.
+    - Added `register` screen to `app/_layout.tsx` with `headerShown: false`.
+- **Updated `app/login.tsx`:**
+    - Added functionality to accept an `email` parameter for autofill.
+    - Added a navigation link to the new `/register` page.
+    - Improved theming consistency.
+    - Standardized password visibility toggle state and function names to match `app/register.tsx` (`isPasswordVisible`, `togglePasswordVisibility`).
+- **Updated Login and Registration Page Styling:**
+    - Added a new `brand` color (`#252d3a`) to `constants/Colors.ts`.
+    - Updated `app/login.tsx` and `app/register.tsx` to use this `brand` color for their main background.
+    - Corrected styling for password input fields in `app/register.tsx` to ensure proper theme-aware rendering.
+    - Ensured both pages are scrollable using `ScrollView`.
+- **Enhanced Job File Uploads with Camera Integration:**
+    - Installed `expo-camera` dependency.
+    - Created `components/job/CameraCaptureModal.tsx` to provide a dedicated camera interface for taking photos. This modal handles camera permissions, displays a preview, and allows capturing a single image.
+    - Modified `components/job/JobFiles.tsx`:
+        - Replaced the single "Upload File(s)" button with two icon buttons: a "camera" icon to launch `CameraCaptureModal.tsx` and a "folder" icon to use the existing `expo-document-picker` functionality.
+        - Integrated the `CameraCaptureModal` and its callback to handle uploading the captured image.
+        - The document picker is now configured to primarily suggest images (`type: ['image/*']`).
+    - Removed all code comments from `components/job/CameraCaptureModal.tsx` and `components/job/JobFiles.tsx` as per user request.
+    - Updated `app.json` by adding the `expo-camera` plugin to ensure correct camera permissions are configured for iOS and Android. The plugin includes a usage description: "Allow $(PRODUCT_NAME) to access your camera to take photos for job documentation."
 
 ## Next Steps
 
-- **Refine Memory Bank:**
-    - Identify and document any `Known Issues`.
-- **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md`.
+- **Finalize Memory Bank Update:** Complete updates to all relevant Memory Bank files (`progress.md`, `systemPatterns.md`, `techContext.md`) to reflect the camera integration.
+- **Testing:** Thoroughly test the new camera upload functionality and existing file picker functionality on both iOS and Android.
+- **Identify and document any `Known Issues`** that arise during testing or further development.
+- **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md` once Memory Bank is up-to-date and current features are stable.
 - Continuously update all Memory Bank files as new information is gathered or decisions are made.
 
 ## Active Decisions & Considerations

@@ -22,6 +22,7 @@ type Props = {
 };
 
 export default function JobStatus({ job, fetchJob }: Props) {
+  const colorScheme = useColorScheme() ?? 'light'; // Define colorScheme once
   const [cancelComment, setCancelComment] = useState<string>('');
   const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false);
   const [cannotCancel, setCannotCancel] = useState<boolean>(false);
@@ -206,9 +207,9 @@ export default function JobStatus({ job, fetchJob }: Props) {
               styles.modalContent,
               {
                 backgroundColor:
-                  useColorScheme() === 'dark'
+                  colorScheme === 'dark' // Use defined colorScheme
                     ? Colors.dark.background
-                    : 'white',
+                    : Colors.light.background, // Use themed white
               },
             ]}
           >
@@ -216,19 +217,23 @@ export default function JobStatus({ job, fetchJob }: Props) {
             <View style={styles.inputContainer}>
               <TextInput
                 style={[
-                  globalStyles.input,
+                  globalStyles.themedFormInput, // Use new base style
                   {
                     color:
-                      useColorScheme() === 'dark'
+                      colorScheme === 'dark' // Use defined colorScheme
                         ? Colors.dark.text
                         : Colors.light.text,
                     backgroundColor:
-                      useColorScheme() === 'dark' ? '#2c2c2c' : 'white',
+                      colorScheme === 'dark' ? '#2c2c2c' : Colors.light.background, // Use themed white
+                    borderColor: // Add themed border color
+                      colorScheme === 'dark' // Use defined colorScheme
+                        ? Colors.dark.borderColor
+                        : Colors.light.borderColor,
                   },
                 ]}
                 placeholder='Enter reason for cancellation'
                 placeholderTextColor={
-                  useColorScheme() === 'dark' ? '#9BA1A6' : '#687076'
+                  colorScheme === 'dark' ? '#9BA1A6' : '#687076' // Use defined colorScheme
                 }
                 value={cancelComment}
                 onChangeText={setCancelComment}

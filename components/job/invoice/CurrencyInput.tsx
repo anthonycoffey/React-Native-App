@@ -8,6 +8,7 @@ import {
   getInputBackgroundColor,
   getTextColor,
   getPlaceholderTextColor,
+  getBorderColor, // Import getBorderColor
 } from '@/hooks/useThemeColor';
 
 type Props = {
@@ -51,11 +52,12 @@ export default function CurrencyInput({
       <LabelText style={styles.label}>{label}</LabelText>
       <TextInput
         style={[
-          globalStyles.input,
-          styles.input,
+          globalStyles.themedFormInput, // Use new base style
+          styles.input, // Local styles might still be relevant
           {
             color: getTextColor(colorScheme),
             backgroundColor: getInputBackgroundColor(colorScheme),
+            borderColor: getBorderColor(colorScheme), // Add themed border color
           },
         ]}
         keyboardType='numeric'

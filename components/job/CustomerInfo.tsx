@@ -3,7 +3,8 @@ import { TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import globalStyles from '@/styles/globalStyles';
 import { Job, Address, Car as CarType } from '@/types';
-import { View, Text } from '@/components/Themed';
+import { View } from '@/components/Themed';
+import { LabelText } from '@/components/Typography';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
   getInputBackgroundColor,
@@ -60,7 +61,7 @@ export default function CustomerInfo({
   }, [job]);
 
   const inputStyles = [
-    globalStyles.input,
+    globalStyles.themedFormInput,
     {
       backgroundColor: getInputBackgroundColor(colorScheme),
       color: getTextColor(colorScheme),
@@ -123,7 +124,7 @@ export default function CustomerInfo({
     <View style={styles.container}>
       <View style={styles.fieldContainer}>
         <View style={styles.labelContainer}>
-          <Text style={globalStyles.label}>Customer Name</Text>
+          <LabelText>Customer Name</LabelText>
           <TouchableOpacity
             onPress={() => setIsEditNameModalVisible(true)}
             style={styles.editIcon}
@@ -136,7 +137,7 @@ export default function CustomerInfo({
 
       <View style={styles.fieldContainer}>
         <View style={styles.labelContainer}>
-          <Text style={globalStyles.label}>Customer Email</Text>
+          <LabelText>Customer Email</LabelText>
           <TouchableOpacity
             onPress={() => setIsEditEmailModalVisible(true)}
             style={styles.editIcon}
@@ -149,7 +150,7 @@ export default function CustomerInfo({
 
       <View style={styles.fieldContainer}>
         <View style={styles.labelContainer}>
-          <Text style={globalStyles.label}>Car</Text>
+          <LabelText>Car</LabelText>
           <TouchableOpacity
             onPress={() => setIsEditCarModalVisible(true)}
             style={styles.editIcon}
@@ -166,7 +167,7 @@ export default function CustomerInfo({
 
       <View style={styles.fieldContainer}>
         <View style={styles.labelContainer}>
-          <Text style={globalStyles.label}>Address</Text>
+          <LabelText>Address</LabelText>
           <TouchableOpacity
             onPress={() => setIsEditAddressModalVisible(true)}
             style={styles.editIcon}
