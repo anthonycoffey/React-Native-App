@@ -170,7 +170,7 @@ export default function RegisterScreen() {
               style={[
                 globalStyles.title,
                 styles.title,
-                { color: themedTextColor },
+                { color: 'white' },
               ]}
             >
               Create Account
@@ -189,7 +189,7 @@ export default function RegisterScreen() {
                   styles.inputRowItemLeft,
                 ]}
               >
-                <LabelText>First Name</LabelText>
+                <LabelText style={{ color: 'white' }}>First Name</LabelText>
                 <TextInput
                   style={[
                     globalStyles.themedFormInput,
@@ -214,7 +214,7 @@ export default function RegisterScreen() {
                   styles.inputRowItemRight,
                 ]}
               >
-                <LabelText>Last Name</LabelText>
+                <LabelText style={{ color: 'white' }}>Last Name</LabelText>
                 <TextInput
                   style={[
                     globalStyles.themedFormInput,
@@ -234,7 +234,7 @@ export default function RegisterScreen() {
             </View>
 
             <View style={globalStyles.inputContainer}>
-              <LabelText>Email</LabelText>
+              <LabelText style={{ color: 'white' }}>Email</LabelText>
               <TextInput
                 style={[
                   globalStyles.themedFormInput,
@@ -255,7 +255,7 @@ export default function RegisterScreen() {
             </View>
 
             <View style={globalStyles.inputContainer}>
-              <LabelText>Phone Number</LabelText>
+              <LabelText style={{ color: 'white' }}>Phone Number</LabelText>
               <TextInput
                 style={[
                   globalStyles.themedFormInput,
@@ -275,7 +275,7 @@ export default function RegisterScreen() {
             </View>
 
             <View style={globalStyles.inputContainer}>
-              <LabelText>Password</LabelText>
+              <LabelText style={{ color: 'white' }}>Password</LabelText>
               <View
                 style={[
                   globalStyles.themedPasswordInputWrapper,
@@ -312,7 +312,7 @@ export default function RegisterScreen() {
             </View>
 
             <View style={globalStyles.inputContainer}>
-              <LabelText>Confirm Password</LabelText>
+              <LabelText style={{ color: 'white' }}>Confirm Password</LabelText>
               <View
                 style={[
                   globalStyles.themedPasswordInputWrapper,

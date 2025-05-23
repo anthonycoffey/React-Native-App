@@ -18,7 +18,7 @@ import { apiService, HttpError } from '@/utils/ApiService';
 import { Text, View } from '@/components/Themed';
 import { PrimaryButton } from '@/components/Buttons';
 import globalStyles from '@/styles/globalStyles';
-import { ErrorText } from '@/components/Typography';
+import { ErrorText, LabelText } from '@/components/Typography';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
   useThemeColor,
@@ -159,13 +159,14 @@ export default function LoginScreen() {
               style={[
                 globalStyles.title,
                 loginStyles.title,
-                { color: themedTextColor },
+                { color: 'white' },
               ]}
             >
               Sign In
             </Text>
 
             <View style={globalStyles.inputContainer}>
+              <LabelText style={{ color: 'white' }}>Email</LabelText>
               <TextInput
                 style={[
                   globalStyles.themedFormInput,
@@ -186,6 +187,7 @@ export default function LoginScreen() {
             </View>
 
             <View style={globalStyles.inputContainer}>
+              <LabelText style={{ color: 'white' }}>Password</LabelText>
               <View
                 style={[
                   globalStyles.themedPasswordInputWrapper,
