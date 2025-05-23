@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -269,42 +275,45 @@ export default function CreateJobScreen() {
   ];
   const placeholderTextColor = getPlaceholderTextColor(colorScheme);
 
-  const fetchAddressSuggestionsCore = useCallback(async (input: string) => {
-    if (
-      !input ||
-      input.trim().length < 3 ||
-      !GEOCODING_API_KEY ||
-      !placesSessionToken
-    ) {
-      setAddressSuggestions([]);
-      setIsFetchingAddressSuggestions(false);
-      return;
-    }
-    setIsFetchingAddressSuggestions(true);
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
-      input
-    )}&key=${GEOCODING_API_KEY}&components=country:us&sessiontoken=${placesSessionToken}`;
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      if (data.predictions) {
-        setAddressSuggestions(data.predictions);
-      } else {
+  const fetchAddressSuggestionsCore = useCallback(
+    async (input: string) => {
+      if (
+        !input ||
+        input.trim().length < 3 ||
+        !GEOCODING_API_KEY ||
+        !placesSessionToken
+      ) {
         setAddressSuggestions([]);
-        console.error(
-          'Error fetching address suggestions:',
-          data.status,
-          data.error_message
-        );
+        setIsFetchingAddressSuggestions(false);
+        return;
       }
-    } catch (error) {
-      console.error('Failed to fetch address suggestions:', error);
-      setAddressSuggestions([]);
-    } finally {
-      setIsFetchingAddressSuggestions(false);
-    }
-  }, [placesSessionToken]); // GEOCODING_API_KEY is stable, setters are stable.
+      setIsFetchingAddressSuggestions(true);
+      const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+        input
+      )}&key=${GEOCODING_API_KEY}&components=country:us&sessiontoken=${placesSessionToken}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.predictions) {
+          setAddressSuggestions(data.predictions);
+        } else {
+          setAddressSuggestions([]);
+          console.error(
+            'Error fetching address suggestions:',
+            data.status,
+            data.error_message
+          );
+        }
+      } catch (error) {
+        console.error('Failed to fetch address suggestions:', error);
+        setAddressSuggestions([]);
+      } finally {
+        setIsFetchingAddressSuggestions(false);
+      }
+    },
+    [placesSessionToken]
+  ); // GEOCODING_API_KEY is stable, setters are stable.
 
   const debouncedFetchAddressSuggestions = useDebounce(
     fetchAddressSuggestionsCore,
@@ -996,17 +1005,16 @@ export default function CreateJobScreen() {
               maxLength={17}
               editable={!loading}
             />
-            {customerCars.length > 0 &&
-              !selectedCar && (
-                <OutlinedButton
-                  title='Select Existing Car'
-                  onPress={() => {
-                    setIsNewCar(false);
-                    setCarForm({});
-                  }}
-                  style={{ marginTop: 10 }}
-                />
-              )}
+            {customerCars.length > 0 && !selectedCar && (
+              <OutlinedButton
+                title='Select Existing Car'
+                onPress={() => {
+                  setIsNewCar(false);
+                  setCarForm({});
+                }}
+                style={{ marginTop: 10 }}
+              />
+            )}
           </View>
         ) : (
           <View>
@@ -1244,7 +1252,7 @@ export default function CreateJobScreen() {
 
         <View style={{ marginTop: serviceDropdownOpen ? 150 : 15 }}>
           <CurrencyInput
-            label='Price ($USD)'
+            label='Price '
             value={currentLineItemPrice}
             onChangeText={setCurrentLineItemPrice}
             editable={!loading}

@@ -20,6 +20,7 @@ import {
   getBorderColor,
   getTextColor,
   getInputBackgroundColor,
+  getIconColor, // Added import
 } from '@/hooks/useThemeColor';
 
 type Props = {
@@ -37,9 +38,13 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
     null
   );
   const [valuePrice, setValuePrice] = useState<string>('0.00');
+  const [editingLineItem, setEditingLineItem] =
+    useState<JobLineItemsType | null>(null);
+  const [showEditPriceModal, setShowEditPriceModal] = useState<boolean>(false);
 
   useEffect(() => {
-    if (selectedServiceId) {
+    if (selectedServiceId && !editingLineItem) {
+      // Only update price from service if not editing
       const selectedService = services.find(
         (service) => service.id === selectedServiceId
       );
@@ -166,6 +171,57 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   const resetForm = () => {
     setValuePrice('0.00');
     setSelectedServiceId(null);
+    setEditingLineItem(null); // Also reset editingLineItem
+  };
+
+  const handleOpenEditPriceModal = (item: JobLineItemsType) => {
+    setEditingLineItem(item);
+    setValuePrice(centsToDollars(item.price, 'numeric'));
+    setShowEditPriceModal(true);
+  };
+
+  const handleUpdateLineItemPrice = async () => {
+    if (!editingLineItem) return;
+
+    const updatedPriceInCents = Math.round(+valuePrice * 100);
+
+    // Ensure JobLineItems is not undefined before mapping
+    const currentLineItems = job.JobLineItems || [];
+
+    const updatedLineItemsArray = currentLineItems.map((li) => {
+      if (li.id === editingLineItem.id) {
+        // For the item being edited, update its price but keep its original ServiceId
+        return { ServiceId: li.ServiceId, price: updatedPriceInCents };
+      }
+      // For other items, keep their original ServiceId and price
+      return { ServiceId: li.ServiceId, price: li.price };
+    });
+
+    try {
+      await apiService.post(`/jobs/${job.id}/line-items`, {
+        lineItems: updatedLineItemsArray,
+      });
+      fetchJob();
+      setShowEditPriceModal(false);
+      resetForm(); // This will also clear editingLineItem
+    } catch (error) {
+      console.error('Failed to update line item price:');
+      if (error instanceof HttpError) {
+        console.error(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
+        Alert.alert(
+          'Error',
+          `Failed to update line item price. Server said: ${error.body?.message || error.message}`
+        );
+      } else {
+        console.error('  An unexpected error occurred:', error);
+        Alert.alert(
+          'Error',
+          'An unexpected error occurred while updating line item price.'
+        );
+      }
+    }
   };
 
   const colorScheme = useColorScheme() ?? 'light';
@@ -181,7 +237,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               key={item.id.toString()}
               style={[
                 styles.lineItem,
-                { borderBottomColor: getBorderColor(colorScheme ?? 'light') },
+                { borderBottomColor: getBorderColor(colorScheme) },
               ]}
             >
               <Text
@@ -193,12 +249,24 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               </Text>
               <Text style={styles.price}>{centsToDollars(+item.price)}</Text>
               {edit && (
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={() => deleteLineItem(item)}
-                >
-                  <MaterialIcons name='delete' size={24} color='#d32f2f' />
-                </TouchableOpacity>
+                <View style={styles.actionIconsContainer}>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => handleOpenEditPriceModal(item)}
+                  >
+                    <MaterialIcons
+                      name='edit'
+                      size={24}
+                      color={getIconColor(colorScheme)}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => deleteLineItem(item)}
+                  >
+                    <MaterialIcons name='delete' size={24} color='#d32f2f' />
+                  </TouchableOpacity>
+                </View>
               )}
             </View>
           ) : null
@@ -207,7 +275,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         <Text
           style={[
             styles.emptyText,
-            { color: (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#666' },
+            { color: colorScheme === 'dark' ? '#9BA1A6' : '#666' },
           ]}
         >
           No services added yet.
@@ -223,16 +291,13 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
             <MaterialIcons
               name='add-circle'
               size={24}
-              color={
-                (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'
-              }
+              color={colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4'}
             />
             <Text
               style={[
                 styles.addButtonText,
                 {
-                  color:
-                    (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4',
+                  color: colorScheme === 'dark' ? '#65b9d6' : '#0a7ea4',
                 },
               ]}
             >
@@ -264,7 +329,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           <View
             style={[
               styles.modalContent,
-              { backgroundColor: getBackgroundColor(colorScheme ?? 'light') },
+              { backgroundColor: getBackgroundColor(colorScheme) },
             ]}
           >
             <CardTitle>Add Line Item</CardTitle>
@@ -282,33 +347,28 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                 style={[
                   styles.dropdown,
                   {
-                    backgroundColor: getInputBackgroundColor(
-                      colorScheme ?? 'light'
-                    ),
-                    borderColor: getBorderColor(colorScheme ?? 'light'),
+                    backgroundColor: getInputBackgroundColor(colorScheme),
+                    borderColor: getBorderColor(colorScheme),
                   },
                 ]}
-                textStyle={{ color: getTextColor(colorScheme ?? 'light') }}
+                textStyle={{ color: getTextColor(colorScheme) }}
                 placeholderStyle={{
-                  color:
-                    (colorScheme ?? 'light') === 'dark' ? '#9BA1A6' : '#687076',
+                  color: colorScheme === 'dark' ? '#9BA1A6' : '#687076',
                 }}
                 dropDownContainerStyle={[
                   styles.dropdownContainer,
                   {
-                    backgroundColor: getInputBackgroundColor(
-                      colorScheme ?? 'light'
-                    ),
-                    borderColor: getBorderColor(colorScheme ?? 'light'),
+                    backgroundColor: getInputBackgroundColor(colorScheme),
+                    borderColor: getBorderColor(colorScheme),
                   },
                 ]}
-                theme={(colorScheme ?? 'light') === 'dark' ? 'DARK' : 'LIGHT'}
+                theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
               />
 
               <View style={styles.spacer} />
 
               <CurrencyInput
-                label='Price ($USD)'
+                label='Price '
                 value={valuePrice}
                 onChangeText={setValuePrice}
                 editable={true}
@@ -325,6 +385,54 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                 title='Cancel'
                 onPress={() => {
                   setShowModal(false);
+                  resetForm();
+                }}
+                style={styles.modalButton}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Edit Price Modal */}
+      <Modal
+        visible={showEditPriceModal}
+        animationType='fade'
+        transparent={true}
+        onRequestClose={() => {
+          setShowEditPriceModal(false);
+          resetForm();
+        }}
+      >
+        <View style={styles.modalBackground}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: getBackgroundColor(colorScheme) },
+            ]}
+          >
+            {editingLineItem && editingLineItem.Service && (
+              <View style={styles.formContainer}>
+                <CardTitle>{editingLineItem.Service.name}</CardTitle>
+                <CurrencyInput
+                  label='Price'
+                  value={valuePrice}
+                  onChangeText={setValuePrice}
+                  editable={true} // This should be true for editing
+                />
+              </View>
+            )}
+
+            <View style={styles.modalButtons}>
+              <SecondaryButton
+                title='Save Changes'
+                onPress={handleUpdateLineItemPrice}
+                style={styles.modalButton}
+              />
+              <OutlinedButton
+                title='Cancel'
+                onPress={() => {
+                  setShowEditPriceModal(false);
                   resetForm();
                 }}
                 style={styles.modalButton}
@@ -394,7 +502,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    width: '90%',
+    width: '85%',
     borderRadius: 10,
     padding: 20,
     elevation: 5,
@@ -418,5 +526,12 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     marginBottom: 10,
+  },
+  actionIconsContainer: {
+    flexDirection: 'row',
+  },
+  actionButton: {
+    padding: 5,
+    marginLeft: 8,
   },
 });
