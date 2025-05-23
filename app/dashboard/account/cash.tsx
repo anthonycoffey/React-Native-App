@@ -10,7 +10,12 @@ import {
 } from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getBackgroundColor, getBorderColor, getTextColor, getIconColor } from '@/hooks/useThemeColor';
+import {
+  getBackgroundColor,
+  getBorderColor,
+  getTextColor,
+  getIconColor,
+} from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
 import globalStyles from '@/styles/globalStyles';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -41,7 +46,8 @@ interface CashIntakeApiResponse {
 
 export default function CashManagementScreen() {
   const colorScheme = useColorScheme() ?? 'light';
-  const themedActivityIndicatorColor = colorScheme === 'dark' ? Colors.dark.text : Colors.light.tint;
+  const themedActivityIndicatorColor =
+    colorScheme === 'dark' ? Colors.dark.text : Colors.light.tint;
 
   const [cashIntakes, setCashIntakes] = useState<CashIntake[]>([]);
   const [selectedRows, setSelectedRows] = useState<CashIntake[]>([]);
@@ -62,7 +68,7 @@ export default function CashManagementScreen() {
       );
       setCashIntakes(response.data || []);
     } catch (error) {
-      console.error('Failed to load cash intakes:', error);
+      console.log('Failed to load cash intakes:', error);
       Alert.alert('Error', 'Could not load cash intakes.');
       setCashIntakes([]);
     } finally {
@@ -111,7 +117,7 @@ export default function CashManagementScreen() {
       router.push(`/dashboard/account/deposits/${createdDeposit.id}`);
       loadCashIntakes();
     } catch (error) {
-      console.error('Failed to create deposit:', error);
+      console.log('Failed to create deposit:', error);
       Alert.alert('Error', 'Could not create deposit.');
     } finally {
       setIsSubmittingDeposit(false);
@@ -125,9 +131,13 @@ export default function CashManagementScreen() {
       { borderBottomColor: getBorderColor(colorScheme) },
     ];
 
-    const checkboxIconName = isSelected ? 'check-box' : 'check-box-outline-blank';
-    const checkboxIconColor = isSelected 
-      ? (colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint) 
+    const checkboxIconName = isSelected
+      ? 'check-box'
+      : 'check-box-outline-blank';
+    const checkboxIconColor = isSelected
+      ? colorScheme === 'dark'
+        ? Colors.dark.tint
+        : Colors.light.tint
       : getIconColor(colorScheme);
 
     return (
@@ -135,18 +145,36 @@ export default function CashManagementScreen() {
         onPress={() => toggleSelection(item)}
         style={itemRowDynamicStyle}
       >
-        <MaterialIcons name={checkboxIconName} size={24} color={checkboxIconColor} style={localStyles.checkboxIcon} />
+        <MaterialIcons
+          name={checkboxIconName}
+          size={24}
+          color={checkboxIconColor}
+          style={localStyles.checkboxIcon}
+        />
         <View style={localStyles.itemTextContainer}>
-          <Text style={[localStyles.itemCell, {color: getTextColor(colorScheme)}]}>
+          <Text
+            style={[localStyles.itemCell, { color: getTextColor(colorScheme) }]}
+          >
             Amount: {centsToDollars(item.amount)}
           </Text>
-          <Text style={[localStyles.itemCell, {color: getTextColor(colorScheme)}]}>
+          <Text
+            style={[localStyles.itemCell, { color: getTextColor(colorScheme) }]}
+          >
             Owed: {centsToDollars(item.owed)}
           </Text>
           {item.Payment?.Job?.id && (
-            <Text style={[localStyles.itemCell, {color: getTextColor(colorScheme)}]}>Job: J-{item.Payment.Job.id}</Text>
+            <Text
+              style={[
+                localStyles.itemCell,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
+              Job: J-{item.Payment.Job.id}
+            </Text>
           )}
-          <Text style={[localStyles.itemCell, {color: getTextColor(colorScheme)}]}>
+          <Text
+            style={[localStyles.itemCell, { color: getTextColor(colorScheme) }]}
+          >
             Date: {formatDateTime(item.createdAt)}
           </Text>
         </View>
@@ -168,8 +196,18 @@ export default function CashManagementScreen() {
   }
 
   return (
-    <ThemedView style={[globalStyles.container, { backgroundColor: getBackgroundColor(colorScheme) }]}>
-      <ThemedView style={[localStyles.headerContainer, { borderBottomColor: getBorderColor(colorScheme) }]}>
+    <ThemedView
+      style={[
+        globalStyles.container,
+        { backgroundColor: getBackgroundColor(colorScheme) },
+      ]}
+    >
+      <ThemedView
+        style={[
+          localStyles.headerContainer,
+          { borderBottomColor: getBorderColor(colorScheme) },
+        ]}
+      >
         <Text style={globalStyles.title}>Cash Management</Text>
         <PrimaryButton
           title='Deposit'
@@ -196,12 +234,17 @@ export default function CashManagementScreen() {
         onRequestClose={() => setDepositModalVisible(false)}
       >
         <ThemedView style={localStyles.modalOverlay}>
-          <ThemedView style={[localStyles.modalContent, { backgroundColor: getBackgroundColor(colorScheme) }]}>
+          <ThemedView
+            style={[
+              localStyles.modalContent,
+              { backgroundColor: getBackgroundColor(colorScheme) },
+            ]}
+          >
             <Text style={globalStyles.subtitle}>New Deposit</Text>
             <CurrencyInput
               label='Deposit Amount (USD)'
               value={(newDepositAmount / 100).toFixed(2)}
-              placeholder="0.00"
+              placeholder='0.00'
               onChangeText={(text: string) => {
                 const numericValue = parseFloat(text.replace(/[^0-9.]/g, ''));
                 setNewDepositAmount(
@@ -219,7 +262,17 @@ export default function CashManagementScreen() {
               onPress={() => setDepositModalVisible(false)}
               style={{ marginTop: 10 }}
             >
-              <Text style={{ textAlign: 'center', color: colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint }}>Cancel</Text>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color:
+                    colorScheme === 'dark'
+                      ? Colors.dark.tint
+                      : Colors.light.tint,
+                }}
+              >
+                Cancel
+              </Text>
             </TouchableOpacity>
           </ThemedView>
         </ThemedView>

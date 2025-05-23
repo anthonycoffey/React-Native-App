@@ -44,7 +44,7 @@ export default function JobsScreen() {
     // A better approach is to return a loading indicator here.
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
       </View>
     );
   }
@@ -74,19 +74,25 @@ export default function JobsScreen() {
       const fetchedJobs = await apiService.get<Job[]>(queryString);
       setJobs(fetchedJobs || []);
     } catch (error) {
-      console.error('Error fetching jobs:');
+      console.log('Error fetching jobs:');
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
       } else {
-        console.error('An unexpected error occurred:', error);
+        console.log('An unexpected error occurred:', error);
       }
       setJobs([]);
     } finally {
       setLoading(false);
     }
-  }, [auth?.session, auth?.isLoading, auth?.isApiAuthReady, currentScope, currentSortBy]);
+  }, [
+    auth?.session,
+    auth?.isLoading,
+    auth?.isApiAuthReady,
+    currentScope,
+    currentSortBy,
+  ]);
 
   useEffect(() => {
     // Ensure auth is available before attempting to fetch

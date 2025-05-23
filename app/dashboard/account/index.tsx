@@ -9,10 +9,7 @@ import ProfilePictureUploader from '@/components/account/ProfilePictureUploader'
 import Card from '@/components/Card';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
-import {
-  OutlinedButton,
-  PrimaryButton,
-} from '@/components/Buttons';
+import { OutlinedButton, PrimaryButton } from '@/components/Buttons';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -44,7 +41,7 @@ export default function AccountScreen() {
         const data = await apiService.get<AccountDetails>('/account');
         setAccountDetails(data);
       } catch (error) {
-        console.error('Failed to fetch account details:', error);
+        console.log('Failed to fetch account details:', error);
         Alert.alert('Error', 'Could not load account details.');
       } finally {
         setIsLoading(false);
@@ -63,7 +60,7 @@ export default function AccountScreen() {
         router.replace('/login');
       }
     } catch (error) {
-      console.error('Logout error:', error);
+      console.log('Logout error:', error);
     }
   };
 

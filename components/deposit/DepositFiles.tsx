@@ -46,8 +46,6 @@ const FileViewerModal = ({
   file: CashDepositFile | null;
   onClose: () => void;
 }) => {
-
-
   const colorScheme = useColorScheme() ?? 'light';
   const styles = StyleSheet.create({
     modalContainer: {
@@ -91,7 +89,7 @@ const FileViewerModal = ({
             <ThemedText>Cannot preview this file type.</ThemedText>
           )}
           <PrimaryButton
-            title="Close"
+            title='Close'
             onPress={onClose}
             style={{ marginTop: 15 }}
           />
@@ -101,7 +99,11 @@ const FileViewerModal = ({
   );
 };
 
-export default function DepositFiles({ depositId, files, onFilesUpdate }: DepositFilesProps) {
+export default function DepositFiles({
+  depositId,
+  files,
+  onFilesUpdate,
+}: DepositFilesProps) {
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [isViewerModalVisible, setIsViewerModalVisible] = useState(false);
   const [fileToView, setFileToView] = useState<CashDepositFile | null>(null);
@@ -153,16 +155,22 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
         type: 'image/*',
       });
 
-      if (result.canceled === false && result.assets && result.assets.length > 0) {
+      if (
+        result.canceled === false &&
+        result.assets &&
+        result.assets.length > 0
+      ) {
         await handleFileUploadInternal(result.assets);
       }
     } catch (err) {
-      console.error('Error picking document:', err);
+      console.log('Error picking document:', err);
       Alert.alert('Error', 'Could not open document picker.');
     }
   };
 
-  const handleFileUploadInternal = async (assetsToUpload: DocumentPicker.DocumentPickerAsset[]) => {
+  const handleFileUploadInternal = async (
+    assetsToUpload: DocumentPicker.DocumentPickerAsset[]
+  ) => {
     if (!assetsToUpload || assetsToUpload.length === 0) {
       return;
     }
@@ -187,13 +195,21 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
       Alert.alert('Success', 'Image(s) uploaded successfully.');
       await onFilesUpdate();
     } catch (error) {
-      console.error('Upload error:');
+      console.log('Upload error:');
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-        Alert.alert('Upload Error', `Failed to upload image(s). Server said: ${error.body?.message || error.message}`);
+        console.log(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
+        Alert.alert(
+          'Upload Error',
+          `Failed to upload image(s). Server said: ${error.body?.message || error.message}`
+        );
       } else {
-        console.error('  An unexpected error occurred:', error);
-        Alert.alert('Upload Error', 'An unexpected error occurred while uploading image(s).');
+        console.log('  An unexpected error occurred:', error);
+        Alert.alert(
+          'Upload Error',
+          'An unexpected error occurred while uploading image(s).'
+        );
       }
     } finally {
       setLoadingFiles(false);
@@ -213,17 +229,17 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
   return (
     <ThemedView style={styles.container}>
       {files && files.length > 0 ? (
-        <ScrollView contentContainerStyle={styles.galleryContainer} horizontal={false}>
+        <ScrollView
+          contentContainerStyle={styles.galleryContainer}
+          horizontal={false}
+        >
           {files.map((file) => (
             <TouchableOpacity
               key={file.id}
               style={styles.filePreviewContainer}
               onPress={() => viewFile(file)}
             >
-              <Image
-                source={{ uri: file.url }}
-                style={styles.imagePreview}
-              />
+              <Image source={{ uri: file.url }} style={styles.imagePreview} />
               <ThemedText
                 style={styles.fileName}
                 numberOfLines={2}
@@ -235,12 +251,14 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
           ))}
         </ScrollView>
       ) : (
-        <ThemedText style={{ marginVertical: 10, textAlign: 'center' }}>No proof images uploaded yet.</ThemedText>
+        <ThemedText style={{ marginVertical: 10, textAlign: 'center' }}>
+          No proof images uploaded yet.
+        </ThemedText>
       )}
 
       <View style={styles.uploadSection}>
         <PrimaryButton
-          title="Upload Image(s)"
+          title='Upload Image(s)'
           onPress={pickDocument}
           disabled={loadingFiles}
           style={{ marginBottom: 10 }}
@@ -248,10 +266,7 @@ export default function DepositFiles({ depositId, files, onFilesUpdate }: Deposi
 
         {loadingFiles ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator
-              size='small'
-              color={Colors[colorScheme].tint}
-            />
+            <ActivityIndicator size='small' color={Colors[colorScheme].tint} />
             <ThemedText>Uploading...</ThemedText>
           </View>
         ) : null}

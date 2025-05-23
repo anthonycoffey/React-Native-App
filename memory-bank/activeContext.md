@@ -154,10 +154,20 @@ Refining Job File Management with camera integration and ensuring robust Memory 
         - The document picker is now configured to primarily suggest images (`type: ['image/*']`).
     - Removed all code comments from `components/job/CameraCaptureModal.tsx` and `components/job/JobFiles.tsx` as per user request.
     - Updated `app.json` by adding the `expo-camera` plugin to ensure correct camera permissions are configured for iOS and Android. The plugin includes a usage description: "Allow $(PRODUCT_NAME) to access your camera to take photos for job documentation."
+- **Implemented Lost Password Page:**
+    - Installed `react-native-webview` dependency.
+    - Created `app/lost-password.tsx` screen featuring a `WebView` pointing to `https://app.24hrcarunlocking.com/reset-password`.
+    - Added a "Back to Login" button on the `lost-password` screen.
+    - Added a "Forgot Password?" link on `app/login.tsx` navigating to the new screen.
+    - Included `lost-password` in the root navigation layout (`app/_layout.tsx`) with `headerShown: false`.
+- **Implemented Phone Number Formatting on Registration Page:**
+    - Added a `formatPhoneNumber` utility function to `utils/strings.ts` to format numbers as `XXX-XXX-XXXX`.
+    - Updated `app/register.tsx` to use this utility for the phone number input field, providing real-time formatting as the user types.
+    - Set `maxLength={12}` for the phone input field.
 
 ## Next Steps
 
-- **Finalize Memory Bank Update:** Complete updates to all relevant Memory Bank files (`progress.md`, `systemPatterns.md`, `techContext.md`) to reflect the camera integration.
+- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the new Lost Password page.
 - **Testing:** Thoroughly test the new camera upload functionality and existing file picker functionality on both iOS and Android.
 - **Identify and document any `Known Issues`** that arise during testing or further development.
 - **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md` once Memory Bank is up-to-date and current features are stable.
