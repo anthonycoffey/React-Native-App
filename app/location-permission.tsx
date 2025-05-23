@@ -36,7 +36,7 @@ export default function LocationPermissionScreen() {
 
       router.replace('/dashboard');
     } catch (error) {
-      console.error('Error requesting location permission:', error);
+      console.log('Error requesting location permission:', error);
       setDenied(true);
       setLoading(false);
     }

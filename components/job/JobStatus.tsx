@@ -42,9 +42,9 @@ export default function JobStatus({ job, fetchJob }: Props) {
       await apiService.post(`/jobs/${job.id}/${event}`, { event });
       fetchJob();
     } catch (error) {
-      console.error(`Failed to update job status for event ${event}:`);
+      console.log(`Failed to update job status for event ${event}:`);
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
         Alert.alert(
@@ -52,7 +52,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
           `Failed to update job status. Server said: ${error.body?.message || error.message}`
         );
       } else {
-        console.error('  An unexpected error occurred:', error);
+        console.log('  An unexpected error occurred:', error);
         Alert.alert(
           'Error',
           'An unexpected error occurred while updating job status.'
@@ -66,9 +66,9 @@ export default function JobStatus({ job, fetchJob }: Props) {
       await apiService.post(`/jobs/${job.id}/quit`);
       router.back();
     } catch (error) {
-      console.error('Failed to quit job:');
+      console.log('Failed to quit job:');
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
         Alert.alert(
@@ -76,7 +76,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
           `Failed to quit job. Server said: ${error.body?.message || error.message}`
         );
       } else {
-        console.error('  An unexpected error occurred:', error);
+        console.log('  An unexpected error occurred:', error);
         Alert.alert(
           'Error',
           'An unexpected error occurred while quitting job.'
@@ -92,9 +92,9 @@ export default function JobStatus({ job, fetchJob }: Props) {
       });
       router.back();
     } catch (error) {
-      console.error('Failed to cancel job:');
+      console.log('Failed to cancel job:');
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
         Alert.alert(
@@ -102,7 +102,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
           `Failed to cancel job. Server said: ${error.body?.message || error.message}`
         );
       } else {
-        console.error('  An unexpected error occurred:', error);
+        console.log('  An unexpected error occurred:', error);
         Alert.alert(
           'Error',
           'An unexpected error occurred while canceling job.'
@@ -224,8 +224,11 @@ export default function JobStatus({ job, fetchJob }: Props) {
                         ? Colors.dark.text
                         : Colors.light.text,
                     backgroundColor:
-                      colorScheme === 'dark' ? '#2c2c2c' : Colors.light.background, // Use themed white
-                    borderColor: // Add themed border color
+                      colorScheme === 'dark'
+                        ? '#2c2c2c'
+                        : Colors.light.background, // Use themed white
+                    // Add themed border color
+                    borderColor:
                       colorScheme === 'dark' // Use defined colorScheme
                         ? Colors.dark.borderColor
                         : Colors.light.borderColor,

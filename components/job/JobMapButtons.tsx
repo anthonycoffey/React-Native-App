@@ -49,7 +49,7 @@ export default function JobMapButtons({ job }: Props) {
           setMapApps(apps);
         }
       } catch (error) {
-        console.error('Error loading map options:', error);
+        console.log('Error loading map options:', error);
       } finally {
         setLoading(false);
       }

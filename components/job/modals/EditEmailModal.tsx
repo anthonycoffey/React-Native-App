@@ -4,7 +4,12 @@ import { View } from '@/components/Themed';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { CardTitle } from '@/components/Typography';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getInputBackgroundColor, getTextColor, getBorderColor, getPlaceholderTextColor } from '@/hooks/useThemeColor';
+import {
+  getInputBackgroundColor,
+  getTextColor,
+  getBorderColor,
+  getPlaceholderTextColor,
+} from '@/hooks/useThemeColor';
 import globalStyles from '@/styles/globalStyles';
 
 type Props = {
@@ -14,7 +19,12 @@ type Props = {
   onSave: (newEmail: string) => Promise<void>;
 };
 
-export default function EditEmailModal({ visible, currentEmail, onClose, onSave }: Props) {
+export default function EditEmailModal({
+  visible,
+  currentEmail,
+  onClose,
+  onSave,
+}: Props) {
   const colorScheme = useColorScheme() ?? 'light';
   const [email, setEmail] = useState(currentEmail || '');
   const [loading, setLoading] = useState(false);
@@ -39,8 +49,11 @@ export default function EditEmailModal({ visible, currentEmail, onClose, onSave 
       Alert.alert('Success', 'Customer email updated successfully.');
       onClose();
     } catch (error) {
-      console.error('Failed to update email:', error);
-      Alert.alert('Error', 'Failed to update customer email. Please try again.');
+      console.log('Failed to update email:', error);
+      Alert.alert(
+        'Error',
+        'Failed to update customer email. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -58,27 +71,41 @@ export default function EditEmailModal({ visible, currentEmail, onClose, onSave 
 
   return (
     <Modal
-      animationType="slide"
+      animationType='slide'
       transparent={true}
       visible={visible}
       onRequestClose={onClose}
     >
       <View style={styles.centeredView}>
         <View style={[styles.modalView, { backgroundColor: bgColor }]}>
-          <CardTitle style={[styles.modalText, { color: getTextColor(colorScheme) }]}>Edit Customer Email</CardTitle>
+          <CardTitle
+            style={[styles.modalText, { color: getTextColor(colorScheme) }]}
+          >
+            Edit Customer Email
+          </CardTitle>
           <TextInput
             value={email}
             onChangeText={setEmail}
-            placeholder="Enter customer email"
+            placeholder='Enter customer email'
             placeholderTextColor={getPlaceholderTextColor(colorScheme)}
             style={themedInputStyle}
             editable={!loading}
-            keyboardType="email-address"
-            autoCapitalize="none"
+            keyboardType='email-address'
+            autoCapitalize='none'
           />
           <View style={[styles.buttonContainer, { backgroundColor: bgColor }]}>
-            <OutlinedButton title="Cancel" onPress={onClose} disabled={loading} style={styles.button} />
-            <PrimaryButton title={loading ? "Saving..." : "Save"} onPress={handleSave} disabled={loading} style={styles.button} />
+            <OutlinedButton
+              title='Cancel'
+              onPress={onClose}
+              disabled={loading}
+              style={styles.button}
+            />
+            <PrimaryButton
+              title={loading ? 'Saving...' : 'Save'}
+              onPress={handleSave}
+              disabled={loading}
+              style={styles.button}
+            />
           </View>
         </View>
       </View>
@@ -121,5 +148,5 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     marginHorizontal: 5,
-  }
+  },
 });

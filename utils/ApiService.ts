@@ -43,7 +43,7 @@ class ApiService {
         headers.append('Content-Type', 'application/json');
       }
     }
-    
+
     const config: RequestInit = {
       ...options,
       headers,
@@ -74,21 +74,20 @@ class ApiService {
       if (response.status === 204) {
         return undefined as T;
       }
-      
+
       // Check if response is JSON before trying to parse
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
         return response.json() as Promise<T>;
       } else {
-        return response.text() as unknown as Promise<T>; 
+        return response.text() as unknown as Promise<T>;
       }
-
     } catch (error) {
       if (error instanceof HttpError) {
         throw error;
       }
       // For network errors or other fetch-related issues
-      console.error('ApiService Request Error:', error);
+      console.log('ApiService Request Error:', error);
       throw new Error(`Network request failed: ${(error as Error).message}`);
     }
   }

@@ -8,7 +8,13 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import { CameraView, CameraType, FlashMode, Camera, CameraMountError } from 'expo-camera';
+import {
+  CameraView,
+  CameraType,
+  FlashMode,
+  Camera,
+  CameraMountError,
+} from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Text as ThemedText } from '@/components/Themed';
 import Colors from '@/constants/Colors';
@@ -60,7 +66,7 @@ export default function CameraCaptureModal({
         const type = 'image/jpeg';
         onPictureTaken(uri, type, name);
       } catch (error) {
-        console.error('Error taking picture:', error);
+        console.log('Error taking picture:', error);
         Alert.alert('Error', 'Could not take picture. Please try again.');
       } finally {
         setIsTakingPicture(false);
@@ -127,15 +133,17 @@ export default function CameraCaptureModal({
       alignItems: 'center',
       padding: 20,
       backgroundColor: Colors[colorScheme].background,
-    }
+    },
   });
 
   if (hasPermission === null && visible) {
     return (
       <Modal visible={visible} transparent={false} animationType='slide'>
         <View style={styles.permissionTextContainer}>
-          <ActivityIndicator size="large" color={Colors[colorScheme].tint} />
-          <ThemedText style={{ marginTop: 10 }}>Requesting camera permission...</ThemedText>
+          <ActivityIndicator size='large' color={Colors[colorScheme].tint} />
+          <ThemedText style={{ marginTop: 10 }}>
+            Requesting camera permission...
+          </ThemedText>
         </View>
       </Modal>
     );
@@ -146,9 +154,13 @@ export default function CameraCaptureModal({
       <Modal visible={visible} transparent={false} animationType='slide'>
         <View style={styles.permissionTextContainer}>
           <ThemedText>Camera permission denied.</ThemedText>
-          <ThemedText>Please enable it in settings to use the camera.</ThemedText>
-          <TouchableOpacity onPress={onClose} style={{marginTop: 20}}>
-            <ThemedText style={{color: Colors[colorScheme].tint}}>Close</ThemedText>
+          <ThemedText>
+            Please enable it in settings to use the camera.
+          </ThemedText>
+          <TouchableOpacity onPress={onClose} style={{ marginTop: 20 }}>
+            <ThemedText style={{ color: Colors[colorScheme].tint }}>
+              Close
+            </ThemedText>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -170,13 +182,13 @@ export default function CameraCaptureModal({
           flash={'off' as FlashMode}
           onCameraReady={() => setIsCameraReady(true)}
           onMountError={(error: CameraMountError) => {
-            console.error('Camera mount error:', error.message);
+            console.log('Camera mount error:', error.message);
             Alert.alert('Camera Error', 'Could not initialize camera.');
             onClose();
           }}
         />
         <View style={styles.controlsContainer}>
-          <View style={{width: 50}} />
+          <View style={{ width: 50 }} />
           <TouchableOpacity
             style={styles.captureButtonOuter}
             onPress={handleTakePicture}
@@ -184,14 +196,18 @@ export default function CameraCaptureModal({
           >
             <View style={styles.captureButtonInner} />
           </TouchableOpacity>
-          <View style={{width: 50}} />
+          <View style={{ width: 50 }} />
         </View>
-        <TouchableOpacity style={styles.closeButton} onPress={onClose} disabled={isTakingPicture}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={onClose}
+          disabled={isTakingPicture}
+        >
           <MaterialIcons name='close' size={30} color='white' />
         </TouchableOpacity>
         {isTakingPicture && (
           <View style={styles.loadingIndicator}>
-            <ActivityIndicator size="large" color="white" />
+            <ActivityIndicator size='large' color='white' />
           </View>
         )}
       </View>

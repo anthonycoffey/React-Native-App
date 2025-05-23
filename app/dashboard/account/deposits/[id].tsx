@@ -69,7 +69,7 @@ export default function SingleDepositScreen() {
       );
       setDeposit(response);
     } catch (error) {
-      console.error(`Failed to load deposit ${id}:`, error);
+      console.log(`Failed to load deposit ${id}:`, error);
       Alert.alert('Error', `Could not load details for deposit CD-${id}.`);
       setDeposit(null);
     } finally {
@@ -117,7 +117,7 @@ export default function SingleDepositScreen() {
           },
         ]}
       >
-        <ActivityIndicator size="large" color={themedActivityIndicatorColor} />
+        <ActivityIndicator size='large' color={themedActivityIndicatorColor} />
       </ThemedView>
     );
   }

@@ -47,7 +47,7 @@ export default function JobReferralCode({ job, fetchJob }: Props) {
       setReferralCodeInput('');
       Alert.alert('Success', 'Referral code added successfully.');
     } catch (error) {
-      console.error('Failed to add referral code:', error);
+      console.log('Failed to add referral code:', error);
       Alert.alert(
         'Error',
         // @ts-ignore
@@ -74,7 +74,7 @@ export default function JobReferralCode({ job, fetchJob }: Props) {
               await fetchJob();
               Alert.alert('Success', 'Referral code removed successfully.');
             } catch (error) {
-              console.error('Failed to remove referral code:', error);
+              console.log('Failed to remove referral code:', error);
               Alert.alert(
                 'Error',
                 // @ts-ignore

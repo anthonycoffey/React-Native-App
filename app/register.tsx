@@ -121,7 +121,7 @@ export default function RegisterScreen() {
           'Unable to connect to the server. Please check your network connection and try again.'
         );
       }
-      console.error('Registration error:', err);
+      console.log('Registration error:', err);
     } finally {
       setIsLoading(false);
     }

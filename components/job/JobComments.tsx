@@ -32,8 +32,12 @@ const JobComments: React.FC<JobCommentsProps> = ({
   const colorScheme = useColorScheme() ?? 'light';
 
   const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
-  const [commentModalMode, setCommentModalMode] = useState<'add' | 'edit'>('add');
-  const [selectedComment, setSelectedComment] = useState<JobComment | null>(null);
+  const [commentModalMode, setCommentModalMode] = useState<'add' | 'edit'>(
+    'add'
+  );
+  const [selectedComment, setSelectedComment] = useState<JobComment | null>(
+    null
+  );
   const [isCommentsCollapsed, setIsCommentsCollapsed] = useState(false);
 
   const openAddModal = () => {
@@ -60,11 +64,17 @@ const JobComments: React.FC<JobCommentsProps> = ({
       fetchJob();
       closeCommentModal();
     } catch (error) {
-      console.error('Failed to add comment:', error);
+      console.log('Failed to add comment:', error);
       if (error instanceof HttpError) {
-        Alert.alert('Error', `Failed to add comment. Server said: ${error.body?.message || error.message}`);
+        Alert.alert(
+          'Error',
+          `Failed to add comment. Server said: ${error.body?.message || error.message}`
+        );
       } else {
-        Alert.alert('Error', 'An unexpected error occurred while adding comment.');
+        Alert.alert(
+          'Error',
+          'An unexpected error occurred while adding comment.'
+        );
       }
     } finally {
       setLoading(false);
@@ -75,15 +85,23 @@ const JobComments: React.FC<JobCommentsProps> = ({
     if (!selectedComment) return;
     setLoading(true);
     try {
-      await apiService.patch(`/jobs/${jobId}/comments/${selectedComment.id}`, { text });
+      await apiService.patch(`/jobs/${jobId}/comments/${selectedComment.id}`, {
+        text,
+      });
       fetchJob();
       closeCommentModal();
     } catch (error) {
-      console.error('Failed to edit comment:', error);
+      console.log('Failed to edit comment:', error);
       if (error instanceof HttpError) {
-        Alert.alert('Error', `Failed to edit comment. Server said: ${error.body?.message || error.message}`);
+        Alert.alert(
+          'Error',
+          `Failed to edit comment. Server said: ${error.body?.message || error.message}`
+        );
       } else {
-        Alert.alert('Error', 'An unexpected error occurred while editing comment.');
+        Alert.alert(
+          'Error',
+          'An unexpected error occurred while editing comment.'
+        );
       }
     } finally {
       setLoading(false);
@@ -102,14 +120,22 @@ const JobComments: React.FC<JobCommentsProps> = ({
           onPress: async () => {
             setLoading(true);
             try {
-              await apiService.delete(`/jobs/${jobId}/comments/${commentIdToDelete}`);
+              await apiService.delete(
+                `/jobs/${jobId}/comments/${commentIdToDelete}`
+              );
               fetchJob();
             } catch (error) {
-              console.error('Failed to delete comment:', error);
+              console.log('Failed to delete comment:', error);
               if (error instanceof HttpError) {
-                Alert.alert('Error', `Failed to delete comment. Server said: ${error.body?.message || error.message}`);
+                Alert.alert(
+                  'Error',
+                  `Failed to delete comment. Server said: ${error.body?.message || error.message}`
+                );
               } else {
-                Alert.alert('Error', 'An unexpected error occurred while deleting comment.');
+                Alert.alert(
+                  'Error',
+                  'An unexpected error occurred while deleting comment.'
+                );
               }
             } finally {
               setLoading(false);
@@ -119,14 +145,15 @@ const JobComments: React.FC<JobCommentsProps> = ({
       ]
     );
   };
-  
-  const spinnerColor = colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint;
+
+  const spinnerColor =
+    colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint;
 
   return (
     <>
       {loading && (
         <ThemedView style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={spinnerColor} />
+          <ActivityIndicator size='large' color={spinnerColor} />
         </ThemedView>
       )}
       <ThemedView style={styles.commentsSectionContainer}>
@@ -138,9 +165,13 @@ const JobComments: React.FC<JobCommentsProps> = ({
             Comments ({jobComments?.length || 0})
           </Text>
           <MaterialIcons
-            name={isCommentsCollapsed ? 'keyboard-arrow-down' : 'keyboard-arrow-up'}
+            name={
+              isCommentsCollapsed ? 'keyboard-arrow-down' : 'keyboard-arrow-up'
+            }
             size={24}
-            color={colorScheme === 'dark' ? Colors.dark.text : Colors.light.text}
+            color={
+              colorScheme === 'dark' ? Colors.dark.text : Colors.light.text
+            }
           />
         </TouchableOpacity>
 
@@ -153,7 +184,7 @@ const JobComments: React.FC<JobCommentsProps> = ({
               onDeleteRequest={handleDeleteComment}
             />
             <PrimaryButton
-              title="Add Comment"
+              title='Add Comment'
               onPress={openAddModal}
               style={styles.addCommentButton}
             />
@@ -164,7 +195,9 @@ const JobComments: React.FC<JobCommentsProps> = ({
       <CommentModal
         isVisible={isCommentModalVisible}
         onClose={closeCommentModal}
-        onSubmit={commentModalMode === 'add' ? handleAddComment : handleEditComment}
+        onSubmit={
+          commentModalMode === 'add' ? handleAddComment : handleEditComment
+        }
         initialText={selectedComment?.text || ''}
         title={commentModalMode === 'add' ? 'Add New Comment' : 'Edit Comment'}
       />
