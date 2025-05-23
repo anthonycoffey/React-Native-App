@@ -28,7 +28,7 @@ export function UserProvider({ children }: UserProviderProps) {
         const storedValue = await AsyncStorage.getItem(CLOCKED_IN_KEY);
         setIsClockedIn(storedValue === 'true');
       } catch (error) {
-        console.error('Failed to load clocked-in status:', error);
+        console.log('Failed to load clocked-in status:', error);
       } finally {
         setIsLoadingClockedInStatus(false);
       }
@@ -45,7 +45,7 @@ export function UserProvider({ children }: UserProviderProps) {
           isClockedIn ? 'true' : 'false'
         );
       } catch (error) {
-        console.error('Failed to save clocked-in status:', error);
+        console.log('Failed to save clocked-in status:', error);
       }
     }
 
@@ -60,11 +60,11 @@ export function UserProvider({ children }: UserProviderProps) {
       setIsClockedIn(true);
     } catch (error) {
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
       } else {
-        console.error('An unexpected error occurred:', error);
+        console.log('An unexpected error occurred:', error);
       }
     }
   };
@@ -74,13 +74,13 @@ export function UserProvider({ children }: UserProviderProps) {
       await apiService.post('/user/shift/end');
       setIsClockedIn(false);
     } catch (error) {
-      console.error('[UserContext] Failed to clock out:');
+      console.log('[UserContext] Failed to clock out:');
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
       } else {
-        console.error('An unexpected error occurred:', error);
+        console.log('An unexpected error occurred:', error);
       }
     }
   };

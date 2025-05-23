@@ -21,7 +21,7 @@ const geocodeAddress = async (address: string): Promise<any> => {
     const href = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
       address
     )}&key=${GEOCODING_API_KEY}`;
-    
+
     const response = await fetch(href);
     if (!response.ok) {
       let errorBody = `Google Geocoding API request failed with status ${response.status}`;
@@ -32,7 +32,7 @@ const geocodeAddress = async (address: string): Promise<any> => {
       throw new Error(errorBody);
     }
 
-    const data = await response.json() as GeocodeResponse;
+    const data = (await response.json()) as GeocodeResponse;
     const { status, results } = data;
 
     if (status === 'OK' && results && results.length > 0) {
@@ -40,11 +40,15 @@ const geocodeAddress = async (address: string): Promise<any> => {
       const { location, location_type } = geometry;
       return { ...location, place_id, location_type, formatted_address };
     } else {
-      throw new Error(`Geocoding failed with status: ${status}. ${data.error_message || 'No additional error message provided.'}`.trim());
+      throw new Error(
+        `Geocoding failed with status: ${status}. ${data.error_message || 'No additional error message provided.'}`.trim()
+      );
     }
   } catch (error: any) {
-    console.error('Geocoding error:', error.message);
-    throw new Error(error.message || 'Geocoding failed due to an unexpected error.');
+    console.log('Geocoding error:', error.message);
+    throw new Error(
+      error.message || 'Geocoding failed due to an unexpected error.'
+    );
   }
 };
 
