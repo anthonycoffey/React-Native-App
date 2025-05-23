@@ -16,7 +16,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { useThemeColor } from '@/hooks/useThemeColor';
 // globalStyles import might become unused if this is the only usage.
 // Linter will handle if it's truly unused after the change.
-import globalStyles from '@/styles/globalStyles'; 
+import globalStyles from '@/styles/globalStyles';
 import Colors from '@/constants/Colors';
 
 export default function ProfilePictureUploader() {
@@ -31,10 +31,7 @@ export default function ProfilePictureUploader() {
     return null;
   }
 
-  const {
-    currentUser,
-    isUserLoading: isAuthUserLoading,
-  } = authContext;
+  const { currentUser, isUserLoading: isAuthUserLoading } = authContext;
 
   const pickImage = async () => {
     try {
@@ -48,7 +45,7 @@ export default function ProfilePictureUploader() {
         await uploadImage(asset.uri, asset.name, asset.mimeType);
       }
     } catch (error) {
-      console.error('Document picker error:', error);
+      console.log('Document picker error:', error);
       Alert.alert('Error', 'Could not open image picker.');
     }
   };
@@ -72,7 +69,7 @@ export default function ProfilePictureUploader() {
       }
       Alert.alert('Success', 'Profile picture uploaded!');
     } catch (error) {
-      console.error('Upload error:', error);
+      console.log('Upload error:', error);
       Alert.alert('Error', 'Failed to upload profile picture.');
     } finally {
       setUploading(false);
@@ -88,7 +85,7 @@ export default function ProfilePictureUploader() {
       }
       Alert.alert('Success', 'Profile picture deleted!');
     } catch (error) {
-      console.error('Delete error:', error);
+      console.log('Delete error:', error);
       Alert.alert('Error', 'Failed to delete profile picture.');
     } finally {
       setDeleting(false);
@@ -201,5 +198,4 @@ const localStyles = StyleSheet.create({
   disabledButton: {
     opacity: 0.5,
   },
-
 });

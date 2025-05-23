@@ -57,13 +57,15 @@ export function AuthProvider(props: React.PropsWithChildren) {
       console.log('[AuthContext] Failed to load current user:');
       setCurrentUser(null);
       if (error instanceof HttpError) {
-        console.log(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
+        console.log(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
         if (error.status === 401) {
           console.warn('[AuthContext] Received 401, signing out.');
           await signOutAndNavigate();
         }
       } else {
-        console.error('  An unexpected error occurred:', error);
+        console.log('  An unexpected error occurred:', error);
       }
     } finally {
       setIsUserLoading(false);
@@ -94,7 +96,7 @@ export function AuthProvider(props: React.PropsWithChildren) {
       await setSession(token);
       router.push('/dashboard');
     } catch (error) {
-      console.error('[AuthContext] SignIn failed during user data fetch:', error);
+      console.log('[AuthContext] SignIn failed during user data fetch:', error);
       await apiService.setAuthToken(null);
       setIsApiAuthReady(false);
       setCurrentUser(null);
@@ -111,7 +113,7 @@ export function AuthProvider(props: React.PropsWithChildren) {
     await setSession(null);
     router.replace('/login');
   };
-  
+
   const signOut = async () => {
     await signOutAndNavigate();
   };

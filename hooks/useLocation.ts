@@ -25,7 +25,10 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
             timestamp: loc.timestamp,
           });
         } catch (apiError) {
-          console.error('Background Location Task: Failed to send location to server.', apiError);
+          console.log(
+            'Background Location Task: Failed to send location to server.',
+            apiError
+          );
         }
       }
     }
@@ -64,14 +67,16 @@ export default function useLocation(skipRedirect = false) {
         return true;
       } else {
         setHasPermission(false);
-        setErrorMsg('Background location permission is required for continuous tracking.');
+        setErrorMsg(
+          'Background location permission is required for continuous tracking.'
+        );
         if (!skipRedirect) {
           router.replace('/location-permission');
         }
         return false;
       }
     } catch (error) {
-      console.error('useLocation: Error checking permissions:', error);
+      console.log('useLocation: Error checking permissions:', error);
       setErrorMsg('Failed to check location permissions');
       setHasPermission(false);
       return false;
@@ -91,7 +96,7 @@ export default function useLocation(skipRedirect = false) {
           timestamp: locationData.timestamp,
         });
       } catch (error) {
-        console.error('useLocation: Error API POST /user/geolocation:', error);
+        console.log('useLocation: Error API POST /user/geolocation:', error);
       }
     },
     [isClockedIn]
@@ -99,12 +104,16 @@ export default function useLocation(skipRedirect = false) {
 
   const stopLocationUpdates = useCallback(async () => {
     try {
-      const isTracking = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
+      const isTracking =
+        await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
       if (isTracking) {
         await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
       }
     } catch (error) {
-      console.error('useLocation: Error stopping background location updates:', error);
+      console.log(
+        'useLocation: Error stopping background location updates:',
+        error
+      );
     }
   }, []);
 
@@ -122,7 +131,10 @@ export default function useLocation(skipRedirect = false) {
         showsBackgroundLocationIndicator: true,
       });
     } catch (error) {
-      console.error('useLocation: Error starting background location updates:', error);
+      console.log(
+        'useLocation: Error starting background location updates:',
+        error
+      );
       setErrorMsg('Failed to start background location updates.');
     }
   }, [hasPermission, isClockedIn, stopLocationUpdates]);
@@ -139,7 +151,7 @@ export default function useLocation(skipRedirect = false) {
   useEffect(() => {
     const manageUpdates = async () => {
       if (isClockedIn && hasPermission) {
-        await stopLocationUpdates(); 
+        await stopLocationUpdates();
         await startLocationUpdates();
       } else {
         await stopLocationUpdates();
@@ -150,11 +162,13 @@ export default function useLocation(skipRedirect = false) {
 
   useEffect(() => {
     return () => {
-      Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME).then(isTracking => {
-        if (isTracking) {
-          Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+      Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME).then(
+        (isTracking) => {
+          if (isTracking) {
+            Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+          }
         }
-      });
+      );
     };
   }, []);
 
@@ -171,7 +185,7 @@ export default function useLocation(skipRedirect = false) {
       await updateServerLocation(currentLocation);
       return currentLocation;
     } catch (error) {
-      console.error('useLocation: Error during manual refreshLocation:', error);
+      console.log('useLocation: Error during manual refreshLocation:', error);
       setErrorMsg('Failed to get location on refresh');
       return null;
     } finally {

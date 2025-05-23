@@ -90,21 +90,21 @@ export default function LoginScreen() {
       if (response?.token && signIn) {
         await signIn(response.token);
       } else if (!signIn) {
-        console.error(
+        console.log(
           'Login error: signIn function is not available from AuthContext.'
         );
         setError(
           'Login service is currently unavailable. Please try again later.'
         );
       } else {
-        console.error(
+        console.log(
           'Login error: Invalid response format - token missing.',
           response
         );
         setError('Login failed due to an unexpected server response.');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.log('Login error:', error);
       if (error instanceof HttpError) {
         if (error.status === 401 || error.status === 403) {
           setError('Invalid email or password. Please try again.');
@@ -202,22 +202,22 @@ export default function LoginScreen() {
                   ]}
                   placeholder='Password'
                   placeholderTextColor={themedPlaceholderTextColor}
-                secureTextEntry={!isPasswordVisible}
-                value={password}
-                onChangeText={setPassword}
-                autoCapitalize='none'
-                autoCorrect={false}
-              />
-              <TouchableOpacity
-                onPress={togglePasswordVisibility}
-                style={globalStyles.eyeIcon}
-              >
-                <MaterialIcons
-                  name={isPasswordVisible ? 'visibility-off' : 'visibility'}
-                  size={20}
-                  color={iconColor}
+                  secureTextEntry={!isPasswordVisible}
+                  value={password}
+                  onChangeText={setPassword}
+                  autoCapitalize='none'
+                  autoCorrect={false}
                 />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={togglePasswordVisibility}
+                  style={globalStyles.eyeIcon}
+                >
+                  <MaterialIcons
+                    name={isPasswordVisible ? 'visibility-off' : 'visibility'}
+                    size={20}
+                    color={iconColor}
+                  />
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -250,6 +250,13 @@ export default function LoginScreen() {
               <Text style={{ color: linkColor }}>
                 Don't have an account? Sign Up
               </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => router.push('/lost-password')}
+              style={loginStyles.forgotPasswordLink}
+            >
+              <Text style={{ color: linkColor }}>Forgot Password?</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -297,6 +304,10 @@ const loginStyles = StyleSheet.create({
   },
   signUpLink: {
     marginTop: 20,
+    alignItems: 'center',
+  },
+  forgotPasswordLink: {
+    marginTop: 15,
     alignItems: 'center',
   },
 });

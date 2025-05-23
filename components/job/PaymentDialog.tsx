@@ -34,13 +34,21 @@ export default function PaymentDialog({
       fetchJob();
       hidePaymentDialog();
     } catch (error) {
-      console.error('Failed to create cash payment:');
+      console.log('Failed to create cash payment:');
       if (error instanceof HttpError) {
-        console.error(`  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`);
-        Alert.alert('Payment Error', `Failed to record cash payment. Server said: ${error.body?.message || error.message}`);
+        console.log(
+          `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
+        );
+        Alert.alert(
+          'Payment Error',
+          `Failed to record cash payment. Server said: ${error.body?.message || error.message}`
+        );
       } else {
-        console.error('  An unexpected error occurred:', error);
-        Alert.alert('Payment Error', 'An unexpected error occurred while recording cash payment.');
+        console.log('  An unexpected error occurred:', error);
+        Alert.alert(
+          'Payment Error',
+          'An unexpected error occurred while recording cash payment.'
+        );
       }
     }
   };

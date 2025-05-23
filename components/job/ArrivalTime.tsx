@@ -76,9 +76,9 @@ export default function ArrivalTime({
         fetchJob();
       } catch (error) {
         setUpdated(false);
-        console.error('Failed to update arrival time:');
+        console.log('Failed to update arrival time:');
         if (error instanceof HttpError) {
-          console.error(
+          console.log(
             `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
           );
           Alert.alert(
@@ -86,7 +86,7 @@ export default function ArrivalTime({
             `Failed to update arrival time. Server said: ${error.body?.message || error.message}`
           );
         } else {
-          console.error('  An unexpected error occurred:', error);
+          console.log('  An unexpected error occurred:', error);
           Alert.alert(
             'Error',
             'An unexpected error occurred while updating arrival time.'

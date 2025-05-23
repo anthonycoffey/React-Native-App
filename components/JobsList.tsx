@@ -15,15 +15,18 @@ import { Text, View as ThemedView } from '@/components/Themed';
 import globalStyles from '@/styles/globalStyles';
 
 type JobsListProps = {
-  jobs: {
-    data: Job[];
-    meta?: {
-      currentPage: number;
-      lastPage: number;
-      limit: number;
-      total: number;
-    };
-  } | Job[] | [];
+  jobs:
+    | {
+        data: Job[];
+        meta?: {
+          currentPage: number;
+          lastPage: number;
+          limit: number;
+          total: number;
+        };
+      }
+    | Job[]
+    | [];
   fetchJobs: () => void;
   loading?: boolean;
 };
@@ -50,8 +53,7 @@ export default function JobsList({
   loading = false,
 }: JobsListProps) {
   const [refreshing, setRefreshing] = useState(false);
-  
-  
+
   // Process jobs data to handle different formats
   const jobsData = React.useMemo(() => {
     if (!jobs) return [];
@@ -59,7 +61,7 @@ export default function JobsList({
     if ('data' in jobs && Array.isArray(jobs.data)) return jobs.data;
     return [];
   }, [jobs]);
-  
+
   const isEmpty = jobsData.length === 0;
 
   const onRefresh = React.useCallback(async () => {
@@ -67,7 +69,7 @@ export default function JobsList({
     try {
       await fetchJobs();
     } catch (error) {
-      console.error('Error refreshing jobs:', error);
+      console.log('Error refreshing jobs:', error);
     } finally {
       setRefreshing(false);
     }
@@ -89,7 +91,7 @@ export default function JobsList({
       ListEmptyComponent={isEmpty ? ListEmptyComponent : null}
       contentContainerStyle={[
         styles.listContainer,
-        isEmpty && styles.emptyListContainer
+        isEmpty && styles.emptyListContainer,
       ]}
       renderItem={({ item }) => {
         return (

@@ -43,9 +43,9 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       await apiService.post(`/jobs/${job.id}/generate-invoice`);
       fetchJob();
     } catch (error) {
-      console.error('Failed to generate invoice:');
+      console.log('Failed to generate invoice:');
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
         Alert.alert(
@@ -53,7 +53,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
           `Failed to generate invoice. Server said: ${error.body?.message || error.message}`
         );
       } else {
-        console.error('  An unexpected error occurred:', error);
+        console.log('  An unexpected error occurred:', error);
         Alert.alert(
           'Error',
           'An unexpected error occurred while generating invoice.'
@@ -96,9 +96,9 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       fetchJob();
       Alert.alert('Success', 'Invoice sent successfully');
     } catch (error) {
-      console.error('Failed to send invoice:');
+      console.log('Failed to send invoice:');
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
         Alert.alert(
@@ -106,7 +106,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
           `Failed to send invoice. Server said: ${error.body?.message || error.message}`
         );
       } else {
-        console.error('  An unexpected error occurred:', error);
+        console.log('  An unexpected error occurred:', error);
         Alert.alert(
           'Error',
           'An unexpected error occurred while sending invoice.'

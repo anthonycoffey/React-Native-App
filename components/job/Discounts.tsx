@@ -43,7 +43,7 @@ export default function Discounts({ job, fetchJob }: Props) {
       await fetchJob();
       Alert.alert('Success', 'Discount removed successfully.');
     } catch (error) {
-      console.error('Failed to remove discount:', error);
+      console.log('Failed to remove discount:', error);
       const errorMessage =
         (error as any)?.body?.message ||
         'Failed to remove discount. Please try again.';
@@ -61,7 +61,7 @@ export default function Discounts({ job, fetchJob }: Props) {
       setIsFormModalVisible(false);
       Alert.alert('Success', 'Discount added successfully.');
     } catch (error) {
-      console.error('Failed to add discount:', error);
+      console.log('Failed to add discount:', error);
       const errorMessage =
         (error as any)?.body?.message ||
         'Failed to add discount. Please try again.';

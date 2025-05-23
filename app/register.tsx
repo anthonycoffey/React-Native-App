@@ -14,6 +14,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { apiService, HttpError } from '@/utils/ApiService';
+import { formatPhoneNumber } from '@/utils/strings';
 import { Text, View } from '@/components/Themed';
 import { PrimaryButton } from '@/components/Buttons';
 import globalStyles from '@/styles/globalStyles';
@@ -53,11 +54,20 @@ export default function RegisterScreen() {
   const themedInputBackgroundColor = getInputBackgroundColor(theme);
   const themedBorderColor = getBorderColor(theme);
   const themedPlaceholderTextColor = getPlaceholderTextColor(theme);
+  const activityIndicatorColor = useThemeColor(
+    { light: Colors.dark.text, dark: Colors.light.text },
+    'text'
+  );
 
   const togglePasswordVisibility = () =>
     setIsPasswordVisible(!isPasswordVisible);
   const toggleConfirmPasswordVisibility = () =>
     setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
+
+  const handlePhoneChange = (text: string) => {
+    const formatted = formatPhoneNumber(text);
+    setPhone(formatted);
+  };
 
   const handleSubmit = async () => {
     Keyboard.dismiss();
@@ -121,7 +131,7 @@ export default function RegisterScreen() {
           'Unable to connect to the server. Please check your network connection and try again.'
         );
       }
-      console.error('Registration error:', err);
+      console.log('Registration error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -258,8 +268,9 @@ export default function RegisterScreen() {
                 placeholder='Enter your phone number'
                 placeholderTextColor={themedPlaceholderTextColor}
                 value={phone}
-                onChangeText={setPhone}
+                onChangeText={handlePhoneChange}
                 keyboardType='phone-pad'
+                maxLength={12}
               />
             </View>
 
@@ -358,10 +369,7 @@ export default function RegisterScreen() {
             >
               {isLoading && (
                 <ActivityIndicator
-                  color={useThemeColor(
-                    { light: Colors.dark.text, dark: Colors.light.text },
-                    'text'
-                  )}
+                  color={activityIndicatorColor}
                 />
               )}
             </PrimaryButton>
@@ -424,7 +432,6 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 16,
   },
   inputRowItem: {
     flex: 1,

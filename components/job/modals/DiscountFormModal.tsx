@@ -105,7 +105,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
         }))
       );
     } catch (error) {
-      console.error('Failed to fetch discount codes:', error);
+      console.log('Failed to fetch discount codes:', error);
       Alert.alert('Error', 'Could not load discount codes.');
       setAvailableDiscountCodes([]);
       setDiscountCodeOptions([]);

@@ -107,6 +107,15 @@ This document tracks what works, what's left to build, the current status, known
     - Modified `components/job/JobFiles.tsx` to include separate icon buttons for camera and file picker, integrating the new camera modal.
     - Removed all code comments from `components/job/CameraCaptureModal.tsx` and `components/job/JobFiles.tsx`.
     - Updated `app.json` with the `expo-camera` plugin to handle camera permissions.
+- **Lost Password Page:**
+    - Installed `react-native-webview` dependency.
+    - Created `app/lost-password.tsx` screen with a `WebView` for the password reset URL.
+    - Added a "Back to Login" button on the `lost-password` screen.
+    - Added a "Forgot Password?" link on `app/login.tsx` to navigate to the new screen.
+    - Integrated the `lost-password` screen into the main navigation stack in `app/_layout.tsx`.
+- **Phone Number Formatting (Registration Page):**
+    - Added `formatPhoneNumber` utility to `utils/strings.ts` for `XXX-XXX-XXXX` formatting.
+    - Integrated into `app/register.tsx` phone input for real-time formatting and set `maxLength={12}`.
 
 ## What's Left to Build
 

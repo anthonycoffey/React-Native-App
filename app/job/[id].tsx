@@ -56,7 +56,7 @@ export default function JobPage() {
 
   const fetchJob = useCallback(async () => {
     if (!jobId) {
-      console.error('Job ID is missing');
+      console.log('Job ID is missing');
       setLoading(false);
       return;
     }
@@ -65,7 +65,7 @@ export default function JobPage() {
       const fetchedJob = await apiService.get<Job>(`/jobs/${jobId}`);
       setJob(fetchedJob);
     } catch (error) {
-      console.error('Failed to fetch job details:');
+      console.log('Failed to fetch job details:');
       if (error instanceof HttpError) {
         Alert.alert(
           'Error',

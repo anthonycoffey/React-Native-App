@@ -150,7 +150,7 @@ export default function CreateJobScreen() {
           response.data.map((s) => ({ label: s.name, value: s.id }))
         );
       } catch (error) {
-        console.error('Failed to fetch services:', error);
+        console.log('Failed to fetch services:', error);
         Alert.alert('Error', 'Failed to load services.');
       }
     };
@@ -193,7 +193,7 @@ export default function CreateJobScreen() {
       );
       setSearchedCustomers(response);
     } catch (error) {
-      console.error('Failed to search customers:', error);
+      console.log('Failed to search customers:', error);
       Alert.alert('Error', 'Failed to search customers.');
       setSearchedCustomers([]);
     } finally {
@@ -258,7 +258,7 @@ export default function CreateJobScreen() {
         setIsNewCar(false);
       }
     } catch (error) {
-      console.error('Failed to fetch customer cars:', error);
+      console.log('Failed to fetch customer cars:', error);
       setCustomerCars([]);
       setIsNewCar(true);
     }
@@ -299,14 +299,14 @@ export default function CreateJobScreen() {
           setAddressSuggestions(data.predictions);
         } else {
           setAddressSuggestions([]);
-          console.error(
+          console.log(
             'Error fetching address suggestions:',
             data.status,
             data.error_message
           );
         }
       } catch (error) {
-        console.error('Failed to fetch address suggestions:', error);
+        console.log('Failed to fetch address suggestions:', error);
         setAddressSuggestions([]);
       } finally {
         setIsFetchingAddressSuggestions(false);
@@ -378,14 +378,14 @@ export default function CreateJobScreen() {
         setPlacesSessionToken(Crypto.randomUUID());
       } else {
         Alert.alert('Error', 'Could not retrieve address details.');
-        console.error(
+        console.log(
           'Error fetching place details:',
           data.status,
           data.error_message
         );
       }
     } catch (error) {
-      console.error('Failed to fetch place details:', error);
+      console.log('Failed to fetch place details:', error);
       Alert.alert('Error', 'Failed to retrieve address details.');
     } finally {
       setIsFetchingAddressSuggestions(false);
@@ -542,7 +542,7 @@ export default function CreateJobScreen() {
       Alert.alert('Success', `Job #${newJob.id} created successfully!`);
       router.replace(`/job/${newJob.id}`);
     } catch (error) {
-      console.error('Failed to create job:', error);
+      console.log('Failed to create job:', error);
       const errorMessage =
         error instanceof HttpError
           ? error.body?.message || error.message

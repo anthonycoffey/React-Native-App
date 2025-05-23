@@ -83,7 +83,7 @@ export default function EditAddressModal({
       Alert.alert('Success', 'Address updated successfully.');
       onClose();
     } catch (error) {
-      console.error('Failed to update address:', error);
+      console.log('Failed to update address:', error);
       Alert.alert('Error', 'Failed to update address. Please try again.');
     } finally {
       setLoading(false);

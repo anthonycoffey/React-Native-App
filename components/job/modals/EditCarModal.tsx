@@ -84,7 +84,7 @@ export default function EditCarModal({
       Alert.alert('Success', 'Car details updated successfully.');
       onClose();
     } catch (error) {
-      console.error('Failed to update car:', error);
+      console.log('Failed to update car:', error);
       Alert.alert('Error', 'Failed to update car details. Please try again.');
     } finally {
       setLoading(false);

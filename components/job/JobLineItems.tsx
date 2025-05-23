@@ -68,9 +68,9 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         }));
         setServicesItems(items);
       } catch (error) {
-        console.error('Failed to fetch services:');
+        console.log('Failed to fetch services:');
         if (error instanceof HttpError) {
-          console.error(
+          console.log(
             `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
           );
           Alert.alert(
@@ -78,7 +78,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
             `Failed to load services. Server said: ${error.body?.message || error.message}`
           );
         } else {
-          console.error('  An unexpected error occurred:', error);
+          console.log('  An unexpected error occurred:', error);
           Alert.alert(
             'Error',
             'An unexpected error occurred while loading services.'
@@ -107,9 +107,9 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           setShowModal(false);
           resetForm();
         } catch (error) {
-          console.error('Failed to add line item:');
+          console.log('Failed to add line item:');
           if (error instanceof HttpError) {
-            console.error(
+            console.log(
               `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
             );
             Alert.alert(
@@ -117,7 +117,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               `Failed to add line item. Server said: ${error.body?.message || error.message}`
             );
           } else {
-            console.error('  An unexpected error occurred:', error);
+            console.log('  An unexpected error occurred:', error);
             Alert.alert(
               'Error',
               'An unexpected error occurred while adding line item.'
@@ -144,9 +144,9 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
               await apiService.delete(`/jobs/${job.id}/line-items/${item.id}`);
               fetchJob();
             } catch (error) {
-              console.error('Failed to delete line item:');
+              console.log('Failed to delete line item:');
               if (error instanceof HttpError) {
-                console.error(
+                console.log(
                   `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
                 );
                 Alert.alert(
@@ -154,7 +154,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                   `Failed to delete line item. Server said: ${error.body?.message || error.message}`
                 );
               } else {
-                console.error('  An unexpected error occurred:', error);
+                console.log('  An unexpected error occurred:', error);
                 Alert.alert(
                   'Error',
                   'An unexpected error occurred while deleting line item.'
@@ -205,9 +205,9 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
       setShowEditPriceModal(false);
       resetForm(); // This will also clear editingLineItem
     } catch (error) {
-      console.error('Failed to update line item price:');
+      console.log('Failed to update line item price:');
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
         Alert.alert(
@@ -215,7 +215,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           `Failed to update line item price. Server said: ${error.body?.message || error.message}`
         );
       } else {
-        console.error('  An unexpected error occurred:', error);
+        console.log('  An unexpected error occurred:', error);
         Alert.alert(
           'Error',
           'An unexpected error occurred while updating line item price.'

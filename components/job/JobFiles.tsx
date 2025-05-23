@@ -199,7 +199,11 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     setIsCameraModalVisible(true);
   };
 
-  const handlePictureTaken = async (uri: string, type: string, name: string) => {
+  const handlePictureTaken = async (
+    uri: string,
+    type: string,
+    name: string
+  ) => {
     setIsCameraModalVisible(false);
     const singleAsset: DocumentPicker.DocumentPickerAsset = {
       uri,
@@ -218,11 +222,15 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
         type: ['image/*'],
       });
 
-      if (result.canceled === false && result.assets && result.assets.length > 0) {
+      if (
+        result.canceled === false &&
+        result.assets &&
+        result.assets.length > 0
+      ) {
         await handleFileUploadInternal(result.assets);
       }
     } catch (err) {
-      console.error('Error picking document:', err);
+      console.log('Error picking document:', err);
       Alert.alert('Error', 'Could not open document picker.');
     }
   };
@@ -250,9 +258,9 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       Alert.alert('Success', 'Files uploaded successfully.');
       fetchJob();
     } catch (error) {
-      console.error('Upload error:');
+      console.log('Upload error:');
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
         Alert.alert(
@@ -260,7 +268,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
           `Failed to upload files. Server said: ${error.body?.message || error.message}`
         );
       } else {
-        console.error('  An unexpected error occurred:', error);
+        console.log('  An unexpected error occurred:', error);
         Alert.alert(
           'Upload Error',
           'An unexpected error occurred while uploading files.'
@@ -278,9 +286,9 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       Alert.alert('Success', 'File deleted successfully.');
       fetchJob();
     } catch (error) {
-      console.error('Delete error:');
+      console.log('Delete error:');
       if (error instanceof HttpError) {
-        console.error(
+        console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
         Alert.alert(
@@ -288,7 +296,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
           `Failed to delete file. Server said: ${error.body?.message || error.message}`
         );
       } else {
-        console.error('  An unexpected error occurred:', error);
+        console.log('  An unexpected error occurred:', error);
         Alert.alert(
           'Delete Error',
           'An unexpected error occurred while deleting file.'
@@ -397,23 +405,36 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       )}
 
       <View style={styles.uploadSection}>
-        <TouchableOpacity style={styles.iconButton} onPress={openCamera} disabled={loadingFiles}>
-          <MaterialIcons name="photo-camera" size={32} color={Colors[colorScheme].text} />
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={openCamera}
+          disabled={loadingFiles}
+        >
+          <MaterialIcons
+            name='photo-camera'
+            size={32}
+            color={Colors[colorScheme].text}
+          />
           <ThemedText style={styles.iconButtonText}>Camera</ThemedText>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconButton} onPress={pickDocument} disabled={loadingFiles}>
-          <MaterialIcons name="folder-open" size={32} color={Colors[colorScheme].text} />
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={pickDocument}
+          disabled={loadingFiles}
+        >
+          <MaterialIcons
+            name='folder-open'
+            size={32}
+            color={Colors[colorScheme].text}
+          />
           <ThemedText style={styles.iconButtonText}>Files</ThemedText>
         </TouchableOpacity>
       </View>
 
       {loadingFiles && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator
-            size="large"
-            color={Colors[colorScheme].tint}
-          />
+          <ActivityIndicator size='large' color={Colors[colorScheme].tint} />
           <ThemedText>Processing...</ThemedText>
         </View>
       )}

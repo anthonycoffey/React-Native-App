@@ -46,7 +46,7 @@ export default function EditNameModal({
       Alert.alert('Success', 'Customer name updated successfully.');
       onClose();
     } catch (error) {
-      console.error('Failed to update name:', error);
+      console.log('Failed to update name:', error);
       Alert.alert('Error', 'Failed to update customer name. Please try again.');
     } finally {
       setLoading(false);
