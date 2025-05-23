@@ -1,6 +1,9 @@
 import React from 'react';
 import { Text, View } from '@/components/Themed';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useColorScheme } from '@/components/useColorScheme';
+import { useThemeColor, getIconColor } from '@/hooks/useThemeColor';
+import Colors, { buttonVariants } from '@/constants/Colors';
 import useLocation from '@/hooks/useLocation';
 import { PrimaryButton } from '@/components/Buttons';
 import { router } from 'expo-router';
@@ -8,6 +11,13 @@ import { useUser } from '@/contexts/UserContext';
 import globalStyles from '@/styles/globalStyles';
 
 export default function GoOnlineScreen() {
+  const theme = useColorScheme() ?? 'light';
+  const iconColor = useThemeColor({}, 'icon');
+  const tintColor = useThemeColor({ light: Colors.light.tint, dark: Colors.dark.tint }, 'tint');
+  const coordinatesTextColor = useThemeColor({ light: '#666666', dark: Colors.dark.icon }, 'text');
+  const clockInButtonBg = useThemeColor({ light: buttonVariants.success, dark: buttonVariants.success }, 'background');
+  const clockOutButtonBg = useThemeColor({ light: buttonVariants.error, dark: buttonVariants.error }, 'background');
+
   const { location, errorMsg, hasPermission } = useLocation(true);
   const { isClockedIn, clockIn, clockOut } = useUser();
 
@@ -27,7 +37,7 @@ export default function GoOnlineScreen() {
     if (errorMsg) {
       return (
         <View style={globalStyles.centeredContent}>
-          <MaterialIcons name='gps-fixed' size={50} />
+          <MaterialIcons name='gps-fixed' size={50} color={iconColor} />
           <Text type='title' style={globalStyles.statusTitle}>
             Location Error
           </Text>
@@ -44,7 +54,7 @@ export default function GoOnlineScreen() {
     if (!hasPermission) {
       return (
         <View style={globalStyles.centeredContent}>
-          <MaterialIcons name='gps-fixed' size={50} color='#0a7ea4' style={{marginBottom: 10}}/>
+          <MaterialIcons name='gps-fixed' size={50} color={tintColor} style={{marginBottom: 10}}/>
           <Text type='title'>Location Access Required</Text>
           <Text style={globalStyles.subtitle}>
             To go online and receive job assignments, please enable location
@@ -64,7 +74,7 @@ export default function GoOnlineScreen() {
         <MaterialIcons
           name={isClockedIn ? 'gps-fixed' : 'gps-off'}
           size={80}
-          color={isClockedIn ? '#4CAF50' : '#757575'}
+          color={isClockedIn ? buttonVariants.success : iconColor}
         />
 
         <Text type='title' style={globalStyles.statusTitle}>
@@ -82,14 +92,14 @@ export default function GoOnlineScreen() {
             <MaterialIcons
               name='gps-fixed'
               size={24}
-              color='#0a7ea4'
+              color={tintColor}
               style={{
                 marginRight: 10,
               }}
             />
             <View>
               <Text type='subtitle'>Your Current Location</Text>
-              <Text style={globalStyles.coordinates}>
+              <Text style={[globalStyles.coordinates, { color: coordinatesTextColor }]}>
                 Lat: {location.coords.latitude.toFixed(6)}, Lng:{' '}
                 {location.coords.longitude.toFixed(6)}
               </Text>
@@ -103,8 +113,8 @@ export default function GoOnlineScreen() {
           style={[
             globalStyles.clockButton,
             isClockedIn
-              ? globalStyles.clockOutButton
-              : globalStyles.clockInButton,
+              ? [globalStyles.clockOutButton, { backgroundColor: clockOutButtonBg }]
+              : [globalStyles.clockInButton, { backgroundColor: clockInButtonBg }],
           ]}
         />
       </View>

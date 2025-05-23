@@ -84,6 +84,29 @@ This document tracks what works, what's left to build, the current status, known
     - Installed `expo-task-manager`.
     - Modified `hooks/useLocation.ts` to define a background task (`background-location-task`) for sending location updates, updated permission requests for background access, and switched from `watchPositionAsync` to `startLocationUpdatesAsync` and `stopLocationUpdatesAsync`.
     - Ensured `app.json` was already correctly configured for background location.
+- **Styling Refactor for Login/Registration Pages:**
+    - Updated `styles/globalStyles.ts` with new theme-aware input styles (`themedFormInput`, `themedPasswordInputWrapper`, `themedPasswordTextInput`) and made `inputContainer` background transparent. Removed old/unused input styles.
+    - Refactored `app/login.tsx` and `app/register.tsx` to use these new global styles, ensuring consistent structure and theming for input fields.
+- **User Registration Feature:**
+    - Created `app/register.tsx` with a complete registration form.
+    - Implemented client-side validation (required fields, password match, strong password).
+    - Integrated with `POST /users/signup` API endpoint.
+    - Redirects to login page with email autofill on successful registration.
+    - Added navigation links between login and registration pages.
+    - Ensured consistent light/dark mode theming.
+    - Arranged First Name and Last Name fields on the same row.
+    - Added to root `_layout.tsx` with `headerShown: false`.
+- **Login Page Updates (`app/login.tsx`):**
+    - Enabled email autofill from registration.
+    - Added link to the registration page.
+    - Improved theming consistency.
+    - Standardized password visibility toggle state and function names to match `app/register.tsx` (`isPasswordVisible`, `togglePasswordVisibility`).
+- **Enhanced Job File Uploads with Camera Integration:**
+    - Installed `expo-camera` dependency.
+    - Created `components/job/CameraCaptureModal.tsx` for direct photo capture.
+    - Modified `components/job/JobFiles.tsx` to include separate icon buttons for camera and file picker, integrating the new camera modal.
+    - Removed all code comments from `components/job/CameraCaptureModal.tsx` and `components/job/JobFiles.tsx`.
+    - Updated `app.json` with the `expo-camera` plugin to handle camera permissions.
 
 ## What's Left to Build
 

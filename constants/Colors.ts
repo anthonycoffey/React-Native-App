@@ -28,6 +28,7 @@ export default {
     errorText: '#D32F2F',
     errorBackground: '#FFEBEE',
     shadow: '#000000',
+    brand: '#252d3a',
   },
   dark: {
     text: '#ECEDEE',
@@ -40,5 +41,6 @@ export default {
     errorText: '#FFCDD2',
     errorBackground: '#B71C1C',
     shadow: '#333333',
+    brand: '#252d3a',
   },
 };

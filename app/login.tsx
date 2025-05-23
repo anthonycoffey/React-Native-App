@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TextInput,
   TouchableOpacity,
@@ -9,36 +9,63 @@ import {
   Image,
   ActivityIndicator,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { Text, View } from '@/components/Themed';
 import { PrimaryButton } from '@/components/Buttons';
 import globalStyles from '@/styles/globalStyles';
 import { ErrorText } from '@/components/Typography';
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { useColorScheme } from '@/components/useColorScheme';
+import {
+  useThemeColor,
+  getTextColor,
+  getInputBackgroundColor,
+  getPlaceholderTextColor,
+  getBorderColor,
+} from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
 
 export default function LoginScreen() {
   const auth = useAuth();
   const signIn = auth?.signIn;
-  const [email, setEmail] = useState('');
+  const { email: registeredEmail } = useLocalSearchParams<{ email?: string }>();
+  const [email, setEmail] = useState(registeredEmail || '');
   const [password, setPassword] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const theme = useColorScheme() ?? 'light';
   const errorContainerBackgroundColor = useThemeColor(
     { light: Colors.light.errorBackground, dark: Colors.dark.errorBackground },
     'errorBackground'
   );
+  const iconColor = useThemeColor({ light: '#666', dark: '#ccc' }, 'icon');
+  const linkColor = useThemeColor({}, 'tint');
+  const themedTextColor = getTextColor(theme);
+  const themedInputBackgroundColor = getInputBackgroundColor(theme);
+  const themedBorderColor = getBorderColor(theme);
+  const themedPlaceholderTextColor = getPlaceholderTextColor(theme);
 
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
+  const activityIndicatorColor =
+    theme === 'light' ? Colors.dark.text : Colors.light.text;
+
+  useEffect(() => {
+    if (registeredEmail) {
+      setEmail(registeredEmail);
+    }
+  }, [registeredEmail]);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
   const handleSubmit = async () => {
+    Keyboard.dismiss();
     if (!email) {
       setError('Email is required');
       return;
@@ -102,105 +129,163 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={loginStyles.container}
+      style={[
+        loginStyles.container,
+        { backgroundColor: useThemeColor({}, 'brand') },
+      ]}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={loginStyles.innerContainer}>
-          <View style={loginStyles.logoContainer}>
-            <Image
-              style={loginStyles.logo}
-              source={require('../assets/icon.png')}
-            />
-          </View>
-
-          <Text type='title' style={[globalStyles.title, loginStyles.title]}>
-            Sign In
-          </Text>
-
-          <View style={globalStyles.inputContainer}>
-            <TextInput
-              style={globalStyles.formInput}
-              placeholder='Email'
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize='none'
-              autoCorrect={false}
-              keyboardType='email-address'
-            />
-          </View>
-
-          <View style={globalStyles.inputContainer}>
-            <TextInput
-              style={globalStyles.passwordInput}
-              placeholder='Password'
-              secureTextEntry={!isVisible}
-              value={password}
-              onChangeText={setPassword}
-              autoCapitalize='none'
-              autoCorrect={false}
-            />
-            <TouchableOpacity
-              onPress={toggleVisibility}
-              style={globalStyles.eyeIcon}
-            >
-              <MaterialIcons
-                name={isVisible ? 'visibility-off' : 'visibility'}
-                size={20}
-                color='#666'
-              />
-            </TouchableOpacity>
-          </View>
-
-          {error && (
+        <ScrollView contentContainerStyle={loginStyles.scrollViewContent}>
+          <View
+            style={[
+              loginStyles.innerContainer,
+              { backgroundColor: useThemeColor({}, 'brand') },
+            ]}
+          >
             <View
               style={[
-                loginStyles.errorContainerLayout,
-                { backgroundColor: errorContainerBackgroundColor },
+                loginStyles.logoContainer,
+                { backgroundColor: useThemeColor({}, 'brand') },
               ]}
             >
-              <ErrorText>{error}</ErrorText>
+              <Image
+                style={loginStyles.logo}
+                source={require('../assets/icon.png')}
+              />
             </View>
-          )}
 
-          <PrimaryButton
-            title={isLoading ? '' : 'Login'}
-            onPress={handleSubmit}
-            disabled={isLoading}
-            style={loginStyles.loginButton}
-          >
-            {isLoading && <ActivityIndicator color='#fff' />}
-          </PrimaryButton>
-        </View>
+            <Text
+              type='title'
+              style={[
+                globalStyles.title,
+                loginStyles.title,
+                { color: themedTextColor },
+              ]}
+            >
+              Sign In
+            </Text>
+
+            <View style={globalStyles.inputContainer}>
+              <TextInput
+                style={[
+                  globalStyles.themedFormInput,
+                  {
+                    backgroundColor: themedInputBackgroundColor,
+                    color: themedTextColor,
+                    borderColor: themedBorderColor,
+                  },
+                ]}
+                placeholder='Email'
+                placeholderTextColor={themedPlaceholderTextColor}
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize='none'
+                autoCorrect={false}
+                keyboardType='email-address'
+              />
+            </View>
+
+            <View style={globalStyles.inputContainer}>
+              <View
+                style={[
+                  globalStyles.themedPasswordInputWrapper,
+                  {
+                    backgroundColor: themedInputBackgroundColor,
+                    borderColor: themedBorderColor,
+                  },
+                ]}
+              >
+                <TextInput
+                  style={[
+                    globalStyles.themedPasswordTextInput,
+                    { color: themedTextColor },
+                  ]}
+                  placeholder='Password'
+                  placeholderTextColor={themedPlaceholderTextColor}
+                secureTextEntry={!isPasswordVisible}
+                value={password}
+                onChangeText={setPassword}
+                autoCapitalize='none'
+                autoCorrect={false}
+              />
+              <TouchableOpacity
+                onPress={togglePasswordVisibility}
+                style={globalStyles.eyeIcon}
+              >
+                <MaterialIcons
+                  name={isPasswordVisible ? 'visibility-off' : 'visibility'}
+                  size={20}
+                  color={iconColor}
+                />
+              </TouchableOpacity>
+              </View>
+            </View>
+
+            {error && (
+              <View
+                style={[
+                  loginStyles.errorContainerLayout,
+                  { backgroundColor: errorContainerBackgroundColor },
+                ]}
+              >
+                <ErrorText>{error}</ErrorText>
+              </View>
+            )}
+
+            <PrimaryButton
+              title={isLoading ? '' : 'Login'}
+              onPress={handleSubmit}
+              disabled={isLoading}
+              style={loginStyles.loginButton}
+            >
+              {isLoading && (
+                <ActivityIndicator color={activityIndicatorColor} />
+              )}
+            </PrimaryButton>
+
+            <TouchableOpacity
+              onPress={() => router.push('/register')}
+              style={loginStyles.signUpLink}
+            >
+              <Text style={{ color: linkColor }}>
+                Don't have an account? Sign Up
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }
+
 const loginStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#252d3a',
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   innerContainer: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#252d3a',
-    minWidth: '50%',
+    width: '100%',
+    maxWidth: 500,
     justifyContent: 'center',
     alignSelf: 'center',
   },
   logoContainer: {
     alignItems: 'center',
-    backgroundColor: '#252d3a',
-    marginBottom: 50,
+    marginBottom: 30,
   },
   logo: {
-    width: 300,
-    height: 300,
+    width: 150,
+    height: 150,
     resizeMode: 'contain',
   },
   title: {
-    color: '#fff',
     marginBottom: 24,
+    textAlign: 'center',
   },
   errorContainerLayout: {
     padding: 10,
@@ -209,5 +294,9 @@ const loginStyles = StyleSheet.create({
   },
   loginButton: {
     marginTop: 10,
+  },
+  signUpLink: {
+    marginTop: 20,
+    alignItems: 'center',
   },
 });
