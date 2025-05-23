@@ -251,6 +251,13 @@ export default function LoginScreen() {
                 Don't have an account? Sign Up
               </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => router.push('/lost-password')}
+              style={loginStyles.forgotPasswordLink}
+            >
+              <Text style={{ color: linkColor }}>Forgot Password?</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </TouchableWithoutFeedback>
@@ -297,6 +304,10 @@ const loginStyles = StyleSheet.create({
   },
   signUpLink: {
     marginTop: 20,
+    alignItems: 'center',
+  },
+  forgotPasswordLink: {
+    marginTop: 15,
     alignItems: 'center',
   },
 });
