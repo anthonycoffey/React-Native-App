@@ -116,6 +116,10 @@ This document tracks what works, what's left to build, the current status, known
 - **Phone Number Formatting (Registration Page):**
     - Added `formatPhoneNumber` utility to `utils/strings.ts` for `XXX-XXX-XXXX` formatting.
     - Integrated into `app/register.tsx` phone input for real-time formatting and set `maxLength={12}`.
+- **Account Deletion Request:**
+    - Added a "Request Account Deletion" button to the account screen (`app/dashboard/account/index.tsx`).
+    - The button triggers a confirmation dialog before sending a `POST` request to `/account/delete`.
+    - The user is notified of the request's success or failure via an alert.
 
 ## What's Left to Build
 
