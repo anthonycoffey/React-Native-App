@@ -118,7 +118,8 @@ This document tracks what works, what's left to build, the current status, known
     - Integrated into `app/register.tsx` phone input for real-time formatting and set `maxLength={12}`.
 - **Account Deletion Request:**
     - Added a "Request Account Deletion" button to the account screen (`app/dashboard/account/index.tsx`).
-    - The button triggers a confirmation dialog before sending a `POST` request to `/account/delete`.
+    - Implemented a custom confirmation modal (`components/account/DeleteAccountModal.tsx`) that requires the user to type "delete" to confirm.
+    - The button triggers the modal, and upon confirmation, a `DELETE` request is sent to `/account/delete`.
     - The user is notified of the request's success or failure via an alert.
 
 ## What's Left to Build
