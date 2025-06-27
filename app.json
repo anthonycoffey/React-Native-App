@@ -60,9 +60,7 @@
           "dgis",
           "lftgpas"
         ],
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
-        "NSLocationAlwaysUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
-        "NSLocationWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
+        "NSMotionUsageDescription": "To conserve battery life, this app uses your motion activity to intelligently manage location updates. For example, updates are reduced when you are stationary and increased when you are driving to an active job.",
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": ["location"]
       }
@@ -96,7 +94,8 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
+          "locationWhenInUsePermission": "To show you available roadside service jobs near your current position, this app accesses your location while you are using it. For example, you will see a list of jobs sorted by the closest distance to you.",
+          "locationAlwaysAndWhenInUsePermission": "To provide customers with accurate real-time arrival estimates and to alert you of new nearby job opportunities even when the app is in the background, please allow location access at all times. This ensures you never miss a job and that customers are always informed.",
           "isAndroidBackgroundLocationEnabled": true,
           "isIosBackgroundLocationEnabled": true
         }
