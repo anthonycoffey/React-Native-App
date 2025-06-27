@@ -164,6 +164,11 @@ Refining Job File Management with camera integration and ensuring robust Memory 
     - Added a `formatPhoneNumber` utility function to `utils/strings.ts` to format numbers as `XXX-XXX-XXXX`.
     - Updated `app/register.tsx` to use this utility for the phone number input field, providing real-time formatting as the user types.
     - Set `maxLength={12}` for the phone input field.
+- **Account Deletion Request:**
+    - Added a "Request Account Deletion" button to the account screen (`app/dashboard/account/index.tsx`).
+    - The button triggers a confirmation dialog before sending a `POST` request to `/account/delete`.
+    - The user is notified of the request's success or failure via an alert.
+    - The user is not logged out upon successful request.
 
 ## Next Steps
 
