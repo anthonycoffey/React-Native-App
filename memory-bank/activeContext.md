@@ -4,7 +4,7 @@ This document details the current work focus, recent changes, next steps, active
 
 ## Current Work Focus
 
-Refining Job File Management with camera integration and ensuring robust Memory Bank documentation.
+Updating the account deletion API endpoint and ensuring robust Memory Bank documentation.
 
 ## Recent Changes
 
@@ -169,6 +169,12 @@ Refining Job File Management with camera integration and ensuring robust Memory 
     - The button triggers a confirmation dialog before sending a `POST` request to `/account/delete`.
     - The user is notified of the request's success or failure via an alert.
     - The user is not logged out upon successful request.
+- **Updated Account Deletion Endpoint:**
+    - Changed the API call in `app/dashboard/account/index.tsx` from `apiService.post('/account/delete')` to `apiService.delete('/account/delete')` to match the API documentation.
+- **Enhanced Account Deletion with Confirmation Modal:**
+    - Created a new `DeleteAccountModal.tsx` component in `components/account/`.
+    - This modal requires the user to type "delete" to confirm the action.
+    - Replaced the standard `Alert.alert` with the new custom modal in `app/dashboard/account/index.tsx`.
 
 ## Next Steps
 

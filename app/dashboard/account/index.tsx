@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import DeleteAccountModal from '@/components/account/DeleteAccountModal';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getBackgroundColor } from '@/hooks/useThemeColor';
@@ -29,6 +30,7 @@ export default function AccountScreen() {
     null
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchAccountDetails = async () => {
@@ -64,36 +66,24 @@ export default function AccountScreen() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      await apiService.delete('/account/delete');
+      Alert.alert(
+        'Success',
+        'Your account deletion request has been sent successfully.'
+      );
+    } catch (error) {
+      console.log('Failed to send deletion request:', error);
+      Alert.alert(
+        'Error',
+        'Could not process your request. Please try again later.'
+      );
+    }
+  };
+
   const handleDeleteAccountRequest = () => {
-    Alert.alert(
-      'Confirm Account Deletion',
-      'Are you sure you want to request account deletion? This action cannot be undone.',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Confirm',
-          onPress: async () => {
-            try {
-              await apiService.post('/account/delete');
-              Alert.alert(
-                'Success',
-                'Your account deletion request has been sent successfully.'
-              );
-            } catch (error) {
-              console.log('Failed to send deletion request:', error);
-              Alert.alert(
-                'Error',
-                'Could not process your request. Please try again later.'
-              );
-            }
-          },
-          style: 'destructive',
-        },
-      ]
-    );
+    setIsDeleteModalVisible(true);
   };
 
   const themedActivityIndicatorColor =
@@ -192,6 +182,11 @@ export default function AccountScreen() {
       <ThemedView style={localStyles.sectionContainer}>
         <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} />
       </ThemedView>
+      <DeleteAccountModal
+        visible={isDeleteModalVisible}
+        onClose={() => setIsDeleteModalVisible(false)}
+        onConfirm={handleDeleteAccount}
+      />
     </ScrollView>
   );
 }
