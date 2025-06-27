@@ -71,8 +71,11 @@ export default function AccountScreen() {
       await apiService.delete('/account/delete');
       Alert.alert(
         'Success',
-        'Your account deletion request has been sent successfully.'
+        'Your account has been successfully deleted.'
       );
+      setTimeout(() => {
+        handleLogout();
+      }, 1000);
     } catch (error) {
       console.log('Failed to send deletion request:', error);
       Alert.alert(
@@ -173,7 +176,7 @@ export default function AccountScreen() {
 
       <ThemedView style={localStyles.sectionContainer}>
         <OutlinedButton
-          title='Request Account Deletion'
+          title='Delete Account'
           variant='error'
           onPress={handleDeleteAccountRequest}
         />

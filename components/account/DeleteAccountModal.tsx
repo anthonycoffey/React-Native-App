@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, TextInput, StyleSheet, Alert } from 'react-native';
+import { Modal, View, TextInput, StyleSheet, Alert } from 'react-native';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import globalStyles from '@/styles/globalStyles';
-import { View as ThemedView } from '@/components/Themed';
+import { View as ThemedView, Text } from '@/components/Themed';
 
 interface DeleteAccountModalProps {
   visible: boolean;
