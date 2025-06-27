@@ -64,6 +64,38 @@ export default function AccountScreen() {
     }
   };
 
+  const handleDeleteAccountRequest = () => {
+    Alert.alert(
+      'Confirm Account Deletion',
+      'Are you sure you want to request account deletion? This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: async () => {
+            try {
+              await apiService.post('/account/delete');
+              Alert.alert(
+                'Success',
+                'Your account deletion request has been sent successfully.'
+              );
+            } catch (error) {
+              console.log('Failed to send deletion request:', error);
+              Alert.alert(
+                'Error',
+                'Could not process your request. Please try again later.'
+              );
+            }
+          },
+          style: 'destructive',
+        },
+      ]
+    );
+  };
+
   const themedActivityIndicatorColor =
     colorScheme === 'dark' ? Colors.dark.text : Colors.light.tint;
 
@@ -148,6 +180,14 @@ export default function AccountScreen() {
           style={{ marginTop: 10 }}
         />
       </Card>
+
+      <ThemedView style={localStyles.sectionContainer}>
+        <OutlinedButton
+          title='Request Account Deletion'
+          variant='error'
+          onPress={handleDeleteAccountRequest}
+        />
+      </ThemedView>
 
       <ThemedView style={localStyles.sectionContainer}>
         <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} />
