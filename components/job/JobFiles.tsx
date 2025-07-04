@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,8 +7,10 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
+import { VideoView as Video, useVideoPlayer } from 'expo-video';
 import { Job, JobFile } from '@/types';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -38,6 +40,11 @@ const FileViewerModal = ({
   file: JobFile | null;
   onClose: () => void;
 }) => {
+  const player = useVideoPlayer(file?.url ?? '', (player) => {
+    player.loop = true;
+    player.play();
+  });
+
   const colorScheme = useColorScheme() ?? 'light';
   const styles = StyleSheet.create({
     modalContainer: {
@@ -57,6 +64,11 @@ const FileViewerModal = ({
       width: '100%',
       height: 300,
       resizeMode: 'contain',
+      marginBottom: 20,
+    },
+    video: {
+      width: '100%',
+      height: 300,
       marginBottom: 20,
     },
     videoPlaceholder: {
@@ -85,28 +97,36 @@ const FileViewerModal = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <ThemedText type='subtitle' style={{ marginBottom: 15 }}>
-            {file.name}
-          </ThemedText>
-          {file.type.startsWith('image/') ? (
-            <Image source={{ uri: file.url }} style={styles.image} />
-          ) : file.type.startsWith('video/') ? (
-            <View style={styles.videoPlaceholder}>
-              <ThemedText>Video playback not yet implemented.</ThemedText>
-              <ThemedText>(Tap to try opening externally)</ThemedText>
-            </View>
-          ) : (
-            <ThemedText>Cannot preview this file type.</ThemedText>
-          )}
-          <PrimaryButton
-            title='Close'
-            onPress={onClose}
-            style={{ marginTop: 15 }}
-          />
-        </View>
-      </View>
+      <TouchableOpacity
+        style={styles.modalContainer}
+        activeOpacity={1}
+        onPressOut={onClose}
+      >
+        <TouchableWithoutFeedback>
+          <View style={styles.modalContent}>
+            <ThemedText type='caption' style={{ marginBottom: 15 }}>
+              {file.name}
+            </ThemedText>
+            {file.type.startsWith('image/') ? (
+              <Image source={{ uri: file.url }} style={styles.image} />
+            ) : file.type.startsWith('video/') ? (
+              <Video
+                player={player}
+                style={styles.video}
+                nativeControls
+                contentFit='contain'
+              />
+            ) : (
+              <ThemedText>Cannot preview this file type.</ThemedText>
+            )}
+            <PrimaryButton
+              title='Close'
+              onPress={onClose}
+              style={{ marginTop: 15 }}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      </TouchableOpacity>
     </Modal>
   );
 };
@@ -162,7 +182,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       marginRight: 8,
     },
     deleteButton: {
-      padding: 5,
+      padding: 3,
     },
     uploadSection: {
       marginTop: 15,
@@ -219,7 +239,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         multiple: true,
-        type: ['image/*'],
+        type: ['image/*', 'video/*'],
       });
 
       if (
@@ -342,13 +362,27 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       {job.JobFiles && job.JobFiles.length > 0 ? (
         <View style={styles.galleryContainer}>
           {job.JobFiles.map((file) =>
-            file.type.startsWith('image/') ? (
+            file.type.startsWith('image/') || file.type.startsWith('video/') ? (
               <TouchableOpacity
                 key={file.id}
                 style={styles.filePreviewContainer}
                 onPress={() => viewFile(file)}
               >
-                <Image source={{ uri: file.url }} style={styles.imagePreview} />
+                {file.type.startsWith('image/') ? (
+                  <Image
+                    source={{ uri: file.url }}
+                    style={styles.imagePreview}
+                  />
+                ) : (
+                  <View style={styles.imagePreview}>
+                    <MaterialIcons
+                      name='videocam'
+                      size={48}
+                      color={Colors[colorScheme].text}
+                      style={{ opacity: 0.6 }}
+                    />
+                  </View>
+                )}
                 <ThemedText
                   style={styles.fileName}
                   numberOfLines={2}
@@ -362,7 +396,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
                     styles.deleteButton,
                     {
                       position: 'absolute',
-                      top: 0,
+                      top: -5,
                       right: 0,
                       backgroundColor: 'rgba(0,0,0,0.5)',
                       borderRadius: 12,

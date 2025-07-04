@@ -8,13 +8,7 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import {
-  CameraView,
-  CameraType,
-  FlashMode,
-  Camera,
-  CameraMountError,
-} from 'expo-camera';
+import { CameraView, CameraType, FlashMode, Camera } from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Text as ThemedText } from '@/components/Themed';
 import Colors from '@/constants/Colors';
@@ -34,18 +28,23 @@ export default function CameraCaptureModal({
   const colorScheme = useColorScheme() ?? 'light';
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
-  const [isTakingPicture, setIsTakingPicture] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [mode, setMode] = useState<'picture' | 'video'>('picture');
   const cameraRef = useRef<CameraView>(null);
 
   useEffect(() => {
     if (visible) {
       (async () => {
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        setHasPermission(status === 'granted');
-        if (status !== 'granted') {
+        const cameraStatus = await Camera.requestCameraPermissionsAsync();
+        const micStatus = await Camera.requestMicrophonePermissionsAsync();
+        const granted =
+          cameraStatus.status === 'granted' && micStatus.status === 'granted';
+        setHasPermission(granted);
+        if (!granted) {
           Alert.alert(
             'Permission Denied',
-            'Camera permission is required to take photos.'
+            'Camera and microphone permissions are required.'
           );
           onClose();
         }
@@ -53,23 +52,45 @@ export default function CameraCaptureModal({
     }
   }, [visible, onClose]);
 
-  const handleTakePicture = async () => {
-    if (cameraRef.current && isCameraReady && !isTakingPicture) {
-      setIsTakingPicture(true);
+  const handleCapture = async () => {
+    if (!cameraRef.current || !isCameraReady || isProcessing) return;
+
+    if (mode === 'picture') {
+      setIsProcessing(true);
       try {
         const photo = await cameraRef.current.takePictureAsync({
           quality: 0.7,
           exif: false,
         });
-        const uri = photo.uri;
-        const name = `photo_${Date.now()}.jpg`;
-        const type = 'image/jpeg';
-        onPictureTaken(uri, type, name);
+        if (photo) {
+          onPictureTaken(photo.uri, 'image/jpeg', `photo_${Date.now()}.jpg`);
+        }
       } catch (error) {
         console.log('Error taking picture:', error);
         Alert.alert('Error', 'Could not take picture. Please try again.');
       } finally {
-        setIsTakingPicture(false);
+        setIsProcessing(false);
+      }
+    } else {
+      if (isRecording) {
+        cameraRef.current.stopRecording();
+        setIsRecording(false);
+        setIsProcessing(false);
+      } else {
+        setIsRecording(true);
+        setIsProcessing(true);
+        try {
+          const video = await cameraRef.current.recordAsync();
+          if (video) {
+            onPictureTaken(video.uri, 'video/mp4', `video_${Date.now()}.mp4`);
+          }
+        } catch (error) {
+          console.log('Error recording video:', error);
+          Alert.alert('Error', 'Could not record video. Please try again.');
+        } finally {
+          setIsRecording(false);
+          setIsProcessing(false);
+        }
       }
     }
   };
@@ -109,6 +130,15 @@ export default function CameraCaptureModal({
       borderWidth: 3,
       borderColor: 'black',
     },
+    recordingButton: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: 'red',
+    },
+    modeSwitchButton: {
+      padding: 10,
+    },
     closeButton: {
       position: 'absolute',
       top: Platform.OS === 'ios' ? 50 : 20,
@@ -142,7 +172,7 @@ export default function CameraCaptureModal({
         <View style={styles.permissionTextContainer}>
           <ActivityIndicator size='large' color={Colors[colorScheme].tint} />
           <ThemedText style={{ marginTop: 10 }}>
-            Requesting camera permission...
+            Requesting permissions...
           </ThemedText>
         </View>
       </Modal>
@@ -153,9 +183,9 @@ export default function CameraCaptureModal({
     return (
       <Modal visible={visible} transparent={false} animationType='slide'>
         <View style={styles.permissionTextContainer}>
-          <ThemedText>Camera permission denied.</ThemedText>
+          <ThemedText>Permissions denied.</ThemedText>
           <ThemedText>
-            Please enable it in settings to use the camera.
+            Please enable camera and microphone permissions in settings.
           </ThemedText>
           <TouchableOpacity onPress={onClose} style={{ marginTop: 20 }}>
             <ThemedText style={{ color: Colors[colorScheme].tint }}>
@@ -172,7 +202,7 @@ export default function CameraCaptureModal({
       visible={visible}
       transparent={false}
       animationType='slide'
-      onRequestClose={onClose}
+      onRequestClose={isRecording ? undefined : onClose}
     >
       <View style={styles.modalContainer}>
         <CameraView
@@ -180,32 +210,47 @@ export default function CameraCaptureModal({
           style={styles.camera}
           facing={'back' as CameraType}
           flash={'off' as FlashMode}
+          mode={mode}
           onCameraReady={() => setIsCameraReady(true)}
-          onMountError={(error: CameraMountError) => {
+          onMountError={(error) => {
             console.log('Camera mount error:', error.message);
             Alert.alert('Camera Error', 'Could not initialize camera.');
             onClose();
           }}
         />
         <View style={styles.controlsContainer}>
-          <View style={{ width: 50 }} />
+          <TouchableOpacity
+            style={styles.modeSwitchButton}
+            onPress={() => setMode(mode === 'picture' ? 'video' : 'picture')}
+            disabled={isRecording || isProcessing}
+          >
+            <MaterialIcons
+              name={mode === 'picture' ? 'videocam' : 'photo-camera'}
+              size={30}
+              color='white'
+            />
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.captureButtonOuter}
-            onPress={handleTakePicture}
-            disabled={!isCameraReady || isTakingPicture}
+            onPress={handleCapture}
+            disabled={!isCameraReady || (isProcessing && !isRecording)}
           >
-            <View style={styles.captureButtonInner} />
+            {isRecording ? (
+              <View style={styles.recordingButton} />
+            ) : (
+              <View style={styles.captureButtonInner} />
+            )}
           </TouchableOpacity>
           <View style={{ width: 50 }} />
         </View>
         <TouchableOpacity
           style={styles.closeButton}
           onPress={onClose}
-          disabled={isTakingPicture}
+          disabled={isRecording || isProcessing}
         >
           <MaterialIcons name='close' size={30} color='white' />
         </TouchableOpacity>
-        {isTakingPicture && (
+        {isProcessing && !isRecording && (
           <View style={styles.loadingIndicator}>
             <ActivityIndicator size='large' color='white' />
           </View>

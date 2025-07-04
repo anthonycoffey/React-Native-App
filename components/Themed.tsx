@@ -14,7 +14,7 @@ type ThemeProps = {
 };
 
 export type TextProps = ThemeProps & DefaultText['props'] & {
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption';
 };
 export type ViewProps = ThemeProps & DefaultView['props'];
 
@@ -45,6 +45,7 @@ export function Text(props: TextProps) {
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
         type === 'subtitle' ? styles.subtitle : undefined,
         type === 'link' ? styles.link : undefined,
+        type === 'caption' ? styles.caption : undefined,
         style
       ]}
       {...otherProps}
@@ -82,5 +83,10 @@ const styles = StyleSheet.create({
     lineHeight: 30,
     fontSize: 16,
     color: '#0a7ea4',
+  },
+  caption: {
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#888',
   },
 });
