@@ -14,6 +14,7 @@ type AuthContextType = {
   session: string | null;
   isLoading: boolean;
   currentUser: User | null;
+  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
   isUserLoading: boolean;
   fetchCurrentUser: () => Promise<void>;
   isApiAuthReady: boolean;
@@ -124,6 +125,7 @@ export function AuthProvider(props: React.PropsWithChildren) {
     session,
     isLoading: isLoadingSession,
     currentUser,
+    setCurrentUser,
     isUserLoading,
     fetchCurrentUser: () => fetchAndSetCurrentUser(session),
     isApiAuthReady,
