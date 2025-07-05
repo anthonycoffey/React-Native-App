@@ -10,6 +10,8 @@ This document details the technologies used, development setup, technical constr
 - **Navigation:** Expo Router (File System Based)
 - **State Management:** React Context API
 - **Secure Storage:** `expo-secure-store`
+- **Notifications:** `expo-notifications` (for handling local and push notifications)
+- **Device Information:** `expo-device` (to check if the app is running on a physical device)
 - **Camera Access:** `expo-camera` (for direct camera interaction)
 - **Document Picking:** `expo-document-picker` (for selecting files from storage)
 - **Background Task Management:** `expo-task-manager` (used for background location updates)
@@ -54,6 +56,8 @@ This document details the technologies used, development setup, technical constr
   - `expo-crypto`: Provides cryptographic functionalities, including UUID generation for Google Places API session tokens.
   - `expo-document-picker`: Allows users to select documents or files from the device's storage.
   - `expo-task-manager`: Enables defining and managing tasks that can run in the background, such as location tracking.
+  - `expo-notifications`: Provides an API to fetch push notification tokens, schedule, and manage notifications.
+  - `expo-device`: Provides access to system information about the device.
 
 ## Tool Usage Patterns
 

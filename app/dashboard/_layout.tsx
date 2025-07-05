@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Tabs, useRouter, Redirect, Link } from 'expo-router';
 import { ActivityIndicator, View, Pressable } from 'react-native';
-
+import NotificationBell from '@/components/dashboard/NotificationBell';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
@@ -58,7 +58,7 @@ export default function TabLayout() {
         options={{
           title: 'My Jobs',
           tabBarIcon: ({ color }) => <TabBarIcon name='list' color={color} />,
-          headerRight: () => (
+          headerLeft: () => (
             <Link href='/dashboard/create-job' asChild>
               <Pressable>
                 {({ pressed }) => (
@@ -66,11 +66,14 @@ export default function TabLayout() {
                     name='add-circle-outline'
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                    style={{ marginLeft: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
               </Pressable>
             </Link>
+          ),
+          headerRight: () => (
+            <NotificationBell />
           ),
         }}
       />
@@ -97,6 +100,13 @@ export default function TabLayout() {
         name='create-job'
         options={{
           title: 'Create Job',
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name='notifications'
+        options={{
+          title: 'Notifications',
           href: null,
         }}
       />

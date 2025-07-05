@@ -122,6 +122,23 @@ This document tracks what works, what's left to build, the current status, known
     - The button triggers the modal, and upon confirmation, a `DELETE` request is sent to `/account/delete`.
     - The user is notified of the request's success or failure via an alert.
     - The user is now logged out and redirected to the login screen after a 1-second delay for a smoother user experience.
+- **Dashboard Job List Refactor (`app/dashboard/index.tsx`):**
+  - Improved the layout and production readiness of the main jobs screen.
+  - Created a new reusable `JobsFilter.tsx` component under `components/dashboard/` to abstract the filter and sort dropdowns.
+  - Migrated all related logic, state, and styling for the filters into the new component.
+  - Corrected TypeScript prop types in `JobsFilter.tsx` for state setters.
+  - Simplified `app/dashboard/index.tsx` by removing the now-redundant filter code and using the new `JobsFilter` component, leading to a cleaner and more maintainable implementation.
+- **In-App Notification Center:**
+  - Implemented a full-featured in-app notification system.
+  - **Configuration:** Added `expo-notifications` plugin to `app.json`.
+  - **Core Logic:** Created `hooks/useNotifications.ts` to manage permissions, listeners, and saving notifications to `AsyncStorage`.
+  - **State Management:** Created `contexts/NotificationsContext.tsx` to provide app-wide access to notifications, unread counts, and management functions.
+  - **UI Components:**
+    - Created `components/dashboard/NotificationBell.tsx` to display a bell icon with an unread count badge in the header.
+    - Created `app/dashboard/notifications.tsx` as a dedicated screen to view notification history.
+  - **Integration:**
+    - The `NotificationsProvider` and `useNotifications` hook are initialized in the root layout (`app/_layout.tsx`).
+    - The `NotificationBell` is added to the header on the main dashboard screen, and the "Add Job" button was moved to the left side of the header for better layout.
 
 ## What's Left to Build
 

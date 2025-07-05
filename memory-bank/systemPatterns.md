@@ -31,8 +31,16 @@ This document outlines the system architecture, key technical decisions, design 
     *   **Global State:** React Context API is used for managing global state:
         *   `contexts/AuthContext.tsx`: Manages the user's `session` (authentication token) and the authenticated user's data (`currentUser`). It fetches user data upon successful establishment of a `session` (which also involves setting the token in `apiService`). The presence of a non-null `session` indicates that the API client is configured with an auth token.
         *   `contexts/UserContext.tsx`: Manages other user-specific states not directly tied to authentication, such as `isClockedIn`.
+        *   `contexts/NotificationsContext.tsx`: Manages the state of in-app notifications, including the list of notifications and the unread count. It also handles loading notifications from and saving them to `AsyncStorage`.
     *   **Local State:** Standard React component state (`useState`, `useEffect`) is used extensively within components for managing their internal data and lifecycle.
-3.  **Styling & Theming:**
+3.  **Notifications:**
+    *   **Engine:** The `expo-notifications` library is used to handle all aspects of local and push notifications.
+    *   **Permissions & Listeners:** The `hooks/useNotifications.ts` custom hook is responsible for requesting permissions, setting up notification handlers, and establishing listeners for incoming notifications. It is initialized once in the root layout (`app/_layout.tsx`).
+    *   **Storage:** Received notifications are saved to `AsyncStorage` to persist them across app sessions.
+    *   **UI:**
+        *   A `NotificationBell.tsx` component in the dashboard header displays the unread notification count.
+        *   A dedicated screen at `app/dashboard/notifications.tsx` displays a history of all received notifications.
+4.  **Styling & Theming:**
     *   Styling is primarily managed using React Native's `StyleSheet` API.
     *   A comprehensive theming system is in place to support light and dark modes consistently across the application. This is the standard approach and **must be followed for all new and existing components**:
         *   **Getting the Current Theme:** The current color scheme (e.g., 'light' or 'dark') is obtained using `const theme = useColorScheme() ?? 'light';` (import from `@/components/useColorScheme`).
@@ -68,8 +76,8 @@ This document outlines the system architecture, key technical decisions, design 
 
 ## Design Patterns (Observed or Intended in Mobile App)
 
-1.  **Provider Pattern:** Implemented via React Context API for `AuthContext` and `UserContext`.
-2.  **Custom Hooks:** Utilized for encapsulating reusable logic (e.g., `hooks/useLocation.ts`, `hooks/useStorageState.ts`, `hooks/useThemeColor.ts`).
+1.  **Provider Pattern:** Implemented via React Context API for `AuthContext`, `UserContext`, and `NotificationsContext`.
+2.  **Custom Hooks:** Utilized for encapsulating reusable logic (e.g., `hooks/useLocation.ts`, `hooks/useStorageState.ts`, `hooks/useThemeColor.ts`, `hooks/useNotifications.ts`).
 3.  **Functional Components with Hooks:** Standard approach for component development.
 4.  **File System Routing:** Leveraged from Expo Router.
 5.  **Higher-Order Components (HOCs):** Potentially used for route protection or wrapping layouts, though Expo Router's layout mechanism might reduce direct HOC usage for routing. *(To be verified)*
