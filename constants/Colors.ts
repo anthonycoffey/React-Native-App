@@ -29,6 +29,7 @@ export default {
     errorBackground: '#FFEBEE',
     shadow: '#000000',
     brand: '#252d3a',
+    card: '#f8f8f8',
   },
   dark: {
     text: '#ECEDEE',
@@ -42,5 +43,6 @@ export default {
     errorBackground: '#B71C1C',
     shadow: '#333333',
     brand: '#252d3a',
+    card: '#1c1c1e',
   },
 };
