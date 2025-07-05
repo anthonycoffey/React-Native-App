@@ -14,7 +14,9 @@
       "resizeMode": "cover",
       "backgroundColor": "#252c3a"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
@@ -62,7 +64,9 @@
         ],
         "NSMotionUsageDescription": "To conserve battery life, this app uses your motion activity to intelligently manage location updates. For example, updates are reduced when you are stationary and increased when you are driving to an active job.",
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": ["location"]
+        "UIBackgroundModes": [
+          "location"
+        ]
       }
     },
     "android": {
@@ -106,7 +110,15 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to take photos for job documentation."
         }
       ],
-      "expo-notifications"
+      "expo-notifications",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "technician-app",
+          "organization": "24hr-car-unlock-2f6982a53"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

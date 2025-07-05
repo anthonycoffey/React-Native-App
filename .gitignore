@@ -44,3 +44,5 @@ eas.json
 credentials.json
 credentials/
 eco-tenure-344722-946aaa4aa1d7.json
+
+.env.local

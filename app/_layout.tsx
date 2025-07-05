@@ -15,12 +15,29 @@ import { NotificationsProvider } from '@/contexts/NotificationsContext';
 import { useNotifications } from '@/hooks/useNotifications';
 import { JobScreenParams } from '../types';
 import { useColorScheme } from '@/components/useColorScheme';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://70100b46f675927bbe6a6ce24f378320@o4505751809884160.ingest.us.sentry.io/4509618064457728',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   const colorScheme = useColorScheme() ?? 'light';
 
   useNotifications();
@@ -67,4 +84,4 @@ export default function RootLayout() {
       </UserProvider>
     </AuthProvider>
   );
-}
+});

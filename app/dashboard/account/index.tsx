@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  View as RNView,
+} from 'react-native';
 import DeleteAccountModal from '@/components/account/DeleteAccountModal';
+import EditEmailModal from '@/components/account/EditEmailModal';
+import EditNameModal from '@/components/account/EditNameModal';
+import EditPhoneModal from '@/components/account/EditPhoneModal';
+import { IconButton } from '@/components/Buttons';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getBackgroundColor } from '@/hooks/useThemeColor';
@@ -13,6 +23,7 @@ import { centsToDollars } from '@/utils/money';
 import { OutlinedButton, PrimaryButton } from '@/components/Buttons';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { formatPhoneNumber } from '@/utils/strings';
 
 interface AccountDetails {
   owedCash: number;
@@ -31,6 +42,9 @@ export default function AccountScreen() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isEditNameModalVisible, setIsEditNameModalVisible] = useState(false);
+  const [isEditEmailModalVisible, setIsEditEmailModalVisible] = useState(false);
+  const [isEditPhoneModalVisible, setIsEditPhoneModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchAccountDetails = async () => {
@@ -119,6 +133,38 @@ export default function AccountScreen() {
       </ThemedView>
 
       <Card>
+        <Text style={globalStyles.subtitle}>Profile Information</Text>
+        <RNView style={localStyles.infoRow}>
+          <Text style={localStyles.infoLabel}>Name</Text>
+          <Text style={localStyles.infoValue}>
+            {auth?.currentUser?.firstName} {auth?.currentUser?.lastName}
+          </Text>
+          <IconButton
+            iconName='edit'
+            onPress={() => setIsEditNameModalVisible(true)}
+          />
+        </RNView>
+        <RNView style={localStyles.infoRow}>
+          <Text style={localStyles.infoLabel}>Email</Text>
+          <Text style={localStyles.infoValue}>{auth?.currentUser?.email}</Text>
+          <IconButton
+            iconName='edit'
+            onPress={() => setIsEditEmailModalVisible(true)}
+          />
+        </RNView>
+        <RNView style={localStyles.infoRow}>
+          <Text style={localStyles.infoLabel}>Phone</Text>
+          <Text style={localStyles.infoValue}>
+            {formatPhoneNumber(auth?.currentUser?.phone || '')}
+          </Text>
+          <IconButton
+            iconName='edit'
+            onPress={() => setIsEditPhoneModalVisible(true)}
+          />
+        </RNView>
+      </Card>
+
+      <Card>
         <Text style={globalStyles.subtitle}>Account Balance</Text>
         <Text style={localStyles.balanceText}>
           Owed cash:{' '}
@@ -190,11 +236,44 @@ export default function AccountScreen() {
         onClose={() => setIsDeleteModalVisible(false)}
         onConfirm={handleDeleteAccount}
       />
+      <EditNameModal
+        visible={isEditNameModalVisible}
+        onClose={() => setIsEditNameModalVisible(false)}
+        user={auth?.currentUser || null}
+      />
+      <EditEmailModal
+        visible={isEditEmailModalVisible}
+        onClose={() => setIsEditEmailModalVisible(false)}
+        user={auth?.currentUser || null}
+      />
+      <EditPhoneModal
+        visible={isEditPhoneModalVisible}
+        onClose={() => setIsEditPhoneModalVisible(false)}
+        user={auth?.currentUser || null}
+      />
     </ScrollView>
   );
 }
 
 const localStyles = StyleSheet.create({
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.light.tint,
+  },
+  infoLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  infoValue: {
+    fontSize: 16,
+    flex: 1,
+    textAlign: 'right',
+    marginRight: 10,
+  },
   sectionContainer: {
     paddingVertical: 10,
     paddingHorizontal: 15,
