@@ -15,6 +15,7 @@ import {
   Platform,
   FlatList,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import { View, Text } from '@/components/Themed';
 import Card from '@/components/Card';
@@ -574,734 +575,733 @@ export default function CreateJobScreen() {
   };
 
   return (
-    <ScrollView
+    <SafeAreaView
       style={[
         styles.container,
         { backgroundColor: getBackgroundColor(colorScheme) },
       ]}
-      keyboardShouldPersistTaps='handled'
-      nestedScrollEnabled={true}
     >
-      <Card>
-        <CardTitle>Customer</CardTitle>
-        {!selectedCustomer && !isNewCustomer && (
-          <View style={styles.buttonRow}>
-            <PrimaryButton
-              title='New Customer'
-              onPress={() => {
-                setCustomerForm({});
-                setSelectedCustomer(null);
-                setIsNewCustomer(false);
-                setCustomerCars([]);
-                setSelectedCar(null);
-                setCarForm({});
-                setIsNewCar(true);
-                setNewCustomerModalVisible(true);
-              }}
-              style={styles.flexButton}
-            />
-            <View style={{ width: 10 }} />
-            <OutlinedButton
-              title='Existing Customer'
-              onPress={() => {
-                setCustomerModalVisible(true);
-                setCustomerSearchQuery('');
-                setSearchedCustomers([]);
-              }}
-              style={styles.flexButton}
-            />
-          </View>
-        )}
-
-        {isNewCustomer && !selectedCustomer && customerForm.firstName && (
-          <View>
-            <Text
-              style={[
-                styles.customerDetailText,
-                { color: getTextColor(colorScheme) },
-              ]}
-            >
-              New Customer:
-            </Text>
-            <Text
-              style={[
-                styles.customerDetailText,
-                { color: getTextColor(colorScheme) },
-              ]}
-            >
-              Name: {customerForm.firstName} {customerForm.lastName || ''}
-            </Text>
-            <Text
-              style={[
-                styles.customerDetailText,
-                { color: getTextColor(colorScheme) },
-              ]}
-            >
-              Email: {customerForm.email || 'N/A'}
-            </Text>
-            <Text
-              style={[
-                styles.customerDetailText,
-                { color: getTextColor(colorScheme) },
-              ]}
-            >
-              Phone: {customerForm.phone || 'N/A'}
-            </Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContentContainer}
+        keyboardShouldPersistTaps='handled'
+        nestedScrollEnabled={true}
+      >
+        <Card>
+          <CardTitle>Customer</CardTitle>
+          {!selectedCustomer && !isNewCustomer && (
             <View style={styles.buttonRow}>
-              <OutlinedButton
-                title='Edit New Customer'
-                onPress={() => setNewCustomerModalVisible(true)}
-                style={styles.flexButton}
-              />
-              <View style={{ width: 10 }} />
-              <OutlinedButton
-                title='Clear New Customer'
-                variant='error'
+              <PrimaryButton
+                title='New'
                 onPress={() => {
-                  setIsNewCustomer(false);
                   setCustomerForm({});
-                }}
-                style={styles.flexButton}
-              />
-            </View>
-          </View>
-        )}
-
-        {selectedCustomer && (
-          <View>
-            <Text
-              style={[
-                styles.customerDetailText,
-                { color: getTextColor(colorScheme) },
-              ]}
-            >
-              Name: {selectedCustomer.firstName} {selectedCustomer.lastName}
-            </Text>
-            <Text
-              style={[
-                styles.customerDetailText,
-                { color: getTextColor(colorScheme) },
-              ]}
-            >
-              Email: {selectedCustomer.email || 'N/A'}
-            </Text>
-            <Text
-              style={[
-                styles.customerDetailText,
-                { color: getTextColor(colorScheme) },
-              ]}
-            >
-              Phone:{' '}
-              {selectedCustomer.phone ||
-                selectedCustomer.defaultPhone?.number ||
-                'N/A'}
-            </Text>
-            <View style={styles.buttonRow}>
-              <OutlinedButton
-                title='Clear'
-                variant='error'
-                onPress={() => {
                   setSelectedCustomer(null);
-                  setCustomerForm({});
                   setIsNewCustomer(false);
                   setCustomerCars([]);
                   setSelectedCar(null);
                   setCarForm({});
-                  setIsNewCar(false);
+                  setIsNewCar(true);
+                  setNewCustomerModalVisible(true);
                 }}
-                style={styles.flexButton}
-              />
-            </View>
-          </View>
-        )}
-      </Card>
-
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={customerModalVisible}
-        onRequestClose={() => setCustomerModalVisible(false)}
-      >
-        <View style={styles.modalCenteredView}>
-          <View
-            style={[
-              styles.modalView,
-              { backgroundColor: getBackgroundColor(colorScheme) },
-            ]}
-          >
-            <CardTitle>Search Existing Customer</CardTitle>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='Search by name or phone (min 2 chars)'
-              placeholderTextColor={placeholderTextColor}
-              value={customerSearchQuery}
-              onChangeText={handleCustomerSearch}
-              autoFocus
-            />
-            {isSearchingCustomers && (
-              <ActivityIndicator
-                style={{ marginVertical: 10 }}
-                color={
-                  colorScheme === 'dark' ? Colors.dark.text : Colors.light.text
-                }
-              />
-            )}
-            <FlatList
-              data={searchedCustomers}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[
-                    styles.searchResultItem,
-                    { borderBottomColor: getBorderColor(colorScheme) },
-                  ]}
-                  onPress={() => handleSelectSearchedCustomer(item)}
-                >
-                  <Text style={{ color: getTextColor(colorScheme) }}>
-                    {item.firstName} {item.lastName} (
-                    {item.defaultPhone?.number || item.phone || 'No phone'})
-                  </Text>
-                </TouchableOpacity>
-              )}
-              ListEmptyComponent={
-                !isSearchingCustomers && customerSearchQuery.length > 1 ? (
-                  <Text
-                    style={{
-                      color: getTextColor(colorScheme),
-                      textAlign: 'center',
-                      marginVertical: 10,
-                    }}
-                  >
-                    No customers found.
-                  </Text>
-                ) : null
-              }
-              style={{ maxHeight: 200 }}
-            />
-            <PrimaryButton
-              title='Close'
-              onPress={() => setCustomerModalVisible(false)}
-              style={{ marginTop: 15 }}
-            />
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={newCustomerModalVisible}
-        onRequestClose={handleCancelNewCustomerModal}
-      >
-        <View style={styles.modalCenteredView}>
-          <View
-            style={[
-              styles.modalView,
-              { backgroundColor: getBackgroundColor(colorScheme) },
-            ]}
-          >
-            <CardTitle>Add New Customer</CardTitle>
-            <LabelText>
-              First Name{' '}
-              <Text style={{ color: useThemeColor({}, 'errorText') }}>*</Text>
-            </LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='Enter first name'
-              placeholderTextColor={placeholderTextColor}
-              value={customerForm.firstName || ''}
-              onChangeText={(text) =>
-                setCustomerForm((prev) => ({ ...prev, firstName: text }))
-              }
-              editable={!loading}
-            />
-            <LabelText>Last Name</LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='Enter last name'
-              placeholderTextColor={placeholderTextColor}
-              value={customerForm.lastName || ''}
-              onChangeText={(text) =>
-                setCustomerForm((prev) => ({ ...prev, lastName: text }))
-              }
-              editable={!loading}
-            />
-            <LabelText>Email</LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='Enter email address'
-              placeholderTextColor={placeholderTextColor}
-              value={customerForm.email || ''}
-              onChangeText={(text) =>
-                setCustomerForm((prev) => ({ ...prev, email: text }))
-              }
-              keyboardType='email-address'
-              autoCapitalize='none'
-              editable={!loading}
-            />
-            <LabelText>
-              Phone Number{' '}
-              <Text style={{ color: useThemeColor({}, 'errorText') }}>*</Text>
-            </LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='Enter phone number'
-              placeholderTextColor={placeholderTextColor}
-              value={customerForm.phone || ''}
-              onChangeText={(text) =>
-                setCustomerForm((prev) => ({
-                  ...prev,
-                  phone: text.replace(/[^0-9]/g, ''),
-                }))
-              }
-              keyboardType='phone-pad'
-              editable={!loading}
-            />
-            <View style={styles.buttonRow}>
-              <OutlinedButton
-                title='Cancel'
-                onPress={handleCancelNewCustomerModal}
                 style={styles.flexButton}
               />
               <View style={{ width: 10 }} />
-              <PrimaryButton
-                title='Save Customer'
-                onPress={handleSaveNewCustomer}
+              <OutlinedButton
+                title='Existing'
+                onPress={() => {
+                  setCustomerModalVisible(true);
+                  setCustomerSearchQuery('');
+                  setSearchedCustomers([]);
+                }}
                 style={styles.flexButton}
               />
             </View>
-          </View>
-        </View>
-      </Modal>
+          )}
 
-      <Card>
-        <CardTitle>Arrival Time</CardTitle>
-        <TouchableOpacity onPress={openDateTimePicker}>
-          <Text style={themedInputStyle}>
-            {format(arrivalTime, 'MM/dd/yyyy hh:mm a')}
-          </Text>
-        </TouchableOpacity>
-        <Text style={[styles.subText, { color: getTextColor(colorScheme) }]}>
-          {formatDistanceToNow(arrivalTime, { addSuffix: true })}
-        </Text>
-        {Platform.OS === 'ios' && showDateTimePicker && (
-          <DateTimePicker
-            value={arrivalTime}
-            mode='datetime'
-            display='default'
-            onChange={handleAppleDateTimeChange}
-          />
-        )}
-      </Card>
-
-      <Card style={[!customerSectionActive && styles.disabledCard]}>
-        <CardTitle>Car Details</CardTitle>
-        {!customerSectionActive ? (
-          <Text style={{ color: getTextColor(colorScheme) }}>
-            Please select or create a customer first.
-          </Text>
-        ) : selectedCar ? (
-          <View>
-            <Text
-              style={[
-                styles.customerDetailText,
-                { color: getTextColor(colorScheme) },
-              ]}
-            >
-              {selectedCar.year} {selectedCar.make} {selectedCar.model} (
-              {selectedCar.color})
-            </Text>
-            <Text
-              style={[
-                styles.customerDetailText,
-                { color: getTextColor(colorScheme) },
-              ]}
-            >
-              Plate: {selectedCar.plate}{' '}
-              {selectedCar.vin && `VIN: ${selectedCar.vin}`}
-            </Text>
-            <OutlinedButton
-              title='Change Car / Add New'
-              onPress={() => {
-                setSelectedCar(null);
-                setCarForm({});
-                setIsNewCar(false);
-              }}
-            />
-          </View>
-        ) : isNewCar || customerCars.length === 0 ? (
-          <View>
-            <LabelText>Make</LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='e.g., Toyota'
-              placeholderTextColor={placeholderTextColor}
-              value={carForm.make || ''}
-              onChangeText={(text) =>
-                setCarForm((prev) => ({ ...prev, make: text }))
-              }
-              editable={!loading}
-            />
-            <LabelText>Model</LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='e.g., Camry'
-              placeholderTextColor={placeholderTextColor}
-              value={carForm.model || ''}
-              onChangeText={(text) =>
-                setCarForm((prev) => ({ ...prev, model: text }))
-              }
-              editable={!loading}
-            />
-            <LabelText>Year</LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='e.g., 2021'
-              placeholderTextColor={placeholderTextColor}
-              value={carForm.year?.toString() || ''}
-              onChangeText={(text) =>
-                setCarForm((prev) => ({
-                  ...prev,
-                  year: parseInt(text.replace(/[^0-9]/g, '')) || undefined,
-                }))
-              }
-              keyboardType='number-pad'
-              maxLength={4}
-              editable={!loading}
-            />
-            <LabelText>Color</LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='e.g., Blue'
-              placeholderTextColor={placeholderTextColor}
-              value={carForm.color || ''}
-              onChangeText={(text) =>
-                setCarForm((prev) => ({ ...prev, color: text }))
-              }
-              editable={!loading}
-            />
-            <LabelText>License Plate</LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='Enter license plate'
-              placeholderTextColor={placeholderTextColor}
-              value={carForm.plate || ''}
-              onChangeText={(text) =>
-                setCarForm((prev) => ({ ...prev, plate: text }))
-              }
-              autoCapitalize='characters'
-              editable={!loading}
-            />
-            <LabelText>VIN (Optional)</LabelText>
-            <TextInput
-              style={themedInputStyle}
-              placeholder='Enter VIN'
-              placeholderTextColor={placeholderTextColor}
-              value={carForm.vin || ''}
-              onChangeText={(text) =>
-                setCarForm((prev) => ({ ...prev, vin: text }))
-              }
-              autoCapitalize='characters'
-              maxLength={17}
-              editable={!loading}
-            />
-            {customerCars.length > 0 && !selectedCar && (
-              <OutlinedButton
-                title='Select Existing Car'
-                onPress={() => {
-                  setIsNewCar(false);
-                  setCarForm({});
-                }}
-                style={{ marginTop: 10 }}
-              />
-            )}
-          </View>
-        ) : (
-          <View>
-            <Text
-              style={[
-                styles.subText,
-                { color: getTextColor(colorScheme), marginBottom: 10 },
-              ]}
-            >
-              Select a vehicle:
-            </Text>
-            {customerCars.filter(Boolean).map((car: Car) => {
-              const carId = car.id;
-              return (
-                <TouchableOpacity
-                  key={carId}
-                  style={[
-                    styles.listItem,
-                    { borderBottomColor: getBorderColor(colorScheme) },
-                    (selectedCar as Car | null)?.id === car.id && {
-                      backgroundColor: getInputBackgroundColor(colorScheme),
-                    },
-                  ]}
+          {isNewCustomer && !selectedCustomer && customerForm.firstName && (
+            <View>
+              <Text
+                style={[
+                  styles.customerDetailText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                New Customer:
+              </Text>
+              <Text
+                style={[
+                  styles.customerDetailText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                Name: {customerForm.firstName} {customerForm.lastName || ''}
+              </Text>
+              <Text
+                style={[
+                  styles.customerDetailText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                Email: {customerForm.email || 'N/A'}
+              </Text>
+              <Text
+                style={[
+                  styles.customerDetailText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                Phone: {customerForm.phone || 'N/A'}
+              </Text>
+              <View style={styles.buttonRow}>
+                <OutlinedButton
+                  title='Edit New Customer'
+                  onPress={() => setNewCustomerModalVisible(true)}
+                  style={styles.flexButton}
+                />
+                <View style={{ width: 10 }} />
+                <OutlinedButton
+                  title='Clear New Customer'
+                  variant='error'
                   onPress={() => {
-                    setSelectedCar(car);
+                    setIsNewCustomer(false);
+                    setCustomerForm({});
+                  }}
+                  style={styles.flexButton}
+                />
+              </View>
+            </View>
+          )}
+
+          {selectedCustomer && (
+            <View>
+              <Text
+                style={[
+                  styles.customerDetailText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                Name: {selectedCustomer.firstName} {selectedCustomer.lastName}
+              </Text>
+              <Text
+                style={[
+                  styles.customerDetailText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                Email: {selectedCustomer.email || 'N/A'}
+              </Text>
+              <Text
+                style={[
+                  styles.customerDetailText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                Phone:{' '}
+                {selectedCustomer.phone ||
+                  selectedCustomer.defaultPhone?.number ||
+                  'N/A'}
+              </Text>
+              <View style={styles.buttonRow}>
+                <OutlinedButton
+                  title='Clear'
+                  variant='error'
+                  onPress={() => {
+                    setSelectedCustomer(null);
+                    setCustomerForm({});
+                    setIsNewCustomer(false);
+                    setCustomerCars([]);
+                    setSelectedCar(null);
+                    setCarForm({});
+                    setIsNewCar(false);
+                  }}
+                  style={styles.flexButton}
+                />
+              </View>
+            </View>
+          )}
+        </Card>
+
+        <Modal
+          animationType='slide'
+          transparent={true}
+          visible={customerModalVisible}
+          onRequestClose={() => setCustomerModalVisible(false)}
+        >
+          <View style={styles.modalCenteredView}>
+            <View
+              style={[
+                styles.modalView,
+                { backgroundColor: getBackgroundColor(colorScheme) },
+              ]}
+            >
+              <CardTitle>Search Existing Customer</CardTitle>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='Search by name or phone (min 2 chars)'
+                placeholderTextColor={placeholderTextColor}
+                value={customerSearchQuery}
+                onChangeText={handleCustomerSearch}
+                autoFocus
+              />
+              {isSearchingCustomers && (
+                <ActivityIndicator
+                  style={{ marginVertical: 10 }}
+                  color={
+                    colorScheme === 'dark'
+                      ? Colors.dark.text
+                      : Colors.light.text
+                  }
+                />
+              )}
+              <FlatList
+                data={searchedCustomers}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[
+                      styles.searchResultItem,
+                      { borderBottomColor: getBorderColor(colorScheme) },
+                    ]}
+                    onPress={() => handleSelectSearchedCustomer(item)}
+                  >
+                    <Text style={{ color: getTextColor(colorScheme) }}>
+                      {item.firstName} {item.lastName} (
+                      {item.defaultPhone?.number || item.phone || 'No phone'})
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                ListEmptyComponent={
+                  !isSearchingCustomers && customerSearchQuery.length > 1 ? (
+                    <Text
+                      style={{
+                        color: getTextColor(colorScheme),
+                        textAlign: 'center',
+                        marginVertical: 10,
+                      }}
+                    >
+                      No customers found.
+                    </Text>
+                  ) : null
+                }
+                style={{ maxHeight: 200 }}
+              />
+              <PrimaryButton
+                title='Close'
+                onPress={() => setCustomerModalVisible(false)}
+                style={{ marginTop: 15 }}
+              />
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType='slide'
+          transparent={true}
+          visible={newCustomerModalVisible}
+          onRequestClose={handleCancelNewCustomerModal}
+        >
+          <View style={styles.modalCenteredView}>
+            <View
+              style={[
+                styles.modalView,
+                { backgroundColor: getBackgroundColor(colorScheme) },
+              ]}
+            >
+              <CardTitle>Add New Customer</CardTitle>
+              <LabelText>
+                First Name{' '}
+                <Text style={{ color: useThemeColor({}, 'errorText') }}>*</Text>
+              </LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='Enter first name'
+                placeholderTextColor={placeholderTextColor}
+                value={customerForm.firstName || ''}
+                onChangeText={(text) =>
+                  setCustomerForm((prev) => ({ ...prev, firstName: text }))
+                }
+                editable={!loading}
+              />
+              <LabelText>Last Name</LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='Enter last name'
+                placeholderTextColor={placeholderTextColor}
+                value={customerForm.lastName || ''}
+                onChangeText={(text) =>
+                  setCustomerForm((prev) => ({ ...prev, lastName: text }))
+                }
+                editable={!loading}
+              />
+              <LabelText>Email</LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='Enter email address'
+                placeholderTextColor={placeholderTextColor}
+                value={customerForm.email || ''}
+                onChangeText={(text) =>
+                  setCustomerForm((prev) => ({ ...prev, email: text }))
+                }
+                keyboardType='email-address'
+                autoCapitalize='none'
+                editable={!loading}
+              />
+              <LabelText>
+                Phone Number{' '}
+                <Text style={{ color: useThemeColor({}, 'errorText') }}>*</Text>
+              </LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='Enter phone number'
+                placeholderTextColor={placeholderTextColor}
+                value={customerForm.phone || ''}
+                onChangeText={(text) =>
+                  setCustomerForm((prev) => ({
+                    ...prev,
+                    phone: text.replace(/[^0-9]/g, ''),
+                  }))
+                }
+                keyboardType='phone-pad'
+                editable={!loading}
+              />
+              <View style={styles.buttonRow}>
+                <OutlinedButton
+                  title='Cancel'
+                  onPress={handleCancelNewCustomerModal}
+                  style={styles.flexButton}
+                />
+                <View style={{ width: 10 }} />
+                <PrimaryButton
+                  title='Save Customer'
+                  onPress={handleSaveNewCustomer}
+                  style={styles.flexButton}
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        <Card>
+          <CardTitle>Arrival Time</CardTitle>
+          <TouchableOpacity onPress={openDateTimePicker}>
+            <Text style={themedInputStyle}>
+              {format(arrivalTime, 'MM/dd/yyyy hh:mm a')}
+            </Text>
+          </TouchableOpacity>
+          <Text style={[styles.subText, { color: getTextColor(colorScheme) }]}>
+            {formatDistanceToNow(arrivalTime, { addSuffix: true })}
+          </Text>
+          {Platform.OS === 'ios' && showDateTimePicker && (
+            <DateTimePicker
+              value={arrivalTime}
+              mode='datetime'
+              display='default'
+              onChange={handleAppleDateTimeChange}
+            />
+          )}
+        </Card>
+
+        <Card style={[!customerSectionActive && styles.disabledCard]}>
+          <CardTitle>Car Details</CardTitle>
+          {!customerSectionActive ? (
+            <Text style={{ color: getTextColor(colorScheme) }}>
+              Please select or create a customer first.
+            </Text>
+          ) : selectedCar ? (
+            <View>
+              <Text
+                style={[
+                  styles.customerDetailText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                {selectedCar.year} {selectedCar.make} {selectedCar.model} (
+                {selectedCar.color})
+              </Text>
+              <Text
+                style={[
+                  styles.customerDetailText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
+                Plate: {selectedCar.plate}{' '}
+                {selectedCar.vin && `VIN: ${selectedCar.vin}`}
+              </Text>
+              <OutlinedButton
+                title='Change Car / Add New'
+                onPress={() => {
+                  setSelectedCar(null);
+                  setCarForm({});
+                  setIsNewCar(false);
+                }}
+              />
+            </View>
+          ) : isNewCar || customerCars.length === 0 ? (
+            <View>
+              <LabelText>Make</LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='e.g., Toyota'
+                placeholderTextColor={placeholderTextColor}
+                value={carForm.make || ''}
+                onChangeText={(text) =>
+                  setCarForm((prev) => ({ ...prev, make: text }))
+                }
+                editable={!loading}
+              />
+              <LabelText>Model</LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='e.g., Camry'
+                placeholderTextColor={placeholderTextColor}
+                value={carForm.model || ''}
+                onChangeText={(text) =>
+                  setCarForm((prev) => ({ ...prev, model: text }))
+                }
+                editable={!loading}
+              />
+              <LabelText>Year</LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='e.g., 2021'
+                placeholderTextColor={placeholderTextColor}
+                value={carForm.year?.toString() || ''}
+                onChangeText={(text) =>
+                  setCarForm((prev) => ({
+                    ...prev,
+                    year: parseInt(text.replace(/[^0-9]/g, '')) || undefined,
+                  }))
+                }
+                keyboardType='number-pad'
+                maxLength={4}
+                editable={!loading}
+              />
+              <LabelText>Color</LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='e.g., Blue'
+                placeholderTextColor={placeholderTextColor}
+                value={carForm.color || ''}
+                onChangeText={(text) =>
+                  setCarForm((prev) => ({ ...prev, color: text }))
+                }
+                editable={!loading}
+              />
+              <LabelText>License Plate</LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='Enter license plate'
+                placeholderTextColor={placeholderTextColor}
+                value={carForm.plate || ''}
+                onChangeText={(text) =>
+                  setCarForm((prev) => ({ ...prev, plate: text }))
+                }
+                autoCapitalize='characters'
+                editable={!loading}
+              />
+              <LabelText>VIN (Optional)</LabelText>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='Enter VIN'
+                placeholderTextColor={placeholderTextColor}
+                value={carForm.vin || ''}
+                onChangeText={(text) =>
+                  setCarForm((prev) => ({ ...prev, vin: text }))
+                }
+                autoCapitalize='characters'
+                maxLength={17}
+                editable={!loading}
+              />
+              {customerCars.length > 0 && !selectedCar && (
+                <OutlinedButton
+                  title='Select Existing Car'
+                  onPress={() => {
                     setIsNewCar(false);
                     setCarForm({});
                   }}
-                >
-                  <Text style={{ color: getTextColor(colorScheme) }}>
-                    {car.year} {car.make} {car.model} - {car.plate}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-            <OutlinedButton
-              title='Add New Vehicle'
-              onPress={() => {
-                setIsNewCar(true);
-                setSelectedCar(null);
-                setCarForm({});
-              }}
-              style={{ marginTop: 15 }}
-            />
-          </View>
-        )}
-      </Card>
-
-      <Card>
-        <CardTitle>Service Address</CardTitle>
-        <LabelText>Address Line 1</LabelText>
-        <TextInput
-          style={themedInputStyle}
-          placeholder='Start typing address...'
-          placeholderTextColor={placeholderTextColor}
-          value={addressInput}
-          onChangeText={handleAddressInputChange}
-          editable={!loading}
-        />
-        {isFetchingAddressSuggestions && (
-          <ActivityIndicator style={{ marginVertical: 5 }} />
-        )}
-        {addressSuggestions.length > 0 && (
-          <View
-            style={[
-              styles.suggestionsContainer,
-              {
-                backgroundColor: getInputBackgroundColor(colorScheme),
-                borderColor: getBorderColor(colorScheme),
-              },
-            ]}
-          >
-            {addressSuggestions.map((item) => (
-              <TouchableOpacity
-                key={item.place_id}
-                style={[
-                  styles.suggestionItem,
-                  { borderBottomColor: getBorderColor(colorScheme) },
-                ]}
-                onPress={() => handleSelectAddressSuggestion(item)}
-              >
-                <Text style={{ color: getTextColor(colorScheme) }}>
-                  {item.description}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-        <LabelText>Address Line 2 (Optional)</LabelText>
-        <TextInput
-          style={themedInputStyle}
-          placeholder='Enter address line 2'
-          placeholderTextColor={placeholderTextColor}
-          value={addressForm.address_2 || ''}
-          onChangeText={(text) =>
-            setAddressForm((prev) => ({ ...prev, address_2: text }))
-          }
-          editable={!loading}
-        />
-        <LabelText>City</LabelText>
-        <TextInput
-          style={themedInputStyle}
-          placeholder='Enter city'
-          placeholderTextColor={placeholderTextColor}
-          value={addressForm.city || ''}
-          onChangeText={(text) =>
-            setAddressForm((prev) => ({ ...prev, city: text }))
-          }
-          editable={!loading}
-        />
-        <LabelText>State</LabelText>
-        <TextInput
-          style={themedInputStyle}
-          placeholder='e.g., CA'
-          placeholderTextColor={placeholderTextColor}
-          value={addressForm.state || ''}
-          onChangeText={(text) =>
-            setAddressForm((prev) => ({ ...prev, state: text.toUpperCase() }))
-          }
-          autoCapitalize='characters'
-          maxLength={2}
-          editable={!loading}
-        />
-        <LabelText>Zipcode</LabelText>
-        <TextInput
-          style={themedInputStyle}
-          placeholder='Enter zipcode'
-          placeholderTextColor={placeholderTextColor}
-          value={addressForm.zipcode?.toString() || ''}
-          onChangeText={(text) =>
-            setAddressForm((prev) => ({
-              ...prev,
-              zipcode: parseInt(text.replace(/[^0-9]/g, '')) || undefined,
-            }))
-          }
-          keyboardType='number-pad'
-          maxLength={5}
-          editable={!loading}
-        />
-      </Card>
-
-      <Card>
-        <CardTitle>Line Items</CardTitle>
-        {lineItems.map((item, index) => {
-          const service = services.find((s) => s.id === item.ServiceId);
-          return (
-            <View
-              key={index}
-              style={[
-                styles.lineItemRow,
-                { borderBottomColor: getBorderColor(colorScheme) },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.lineItemText,
-                  { color: getTextColor(colorScheme), minWidth: '50%' },
-                ]}
-              >
-                {service?.name || 'Unknown Service'}
-              </Text>
-              <Text
-                style={[
-                  styles.lineItemText,
-                  {
-                    color: getTextColor(colorScheme),
-                    flex: 0,
-                    marginHorizontal: 10,
-                  },
-                ]}
-              >
-                {centsToDollars(item.price)}
-              </Text>
-              <TouchableOpacity onPress={() => handleRemoveLineItem(index)}>
-                <MaterialIcons
-                  name='delete'
-                  size={24}
-                  color={getTextColor(colorScheme)}
+                  style={{ marginTop: 10 }}
                 />
-              </TouchableOpacity>
+              )}
             </View>
-          );
-        })}
-        {lineItems.length === 0 && (
-          <Text
-            style={{
-              color: getTextColor(colorScheme),
-              textAlign: 'center',
-              marginVertical: 10,
-            }}
-          >
-            No services added yet.
-          </Text>
-        )}
+          ) : (
+            <View>
+              <Text
+                style={[
+                  styles.subText,
+                  { color: getTextColor(colorScheme), marginBottom: 10 },
+                ]}
+              >
+                Select a vehicle:
+              </Text>
+              {customerCars.filter(Boolean).map((car: Car) => {
+                const carId = car.id;
+                return (
+                  <TouchableOpacity
+                    key={carId}
+                    style={[
+                      styles.listItem,
+                      { borderBottomColor: getBorderColor(colorScheme) },
+                      (selectedCar as Car | null)?.id === car.id && {
+                        backgroundColor: getInputBackgroundColor(colorScheme),
+                      },
+                    ]}
+                    onPress={() => {
+                      setSelectedCar(car);
+                      setIsNewCar(false);
+                      setCarForm({});
+                    }}
+                  >
+                    <Text style={{ color: getTextColor(colorScheme) }}>
+                      {car.year} {car.make} {car.model} - {car.plate}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+              <OutlinedButton
+                title='Add New Vehicle'
+                onPress={() => {
+                  setIsNewCar(true);
+                  setSelectedCar(null);
+                  setCarForm({});
+                }}
+                style={{ marginTop: 15 }}
+              />
+            </View>
+          )}
+        </Card>
 
-        <View style={{ marginTop: 15 }}>
-          <LabelText>Service</LabelText>
-          <DropDownPicker
-            open={serviceDropdownOpen}
-            value={selectedServiceIdForNewLineItem}
-            items={allServicesForDropdown}
-            setOpen={setServiceDropdownOpen}
-            setValue={setSelectedServiceIdForNewLineItem}
-            setItems={setAllServicesForDropdown}
-            placeholder='Choose a service...'
-            style={[
-              styles.dropdown,
-              {
-                backgroundColor: getInputBackgroundColor(colorScheme),
-                borderColor: getBorderColor(colorScheme),
-              },
-            ]}
-            textStyle={{ color: getTextColor(colorScheme) }}
-            placeholderStyle={{ color: getPlaceholderTextColor(colorScheme) }}
-            dropDownContainerStyle={[
-              styles.dropdownContainer,
-              {
-                backgroundColor: getInputBackgroundColor(colorScheme),
-                borderColor: getBorderColor(colorScheme),
-              },
-            ]}
-            theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
-            listMode='MODAL'
-            searchable={true}
-            searchPlaceholder='Search services...'
-            searchTextInputStyle={{
-              borderColor: getBorderColor(colorScheme),
-              color: getTextColor(colorScheme),
-            }}
-            searchPlaceholderTextColor={getPlaceholderTextColor(colorScheme)}
-            zIndex={3000}
-            zIndexInverse={1000}
-          />
-        </View>
-
-        <View style={{ marginTop: serviceDropdownOpen ? 150 : 15 }}>
-          <CurrencyInput
-            label='Price '
-            value={currentLineItemPrice}
-            onChangeText={setCurrentLineItemPrice}
+        <Card>
+          <CardTitle>Service Address</CardTitle>
+          <LabelText>Address Line 1</LabelText>
+          <TextInput
+            style={themedInputStyle}
+            placeholder='Start typing address...'
+            placeholderTextColor={placeholderTextColor}
+            value={addressInput}
+            onChangeText={handleAddressInputChange}
             editable={!loading}
           />
-        </View>
+          {isFetchingAddressSuggestions && (
+            <ActivityIndicator style={{ marginVertical: 5 }} />
+          )}
+          {addressSuggestions.length > 0 && (
+            <View
+              style={[
+                styles.suggestionsContainer,
+                {
+                  backgroundColor: getInputBackgroundColor(colorScheme),
+                  borderColor: getBorderColor(colorScheme),
+                },
+              ]}
+            >
+              {addressSuggestions.map((item) => (
+                <TouchableOpacity
+                  key={item.place_id}
+                  style={[
+                    styles.suggestionItem,
+                    { borderBottomColor: getBorderColor(colorScheme) },
+                  ]}
+                  onPress={() => handleSelectAddressSuggestion(item)}
+                >
+                  <Text style={{ color: getTextColor(colorScheme) }}>
+                    {item.description}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+          <LabelText>Address Line 2 (Optional)</LabelText>
+          <TextInput
+            style={themedInputStyle}
+            placeholder='Enter address line 2'
+            placeholderTextColor={placeholderTextColor}
+            value={addressForm.address_2 || ''}
+            onChangeText={(text) =>
+              setAddressForm((prev) => ({ ...prev, address_2: text }))
+            }
+            editable={!loading}
+          />
+          <LabelText>City</LabelText>
+          <TextInput
+            style={themedInputStyle}
+            placeholder='Enter city'
+            placeholderTextColor={placeholderTextColor}
+            value={addressForm.city || ''}
+            onChangeText={(text) =>
+              setAddressForm((prev) => ({ ...prev, city: text }))
+            }
+            editable={!loading}
+          />
+          <LabelText>State</LabelText>
+          <TextInput
+            style={themedInputStyle}
+            placeholder='e.g., CA'
+            placeholderTextColor={placeholderTextColor}
+            value={addressForm.state || ''}
+            onChangeText={(text) =>
+              setAddressForm((prev) => ({ ...prev, state: text.toUpperCase() }))
+            }
+            autoCapitalize='characters'
+            maxLength={2}
+            editable={!loading}
+          />
+          <LabelText>Zipcode</LabelText>
+          <TextInput
+            style={themedInputStyle}
+            placeholder='Enter zipcode'
+            placeholderTextColor={placeholderTextColor}
+            value={addressForm.zipcode?.toString() || ''}
+            onChangeText={(text) =>
+              setAddressForm((prev) => ({
+                ...prev,
+                zipcode: parseInt(text.replace(/[^0-9]/g, '')) || undefined,
+              }))
+            }
+            keyboardType='number-pad'
+            maxLength={5}
+            editable={!loading}
+          />
+        </Card>
+
+        <Card>
+          <CardTitle>Line Items</CardTitle>
+          {lineItems.map((item, index) => {
+            const service = services.find((s) => s.id === item.ServiceId);
+            return (
+              <View
+                key={index}
+                style={[
+                  styles.lineItemRow,
+                  { borderBottomColor: getBorderColor(colorScheme) },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.lineItemText,
+                    { color: getTextColor(colorScheme), minWidth: '50%' },
+                  ]}
+                >
+                  {service?.name || 'Unknown Service'}
+                </Text>
+                <Text
+                  style={[
+                    styles.lineItemText,
+                    {
+                      color: getTextColor(colorScheme),
+                      flex: 0,
+                      marginHorizontal: 10,
+                    },
+                  ]}
+                >
+                  {centsToDollars(item.price)}
+                </Text>
+                <TouchableOpacity onPress={() => handleRemoveLineItem(index)}>
+                  <MaterialIcons
+                    name='delete'
+                    size={24}
+                    color={getTextColor(colorScheme)}
+                  />
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+          {lineItems.length === 0 && (
+            <Text
+              style={{
+                color: getTextColor(colorScheme),
+                textAlign: 'center',
+                marginVertical: 10,
+              }}
+            >
+              No services added yet.
+            </Text>
+          )}
+
+          <View style={{ marginTop: 15 }}>
+            <LabelText>Service</LabelText>
+            <DropDownPicker
+              open={serviceDropdownOpen}
+              value={selectedServiceIdForNewLineItem}
+              items={allServicesForDropdown}
+              setOpen={setServiceDropdownOpen}
+              setValue={setSelectedServiceIdForNewLineItem}
+              setItems={setAllServicesForDropdown}
+              placeholder='Choose a service...'
+              style={[
+                styles.dropdown,
+                {
+                  backgroundColor: getInputBackgroundColor(colorScheme),
+                  borderColor: getBorderColor(colorScheme),
+                },
+              ]}
+              textStyle={{ color: getTextColor(colorScheme) }}
+              placeholderStyle={{ color: getPlaceholderTextColor(colorScheme) }}
+              dropDownContainerStyle={[
+                styles.dropdownContainer,
+                {
+                  backgroundColor: getInputBackgroundColor(colorScheme),
+                  borderColor: getBorderColor(colorScheme),
+                },
+              ]}
+              theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
+              listMode='MODAL'
+              searchable={true}
+              searchPlaceholder='Search services...'
+              searchTextInputStyle={{
+                borderColor: getBorderColor(colorScheme),
+                color: getTextColor(colorScheme),
+              }}
+              searchPlaceholderTextColor={getPlaceholderTextColor(colorScheme)}
+              zIndex={3000}
+              zIndexInverse={1000}
+            />
+          </View>
+
+          <View style={{ marginTop: serviceDropdownOpen ? 150 : 15 }}>
+            <CurrencyInput
+              label='Price '
+              value={currentLineItemPrice}
+              onChangeText={setCurrentLineItemPrice}
+              editable={!loading}
+            />
+          </View>
+          <PrimaryButton
+            title='Add Service Item'
+            onPress={handleAddLineItem}
+            style={{ marginTop: 10 }}
+            disabled={!selectedServiceIdForNewLineItem || loading}
+          />
+        </Card>
+        <Card>
+          <CardTitle>Additional Info</CardTitle>
+          <TextInput
+            value={notes}
+            onChangeText={setNotes}
+            placeholder='Enter any additional notes for the job...'
+            placeholderTextColor={placeholderTextColor}
+            style={[themedInputStyle, styles.textArea]}
+            multiline
+            numberOfLines={4}
+            editable={!loading}
+          />
+        </Card>
+
         <PrimaryButton
-          title='Add Service Item'
-          onPress={handleAddLineItem}
-          style={{ marginTop: 10 }}
-          disabled={!selectedServiceIdForNewLineItem || loading}
+          title={loading ? 'Creating Job...' : 'Create Job'}
+          onPress={submitJob}
+          disabled={!canSubmitForm() || loading}
+          style={styles.submitButton}
         />
-      </Card>
-
-      <Card>
-        <CardTitle>Technician</CardTitle>
-        <Text style={{ color: getTextColor(colorScheme) }}>
-          {currentUser
-            ? currentUser.firstName + ' ' + currentUser.lastName
-            : 'Loading...'}
-        </Text>
-      </Card>
-
-      <Card>
-        <CardTitle>Additional Info</CardTitle>
-        <TextInput
-          value={notes}
-          onChangeText={setNotes}
-          placeholder='Enter any additional notes for the job...'
-          placeholderTextColor={placeholderTextColor}
-          style={[themedInputStyle, styles.textArea]}
-          multiline
-          numberOfLines={4}
-          editable={!loading}
-        />
-      </Card>
-
-      <PrimaryButton
-        title={loading ? 'Creating Job...' : 'Create Job'}
-        onPress={submitJob}
-        disabled={!canSubmitForm() || loading}
-        style={styles.submitButton}
-      />
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollContentContainer: {
+    padding: 15,
   },
   header: {
     fontSize: 24,
@@ -1317,7 +1317,8 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   submitButton: {
-    margin: 15,
+    // The container's padding now handles the spacing.
+    marginTop: 15,
   },
   subText: {
     fontSize: 12,

@@ -162,6 +162,12 @@ export default function TabLayout() {
         options={{
           title: 'Create Job',
           href: null,
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => router.back()}
+              tintColor={Colors[colorScheme].text}
+            />
+          ),
         }}
       />
       <Tabs.Screen

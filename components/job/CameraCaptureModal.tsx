@@ -53,9 +53,12 @@ export default function CameraCaptureModal({
   }, [visible, onClose]);
 
   const handleCapture = async () => {
-    if (!cameraRef.current || !isCameraReady || isProcessing) return;
+    if (!cameraRef.current || !isCameraReady) {
+      return;
+    }
 
     if (mode === 'picture') {
+      if (isProcessing) return;
       setIsProcessing(true);
       try {
         const photo = await cameraRef.current.takePictureAsync({
@@ -72,25 +75,27 @@ export default function CameraCaptureModal({
         setIsProcessing(false);
       }
     } else {
+      // Video mode
       if (isRecording) {
+        setIsProcessing(true); // Show spinner while video is processed
         cameraRef.current.stopRecording();
-        setIsRecording(false);
-        setIsProcessing(false);
       } else {
         setIsRecording(true);
-        setIsProcessing(true);
-        try {
-          const video = await cameraRef.current.recordAsync();
-          if (video) {
-            onPictureTaken(video.uri, 'video/mp4', `video_${Date.now()}.mp4`);
-          }
-        } catch (error) {
-          console.log('Error recording video:', error);
-          Alert.alert('Error', 'Could not record video. Please try again.');
-        } finally {
-          setIsRecording(false);
-          setIsProcessing(false);
-        }
+        cameraRef.current
+          .recordAsync()
+          .then((video) => {
+            if (video) {
+              onPictureTaken(video.uri, 'video/mp4', `video_${Date.now()}.mp4`);
+            }
+          })
+          .catch((error) => {
+            console.error('Video recording failed', error);
+            Alert.alert('Video Error', 'Failed to record video.');
+          })
+          .finally(() => {
+            setIsRecording(false);
+            setIsProcessing(false);
+          });
       }
     }
   };

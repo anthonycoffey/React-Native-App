@@ -83,10 +83,7 @@ export default function AccountScreen() {
   const handleDeleteAccount = async () => {
     try {
       await apiService.delete('/account/delete');
-      Alert.alert(
-        'Success',
-        'Your account has been successfully deleted.'
-      );
+      Alert.alert('Success', 'Your account has been successfully deleted.');
       setTimeout(() => {
         handleLogout();
       }, 1000);
@@ -128,12 +125,13 @@ export default function AccountScreen() {
       }}
     >
       <ThemedView style={localStyles.sectionContainer}>
-        <Text style={globalStyles.subtitle}>My Avatar</Text>
         <ProfilePictureUploader />
       </ThemedView>
 
       <Card>
-        <Text style={globalStyles.subtitle}>Profile Information</Text>
+        <Text style={[globalStyles.subtitle, { textAlign: 'center' }]}>
+          Account Info
+        </Text>
         <RNView style={localStyles.infoRow}>
           <Text style={localStyles.infoLabel}>Name</Text>
           <Text style={localStyles.infoValue}>
@@ -165,7 +163,9 @@ export default function AccountScreen() {
       </Card>
 
       <Card>
-        <Text style={globalStyles.subtitle}>Account Balance</Text>
+        <Text style={[globalStyles.subtitle, { textAlign: 'center' }]}>
+          Account Balance
+        </Text>
         <Text style={localStyles.balanceText}>
           Owed cash:{' '}
           {accountDetails ? centsToDollars(accountDetails.owedCash) : '$0.00'}
@@ -186,7 +186,9 @@ export default function AccountScreen() {
       </Card>
 
       <Card>
-        <Text style={globalStyles.subtitle}>Owed Payouts</Text>
+        <Text style={[globalStyles.subtitle, { textAlign: 'center' }]}>
+          Owed Payouts
+        </Text>
         {accountDetails?.owedPayouts &&
         typeof accountDetails.owedPayouts.total === 'number' ? (
           <>
@@ -212,7 +214,9 @@ export default function AccountScreen() {
       </Card>
 
       <Card>
-        <Text style={globalStyles.subtitle}>Paychecks</Text>
+        <Text style={[globalStyles.subtitle, { textAlign: 'center' }]}>
+          Paychecks
+        </Text>
         <PrimaryButton
           title='View Paychecks'
           onPress={() => router.push('/dashboard/account/paychecks')}
@@ -220,15 +224,13 @@ export default function AccountScreen() {
         />
       </Card>
 
-      <ThemedView style={localStyles.sectionContainer}>
+      <ThemedView style={[localStyles.sectionContainer, { marginBottom: 8 }]}>
         <OutlinedButton
           title='Delete Account'
-          variant='error'
+          variant='warning'
           onPress={handleDeleteAccountRequest}
+          style={{ marginBottom: 8 }}
         />
-      </ThemedView>
-
-      <ThemedView style={localStyles.sectionContainer}>
         <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} />
       </ThemedView>
       <DeleteAccountModal

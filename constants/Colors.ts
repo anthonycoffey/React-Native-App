@@ -3,7 +3,7 @@ const tintColorDark = '#fff';
 
 export const buttonVariants = {
   error: '#e53935',
-  warning: '#fbc02d',
+  warning: '#FB902DFF',
   success: '#43a047',
   primary: '#0a7ea4',
   secondary: '#65b9d6',
