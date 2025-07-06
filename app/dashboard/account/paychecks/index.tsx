@@ -114,7 +114,6 @@ export default function PaychecksScreen() {
           { backgroundColor: getBackgroundColor(colorScheme) },
         ]}
       >
-        <Text style={globalStyles.title}>My Paychecks</Text>
         <Text style={{ color: getTextColor(colorScheme), marginTop: 20 }}>
           User information not available. Cannot load paychecks.
         </Text>

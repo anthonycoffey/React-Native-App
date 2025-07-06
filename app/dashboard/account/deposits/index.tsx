@@ -108,7 +108,6 @@ export default function DepositsListScreen() {
         { backgroundColor: getBackgroundColor(colorScheme) },
       ]}
     >
-      <Text style={globalStyles.title}>Deposits</Text>
       <FlatList
         data={deposits}
         renderItem={renderItem}

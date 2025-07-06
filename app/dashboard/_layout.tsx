@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Tabs, useRouter, Redirect, Link } from 'expo-router';
+import { HeaderBackButton } from '@react-navigation/elements';
 import { ActivityIndicator, View, Pressable } from 'react-native';
 import NotificationBell from '@/components/dashboard/NotificationBell';
 import Colors from '@/constants/Colors';
@@ -50,7 +51,14 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: headerShown,
+        // headerShown: headerShown,
+        headerStyle: {
+          backgroundColor: Colors[colorScheme].background,
+        },
+        headerTintColor: Colors[colorScheme].text,
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
       }}
     >
       <Tabs.Screen
@@ -66,7 +74,7 @@ export default function TabLayout() {
                     name='add-circle-outline'
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginLeft: 15, opacity: pressed ? 0.5 : 1 }}
+                    style={{ marginHorizontal: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
               </Pressable>
@@ -84,16 +92,69 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <TabBarIcon name='location-on' color={color} />
           ),
+          headerRight: () => (
+            <NotificationBell />
+          ),
         }}
       />
       <Tabs.Screen
-        name='account'
+        name='account/index'
         options={{
           title: 'My Account',
-          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarIcon name='account-circle' color={color} />
           ),
+          headerRight: () => <NotificationBell />,
+        }}
+      />
+      <Tabs.Screen
+        name='account/cash'
+        options={{
+          title: 'Cash Management',
+          href: null,
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => router.replace('/dashboard/account')}
+              tintColor={Colors[colorScheme].text}
+            />
+          ),
+          headerRight: () => <NotificationBell />,
+        }}
+      />
+      <Tabs.Screen
+        name='account/deposits/index'
+        options={{
+          title: 'Deposits',
+          href: null,
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => router.replace('/dashboard/account')}
+              tintColor={Colors[colorScheme].text}
+            />
+          ),
+          headerRight: () => <NotificationBell />,
+        }}
+      />
+      <Tabs.Screen
+        name='account/deposits/[id]'
+        options={{
+          title: 'Deposit Details',
+          href: null,
+          headerRight: () => <NotificationBell />,
+        }}
+      />
+      <Tabs.Screen
+        name='account/paychecks/index'
+        options={{
+          title: 'Paychecks',
+          href: null,
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => router.replace('/dashboard/account')}
+              tintColor={Colors[colorScheme].text}
+            />
+          ),
+          headerRight: () => <NotificationBell />,
         }}
       />
       <Tabs.Screen
@@ -108,6 +169,24 @@ export default function TabLayout() {
         options={{
           title: 'Notifications',
           href: null,
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => router.back()}
+              tintColor={Colors[colorScheme].text}
+            />
+          ),
+          headerRight: () => (
+            <Pressable onPress={() => router.back()}>
+              {({ pressed }) => (
+                <MaterialIcons
+                  name='close'
+                  size={25}
+                  color={Colors[colorScheme ?? 'light'].text}
+                  style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                />
+              )}
+            </Pressable>
+          ),
         }}
       />
     </Tabs>

@@ -182,6 +182,13 @@ Updating the account deletion API endpoint and ensuring robust Memory Bank docum
   - Corrected TypeScript prop types in `JobsFilter.tsx` to use `Dispatch<SetStateAction<string>>` for state setters.
   - Simplified the `JobsScreen` (`app/dashboard/index.tsx`) by removing the filter-specific logic and replacing it with the new `JobsFilter` component.
   - Streamlined the layout and removed redundant styling from `JobsScreen`, resulting in cleaner, more maintainable code.
+- **Standardized "My Jobs" Page Layout:**
+  - Refactored `app/dashboard/index.tsx` to align with the standard page layout used in `app/dashboard/account/index.tsx`.
+  - Replaced the root `View` with a theme-aware `ScrollView`.
+  - Wrapped the page content (`JobsFilter` and `JobsList`) within the standardized `Card` component to ensure consistent container styling, padding, and spacing.
+- **Centered Account Modals:**
+  - Corrected a layout issue in `components/account/EditNameModal.tsx`, `components/account/EditPhoneModal.tsx`, and `components/account/EditEmailModal.tsx` to ensure they are properly centered.
+  - The final fix involved removing the `margin` property from the `modalView` style while retaining the `width: '90%'` on the wrapping `TouchableOpacity`, allowing the parent `centeredView` to manage alignment correctly without distorting the modal's internal layout.
 
 ## Next Steps
 

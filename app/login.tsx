@@ -216,7 +216,7 @@ export default function LoginScreen() {
                 >
                   <MaterialIcons
                     name={isPasswordVisible ? 'visibility-off' : 'visibility'}
-                    size={20}
+                    size={24}
                     color={iconColor}
                   />
                 </TouchableOpacity>

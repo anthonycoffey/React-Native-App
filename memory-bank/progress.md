@@ -139,6 +139,8 @@ This document tracks what works, what's left to build, the current status, known
   - **Integration:**
     - The `NotificationsProvider` and `useNotifications` hook are initialized in the root layout (`app/_layout.tsx`).
     - The `NotificationBell` is added to the header on the main dashboard screen, and the "Add Job" button was moved to the left side of the header for better layout.
+- **Standardized "My Jobs" Page Layout:**
+  - Refactored `app/dashboard/index.tsx` to use a `ScrollView` and `Card` component, aligning its structure with other pages like "My Account" for visual consistency.
 
 ## What's Left to Build
 

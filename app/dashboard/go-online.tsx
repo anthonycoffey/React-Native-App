@@ -13,10 +13,22 @@ import globalStyles from '@/styles/globalStyles';
 export default function GoOnlineScreen() {
   const theme = useColorScheme() ?? 'light';
   const iconColor = useThemeColor({}, 'icon');
-  const tintColor = useThemeColor({ light: Colors.light.tint, dark: Colors.dark.tint }, 'tint');
-  const coordinatesTextColor = useThemeColor({ light: '#666666', dark: Colors.dark.icon }, 'text');
-  const clockInButtonBg = useThemeColor({ light: buttonVariants.success, dark: buttonVariants.success }, 'background');
-  const clockOutButtonBg = useThemeColor({ light: buttonVariants.error, dark: buttonVariants.error }, 'background');
+  const tintColor = useThemeColor(
+    { light: Colors.light.tint, dark: Colors.dark.tint },
+    'tint'
+  );
+  const coordinatesTextColor = useThemeColor(
+    { light: '#666666', dark: Colors.dark.icon },
+    'text'
+  );
+  const clockInButtonBg = useThemeColor(
+    { light: buttonVariants.success, dark: buttonVariants.success },
+    'background'
+  );
+  const clockOutButtonBg = useThemeColor(
+    { light: buttonVariants.error, dark: buttonVariants.error },
+    'background'
+  );
 
   const { location, errorMsg, hasPermission } = useLocation(true);
   const { isClockedIn, clockIn, clockOut } = useUser();
@@ -54,7 +66,12 @@ export default function GoOnlineScreen() {
     if (!hasPermission) {
       return (
         <View style={globalStyles.centeredContent}>
-          <MaterialIcons name='gps-fixed' size={50} color={tintColor} style={{marginBottom: 10}}/>
+          <MaterialIcons
+            name='gps-fixed'
+            size={50}
+            color={tintColor}
+            style={{ marginBottom: 10 }}
+          />
           <Text type='title'>Location Access Required</Text>
           <Text style={globalStyles.subtitle}>
             To go online and receive job assignments, please enable location
@@ -81,10 +98,15 @@ export default function GoOnlineScreen() {
           {isClockedIn ? "You're Online" : "You're Offline"}
         </Text>
 
-        <Text style={globalStyles.subtitle}>
+        <Text
+          style={[
+            globalStyles.subtitle,
+            { textAlign: 'center', maxWidth: '80%' },
+          ]}
+        >
           {isClockedIn
             ? "You're online and your location is being tracked."
-            : "You're offline. Go online to start your shift and enable location tracking."}
+            : 'Go online to start your shift and enable location tracking.'}
         </Text>
 
         {location && isClockedIn && (
@@ -99,7 +121,12 @@ export default function GoOnlineScreen() {
             />
             <View>
               <Text type='subtitle'>Your Current Location</Text>
-              <Text style={[globalStyles.coordinates, { color: coordinatesTextColor }]}>
+              <Text
+                style={[
+                  globalStyles.coordinates,
+                  { color: coordinatesTextColor },
+                ]}
+              >
                 Lat: {location.coords.latitude.toFixed(6)}, Lng:{' '}
                 {location.coords.longitude.toFixed(6)}
               </Text>
@@ -113,19 +140,19 @@ export default function GoOnlineScreen() {
           style={[
             globalStyles.clockButton,
             isClockedIn
-              ? [globalStyles.clockOutButton, { backgroundColor: clockOutButtonBg }]
-              : [globalStyles.clockInButton, { backgroundColor: clockInButtonBg }],
+              ? [
+                  globalStyles.clockOutButton,
+                  { backgroundColor: clockOutButtonBg },
+                ]
+              : [
+                  globalStyles.clockInButton,
+                  { backgroundColor: clockInButtonBg },
+                ],
           ]}
         />
       </View>
     );
   };
 
-  return (
-    <View style={globalStyles.container}>
-     
-        {renderContent()}
-     
-    </View>
-  );
+  return <View style={globalStyles.container}>{renderContent()}</View>;
 }

@@ -1,14 +1,19 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, ActivityIndicator } from 'react-native';
+import { StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { View } from '@/components/Themed';
 import JobsList from '@/components/JobsList';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { Job } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import JobsFilter from '@/components/dashboard/JobsFilter';
+import Card from '@/components/Card';
+import { useColorScheme } from '@/components/useColorScheme';
+import { getBackgroundColor } from '@/hooks/useThemeColor';
+import { View as ThemedView } from '@/components/Themed';
 
 export default function JobsScreen() {
   const auth = useAuth();
+  const colorScheme = useColorScheme() ?? 'light';
   const [loading, setLoading] = useState<boolean>(true);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [currentScope, setCurrentScope] = useState<string>('active');
@@ -64,7 +69,7 @@ export default function JobsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={{ flex: 1 }}>
       <JobsFilter
         currentScope={currentScope}
         setCurrentScope={setCurrentScope}
@@ -72,12 +77,13 @@ export default function JobsScreen() {
         setCurrentSortBy={setCurrentSortBy}
       />
       <JobsList jobs={jobs} fetchJobs={fetchJobs} loading={loading} />
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
+    padding: 15,
   },
 });

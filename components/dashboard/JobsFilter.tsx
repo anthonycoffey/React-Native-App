@@ -20,8 +20,8 @@ const scopeOptions = [
 ];
 
 const sortOptions = [
-  { label: 'Arrival Time (Newest First)', value: '-arrivalTime' },
-  { label: 'Arrival Time (Oldest First)', value: 'arrivalTime' },
+  { label: 'Newest', value: '-arrivalTime' },
+  { label: 'Oldest', value: 'arrivalTime' },
 ];
 
 interface JobsFilterProps {
@@ -53,7 +53,7 @@ export default function JobsFilter({
     style: {
       backgroundColor: getInputBackgroundColor(theme),
       borderColor: getBorderColor(theme),
-      marginBottom: 15,
+      marginBottom: 5,
     },
     textStyle: {
       color: getTextColor(theme),
@@ -115,18 +115,17 @@ export default function JobsFilter({
 const styles = StyleSheet.create({
   filtersContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingTop: 10,
-    paddingBottom: 0,
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
   filterItem: {
     width: '48%',
-    marginBottom: 5,
   },
   filterLabel: {
-    marginBottom: 8,
-    fontSize: 14,
+    marginBottom: 4,
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
