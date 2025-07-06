@@ -189,10 +189,21 @@ Updating the account deletion API endpoint and ensuring robust Memory Bank docum
 - **Centered Account Modals:**
   - Corrected a layout issue in `components/account/EditNameModal.tsx`, `components/account/EditPhoneModal.tsx`, and `components/account/EditEmailModal.tsx` to ensure they are properly centered.
   - The final fix involved removing the `margin` property from the `modalView` style while retaining the `width: '90%'` on the wrapping `TouchableOpacity`, allowing the parent `centeredView` to manage alignment correctly without distorting the modal's internal layout.
+- **Fixed Video Recording in `CameraCaptureModal.tsx`:**
+  - Refactored the `handleCapture` function to correctly handle video recording without blocking the UI.
+  - The `await` on `recordAsync()` was replaced with a promise-based approach (`.then()`, `.catch()`, `.finally()`).
+  - This ensures the UI remains responsive during recording and that the recording can be stopped correctly.
+  - State management for `isRecording` and `isProcessing` was updated to provide accurate user feedback.
+- **Standardized "Create Job" Page Layout:**
+  - Refactored `app/dashboard/create-job.tsx` to add consistent padding to the main container.
+  - Wrapped the page in a `SafeAreaView` to prevent the tab navigator from obscuring content at the bottom of the screen.
+  - Added a back button to the header of the `create-job` screen in `app/dashboard/_layout.tsx`.
+  - Reduced the font size of the `CardTitle` component in `components/Typography.tsx` to make the titles less prominent.
+  - This change aligns the page's layout with other screens, ensuring a uniform look and feel.
 
 ## Next Steps
 
-- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the new Lost Password page.
+- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the video recording fix.
 - **Testing:** Thoroughly test the new camera upload functionality and existing file picker functionality on both iOS and Android.
 - **Identify and document any `Known Issues`** that arise during testing or further development.
 - **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md` once Memory Bank is up-to-date and current features are stable.

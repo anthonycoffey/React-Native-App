@@ -71,7 +71,7 @@ export default function JobsFilter({
   return (
     <View style={styles.filtersContainer}>
       <View style={styles.filterItem}>
-        <LabelText style={styles.filterLabel}>Filter by Status:</LabelText>
+        {/* <LabelText style={styles.filterLabel}>Filter by Status:</LabelText> */}
         <DropDownPicker
           open={scopeOpen}
           value={currentScope}
@@ -90,7 +90,7 @@ export default function JobsFilter({
         />
       </View>
       <View style={styles.filterItem}>
-        <LabelText style={styles.filterLabel}>Sort by:</LabelText>
+        {/* <LabelText style={styles.filterLabel}>Sort by:</LabelText> */}
         <DropDownPicker
           open={sortOpen}
           value={currentSortBy}

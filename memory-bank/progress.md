@@ -141,6 +141,16 @@ This document tracks what works, what's left to build, the current status, known
     - The `NotificationBell` is added to the header on the main dashboard screen, and the "Add Job" button was moved to the left side of the header for better layout.
 - **Standardized "My Jobs" Page Layout:**
   - Refactored `app/dashboard/index.tsx` to use a `ScrollView` and `Card` component, aligning its structure with other pages like "My Account" for visual consistency.
+- **Fixed Video Recording:**
+  - Addressed a bug in `components/job/CameraCaptureModal.tsx` where video recording would lock the UI.
+  - The `handleCapture` function was refactored to use a non-blocking promise-based approach for `recordAsync()`.
+  - This ensures the UI remains responsive, recording can be started and stopped correctly, and proper loading states are displayed.
+- **Standardized "Create Job" Page Layout:**
+  - Refactored `app/dashboard/create-job.tsx` to add consistent padding to the main container.
+  - Wrapped the page in a `SafeAreaView` to prevent the tab navigator from obscuring content at the bottom of the screen.
+  - Added a back button to the header of the `create-job` screen in `app/dashboard/_layout.tsx`.
+  - Reduced the font size of the `CardTitle` component in `components/Typography.tsx` to make the titles less prominent.
+  - This change aligns the page's layout with other screens, ensuring a uniform look and feel.
 
 ## What's Left to Build
 

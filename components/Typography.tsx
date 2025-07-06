@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   cardTitle: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 12,
