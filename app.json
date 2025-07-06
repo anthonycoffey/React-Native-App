@@ -78,15 +78,15 @@
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
-        "FOREGROUND_SERVICE",
-        "FOREGROUND_SERVICE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_BACKGROUND_LOCATION",
-        "android.permission.FOREGROUND_SERVICE",
-        "android.permission.FOREGROUND_SERVICE_LOCATION"
-      ]
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
+      ],
+      "foregroundService": {
+        "location": {
+          "description": "To provide customers with accurate real-time arrival estimates and to alert you of new nearby job opportunities even when the app is in the background, please allow location access at all times. This ensures you never miss a job and that customers are always informed."
+        }
+      }
     },
     "web": {
       "bundler": "metro",
@@ -101,7 +101,8 @@
           "locationWhenInUsePermission": "To show you available roadside service jobs near your current position, this app accesses your location while you are using it. For example, you will see a list of jobs sorted by the closest distance to you.",
           "locationAlwaysAndWhenInUsePermission": "To provide customers with accurate real-time arrival estimates and to alert you of new nearby job opportunities even when the app is in the background, please allow location access at all times. This ensures you never miss a job and that customers are always informed.",
           "isAndroidBackgroundLocationEnabled": true,
-          "isIosBackgroundLocationEnabled": true
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
         }
       ],
       [
