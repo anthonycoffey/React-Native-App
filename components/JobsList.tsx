@@ -11,8 +11,9 @@ import { router } from 'expo-router';
 import Chip from '@/components/Chip';
 import { formatDateTime, formatRelative } from '@/utils/dates';
 import { Job } from '@/types';
-import { Text, View as ThemedView } from '@/components/Themed';
+import { Text } from '@/components/Themed';
 import globalStyles from '@/styles/globalStyles';
+import Card from '@/components/Card';
 
 type JobsListProps = {
   jobs:
@@ -95,7 +96,7 @@ export default function JobsList({
       ]}
       renderItem={({ item }) => {
         return (
-          <ThemedView style={styles.card}>
+          <Card>
             <TouchableOpacity
               onPress={() => {
                 router.push({
@@ -161,7 +162,7 @@ export default function JobsList({
                 {item?.status && <Chip>{item.status}</Chip>}
               </View>
             </TouchableOpacity>
-          </ThemedView>
+          </Card>
         );
       }}
       keyExtractor={(item) => item.id.toString()}
@@ -173,6 +174,7 @@ const styles = StyleSheet.create({
   listContainer: {
     flexGrow: 1,
     minHeight: 500,
+    paddingHorizontal: 10,
   },
   emptyListContainer: {
     justifyContent: 'center',
@@ -217,16 +219,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#f44336',
-  },
-  card: {
-    padding: 16,
-    marginBottom: 16,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 6,
   },
   cardHeader: {
     flexDirection: 'row',

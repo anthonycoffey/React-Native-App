@@ -54,10 +54,12 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: 'absolute',
-    right: 15,
-    top: 15,
+    top: '50%',
+    right: 10,
+    transform: [{ translateY: -12 }],
   },
-  label: { // Color removed, should be handled by themed LabelText component
+  label: {
+    // Color removed, should be handled by themed LabelText component
     fontWeight: 'bold',
     fontSize: 12,
   },
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
   themedPasswordTextInput: {
     flex: 1,
     paddingVertical: 12, // Match themedFormInput's vertical padding for consistent height feel
-    paddingRight: 40,    // Space for icon
+    paddingRight: 40, // Space for icon
     // Theme-dependent color to be applied in component
     // No explicit height, no background/border (wrapper handles it)
   },
@@ -96,6 +98,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontSize: 16,
     lineHeight: 24,
+    fontWeight: 'bold',
   },
   errorText: {
     color: '#d32f2f',

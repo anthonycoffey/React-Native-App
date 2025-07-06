@@ -7,13 +7,19 @@ export function maskPhoneNumber(phoneNumber: string): string {
 }
 
 export function formatPhoneNumber(value: string): string {
+  if (!value) return '';
   // 1. Remove all non-digit characters
-  const digits = value.replace(/\D/g, '');
+  let digits = value.replace(/\D/g, '');
 
-  // 2. Limit to 10 digits
+  // 2. Handle country code +1
+  if (digits.length === 11 && digits.startsWith('1')) {
+    digits = digits.substring(1);
+  }
+
+  // 3. Limit to 10 digits
   const truncatedDigits = digits.slice(0, 10);
 
-  // 3. Apply formatting
+  // 4. Apply formatting
   const length = truncatedDigits.length;
   if (length === 0) {
     return '';
