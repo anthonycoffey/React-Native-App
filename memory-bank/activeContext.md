@@ -4,10 +4,27 @@ This document details the current work focus, recent changes, next steps, active
 
 ## Current Work Focus
 
-Updating the account deletion API endpoint and ensuring robust Memory Bank documentation.
+Standardizing the app's visual theme and layout.
 
 ## Recent Changes
 
+- **Modernized Job Page Layout:**
+  - Refactored the `app/job/[id].tsx` page to use the standardized `Card` component for all sections, creating a consistent and modern layout.
+  - Removed old card styles from child components (`JobStatus`, `JobProxy`, etc.) to prevent style conflicts and improve code maintainability.
+- **Standardized App Theme:**
+  - Created a custom theme in `app/_layout.tsx` to ensure consistent header and background colors across all screens, fully supporting both light and dark modes.
+  - Set the header background to white in light mode and a dark gray in dark mode.
+  - Set the page background to a light gray in light mode and a darker gray in dark mode.
+- **Fixed Layout Inconsistencies:**
+  - Removed horizontal padding from the main `ScrollView` in `app/dashboard/account/index.tsx` to allow the background color to span the full width of the screen, matching other pages.
+- **Improved Visual Hierarchy:**
+  - Changed the background color of the light theme to a light gray (`#f0f0f0`) in `constants/Colors.ts`.
+  - Updated the `Card.tsx` component to use the `card` color from the theme, which is now white (`#ffffff`) in light mode. This creates a clear distinction between the page background and the cards.
+- **Redesigned Deposits Page:**
+  - Refactored the deposits list screen (`app/dashboard/account/deposits/index.tsx`) to use a card-based layout.
+  - Each deposit is now displayed in a theme-aware `Card` component.
+  - Added `MaterialIcons` to improve scannability of information (receipt, amount, date, etc.).
+  - Improved the visual hierarchy and spacing for a more modern and intuitive look and feel.
 - Initialized all core Memory Bank files.
 - Populated `projectbrief.md` with core requirements and project goals.
 - Populated `productContext.md` with problem statement, solution, and UX goals.
@@ -200,10 +217,19 @@ Updating the account deletion API endpoint and ensuring robust Memory Bank docum
   - Added a back button to the header of the `create-job` screen in `app/dashboard/_layout.tsx`.
   - Reduced the font size of the `CardTitle` component in `components/Typography.tsx` to make the titles less prominent.
   - This change aligns the page's layout with other screens, ensuring a uniform look and feel.
+- **Added Loading Spinner to File Viewer:**
+  - Updated `components/job/JobFiles.tsx` to display a loading spinner (`ActivityIndicator`) in the `FileViewerModal` while images or videos are loading.
+  - Added an `isLoading` state to the modal.
+  - Used `onLoadStart` and `onLoadEnd` for the `Image` component.
+  - Used a `useEffect` hook to monitor the `player.status` for the `Video` component.
+- **Added Flash Control to Camera:**
+  - Updated `components/job/CameraCaptureModal.tsx` to include a flash control button.
+  - Added state to manage the flash mode ('on', 'off', 'auto') for photos and the torch mode for videos.
+  - The flash setting is now passed to the `CameraView` component using the `flash` and `enableTorch` props.
 
 ## Next Steps
 
-- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the video recording fix.
+- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the loading spinner addition.
 - **Testing:** Thoroughly test the new camera upload functionality and existing file picker functionality on both iOS and Android.
 - **Identify and document any `Known Issues`** that arise during testing or further development.
 - **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md` once Memory Bank is up-to-date and current features are stable.

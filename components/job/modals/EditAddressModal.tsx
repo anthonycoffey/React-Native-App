@@ -80,8 +80,8 @@ export default function EditAddressModal({
         deletedAt: currentAddress?.deletedAt || null,
       };
       await onSave(addressToSave);
-      Alert.alert('Success', 'Address updated successfully.');
       onClose();
+      Alert.alert('Success', 'Address updated successfully.');
     } catch (error) {
       console.log('Failed to update address:', error);
       Alert.alert('Error', 'Failed to update address. Please try again.');

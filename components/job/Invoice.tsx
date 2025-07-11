@@ -122,7 +122,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
     (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4';
 
   return (
-    <View style={[globalStyles.card, styles.container]}>
+    <View style={{ backgroundColor: 'transparent' }}>
       <CardTitle>Invoices</CardTitle>
 
       {job.Invoices?.filter(
@@ -132,7 +132,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
           key={invoice.id}
           style={[
             styles.invoiceRow,
-            { borderColor: getBorderColor(colorScheme ?? 'light') },
+            { borderBottomColor: getBorderColor(colorScheme ?? 'light') },
           ]}
         >
           <Text style={styles.invoiceId}>#{invoice.id}</Text>
@@ -242,23 +242,14 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
   );
 }
 const styles = StyleSheet.create({
-  container: {
-    elevation: 4,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    padding: 16,
-  },
   invoiceRow: {
     flexDirection: 'row',
     marginVertical: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 10,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    backgroundColor: 'transparent',
   },
   invoiceId: {
     fontSize: 18,
@@ -278,6 +269,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    backgroundColor: 'transparent'
   },
   modalOverlay: {
     flex: 1,
@@ -316,6 +308,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
+    backgroundColor: 'transparent',
   },
   cancelButton: {
     paddingVertical: 10,
@@ -325,6 +318,7 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {},
   confirmButton: {
+
     backgroundColor: '#0a7ea4',
     paddingVertical: 10,
     paddingHorizontal: 15,

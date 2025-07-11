@@ -91,13 +91,7 @@ export default function JobReferralCode({ job, fetchJob }: Props) {
   };
 
   return (
-    <ThemedView
-      style={[
-        globalStyles.card,
-        styles.container,
-        { backgroundColor: getBackgroundColor(theme) },
-      ]}
-    >
+    <ThemedView style={{ backgroundColor: 'transparent' }}>
       <CardTitle style={{ color: getTextColor(theme), marginBottom: 10 }}>
         Referral Code
       </CardTitle>
@@ -149,9 +143,6 @@ export default function JobReferralCode({ job, fetchJob }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
   displayContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

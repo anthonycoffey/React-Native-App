@@ -16,7 +16,8 @@ import {
 import Colors from '@/constants/Colors';
 import Card from '@/components/Card';
 import globalStyles from '@/styles/globalStyles';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
 import DepositFiles from '@/components/deposit/DepositFiles';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
@@ -54,12 +55,18 @@ interface SingleDeposit {
 
 export default function SingleDepositScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
   const themedActivityIndicatorColor =
     colorScheme === 'dark' ? Colors.dark.text : Colors.light.tint;
 
   const [deposit, setDeposit] = useState<SingleDeposit | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useAndroidBackHandler(() => {
+    router.replace('/dashboard/account/deposits');
+    return true;
+  });
 
   const loadDepositDetails = useCallback(async () => {
     setLoading(true);
@@ -155,7 +162,7 @@ export default function SingleDepositScreen() {
         padding: 10,
       }}
     >
-      <Text style={globalStyles.title}>Deposit Details: CD-{deposit.id}</Text>
+      <Text style={[globalStyles.title, { textAlign: 'left' }]}>#CD-{deposit.id}</Text>
 
       <Card>
         <Text style={[localStyles.label, { color: getTextColor(colorScheme) }]}>
@@ -190,14 +197,14 @@ export default function SingleDepositScreen() {
       </Card>
 
       {deposit && deposit.id && (
-        <Card>
+        <ThemedView style={{ marginTop: 15 }}>
           <Text style={globalStyles.subtitle}>Proof of Deposit</Text>
           <DepositFiles
             depositId={deposit.id}
             files={deposit.CashDepositFiles || []}
             onFilesUpdate={loadDepositDetails}
           />
-        </Card>
+        </ThemedView>
       )}
     </ScrollView>
   );

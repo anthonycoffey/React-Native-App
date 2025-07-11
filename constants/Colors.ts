@@ -19,7 +19,7 @@ export const ui = {
 export default {
   light: {
     text: '#11181C',
-    background: '#fff',
+    background: '#f0f0f0',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
@@ -29,7 +29,7 @@ export default {
     errorBackground: '#FFEBEE',
     shadow: '#000000',
     brand: '#252d3a',
-    card: '#f8f8f8',
+    card: '#ffffff',
   },
   dark: {
     text: '#ECEDEE',

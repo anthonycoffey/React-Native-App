@@ -21,8 +21,10 @@ import Card from '@/components/Card';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
 import { OutlinedButton, PrimaryButton } from '@/components/Buttons';
+import TestNotificationButton from '@/components/account/TestNotificationButton';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNotificationsContext } from '@/contexts/NotificationsContext';
 import { formatPhoneNumber } from '@/utils/strings';
 
 interface AccountDetails {
@@ -36,6 +38,7 @@ interface AccountDetails {
 
 export default function AccountScreen() {
   const auth = useAuth();
+  const { clearAll: clearAllNotifications } = useNotificationsContext();
   const colorScheme = useColorScheme() ?? 'light';
   const [accountDetails, setAccountDetails] = useState<AccountDetails | null>(
     null
@@ -121,10 +124,9 @@ export default function AccountScreen() {
       style={{ flex: 1, backgroundColor: getBackgroundColor(colorScheme) }}
       contentContainerStyle={{
         flexGrow: 1,
-        paddingHorizontal: 10,
       }}
     >
-      <ThemedView style={localStyles.sectionContainer}>
+      <ThemedView style={[localStyles.sectionContainer, { paddingTop: 10 }]}>
         <ProfilePictureUploader />
       </ThemedView>
 
@@ -231,7 +233,13 @@ export default function AccountScreen() {
           onPress={handleDeleteAccountRequest}
           style={{ marginBottom: 8 }}
         />
-        <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} />
+        {/* <TestNotificationButton />
+        <PrimaryButton
+          title='Clear Notifications'
+          onPress={clearAllNotifications}
+          style={{ marginTop: 8 }}
+        /> */}
+        <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} style={{ marginTop: 8 }}/>
       </ThemedView>
       <DeleteAccountModal
         visible={isDeleteModalVisible}

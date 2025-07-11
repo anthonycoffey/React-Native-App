@@ -59,9 +59,9 @@ export default function TakePayment({
   };
 
   const colorScheme = useColorScheme() ?? 'light';
-  
+
   return (
-    <View style={[globalStyles.card, styles.container]}>
+    <View style={{ backgroundColor: 'transparent' }}>
       {job.status !== 'paid' && hasActiveInvoice ? (
         <>
           <CardTitle>Take Payment</CardTitle>
@@ -101,7 +101,9 @@ export default function TakePayment({
               color='#fff'
               style={styles.buttonIcon}
             />
-            <Text lightColor="#fff" darkColor="#fff" style={styles.buttonText}>Pay with Cash</Text>
+            <Text lightColor='#fff' darkColor='#fff' style={styles.buttonText}>
+              Pay with Cash
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -113,10 +115,12 @@ export default function TakePayment({
         onRequestClose={() => setPayWithCash(false)}
       >
         <View style={styles.modalBackground}>
-          <View style={[
-            styles.modalContent,
-            { backgroundColor: getBackgroundColor(colorScheme) }
-          ]}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: getBackgroundColor(colorScheme) },
+            ]}
+          >
             <TouchableOpacity
               onPress={hidePaymentDialog}
               style={{
@@ -150,21 +154,14 @@ export default function TakePayment({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    elevation: 4,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    padding: 16,
-  },
   inputsRow: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 10,
   },
   inputContainer: {
+    backgroundColor: 'transparent',
     flex: 1,
     marginHorizontal: 5,
   },

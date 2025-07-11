@@ -52,7 +52,6 @@ export default function CustomerInfo({
     useState(false);
   const [isEditCarModalVisible, setIsEditCarModalVisible] = useState(false);
 
-
   useEffect(() => {
     setCustomerName(job.Customer?.fullName || '');
     setCustomerEmail(job.Customer?.email || '');
@@ -175,9 +174,14 @@ export default function CustomerInfo({
             <MaterialIcons name='edit' size={20} color={iconColor} />
           </TouchableOpacity>
         </View>
+
         <TextInput
           editable={false}
-          value={location?.formatted_address || serviceAddress?.short}
+          value={
+            serviceAddress
+              ? `${serviceAddress.address_1 || ''}\n${serviceAddress.address_2 || ''}\n${serviceAddress.city || ''}, ${serviceAddress.state || ''}\n${serviceAddress.zipcode || ''}`
+              : ''
+          }
           style={[inputStyles, styles.addressInput]}
           multiline
         />
@@ -214,11 +218,14 @@ export default function CustomerInfo({
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
+    backgroundColor: 'transparent',
   },
   fieldContainer: {
     marginBottom: 15,
+    backgroundColor: 'transparent',
   },
   labelContainer: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -231,7 +238,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   addressInput: {
-    minHeight: 60,
     textAlignVertical: 'top',
   },
 });

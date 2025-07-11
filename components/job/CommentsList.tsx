@@ -52,7 +52,7 @@ const CommentsList: React.FC<CommentsListProps> = ({
   };
 
   return (
-    <ThemedView>
+    <ThemedView style={{ backgroundColor: 'transparent' }}>
       {paginatedComments.map((item) => (
         <CommentItem
           key={item.id.toString()}
@@ -65,7 +65,7 @@ const CommentsList: React.FC<CommentsListProps> = ({
       {totalPages > 1 && (
         <View style={styles.paginationContainer}>
           <SecondaryButton
-            title="Previous"
+            title='Previous'
             onPress={goToPreviousPage}
             disabled={currentPage === 1}
             style={styles.paginationButton}
@@ -74,7 +74,7 @@ const CommentsList: React.FC<CommentsListProps> = ({
             Page {currentPage} of {totalPages}
           </Text>
           <SecondaryButton
-            title="Next"
+            title='Next'
             onPress={goToNextPage}
             disabled={currentPage === totalPages}
             style={styles.paginationButton}
@@ -87,6 +87,7 @@ const CommentsList: React.FC<CommentsListProps> = ({
 
 const styles = StyleSheet.create({
   emptyContainer: {
+    backgroundColor: 'transparent',
     paddingVertical: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
   },
   pageInfoText: {
     fontSize: 14,
-  }
+  },
 });
 
 export default CommentsList;

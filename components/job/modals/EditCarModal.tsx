@@ -81,8 +81,8 @@ export default function EditCarModal({
         deletedAt: currentCar?.deletedAt || null,
       };
       await onSave(carToSave);
-      Alert.alert('Success', 'Car details updated successfully.');
       onClose();
+      Alert.alert('Success', 'Car details updated successfully.');
     } catch (error) {
       console.log('Failed to update car:', error);
       Alert.alert('Error', 'Failed to update car details. Please try again.');

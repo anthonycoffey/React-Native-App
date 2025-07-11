@@ -156,7 +156,7 @@ const JobComments: React.FC<JobCommentsProps> = ({
           <ActivityIndicator size='large' color={spinnerColor} />
         </ThemedView>
       )}
-      <ThemedView style={styles.commentsSectionContainer}>
+      <ThemedView style={{  backgroundColor: 'transparent' }}>
         <TouchableOpacity
           onPress={() => setIsCommentsCollapsed(!isCommentsCollapsed)}
           style={styles.collapsibleHeader}
@@ -206,10 +206,6 @@ const JobComments: React.FC<JobCommentsProps> = ({
 };
 
 const styles = StyleSheet.create({
-  commentsSectionContainer: {
-    marginTop: 20,
-    paddingVertical: 10,
-  },
   collapsibleHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -115,13 +115,14 @@ export default function JobsFilter({
 const styles = StyleSheet.create({
   filtersContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 5,
-    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginTop: 5,
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    gap: 5,
   },
   filterItem: {
-    width: '48%',
+    flex: 1,
   },
   filterLabel: {
     marginBottom: 4,

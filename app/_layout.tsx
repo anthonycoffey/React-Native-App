@@ -1,9 +1,6 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from '@react-navigation/native';
+import { Theme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
+import Colors from '@/constants/Colors';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -27,7 +24,10 @@ Sentry.init({
   // Configure Session Replay
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+  integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration(),
+  ],
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,
@@ -53,16 +53,47 @@ export default Sentry.wrap(function RootLayout() {
 
   if (!loaded) return null;
 
+  const customDarkTheme: Omit<Theme, 'fonts'> & { fonts: any } = {
+    dark: true,
+    colors: {
+      primary: Colors.dark.tint,
+      background: Colors.dark.background,
+      card: Colors.dark.card,
+      text: Colors.dark.text,
+      border: Colors.dark.borderColor,
+      notification: Colors.dark.tint,
+    },
+    fonts: {},
+  };
+
+  const customDefaultTheme: Omit<Theme, 'fonts'> & { fonts: any } = {
+    dark: false,
+    colors: {
+      primary: Colors.light.tint,
+      background: Colors.light.background,
+      card: Colors.light.card,
+      text: Colors.light.text,
+      border: Colors.light.borderColor,
+      notification: Colors.light.tint,
+    },
+    fonts: {},
+  };
+
   return (
     <AuthProvider>
       <UserProvider>
         <NotificationsProvider>
           <SafeAreaProvider>
             <ThemeProvider
-              value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+              value={
+                colorScheme === 'dark' ? customDarkTheme : customDefaultTheme
+              }
             >
               <Stack>
-                <Stack.Screen name='dashboard' options={{ headerShown: false , title: 'Dashboard'}} />
+                <Stack.Screen
+                  name='dashboard'
+                  options={{ headerShown: false, title: 'Dashboard' }}
+                />
                 <Stack.Screen
                   name='job/[id]'
                   options={({ route }) => ({
@@ -71,8 +102,14 @@ export default Sentry.wrap(function RootLayout() {
                   })}
                 />
                 <Stack.Screen name='login' options={{ headerShown: false }} />
-                <Stack.Screen name='register' options={{ headerShown: false }} />
-                <Stack.Screen name='lost-password' options={{ headerShown: false }} />
+                <Stack.Screen
+                  name='register'
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name='lost-password'
+                  options={{ headerShown: false }}
+                />
                 <Stack.Screen
                   name='location-permission'
                   options={{ headerShown: false }}

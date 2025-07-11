@@ -17,19 +17,25 @@ export default function JobHeader({ job, id }: Props) {
   const iconColor = getIconColor(colorScheme);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerRow}>
+    <View style={[styles.container, { backgroundColor: 'transparent' }]}>
+      <View style={[styles.headerRow, { backgroundColor: 'transparent' }]}>
         <Text style={globalStyles.subtitle}>
           Created on {formatDateTime(job.createdAt)}
         </Text>
       </View>
 
-      <View style={[globalStyles.chipContainer, styles.chipContainerStyle]}>
+      <View
+        style={[
+          globalStyles.chipContainer,
+          styles.chipContainerStyle,
+          { backgroundColor: 'transparent' },
+        ]}
+      >
         <Chip>{job.status.toUpperCase()}</Chip>
         <Chip>{job.paymentStatus.toUpperCase()}</Chip>
       </View>
 
-      <View style={styles.infoRow}>
+      <View style={[styles.infoRow, { backgroundColor: 'transparent' }]}>
         <MaterialIcons
           name='directions-car'
           size={20}
@@ -40,7 +46,7 @@ export default function JobHeader({ job, id }: Props) {
         <Text>{formatRelative(job.arrivalTime)}</Text>
       </View>
 
-      <View style={styles.infoRow}>
+      <View style={[styles.infoRow, { backgroundColor: 'transparent' }]}>
         <MaterialIcons
           name='schedule'
           size={20}
@@ -51,7 +57,7 @@ export default function JobHeader({ job, id }: Props) {
         <Text>{formatDateTime(job.arrivalTime)}</Text>
       </View>
 
-      <View style={[styles.infoRow]}>
+      <View style={[styles.infoRow, { backgroundColor: 'transparent' }]}>
         <MaterialIcons
           name='location-pin'
           size={20}

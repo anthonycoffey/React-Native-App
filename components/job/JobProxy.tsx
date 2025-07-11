@@ -152,13 +152,11 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
     }
   };
 
-  const cardStyle = [globalStyles.card, styles.card];
-
   return (
-    <ThemedView style={cardStyle}>
+    <ThemedView style={{ backgroundColor: 'transparent' }}>
       {job.proxy ? (
         <>
-          <View style={styles.titleRow}>
+          <View style={[styles.titleRow, { backgroundColor: 'transparent' }]}>
             <IconButton
               iconName='sms'
               onPress={handleSmsPress}
@@ -304,10 +302,6 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-    padding: 16,
-  },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',

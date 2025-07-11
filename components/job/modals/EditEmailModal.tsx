@@ -46,8 +46,8 @@ export default function EditEmailModal({
     setLoading(true);
     try {
       await onSave(email.trim());
-      Alert.alert('Success', 'Customer email updated successfully.');
       onClose();
+      Alert.alert('Success', 'Customer email updated successfully.');
     } catch (error) {
       console.log('Failed to update email:', error);
       Alert.alert(
