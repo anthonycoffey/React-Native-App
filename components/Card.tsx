@@ -6,7 +6,7 @@ import { useThemeColor, getBorderColor } from '@/hooks/useThemeColor';
 
 const Card: React.FC<ViewProps> = ({ style, children, ...otherProps }) => {
   const colorScheme = useColorScheme() ?? 'light';
-  const cardBackgroundColor = useThemeColor({}, 'background');
+  const cardBackgroundColor = useThemeColor({}, 'card');
   const cardBorderColor = getBorderColor(colorScheme);
   const themedShadowColor = useThemeColor({}, 'shadow');
 
@@ -32,7 +32,8 @@ const styles = StyleSheet.create({
   cardBase: {
     borderRadius: 8,
     padding: 15,
-    marginBottom: 15,
+    marginHorizontal: 10,
+    marginVertical: 5,
     borderWidth: StyleSheet.hairlineWidth,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,

@@ -53,7 +53,9 @@ export default function GoOnlineScreen() {
           <Text type='title' style={globalStyles.statusTitle}>
             Location Error
           </Text>
-          <Text style={globalStyles.subtitle}>{errorMsg}</Text>
+          <Text style={[globalStyles.subtitle, { textAlign: 'center', fontWeight: 'normal' }]}>
+            {errorMsg}
+          </Text>
           <PrimaryButton
             title='Enable Location'
             onPress={requestLocationPermission}

@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginRight: 8,
     marginLeft: 8,
+    backgroundColor: 'transparent',
   },
   header: {
     fontSize: 24,

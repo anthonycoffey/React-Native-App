@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,11 +7,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const NOTIFICATIONS_STORAGE_KEY = 'notifications';
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
+  handleNotification: async () => {
+    const isAppActive = AppState.currentState === 'active';
+    return {
+      shouldShowAlert: !isAppActive,
+      shouldPlaySound: !isAppActive,
+      shouldSetBadge: false,
+      shouldShowBanner: false, // for android
+      shouldShowList: false, // for ios
+    };
+  },
 });
 
 export interface StoredNotification {
@@ -63,7 +68,7 @@ async function saveNotification(notification: Notifications.Notification) {
 
     const newNotification: StoredNotification = {
       id: notification.request.identifier,
-      date: notification.date.toString(),
+      date: new Date().toISOString(),
       title: notification.request.content.title,
       body: notification.request.content.body,
       read: false,
@@ -94,10 +99,10 @@ export function useNotifications() {
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        notificationListener.current.remove();
       }
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
     };
   }, []);

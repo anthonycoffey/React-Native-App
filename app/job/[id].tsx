@@ -27,7 +27,7 @@ import { View as ThemedView } from '@/components/Themed';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useAuth } from '@/contexts/AuthContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Card from '@/components/Card';
 
 function LoadingSpinner(props: { loading: boolean }) {
   const colorScheme = useColorScheme() ?? 'light';
@@ -126,29 +126,51 @@ export default function JobPage() {
           contentContainerStyle={styles.contentContainer}
           nestedScrollEnabled={true}
         >
-          <SafeAreaView style={{ flex: 1 }}>
+          <Card>
             <JobStatus job={job} fetchJob={fetchJob} />
+          </Card>
+          <Card>
             <JobProxy job={job} refetchJob={fetchJob} />
+          </Card>
+          <Card>
             <JobDetailsAndMapButtons job={job} fetchJob={fetchJob} />
+          </Card>
+          <Card>
             <ArrivalTime
               timestamp={job.arrivalTime}
               jobId={job.id}
               fetchJob={fetchJob}
             />
+          </Card>
+          <Card>
             <JobLineItems job={job} fetchJob={fetchJob} />
+          </Card>
+          <Card>
             <Discounts job={job} fetchJob={fetchJob} />
+          </Card>
+          <Card>
             <JobReferralCode job={job} fetchJob={fetchJob} />
+          </Card>
+          <Card>
             <Invoice job={job} fetchJob={fetchJob} />
+          </Card>
+          <Card>
             <TakePayment job={job} fetchJob={fetchJob} />
+          </Card>
+          <Card>
             <JobPaymentsList job={job} />
+          </Card>
+          <Card>
             <JobFiles job={job} fetchJob={fetchJob} />
+          </Card>
+          <Card>
             <JobComments
               jobId={job.id}
               jobComments={job.JobComments || []}
               currentUserId={currentUserId}
               fetchJob={fetchJob}
             />
-          </SafeAreaView>
+          </Card>
         </ScrollView>
       </KeyboardAvoidingView>
     </ThemedView>
@@ -160,7 +182,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 10,
     paddingBottom: 16,
   },
   loadingContainer: {

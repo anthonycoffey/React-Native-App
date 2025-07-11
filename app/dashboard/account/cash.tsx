@@ -25,6 +25,7 @@ import { formatDateTime } from '@/utils/dates';
 import { PrimaryButton } from '@/components/Buttons';
 import { router } from 'expo-router';
 import CurrencyInput from '@/components/CurrencyInput';
+import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
 
 interface CashIntakePaymentJob {
   id: number | string;
@@ -55,6 +56,11 @@ export default function CashManagementScreen() {
   const [depositModalVisible, setDepositModalVisible] = useState(false);
   const [newDepositAmount, setNewDepositAmount] = useState(0);
   const [isSubmittingDeposit, setIsSubmittingDeposit] = useState(false);
+
+  useAndroidBackHandler(() => {
+    router.replace('/dashboard/account');
+    return true;
+  });
 
   useEffect(() => {
     loadCashIntakes();

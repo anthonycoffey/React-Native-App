@@ -4,7 +4,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 10,
   },
   loginContainer: {
     flex: 1,
@@ -19,11 +18,9 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 20,
   },
   centeredContent: {
+    paddingHorizontal: 10,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -33,13 +30,11 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 10,
   },
-  frameContainer: {
-    padding: 10,
-  },
   chipContainer: {
     paddingTop: 10,
     display: 'flex',
     flexDirection: 'row',
+    backgroundColor: 'transparent',
   },
   statusContainer: {
     flexWrap: 'wrap',
@@ -164,7 +159,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#e0e0e0',
     width: '90%',
-    marginVertical: 24,
+    marginVertical: 12,
     alignSelf: 'center',
   },
   statusTitle: {
@@ -174,7 +169,6 @@ const styles = StyleSheet.create({
   privacyText: {
     fontSize: 14,
     textAlign: 'center',
-    marginBottom: 32,
     opacity: 0.7,
   },
   loadingContainer: {

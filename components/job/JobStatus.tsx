@@ -126,12 +126,12 @@ export default function JobStatus({ job, fetchJob }: Props) {
   };
 
   return (
-    <View style={[globalStyles.card, styles.container]}>
+    <View style={{ backgroundColor: 'transparent' }}>
       <JobHeader job={job} id={job.id} />
 
       {job.status === 'in-progress' &&
         (!job.Invoices || job.Invoices.length === 0) && (
-          <View style={[styles.infoAlert, styles.marginTop]}>
+          <View style={styles.marginTop}>
             <ErrorText>
               You must generate an invoice before finishing a job.
             </ErrorText>
@@ -141,7 +141,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
       {job.status === 'in-progress' &&
         (job.Invoices ?? []).length > 0 &&
         job.paymentStatus !== 'paid' && (
-          <View style={[styles.infoAlert, styles.marginTop]}>
+          <View style={styles.marginTop}>
             <ErrorText>
               You must accept payment before finishing a job.
             </ErrorText>
@@ -269,16 +269,9 @@ export default function JobStatus({ job, fetchJob }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    elevation: 4,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
   buttonsContainer: {
     marginTop: 10,
+    backgroundColor: 'transparent',
   },
   marginTop: {
     marginTop: 10,
@@ -305,12 +298,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginTop: 20,
-  },
-  infoAlert: {
-    borderWidth: 1,
-    borderColor: 'red',
-    backgroundColor: 'rgba(255, 0, 0, 0.1)',
-    padding: 0,
-    borderRadius: 5,
   },
 });

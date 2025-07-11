@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import {
-  View,
   StyleSheet,
   TouchableOpacity,
   FlatList,
@@ -11,7 +10,8 @@ import { router } from 'expo-router';
 import Chip from '@/components/Chip';
 import { formatDateTime, formatRelative } from '@/utils/dates';
 import { Job } from '@/types';
-import { Text } from '@/components/Themed';
+import JobsFilter from '@/components/dashboard/JobsFilter';
+import { Text, View } from '@/components/Themed';
 import globalStyles from '@/styles/globalStyles';
 import Card from '@/components/Card';
 
@@ -30,6 +30,10 @@ type JobsListProps = {
     | [];
   fetchJobs: () => void;
   loading?: boolean;
+  currentScope: string;
+  setCurrentScope: Dispatch<SetStateAction<string>>;
+  currentSortBy: string;
+  setCurrentSortBy: Dispatch<SetStateAction<string>>;
 };
 
 const ListEmptyComponent = () => {
@@ -52,6 +56,10 @@ export default function JobsList({
   jobs,
   fetchJobs,
   loading = false,
+  currentScope,
+  setCurrentScope,
+  currentSortBy,
+  setCurrentSortBy,
 }: JobsListProps) {
   const [refreshing, setRefreshing] = useState(false);
 
@@ -89,6 +97,14 @@ export default function JobsList({
       refreshing={refreshing}
       onRefresh={onRefresh}
       data={jobsData}
+      ListHeaderComponent={
+        <JobsFilter
+          currentScope={currentScope}
+          setCurrentScope={setCurrentScope}
+          currentSortBy={currentSortBy}
+          setCurrentSortBy={setCurrentSortBy}
+        />
+      }
       ListEmptyComponent={isEmpty ? ListEmptyComponent : null}
       contentContainerStyle={[
         styles.listContainer,
@@ -120,7 +136,7 @@ export default function JobsList({
                 <Text type='defaultSemiBold'>J-{item.id}</Text>
               </View>
 
-              <View style={styles.cardContent}>
+              <View style={{ backgroundColor: 'transparent' }}>
                 <View style={styles.row}>
                   <MaterialIcons
                     name='schedule'
@@ -174,7 +190,6 @@ const styles = StyleSheet.create({
   listContainer: {
     flexGrow: 1,
     minHeight: 500,
-    paddingHorizontal: 10,
   },
   emptyListContainer: {
     justifyContent: 'center',
@@ -221,20 +236,18 @@ const styles = StyleSheet.create({
     color: '#f44336',
   },
   cardHeader: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 6,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-    paddingBottom: 10,
-  },
-  cardContent: {
-    marginBottom: 12,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
+    backgroundColor: 'transparent',
   },
   icon: {
     marginRight: 8,

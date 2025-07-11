@@ -71,11 +71,11 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
 
 
   return (
-    <View style={[globalStyles.card, styles.container]}>
+    <View style={{ backgroundColor: 'transparent' }}>
       <CardTitle>Job Details</CardTitle>
       <CustomerInfo job={job} location={location} fetchJob={fetchJob} />
 
-      <View style={styles.appsContainer}>
+      <View style={[styles.appsContainer, { backgroundColor: 'transparent' }]}>
         {availableApps.map(({ icon, name, id, open }: availableAppsProps) => (
           <Pressable key={id} onPress={open} style={globalStyles.mapButton}>
             <Image source={icon} style={styles.appIcon} />
@@ -88,15 +88,6 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    elevation: 4,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    padding: 16,
-  },
   appsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',

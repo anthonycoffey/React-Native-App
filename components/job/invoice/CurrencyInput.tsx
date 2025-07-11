@@ -73,7 +73,7 @@ export default function CurrencyInput({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
-    width: '100%',
+    backgroundColor: 'transparent'
   },
   label: {
     marginLeft: 0,

@@ -66,13 +66,7 @@ export default function JobPaymentsList({ job }: Props) {
   );
 
   return (
-    <ThemedView
-      style={[
-        globalStyles.card,
-        styles.container,
-        { backgroundColor: getBackgroundColor(theme) },
-      ]}
-    >
+    <ThemedView style={{ backgroundColor: 'transparent' }}>
       <CardTitle style={{ color: getTextColor(theme), marginBottom: 10 }}>
         Payment History
       </CardTitle>
@@ -93,9 +87,6 @@ export default function JobPaymentsList({ job }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
   paymentItemContainer: {
     paddingVertical: 12,
     borderBottomWidth: 1,

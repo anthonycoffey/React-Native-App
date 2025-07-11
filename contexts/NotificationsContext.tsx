@@ -9,6 +9,7 @@ interface NotificationsContextData {
   notifications: StoredNotification[];
   unreadCount: number;
   markAsRead: (notificationId: string) => void;
+  markAllAsRead: () => void;
   clearAll: () => void;
   refreshNotifications: () => void;
 }
@@ -74,6 +75,17 @@ export function NotificationsProvider({ children }: NotificationsProviderProps) 
       console.error('Failed to clear notifications.', e);
     }
   };
+
+  const markAllAsRead = async () => {
+    try {
+      const updatedNotifications = notifications.map(n => ({ ...n, read: true }));
+      setNotifications(updatedNotifications);
+      setUnreadCount(0);
+      await AsyncStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(updatedNotifications));
+    } catch (e) {
+      console.error('Failed to mark all notifications as read.', e);
+    }
+  };
   
   useEffect(() => {
     const subscription = Notifications.addNotificationReceivedListener(() => {
@@ -86,6 +98,7 @@ export function NotificationsProvider({ children }: NotificationsProviderProps) 
     notifications,
     unreadCount,
     markAsRead,
+    markAllAsRead,
     clearAll,
     refreshNotifications,
   };

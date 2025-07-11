@@ -63,7 +63,7 @@ export default function LocationPermissionScreen() {
             enable location services in your device settings.
           </Text>
         ) : (
-          <Text style={globalStyles.subtitle}>
+          <Text style={[globalStyles.subtitle,{textAlign: 'center', fontWeight: 'normal'}]}>
             This app collects location data to provide you with real-time
             updates about nearby jobs even when the app is closed or not in use.
           </Text>

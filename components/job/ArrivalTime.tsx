@@ -97,9 +97,9 @@ export default function ArrivalTime({
   };
 
   return (
-    <View style={[globalStyles.card, styles.container]}>
+    <View style={{ backgroundColor: 'transparent' }}>
       <CardTitle>Arrival Time</CardTitle>
-      <View style={styles.pickerContainer}>
+      <View style={[styles.pickerContainer, { backgroundColor: 'transparent' }]}>
         {Platform.OS === 'ios' && (
           <>
             <DateTimePicker
@@ -119,18 +119,7 @@ export default function ArrivalTime({
 
         {Platform.OS === 'android' && (
           <View style={styles.androidContainer}>
-            <View
-              style={[
-                styles.displayTimeContainer,
-                {
-                  backgroundColor:
-                    (colorScheme ?? 'light') === 'dark'
-                      ? 'rgba(50, 50, 50, 0.5)'
-                      : 'rgba(224, 224, 224, 0.3)',
-                  borderColor: getBorderColor(colorScheme ?? 'light'),
-                },
-              ]}
-            >
+            <View style={styles.displayTimeContainer}>
               <Text
                 style={[
                   styles.displayTime,
@@ -201,20 +190,13 @@ export default function ArrivalTime({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    elevation: 4,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
   pickerContainer: {
     paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   androidContainer: {
+    backgroundColor: 'transparent',
     flexDirection: 'column',
     width: '100%',
   },
@@ -226,7 +208,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 10,
-    borderWidth: 1,
   },
   displayTime: {
     fontFamily: 'monospace',
@@ -234,6 +215,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   buttonRow: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     paddingHorizontal: 10,
     justifyContent: 'space-between',

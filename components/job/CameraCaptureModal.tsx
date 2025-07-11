@@ -31,6 +31,8 @@ export default function CameraCaptureModal({
   const [isProcessing, setIsProcessing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [mode, setMode] = useState<'picture' | 'video'>('picture');
+  const [flash, setFlash] = useState<FlashMode>('off');
+  const [isTorchOn, setIsTorchOn] = useState(false);
   const cameraRef = useRef<CameraView>(null);
 
   useEffect(() => {
@@ -100,6 +102,28 @@ export default function CameraCaptureModal({
     }
   };
 
+  const toggleFlash = () => {
+    if (mode === 'picture') {
+      setFlash((current) => {
+        if (current === 'off') return 'on';
+        if (current === 'on') return 'auto';
+        return 'off';
+      });
+    } else {
+      setIsTorchOn((current) => !current);
+    }
+  };
+
+  const getFlashIcon = () => {
+    if (mode === 'picture') {
+      if (flash === 'on') return 'flash-on';
+      if (flash === 'auto') return 'flash-auto';
+      return 'flash-off';
+    } else {
+      return isTorchOn ? 'flash-on' : 'flash-off';
+    }
+  };
+
   const styles = StyleSheet.create({
     modalContainer: {
       flex: 1,
@@ -148,6 +172,14 @@ export default function CameraCaptureModal({
       position: 'absolute',
       top: Platform.OS === 'ios' ? 50 : 20,
       left: 20,
+      padding: 10,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      borderRadius: 20,
+    },
+    flashButton: {
+      position: 'absolute',
+      top: Platform.OS === 'ios' ? 50 : 20,
+      right: 20,
       padding: 10,
       backgroundColor: 'rgba(0,0,0,0.5)',
       borderRadius: 20,
@@ -214,7 +246,8 @@ export default function CameraCaptureModal({
           ref={cameraRef}
           style={styles.camera}
           facing={'back' as CameraType}
-          flash={'off' as FlashMode}
+          flash={mode === 'picture' ? flash : 'off'}
+          enableTorch={mode === 'video' && isTorchOn}
           mode={mode}
           onCameraReady={() => setIsCameraReady(true)}
           onMountError={(error) => {
@@ -248,6 +281,13 @@ export default function CameraCaptureModal({
           </TouchableOpacity>
           <View style={{ width: 50 }} />
         </View>
+        <TouchableOpacity
+          style={styles.flashButton}
+          onPress={toggleFlash}
+          disabled={isRecording || isProcessing}
+        >
+          <MaterialIcons name={getFlashIcon()} size={30} color='white' />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.closeButton}
           onPress={onClose}

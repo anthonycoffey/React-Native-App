@@ -53,7 +53,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         // headerShown: headerShown,
         headerStyle: {
-          backgroundColor: Colors[colorScheme].background,
+          backgroundColor: Colors[colorScheme].card,
         },
         headerTintColor: Colors[colorScheme].text,
         headerTitleStyle: {
@@ -140,6 +140,12 @@ export default function TabLayout() {
         options={{
           title: 'Deposit Details',
           href: null,
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => router.replace('/dashboard/account/deposits')}
+              tintColor={Colors[colorScheme].text}
+            />
+          ),
           headerRight: () => <NotificationBell />,
         }}
       />

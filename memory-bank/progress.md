@@ -4,6 +4,22 @@ This document tracks what works, what's left to build, the current status, known
 
 ## What Works
 
+- **Modernized Job Page Layout:**
+  - Refactored the `app/job/[id].tsx` page to use the standardized `Card` component for all sections, creating a consistent and modern layout.
+  - Removed old card styles from child components (`JobStatus`, `JobProxy`, etc.) to prevent style conflicts and improve code maintainability.
+- **Standardized App Theme:**
+  - Created a custom theme in `app/_layout.tsx` to ensure consistent header and background colors across all screens, fully supporting both light and dark modes.
+  - Set the header background to white in light mode and a dark gray in dark mode.
+  - Set the page background to a light gray in light mode and a darker gray in dark mode.
+- **Fixed Layout Inconsistencies:**
+  - Removed horizontal padding from the main `ScrollView` in `app/dashboard/account/index.tsx` to allow the background color to span the full width of the screen, matching other pages.
+- **Improved Visual Hierarchy:**
+  - Changed the background color of the light theme to a light gray (`#f0f0f0`) in `constants/Colors.ts`.
+  - Updated the `Card.tsx` component to use the `card` color from the theme, which is now white (`#ffffff`) in light mode. This creates a clear distinction between the page background and the cards.
+- **Deposits Page Redesign:**
+  - The deposits list page (`app/dashboard/account/deposits/index.tsx`) has been successfully redesigned to use a modern, card-based layout.
+  - Each deposit is now rendered as a tappable, theme-aware `Card`.
+  - The new design incorporates `MaterialIcons` for better readability and a more intuitive user experience.
 - Memory Bank core file structure has been initialized.
 - `projectbrief.md` populated with core requirements and project goals based on user input.
 - `productContext.md` populated with problem statement, proposed solution, how it works, and user experience goals based on user input.
@@ -151,6 +167,16 @@ This document tracks what works, what's left to build, the current status, known
   - Added a back button to the header of the `create-job` screen in `app/dashboard/_layout.tsx`.
   - Reduced the font size of the `CardTitle` component in `components/Typography.tsx` to make the titles less prominent.
   - This change aligns the page's layout with other screens, ensuring a uniform look and feel.
+- **Added Loading Spinner to File Viewer:**
+  - Updated `components/job/JobFiles.tsx` to display a loading spinner (`ActivityIndicator`) in the `FileViewerModal` while images or videos are loading.
+  - Added an `isLoading` state to the modal.
+  - Used `onLoadStart` and `onLoadEnd` for the `Image` component.
+  - Used a `useEffect` hook to monitor the `player.status` for the `Video` component.
+- **Camera Flash Control:**
+  - Added a flash control button to the `CameraCaptureModal`.
+  - Implemented state management to cycle through flash modes ('on', 'off', 'auto') for photos.
+  - Implemented torch functionality for video recording.
+  - The selected flash/torch mode is now applied to the `CameraView` using the `flash` and `enableTorch` props.
 
 ## What's Left to Build
 

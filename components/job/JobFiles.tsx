@@ -40,10 +40,17 @@ const FileViewerModal = ({
   file: JobFile | null;
   onClose: () => void;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const player = useVideoPlayer(file?.url ?? '', (player) => {
     player.loop = true;
     player.play();
   });
+
+  useEffect(() => {
+    if (file?.type.startsWith('video/')) {
+      setIsLoading(player.status === 'loading');
+    }
+  }, [player.status, file?.type]);
 
   const colorScheme = useColorScheme() ?? 'light';
   const styles = StyleSheet.create({
@@ -59,6 +66,7 @@ const FileViewerModal = ({
       borderRadius: 10,
       width: '90%',
       alignItems: 'center',
+      justifyContent: 'center',
     },
     image: {
       width: '100%',
@@ -107,8 +115,20 @@ const FileViewerModal = ({
             <ThemedText type='caption' style={{ marginBottom: 15 }}>
               {file.name}
             </ThemedText>
+            {isLoading && (
+              <ActivityIndicator
+                size='large'
+                color={Colors[colorScheme].tint}
+                style={{ position: 'absolute' }}
+              />
+            )}
             {file.type.startsWith('image/') ? (
-              <Image source={{ uri: file.url }} style={styles.image} />
+              <Image
+                source={{ uri: file.url }}
+                style={styles.image}
+                onLoadStart={() => setIsLoading(true)}
+                onLoadEnd={() => setIsLoading(false)}
+              />
             ) : file.type.startsWith('video/') ? (
               <Video
                 player={player}
@@ -139,13 +159,6 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
   const colorScheme = useColorScheme() ?? 'light';
 
   const styles = StyleSheet.create({
-    container: {
-      marginTop: 16,
-      padding: 10,
-      borderWidth: 1,
-      borderColor: Colors[colorScheme ?? 'light'].borderColor,
-      borderRadius: 8,
-    },
     title: {
       marginBottom: 10,
     },
@@ -354,7 +367,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={{ backgroundColor: 'transparent' }}>
       <ThemedText type='subtitle' style={styles.title}>
         Files ({job.JobFiles?.length || 0})
       </ThemedText>

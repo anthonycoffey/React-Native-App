@@ -5,16 +5,24 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  View,
 } from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getBackgroundColor, getBorderColor } from '@/hooks/useThemeColor';
+import {
+  getBackgroundColor,
+  getIconColor,
+  getTextColor,
+} from '@/hooks/useThemeColor';
+import { MaterialIcons } from '@expo/vector-icons';
+import Card from '@/components/Card';
 import Colors from '@/constants/Colors';
 import globalStyles from '@/styles/globalStyles';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
 import { formatDateTime } from '@/utils/dates';
 import { router } from 'expo-router';
+import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
 
 interface CashIntakeForDeposit {
   id: number | string;
@@ -39,6 +47,11 @@ export default function DepositsListScreen() {
   const [deposits, setDeposits] = useState<Deposit[]>([]);
   const [loading, setLoading] = useState(true);
 
+  useAndroidBackHandler(() => {
+    router.replace('/dashboard/account');
+    return true;
+  });
+
   useEffect(() => {
     loadDeposits();
   }, []);
@@ -59,32 +72,53 @@ export default function DepositsListScreen() {
     }
   };
 
-  const renderItem = ({ item }: { item: Deposit }) => (
+  const renderDepositCard = ({ item }: { item: Deposit }) => (
     <TouchableOpacity
-      style={[
-        localStyles.itemRow,
-        { borderBottomColor: getBorderColor(colorScheme) },
-      ]}
       onPress={() => router.push(`/dashboard/account/deposits/${item.id}`)}
     >
-      <Text style={localStyles.itemCellStrong}>Deposit ID: CD-{item.id}</Text>
-      <Text style={localStyles.itemCell}>
-        Amount: {centsToDollars(item.amount)}
-      </Text>
-      <Text style={localStyles.itemCell}>
-        Date: {formatDateTime(item.createdAt)}
-      </Text>
-      {item.CashIntakes && (
-        <Text
-          style={[
-            localStyles.itemCellSmall,
-            { color: colorScheme === 'dark' ? Colors.dark.text : '#666' },
-          ]}
-        >
-          ({item.CashIntakes.length} cash intake
-          {item.CashIntakes.length === 1 ? '' : 's'})
-        </Text>
-      )}
+      <Card style={localStyles.card}>
+        <View style={localStyles.cardHeader}>
+   
+          <Text style={[localStyles.depositId, { color: getTextColor(colorScheme) }]}>
+            CD-{item.id}
+          </Text>
+        </View>
+        <View style={localStyles.cardBody}>
+          <View style={localStyles.infoRow}>
+            <MaterialIcons
+              name='calendar-today'
+              size={20}
+              color={getIconColor(colorScheme)}
+            />
+            <Text style={[localStyles.infoText, { color: getTextColor(colorScheme) }]}>
+              {formatDateTime(item.createdAt)}
+            </Text>
+          </View>
+          <View style={localStyles.infoRow}>
+            <MaterialIcons
+              name='attach-money'
+              size={20}
+              color={getIconColor(colorScheme)}
+            />
+            <Text style={[localStyles.infoText, { color: getTextColor(colorScheme) }]}>
+              {centsToDollars(item.amount)}
+            </Text>
+          </View>
+          {item.CashIntakes && item.CashIntakes.length > 0 && (
+            <View style={localStyles.infoRow}>
+              <MaterialIcons
+                name='receipt-long'
+                size={20}
+                color={getIconColor(colorScheme)}
+              />
+              <Text style={[localStyles.infoText, { color: getTextColor(colorScheme) }]}>
+                {item.CashIntakes.length} cash intake
+                {item.CashIntakes.length === 1 ? '' : 's'}
+              </Text>
+            </View>
+          )}
+        </View>
+      </Card>
     </TouchableOpacity>
   );
 
@@ -110,10 +144,13 @@ export default function DepositsListScreen() {
     >
       <FlatList
         data={deposits}
-        renderItem={renderItem}
+        renderItem={renderDepositCard}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={localStyles.listContainer}
         ListEmptyComponent={
-          <Text style={localStyles.emptyText}>No deposits found.</Text>
+          <Text style={[localStyles.emptyText, { color: getTextColor(colorScheme) }]}>
+            No deposits found.
+          </Text>
         }
         refreshing={loading}
         onRefresh={loadDeposits}
@@ -123,21 +160,34 @@ export default function DepositsListScreen() {
 }
 
 const localStyles = StyleSheet.create({
-  itemRow: {
-    padding: 15,
-    borderBottomWidth: 1,
+  listContainer: {
+    // paddingHorizontal: 10,
+    // paddingTop: 10,
   },
-  itemCell: {
-    fontSize: 14,
-    marginBottom: 4,
+  card: {
+    marginBottom: 10,
   },
-  itemCellStrong: {
-    fontSize: 16,
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  depositId: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 6,
+    marginLeft: 8,
   },
-  itemCellSmall: {
-    fontSize: 12,
+  cardBody: {
+    paddingLeft: 5,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  infoText: {
+    fontSize: 16,
+    marginLeft: 10,
   },
   emptyText: {
     textAlign: 'center',

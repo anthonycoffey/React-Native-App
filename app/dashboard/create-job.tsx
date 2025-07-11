@@ -1216,7 +1216,7 @@ export default function CreateJobScreen() {
             </Text>
           )}
 
-          <View style={{ marginTop: 15 }}>
+          <View style={{ marginTop: 15, backgroundColor: 'transparent' }}>
             <LabelText>Service</LabelText>
             <DropDownPicker
               open={serviceDropdownOpen}
@@ -1256,7 +1256,12 @@ export default function CreateJobScreen() {
             />
           </View>
 
-          <View style={{ marginTop: serviceDropdownOpen ? 150 : 15 }}>
+          <View
+            style={{
+              marginTop: serviceDropdownOpen ? 150 : 15,
+              backgroundColor: 'transparent',
+            }}
+          >
             <CurrencyInput
               label='Price '
               value={currentLineItemPrice}
@@ -1301,7 +1306,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContentContainer: {
-    padding: 15,
+    // padding: 15,
   },
   header: {
     fontSize: 24,
@@ -1317,8 +1322,9 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   submitButton: {
-    // The container's padding now handles the spacing.
-    marginTop: 15,
+    marginHorizontal: 10,
+    marginTop: 5,
+    marginBottom: 10,
   },
   subText: {
     fontSize: 12,
@@ -1367,6 +1373,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   lineItemRow: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -1374,6 +1381,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   lineItemText: {
+    backgroundColor: 'transparent',
     fontSize: 16,
     flex: 1,
   },

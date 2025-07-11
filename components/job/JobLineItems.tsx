@@ -227,7 +227,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   const colorScheme = useColorScheme() ?? 'light';
 
   return (
-    <View style={[globalStyles.card, styles.container]}>
+    <View style={{ backgroundColor: 'transparent' }}>
       <CardTitle>Services</CardTitle>
 
       {job.JobLineItems && job.JobLineItems.length > 0 ? (
@@ -446,15 +446,8 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    elevation: 4,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
   lineItem: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,

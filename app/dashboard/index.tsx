@@ -5,7 +5,6 @@ import JobsList from '@/components/JobsList';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { Job } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
-import JobsFilter from '@/components/dashboard/JobsFilter';
 import Card from '@/components/Card';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getBackgroundColor } from '@/hooks/useThemeColor';
@@ -70,13 +69,15 @@ export default function JobsScreen() {
 
   return (
     <ThemedView style={{ flex: 1 }}>
-      <JobsFilter
+      <JobsList
+        jobs={jobs}
+        fetchJobs={fetchJobs}
+        loading={loading}
         currentScope={currentScope}
         setCurrentScope={setCurrentScope}
         currentSortBy={currentSortBy}
         setCurrentSortBy={setCurrentSortBy}
       />
-      <JobsList jobs={jobs} fetchJobs={fetchJobs} loading={loading} />
     </ThemedView>
   );
 }
@@ -84,6 +85,5 @@ export default function JobsScreen() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 15,
   },
 });
