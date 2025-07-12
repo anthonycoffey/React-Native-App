@@ -79,11 +79,11 @@ export default function GoOnlineScreen() {
             color={tintColor}
             style={{ marginBottom: 10 }}
           />
-          <Text type='title'>Background Location Required</Text>
+          <Text type='subtitle' style={{ textAlign: 'center', marginBottom: 20 }}>Background Location Required</Text>
           <Text
             style={[
               globalStyles.subtitle,
-              { textAlign: 'center', fontWeight: 'normal', maxWidth: '85%' },
+              { textAlign: 'center', fontWeight: 'normal', paddingHorizontal: 20},
             ]}
           >
             This app requires &quot;Allow all the time&quot; location access to track
@@ -122,14 +122,14 @@ export default function GoOnlineScreen() {
           color={isClockedIn ? buttonVariants.success : iconColor}
         />
 
-        <Text type='title' style={globalStyles.statusTitle}>
-          {isClockedIn ? "You're Online" : "You're Offline"}
+        <Text type='subtitle'>
+          {isClockedIn ? "You're Online!" : "Offline"}
         </Text>
 
         <Text
           style={[
             globalStyles.subtitle,
-            { textAlign: 'center', maxWidth: '80%' },
+            { textAlign: 'center', paddingHorizontal: 20, fontWeight: 'normal' },
           ]}
         >
           {isClockedIn

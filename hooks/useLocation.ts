@@ -61,12 +61,12 @@ export default function useLocation() {
       };
       setPermissionStatus(permissions);
 
-      if (!permissions.foreground) {
-        setErrorMsg('Foreground location permission is required.');
-      } else if (!permissions.background) {
+      if (!permissions.background) {
         setErrorMsg(
           'Background location permission is required for continuous tracking.'
         );
+      } else if (!permissions.foreground) {
+        setErrorMsg('Foreground location permission is required.');
       } else {
         setErrorMsg(null);
       }
@@ -151,7 +151,12 @@ export default function useLocation() {
       }
     };
     manageUpdates();
-  }, [isClockedIn, permissionStatus, startLocationUpdates, stopLocationUpdates]);
+  }, [
+    isClockedIn,
+    permissionStatus,
+    startLocationUpdates,
+    stopLocationUpdates,
+  ]);
 
   useEffect(() => {
     return () => {

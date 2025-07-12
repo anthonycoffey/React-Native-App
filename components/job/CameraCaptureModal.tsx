@@ -259,7 +259,11 @@ export default function CameraCaptureModal({
         <View style={styles.controlsContainer}>
           <TouchableOpacity
             style={styles.modeSwitchButton}
-            onPress={() => setMode(mode === 'picture' ? 'video' : 'picture')}
+            onPress={() => {
+              setFlash('off');
+              setIsTorchOn(false);
+              setMode(mode === 'picture' ? 'video' : 'picture');
+            }}
             disabled={isRecording || isProcessing}
           >
             <MaterialIcons

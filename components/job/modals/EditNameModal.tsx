@@ -16,7 +16,7 @@ type Props = {
   visible: boolean;
   currentName: string;
   onClose: () => void;
-  onSave: (newName: string) => Promise<void>;
+  onSave: (name: { firstName: string; lastName: string }) => Promise<void>;
 };
 
 export default function EditNameModal({
@@ -26,23 +26,31 @@ export default function EditNameModal({
   onSave,
 }: Props) {
   const colorScheme = useColorScheme() ?? 'light';
-  const [name, setName] = useState(currentName);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
 
   const bgColor = getInputBackgroundColor(colorScheme);
 
   useEffect(() => {
-    setName(currentName);
+    if (visible) {
+      const nameParts = currentName.split(' ');
+      setFirstName(nameParts[0] || '');
+      setLastName(nameParts.slice(1).join(' ') || '');
+    }
   }, [currentName, visible]);
 
   const handleSave = async () => {
-    if (!name.trim()) {
-      Alert.alert('Error', 'Name cannot be empty.');
+    if (!firstName.trim() || !lastName.trim()) {
+      Alert.alert('Error', 'First and last name cannot be empty.');
       return;
     }
     setLoading(true);
     try {
-      await onSave(name.trim());
+      await onSave({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+      });
       onClose();
       Alert.alert('Success', 'Customer name updated successfully.');
     } catch (error) {
@@ -78,9 +86,17 @@ export default function EditNameModal({
             Edit Customer Name
           </CardTitle>
           <TextInput
-            value={name}
-            onChangeText={setName}
-            placeholder='Enter customer name'
+            value={firstName}
+            onChangeText={setFirstName}
+            placeholder='First Name'
+            placeholderTextColor={getPlaceholderTextColor(colorScheme)}
+            style={themedInputStyle}
+            editable={!loading}
+          />
+          <TextInput
+            value={lastName}
+            onChangeText={setLastName}
+            placeholder='Last Name'
             placeholderTextColor={getPlaceholderTextColor(colorScheme)}
             style={themedInputStyle}
             editable={!loading}
