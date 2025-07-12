@@ -99,10 +99,12 @@ export default function JobPaymentsList({ job }: Props) {
 
 const styles = StyleSheet.create({
   paymentItemContainer: {
+    backgroundColor: 'transparent',
     paddingVertical: 12,
     borderBottomWidth: 1,
   },
   paymentRow: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 4,

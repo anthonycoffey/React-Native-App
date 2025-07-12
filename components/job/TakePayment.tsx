@@ -25,14 +25,7 @@ export default function TakePayment({
   const [amountToPay, setAmountToPay] = useState<string>('');
   const [tipAmount, setTipAmount] = useState<string>('0.00');
   const [totalDue, setTotalDue] = useState<string>('0.00');
-
-  const hasActiveInvoice = job.Invoices?.some((invoice: Invoice) =>
-    ['pending', 'partially-paid', 'sent'].includes(invoice.status)
-  );
-
-  if (job.status === 'paid' || !hasActiveInvoice) {
-    return null;
-  }
+  const colorScheme = useColorScheme() ?? 'light';
 
   useEffect(() => {
     const pendingInvoice = job.Invoices?.find(
@@ -58,11 +51,17 @@ export default function TakePayment({
     setTotalDue(total.toFixed(2));
   }, [amountToPay, tipAmount]);
 
+  const hasActiveInvoice = job.Invoices?.some((invoice: Invoice) =>
+    ['pending', 'partially-paid', 'sent'].includes(invoice.status)
+  );
+
+  if (job.status === 'paid' || !hasActiveInvoice) {
+    return null;
+  }
+
   const hidePaymentDialog = () => {
     setPayWithCash(false);
   };
-
-  const colorScheme = useColorScheme() ?? 'light';
 
   return (
     <Card>

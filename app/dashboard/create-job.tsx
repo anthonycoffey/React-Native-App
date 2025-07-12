@@ -578,7 +578,7 @@ export default function CreateJobScreen() {
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: getBackgroundColor(colorScheme) },
+        { backgroundColor: 'transparent' },
       ]}
     >
       <ScrollView
