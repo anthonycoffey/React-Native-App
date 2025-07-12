@@ -13,9 +13,6 @@ import { Text, View } from '@/components/Themed';
 import { apiService } from '@/utils/ApiService';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getBackgroundColor, useThemeColor } from '@/hooks/useThemeColor';
-// globalStyles import might become unused if this is the only usage.
-// Linter will handle if it's truly unused after the change.
-import globalStyles from '@/styles/globalStyles';
 import Colors from '@/constants/Colors';
 
 export default function ProfilePictureUploader() {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   TextInput,
   TouchableOpacity,
@@ -167,11 +167,7 @@ export default function RegisterScreen() {
 
             <Text
               type='title'
-              style={[
-                globalStyles.title,
-                styles.title,
-                { color: 'white' },
-              ]}
+              style={[globalStyles.title, styles.title, { color: 'white' }]}
             >
               Create Account
             </Text>
@@ -368,9 +364,7 @@ export default function RegisterScreen() {
               style={styles.registerButton}
             >
               {isLoading && (
-                <ActivityIndicator
-                  color={activityIndicatorColor}
-                />
+                <ActivityIndicator color={activityIndicatorColor} />
               )}
             </PrimaryButton>
 

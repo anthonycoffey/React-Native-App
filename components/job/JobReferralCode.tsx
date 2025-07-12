@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Job } from '@/types';
-import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
 import { View  } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';

@@ -27,7 +27,6 @@ import { View as ThemedView } from '@/components/Themed';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useAuth } from '@/contexts/AuthContext';
-import Card from '@/components/Card';
 
 function LoadingSpinner(props: { loading: boolean }) {
   const colorScheme = useColorScheme() ?? 'light';

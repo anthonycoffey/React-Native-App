@@ -1,18 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, ActivityIndicator } from 'react-native';
 import { View } from '@/components/Themed';
 import JobsList from '@/components/JobsList';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { Job } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
-import Card from '@/components/Card';
-import { useColorScheme } from '@/components/useColorScheme';
-import { getBackgroundColor } from '@/hooks/useThemeColor';
-import { View as ThemedView } from '@/components/Themed';
 
 export default function JobsScreen() {
   const auth = useAuth();
-  const colorScheme = useColorScheme() ?? 'light';
   const [loading, setLoading] = useState<boolean>(true);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [currentScope, setCurrentScope] = useState<string>('active');
@@ -48,9 +43,7 @@ export default function JobsScreen() {
       setLoading(false);
     }
   }, [
-    auth?.session,
-    auth?.isLoading,
-    auth?.isApiAuthReady,
+    auth,
     currentScope,
     currentSortBy,
   ]);
@@ -68,7 +61,7 @@ export default function JobsScreen() {
   }
 
   return (
-    <ThemedView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <JobsList
         jobs={jobs}
         fetchJobs={fetchJobs}
@@ -78,7 +71,7 @@ export default function JobsScreen() {
         currentSortBy={currentSortBy}
         setCurrentSortBy={setCurrentSortBy}
       />
-    </ThemedView>
+    </View>
   );
 }
 

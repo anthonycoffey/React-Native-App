@@ -1,12 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 import { Job, Payment } from '@/types';
-import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
-import { View as ThemedView } from '@/components/Themed';
+import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
-  getBackgroundColor,
   getTextColor,
   getBorderColor,
   getPlaceholderTextColor,

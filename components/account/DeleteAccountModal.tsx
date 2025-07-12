@@ -87,7 +87,7 @@ export default function DeleteAccountModal({
             Confirm Account Deletion
           </Text>
           <Text style={styles.modalText}>
-            This action is permanent and cannot be undone. Please type "delete" below to confirm.
+            This action is permanent and cannot be undone. Please type &quot;delete&quot; below to confirm.
           </Text>
           <TextInput
             style={styles.input}

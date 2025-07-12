@@ -4,12 +4,11 @@ import DateTimePicker, {
 import React, { useState } from 'react';
 import { Platform, StyleSheet, Alert } from 'react-native';
 import { apiService, HttpError } from '@/utils/ApiService';
-import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getBorderColor, getTextColor } from '@/hooks/useThemeColor';
+import { getTextColor } from '@/hooks/useThemeColor';
 import Card from '@/components/Card';
 
 type ArrivalTimeProps = {

@@ -35,53 +35,51 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   }
 });
 
-export default function useLocation(skipRedirect = false) {
+export default function useLocation() {
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [permissionStatus, setPermissionStatus] = useState<{
+    foreground: boolean;
+    background: boolean;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { isClockedIn } = useUser();
 
   const UPDATE_INTERVAL = 1000 * 60 * 5;
 
   const checkPermissions = useCallback(async () => {
+    setIsLoading(true);
     try {
       const { status: foregroundStatus } =
         await Location.getForegroundPermissionsAsync();
-
-      if (foregroundStatus !== 'granted') {
-        setHasPermission(false);
-        setErrorMsg('Foreground location permission is required.');
-        if (!skipRedirect) {
-          router.replace('/location-permission');
-        }
-        return false;
-      }
-
       const { status: backgroundStatus } =
-        await Location.requestBackgroundPermissionsAsync();
+        await Location.getBackgroundPermissionsAsync();
 
-      if (backgroundStatus === 'granted') {
-        setHasPermission(true);
-        setErrorMsg(null);
-        return true;
-      } else {
-        setHasPermission(false);
+      const permissions = {
+        foreground: foregroundStatus === 'granted',
+        background: backgroundStatus === 'granted',
+      };
+      setPermissionStatus(permissions);
+
+      if (!permissions.foreground) {
+        setErrorMsg('Foreground location permission is required.');
+      } else if (!permissions.background) {
         setErrorMsg(
           'Background location permission is required for continuous tracking.'
         );
-        if (!skipRedirect) {
-          router.replace('/location-permission');
-        }
-        return false;
+      } else {
+        setErrorMsg(null);
       }
+      return permissions;
     } catch (error) {
       console.log('useLocation: Error checking permissions:', error);
       setErrorMsg('Failed to check location permissions');
-      setHasPermission(false);
-      return false;
+      setPermissionStatus({ foreground: false, background: false });
+      return { foreground: false, background: false };
+    } finally {
+      setIsLoading(false);
     }
-  }, [skipRedirect]);
+  }, []);
 
   const updateServerLocation = useCallback(
     async (locationData: LocationObject) => {
@@ -118,7 +116,7 @@ export default function useLocation(skipRedirect = false) {
   }, []);
 
   const startLocationUpdates = useCallback(async () => {
-    if (!isClockedIn || !hasPermission) {
+    if (!isClockedIn || !permissionStatus?.background) {
       await stopLocationUpdates();
       return;
     }
@@ -137,20 +135,15 @@ export default function useLocation(skipRedirect = false) {
       );
       setErrorMsg('Failed to start background location updates.');
     }
-  }, [hasPermission, isClockedIn, stopLocationUpdates]);
+  }, [permissionStatus, isClockedIn, stopLocationUpdates]);
 
   useEffect(() => {
-    const initialize = async () => {
-      setIsLoading(true);
-      await checkPermissions();
-      setIsLoading(false);
-    };
-    initialize();
+    checkPermissions();
   }, [checkPermissions]);
 
   useEffect(() => {
     const manageUpdates = async () => {
-      if (isClockedIn && hasPermission) {
+      if (isClockedIn && permissionStatus?.background) {
         await stopLocationUpdates();
         await startLocationUpdates();
       } else {
@@ -158,7 +151,7 @@ export default function useLocation(skipRedirect = false) {
       }
     };
     manageUpdates();
-  }, [isClockedIn, hasPermission, startLocationUpdates, stopLocationUpdates]);
+  }, [isClockedIn, permissionStatus, startLocationUpdates, stopLocationUpdates]);
 
   useEffect(() => {
     return () => {
@@ -173,7 +166,7 @@ export default function useLocation(skipRedirect = false) {
   }, []);
 
   const refreshLocation = useCallback(async () => {
-    if (!isClockedIn || !hasPermission) {
+    if (!isClockedIn || !permissionStatus?.background) {
       return null;
     }
     setIsLoading(true);
@@ -191,13 +184,14 @@ export default function useLocation(skipRedirect = false) {
     } finally {
       setIsLoading(false);
     }
-  }, [hasPermission, isClockedIn, updateServerLocation]);
+  }, [permissionStatus, isClockedIn, updateServerLocation]);
 
   return {
     location,
     errorMsg,
-    hasPermission,
+    permissionStatus,
     isLoading,
     refreshLocation,
+    checkPermissions,
   };
 }

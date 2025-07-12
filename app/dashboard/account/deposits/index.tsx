@@ -9,11 +9,7 @@ import {
 } from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import {
-  getBackgroundColor,
-  getIconColor,
-  getTextColor,
-} from '@/hooks/useThemeColor';
+import { getIconColor, getTextColor } from '@/hooks/useThemeColor';
 import { MaterialIcons } from '@expo/vector-icons';
 import Card from '@/components/Card';
 import Colors from '@/constants/Colors';
@@ -156,10 +152,7 @@ export default function DepositsListScreen() {
 
   return (
     <ThemedView
-      style={[
-        globalStyles.container,
-        { backgroundColor: getBackgroundColor(colorScheme) },
-      ]}
+      style={[globalStyles.container, { backgroundColor: 'transparent' }]}
     >
       <FlatList
         data={deposits}

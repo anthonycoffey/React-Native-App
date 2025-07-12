@@ -132,7 +132,7 @@ export default function PaychecksScreen() {
     <ThemedView
       style={[
         globalStyles.container,
-        { backgroundColor: getBackgroundColor(colorScheme) },
+        { backgroundColor: 'transparent' },
       ]}
     >
       {loading && paychecks.length === 0 ? (

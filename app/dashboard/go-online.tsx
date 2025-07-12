@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useThemeColor, getIconColor } from '@/hooks/useThemeColor';
+import { useThemeColor } from '@/hooks/useThemeColor';
 import Colors, { buttonVariants } from '@/constants/Colors';
 import useLocation from '@/hooks/useLocation';
 import { PrimaryButton } from '@/components/Buttons';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
 import globalStyles from '@/styles/globalStyles';
 
 export default function GoOnlineScreen() {
-  const theme = useColorScheme() ?? 'light';
   const iconColor = useThemeColor({}, 'icon');
   const tintColor = useThemeColor(
     { light: Colors.light.tint, dark: Colors.dark.tint },
@@ -30,14 +29,30 @@ export default function GoOnlineScreen() {
     'background'
   );
 
-  const { location, errorMsg, hasPermission } = useLocation(true);
+  const {
+    location,
+    errorMsg,
+    permissionStatus,
+    isLoading,
+    checkPermissions,
+  } = useLocation();
   const { isClockedIn, clockIn, clockOut } = useUser();
+
+  useFocusEffect(
+    useCallback(() => {
+      checkPermissions();
+    }, [checkPermissions])
+  );
 
   const handleClockInOut = () => {
     if (isClockedIn) {
       clockOut();
     } else {
-      clockIn();
+      if (permissionStatus?.background) {
+        clockIn();
+      } else {
+        router.push('/location-permission');
+      }
     }
   };
 
@@ -46,41 +61,52 @@ export default function GoOnlineScreen() {
   };
 
   const renderContent = () => {
-    if (errorMsg) {
+    if (isLoading || permissionStatus === null) {
       return (
         <View style={globalStyles.centeredContent}>
-          <MaterialIcons name='gps-fixed' size={50} color={iconColor} />
-          <Text type='title' style={globalStyles.statusTitle}>
-            Location Error
-          </Text>
-          <Text style={[globalStyles.subtitle, { textAlign: 'center', fontWeight: 'normal' }]}>
-            {errorMsg}
-          </Text>
-          <PrimaryButton
-            title='Enable Location'
-            onPress={requestLocationPermission}
-            style={globalStyles.button}
-          />
+          <ActivityIndicator size='large' />
+          <Text style={{ marginTop: 10 }}>Checking location status...</Text>
         </View>
       );
     }
 
-    if (!hasPermission) {
+    if (!permissionStatus.background) {
       return (
         <View style={globalStyles.centeredContent}>
           <MaterialIcons
-            name='gps-fixed'
+            name='gps-off'
             size={50}
             color={tintColor}
             style={{ marginBottom: 10 }}
           />
-          <Text type='title'>Location Access Required</Text>
-          <Text style={globalStyles.subtitle}>
-            To go online and receive job assignments, please enable location
-            services.
+          <Text type='title'>Background Location Required</Text>
+          <Text
+            style={[
+              globalStyles.subtitle,
+              { textAlign: 'center', fontWeight: 'normal', maxWidth: '85%' },
+            ]}
+          >
+            This app requires &quot;Allow all the time&quot; location access to track
+            your position for job assignments, even when the app is in the
+            background.
           </Text>
+          {errorMsg && (
+            <Text
+              style={[
+                globalStyles.errorText,
+                {
+                  textAlign: 'center',
+                  marginTop: 10,
+                  fontWeight: 'normal',
+                  maxWidth: '85%',
+                },
+              ]}
+            >
+              {errorMsg}
+            </Text>
+          )}
           <PrimaryButton
-            title='Enable Location'
+            title='Grant Permissions'
             onPress={requestLocationPermission}
             style={globalStyles.button}
           />

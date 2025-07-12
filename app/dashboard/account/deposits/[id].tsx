@@ -11,7 +11,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { getBackgroundColor, getBorderColor } from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
 import Card from '@/components/Card';
-import { HeaderText, LabelText } from '@/components/Typography';
+import { CardTitle, LabelText } from '@/components/Typography';
 import globalStyles from '@/styles/globalStyles';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
@@ -117,7 +117,7 @@ export default function SingleDepositScreen() {
             justifyContent: 'center',
             alignItems: 'center',
             flex: 1,
-            backgroundColor: getBackgroundColor(colorScheme),
+            backgroundColor: 'transparent',
           },
         ]}
       >
@@ -149,19 +149,15 @@ export default function SingleDepositScreen() {
 
   return (
     <ScrollView
-      style={[
-        { flex: 1 },
-        { backgroundColor: getBackgroundColor(colorScheme) },
-      ]}
+      style={[{ flex: 1 }, { backgroundColor: 'transparent' }]}
       contentContainerStyle={{
         flexGrow: 1,
       }}
     >
-      <HeaderText style={{ marginVertical: 10, paddingHorizontal: 10 }}>
-        Deposit #CD-{deposit.id}
-      </HeaderText>
-
       <Card>
+        <CardTitle style={{ textAlign: 'center' }}>
+          Deposit #CD-{deposit.id}
+        </CardTitle>
         <LabelText>Deposited Amount:</LabelText>
         <Text style={localStyles.value}>{centsToDollars(deposit.amount)}</Text>
 

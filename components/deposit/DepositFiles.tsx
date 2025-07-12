@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View,
   StyleSheet,
   TouchableOpacity,
   Modal,
@@ -13,7 +12,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { VideoView as Video, useVideoPlayer } from 'expo-video';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Text as ThemedText, View as ThemedView } from '@/components/Themed';
+import { Text, View } from '@/components/Themed';
 import { PrimaryButton } from '@/components/Buttons';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -121,9 +120,9 @@ const FileViewerModal = ({
       >
         <TouchableWithoutFeedback>
           <View style={styles.modalContent}>
-            <ThemedText type='caption' style={{ marginBottom: 15 }}>
+            <Text type='caption' style={{ marginBottom: 15 }}>
               {file.name}
-            </ThemedText>
+            </Text>
             {isLoading && (
               <ActivityIndicator
                 size='large'
@@ -146,7 +145,7 @@ const FileViewerModal = ({
                 contentFit='contain'
               />
             ) : (
-              <ThemedText>Cannot preview this file type.</ThemedText>
+              <Text>Cannot preview this file type.</Text>
             )}
             <PrimaryButton
               title='Close'
@@ -388,9 +387,9 @@ export default function DepositFiles({
 
   return (
     <>
-      <ThemedText type='defaultSemiBold' style={styles.title}>
+      <Text type='defaultSemiBold' style={styles.title}>
         Files ({files?.length || 0})
-      </ThemedText>
+      </Text>
 
       {files && files.length > 0 ? (
         <View style={styles.galleryContainer}>
@@ -416,13 +415,13 @@ export default function DepositFiles({
                     />
                   </View>
                 )}
-                <ThemedText
+                <Text
                   style={styles.fileName}
                   numberOfLines={2}
                   ellipsizeMode='tail'
                 >
                   {file.name}
-                </ThemedText>
+                </Text>
                 <TouchableOpacity
                   onPress={() => promptDeleteFile(file)}
                   style={[
@@ -445,13 +444,13 @@ export default function DepositFiles({
                   onPress={() => viewFile(file)}
                   style={{ flex: 1 }}
                 >
-                  <ThemedText
+                  <Text
                     style={styles.fileItemName}
                     numberOfLines={1}
                     ellipsizeMode='middle'
                   >
                     {file.name}
-                  </ThemedText>
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => promptDeleteFile(file)}
@@ -468,7 +467,7 @@ export default function DepositFiles({
           )}
         </View>
       ) : (
-        <ThemedText>No files uploaded yet.</ThemedText>
+        <Text>No files uploaded yet.</Text>
       )}
 
       <View style={styles.uploadSection}>
@@ -482,7 +481,7 @@ export default function DepositFiles({
             size={32}
             color={Colors[colorScheme].text}
           />
-          <ThemedText style={styles.iconButtonText}>Camera</ThemedText>
+          <Text style={styles.iconButtonText}>Camera</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -495,14 +494,14 @@ export default function DepositFiles({
             size={32}
             color={Colors[colorScheme].text}
           />
-          <ThemedText style={styles.iconButtonText}>Files</ThemedText>
+          <Text style={styles.iconButtonText}>Files</Text>
         </TouchableOpacity>
       </View>
 
       {loadingFiles && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size='large' color={Colors[colorScheme].tint} />
-          <ThemedText>Processing...</ThemedText>
+          <Text>Processing...</Text>
         </View>
       )}
 

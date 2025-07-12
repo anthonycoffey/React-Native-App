@@ -4,21 +4,22 @@ import DeleteAccountModal from '@/components/account/DeleteAccountModal';
 import EditEmailModal from '@/components/account/EditEmailModal';
 import EditNameModal from '@/components/account/EditNameModal';
 import EditPhoneModal from '@/components/account/EditPhoneModal';
-import { IconButton } from '@/components/Buttons';
 import { Text, View } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getBackgroundColor } from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
 import globalStyles from '@/styles/globalStyles';
 import ProfilePictureUploader from '@/components/account/ProfilePictureUploader';
 import Card from '@/components/Card';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
-import { OutlinedButton, PrimaryButton } from '@/components/Buttons';
-import TestNotificationButton from '@/components/account/TestNotificationButton';
+import {
+  OutlinedButton,
+  PrimaryButton,
+  IconButton,
+} from '@/components/Buttons';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNotificationsContext } from '@/contexts/NotificationsContext';
+// import { useNotificationsContext } from '@/contexts/NotificationsContext';
 import { formatPhoneNumber } from '@/utils/strings';
 import { CardTitle } from '@/components/Typography';
 
@@ -33,7 +34,7 @@ interface AccountDetails {
 
 export default function AccountScreen() {
   const auth = useAuth();
-  const { clearAll: clearAllNotifications } = useNotificationsContext();
+  // const { clearAll: clearAllNotifications } = useNotificationsContext();
   const colorScheme = useColorScheme() ?? 'light';
   const [accountDetails, setAccountDetails] = useState<AccountDetails | null>(
     null
@@ -116,13 +117,13 @@ export default function AccountScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: getBackgroundColor(colorScheme) }}
+      style={{ flex: 1, backgroundColor: 'transparent' }}
       contentContainerStyle={{
         flexGrow: 1,
       }}
     >
       <Card>
-      <ProfilePictureUploader />
+        <ProfilePictureUploader />
         <View style={localStyles.infoRow}>
           <Text style={localStyles.infoLabel}>Name</Text>
           <Text style={localStyles.infoValue}>

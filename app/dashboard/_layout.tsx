@@ -6,7 +6,6 @@ import { ActivityIndicator, View, Pressable } from 'react-native';
 import NotificationBell from '@/components/dashboard/NotificationBell';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useAuth } from '@/contexts/AuthContext';
 import globalStyles from '@/styles/globalStyles';
 
@@ -21,7 +20,6 @@ export default function TabLayout() {
   const colorScheme = useColorScheme() ?? 'light';
   const auth = useAuth();
   const router = useRouter();
-  const headerShown = useClientOnlyValue(false, true);
 
   useEffect(() => {
     if (auth && !auth.isLoading && !auth.session) {

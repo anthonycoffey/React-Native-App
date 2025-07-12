@@ -14,7 +14,7 @@ export default function NotificationsScreen() {
   useEffect(() => {
     // Mark all as read when the screen is viewed
     markAllAsRead();
-  }, []);
+  }, [markAllAsRead]);
 
   const renderItem = ({ item }: { item: StoredNotification }) => (
     <View

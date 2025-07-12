@@ -5,7 +5,6 @@ import { formatDateTime, formatRelative } from '@/utils/dates';
 import globalStyles from '@/styles/globalStyles';
 import { Job } from '@/types';
 import Chip from '@/components/Chip';
-import { LabelText } from '@/components/Typography';
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getIconColor } from '@/hooks/useThemeColor';
