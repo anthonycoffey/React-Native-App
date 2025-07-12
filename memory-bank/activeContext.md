@@ -239,6 +239,10 @@ Standardizing the app's visual theme and layout.
   - Replaced local text styles with standardized `HeaderText` and `LabelText` from `components/Typography.tsx`.
   - Encapsulated all content sections within `Card` components for a consistent look and feel.
   - Adjusted page padding to be consistent with other screens.
+- **Fixed Customer Name Update Bug:**
+  - Modified `components/job/modals/EditNameModal.tsx` to have separate input fields for "First Name" and "Last Name".
+  - Updated the modal to parse the full name into first and last names on opening and to save them as a `{ firstName, lastName }` object.
+  - Adjusted `components/job/CustomerInfo.tsx` to handle the new object structure from the modal and send the correct data (`firstName`, `lastName`) to the backend API, resolving the update failure.
 
 ## Next Steps
 

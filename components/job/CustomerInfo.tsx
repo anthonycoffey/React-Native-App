@@ -70,14 +70,15 @@ export default function CustomerInfo({
 
   const iconColor = getIconColor(colorScheme);
 
-  const handleSaveName = async (newName: string) => {
+  const handleSaveName = async (name: {
+    firstName: string;
+    lastName: string;
+  }) => {
     if (!job.CustomerId) {
       Alert.alert('Error', 'Customer ID is missing.');
       return;
     }
-    await apiService.patch(`/customers/${job.CustomerId}`, {
-      fullName: newName,
-    });
+    await apiService.patch(`/customers/${job.CustomerId}`, name);
     await fetchJob();
   };
 

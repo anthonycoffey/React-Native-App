@@ -182,6 +182,10 @@ This document tracks what works, what's left to build, the current status, known
   - Replaced custom local styles with standardized `HeaderText` and `LabelText` typography components.
   - Wrapped all content sections in `Card` components to align with the app's visual structure.
   - Standardized page padding for a uniform look and feel.
+- **Fixed Customer Name Update Bug:**
+  - Modified `components/job/modals/EditNameModal.tsx` to use separate "First Name" and "Last Name" input fields.
+  - The modal now correctly parses the full name on open and passes a `{ firstName, lastName }` object to the `onSave` handler.
+  - Updated `components/job/CustomerInfo.tsx` to send this object to the backend, resolving the API mismatch and fixing the bug.
 
 ## What's Left to Build
 

@@ -182,6 +182,7 @@ export default function DepositFiles({
       marginBottom: 10,
     },
     galleryContainer: {
+      backgroundColor: 'transparent',
       flexDirection: 'row',
       flexWrap: 'wrap',
     },
@@ -217,6 +218,7 @@ export default function DepositFiles({
       padding: 3,
     },
     uploadSection: {
+      backgroundColor: 'transparent',
       marginTop: 15,
       paddingTop: 10,
       borderTopWidth: 1,

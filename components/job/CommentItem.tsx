@@ -61,13 +61,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 8,
+    paddingVertical: 2,
+    paddingHorizontal: 10,
     marginVertical: 4,
     borderRadius: 8,
   },
   header: {
     flexDirection: 'column',
-    marginBottom: 10,
   },
   userName: {
     fontWeight: 'medium',
@@ -79,20 +79,18 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   commentText: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 12,
   },
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 6,
   },
   actionButton: {
     marginLeft: 10,
   },
   iconButton: {
-    padding: 3,
-    marginLeft: 10,
+    padding: 5,
+    marginLeft: 5,
   },
 });
 
