@@ -24,7 +24,6 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const iconColor = useThemeColor({}, 'icon');
   const deleteIconColor = buttonVariants.error;
 
-
   const handleEdit = () => {
     onEditPress(comment);
   };
@@ -36,19 +35,23 @@ const CommentItem: React.FC<CommentItemProps> = ({
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.userName}>{comment.User?.fullName || 'Unknown User'}</Text>
+        <Text style={styles.userName}>
+          {comment.User?.fullName || 'Unknown User'}
+        </Text>
         <Text style={styles.timestamp}>
-          {formatDistanceToNowStrict(new Date(comment.createdAt), { addSuffix: true })}
+          {formatDistanceToNowStrict(new Date(comment.createdAt), {
+            addSuffix: true,
+          })}
         </Text>
       </View>
       <Text style={styles.commentText}>{comment.text}</Text>
       {isOwnComment && (
         <View style={styles.actionsContainer}>
           <TouchableOpacity onPress={handleEdit} style={styles.iconButton}>
-            <MaterialIcons name="edit" size={20} color={iconColor} />
+            <MaterialIcons name='edit' size={20} color={iconColor} />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleDelete} style={styles.iconButton}>
-            <MaterialIcons name="delete" size={20} color={deleteIconColor} />
+            <MaterialIcons name='delete' size={20} color={deleteIconColor} />
           </TouchableOpacity>
         </View>
       )}
@@ -63,14 +66,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
+    flexDirection: 'column',
+    marginBottom: 10,
   },
   userName: {
-    fontWeight: 'bold',
+    fontWeight: 'medium',
+    fontSize: 12,
   },
   timestamp: {
+    top: -5,
     fontSize: 12,
     opacity: 0.7,
   },
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 3,
     marginLeft: 10,
-  }
+  },
 });
 
 export default CommentItem;

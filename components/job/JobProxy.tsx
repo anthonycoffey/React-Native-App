@@ -322,6 +322,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   phoneRow: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

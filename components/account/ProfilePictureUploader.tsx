@@ -23,6 +23,7 @@ export default function ProfilePictureUploader() {
   const iconColor = useThemeColor({}, 'icon');
   const backgroundColor = getBackgroundColor(colorScheme);
   const errorColor = Colors[colorScheme].errorText;
+  const placeholderBackgroundColor = useThemeColor({}, 'borderColor');
 
   if (!authContext) {
     return null;
@@ -115,7 +116,7 @@ export default function ProfilePictureUploader() {
           style={[
             localStyles.avatarPlaceholder,
             {
-              backgroundColor: useThemeColor({}, 'borderColor'),
+              backgroundColor: placeholderBackgroundColor,
             },
           ]}
         >

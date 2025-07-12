@@ -161,6 +161,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
 
   const styles = StyleSheet.create({
     galleryContainer: {
+      backgroundColor: 'transparent',
       flexDirection: 'row',
       flexWrap: 'wrap',
     },
@@ -200,6 +201,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
       paddingTop: 10,
       borderTopWidth: 1,
       borderTopColor: Colors[colorScheme ?? 'light'].borderColor,
+      backgroundColor: 'transparent',
       flexDirection: 'row',
       justifyContent: 'space-around',
       alignItems: 'center',
