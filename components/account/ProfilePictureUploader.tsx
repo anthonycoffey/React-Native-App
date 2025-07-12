@@ -12,7 +12,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Text, View } from '@/components/Themed';
 import { apiService } from '@/utils/ApiService';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getBackgroundColor, useThemeColor } from '@/hooks/useThemeColor';
+import { useThemeColor } from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
 
 export default function ProfilePictureUploader() {
@@ -21,7 +21,6 @@ export default function ProfilePictureUploader() {
   const [deleting, setDeleting] = useState(false);
   const colorScheme = useColorScheme() ?? 'light';
   const iconColor = useThemeColor({}, 'icon');
-  const backgroundColor = getBackgroundColor(colorScheme);
   const errorColor = Colors[colorScheme].errorText;
   const placeholderBackgroundColor = useThemeColor({}, 'borderColor');
 
@@ -105,7 +104,7 @@ export default function ProfilePictureUploader() {
   }
 
   return (
-    <View style={[localStyles.container, { backgroundColor: backgroundColor }]}>
+    <View style={[localStyles.container, { backgroundColor: 'transparent' }]}>
       {currentUser.avatar ? (
         <Image
           source={{ uri: currentUser.avatar }}
@@ -144,20 +143,20 @@ export default function ProfilePictureUploader() {
         </TouchableOpacity>
 
         {currentUser.avatar && (
-            <TouchableOpacity
-              onPress={deleteImage}
-              disabled={isLoading}
-              style={[
-                localStyles.iconButton,
-                isLoading && localStyles.disabledButton,
-              ]}
-            >
-              {deleting ? (
-                <ActivityIndicator size='small' color={errorColor} />
-              ) : (
-                <MaterialIcons name='delete' size={26} color={errorColor} />
-              )}
-            </TouchableOpacity>
+          <TouchableOpacity
+            onPress={deleteImage}
+            disabled={isLoading}
+            style={[
+              localStyles.iconButton,
+              isLoading && localStyles.disabledButton,
+            ]}
+          >
+            {deleting ? (
+              <ActivityIndicator size='small' color={errorColor} />
+            ) : (
+              <MaterialIcons name='delete' size={26} color={errorColor} />
+            )}
+          </TouchableOpacity>
         )}
       </View>
     </View>
@@ -168,7 +167,8 @@ const localStyles = StyleSheet.create({
   container: {
     alignItems: 'center',
     backgroundColor: 'transparent',
-    padding: 5,
+    padding: 10,
+    borderRadius: 8,
   },
   avatar: {
     width: 100,

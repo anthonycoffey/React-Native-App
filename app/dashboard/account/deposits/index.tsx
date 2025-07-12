@@ -18,7 +18,6 @@ import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
 import { formatDateTime } from '@/utils/dates';
 import { router } from 'expo-router';
-import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
 
 interface CashIntakeForDeposit {
   id: number | string;
@@ -42,11 +41,6 @@ export default function DepositsListScreen() {
 
   const [deposits, setDeposits] = useState<Deposit[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useAndroidBackHandler(() => {
-    router.replace('/dashboard/account');
-    return true;
-  });
 
   useEffect(() => {
     loadDeposits();

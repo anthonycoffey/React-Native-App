@@ -14,7 +14,6 @@ import Card from '@/components/Card';
 import { CardTitle, LabelText } from '@/components/Typography';
 import globalStyles from '@/styles/globalStyles';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
 import DepositFiles from '@/components/deposit/DepositFiles';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
@@ -59,11 +58,6 @@ export default function SingleDepositScreen() {
 
   const [deposit, setDeposit] = useState<SingleDeposit | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useAndroidBackHandler(() => {
-    router.replace('/dashboard/account/deposits');
-    return true;
-  });
 
   const loadDepositDetails = useCallback(async () => {
     setLoading(true);
