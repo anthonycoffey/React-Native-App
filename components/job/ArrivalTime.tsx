@@ -10,6 +10,7 @@ import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getBorderColor, getTextColor } from '@/hooks/useThemeColor';
+import Card from '@/components/Card';
 
 type ArrivalTimeProps = {
   timestamp?: string;
@@ -97,9 +98,11 @@ export default function ArrivalTime({
   };
 
   return (
-    <View style={{ backgroundColor: 'transparent' }}>
+    <Card>
       <CardTitle>Arrival Time</CardTitle>
-      <View style={[styles.pickerContainer, { backgroundColor: 'transparent' }]}>
+      <View
+        style={[styles.pickerContainer, { backgroundColor: 'transparent' }]}
+      >
         {Platform.OS === 'ios' && (
           <>
             <DateTimePicker
@@ -185,7 +188,7 @@ export default function ArrivalTime({
           />
         </View>
       )}
-    </View>
+    </Card>
   );
 }
 

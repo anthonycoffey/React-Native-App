@@ -13,6 +13,7 @@ import {
 } from '@/hooks/useThemeColor';
 import { centsToDollars } from '@/utils/money';
 import { formatDateTime } from '@/utils/dates'; // Assuming this utility exists
+import Card from '@/components/Card';
 
 type Props = {
   job: Job;
@@ -29,44 +30,54 @@ export default function JobPaymentsList({ job }: Props) {
       ]}
     >
       <View style={styles.paymentRow}>
-        <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>Date:</Text>
+        <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>
+          Date:
+        </Text>
         <Text style={[styles.paymentValue, { color: getTextColor(theme) }]}>
           {formatDateTime(item.createdAt)}
         </Text>
       </View>
       <View style={styles.paymentRow}>
-        <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>Type:</Text>
+        <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>
+          Type:
+        </Text>
         <Text style={[styles.paymentValue, { color: getTextColor(theme) }]}>
           {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
         </Text>
       </View>
       <View style={styles.paymentRow}>
-        <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>Amount:</Text>
+        <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>
+          Amount:
+        </Text>
         <Text style={[styles.paymentValue, { color: getTextColor(theme) }]}>
           {centsToDollars(item.amount)}
         </Text>
       </View>
       {item.tip && item.tip > 0 ? (
         <View style={styles.paymentRow}>
-          <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>Tip:</Text>
+          <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>
+            Tip:
+          </Text>
           <Text style={[styles.paymentValue, { color: getTextColor(theme) }]}>
             {centsToDollars(item.tip)}
           </Text>
         </View>
       ) : null}
       {item.status ? (
-         <View style={styles.paymentRow}>
-           <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>Status:</Text>
-           <Text style={[styles.paymentValue, { color: getTextColor(theme) }]}>
-             {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-           </Text>
-         </View>
+        <View style={styles.paymentRow}>
+          <Text style={[styles.paymentLabel, { color: getTextColor(theme) }]}>
+            Status:
+          </Text>
+          <Text style={[styles.paymentValue, { color: getTextColor(theme) }]}>
+            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+          </Text>
+        </View>
       ) : null}
     </View>
   );
 
   return (
-    <ThemedView style={{ backgroundColor: 'transparent' }}>
+    <Card>
       <CardTitle style={{ color: getTextColor(theme), marginBottom: 10 }}>
         Payment History
       </CardTitle>
@@ -78,11 +89,13 @@ export default function JobPaymentsList({ job }: Props) {
           scrollEnabled={false} // If inside a ScrollView
         />
       ) : (
-        <Text style={[styles.emptyText, { color: getPlaceholderTextColor(theme) }]}>
+        <Text
+          style={[styles.emptyText, { color: getPlaceholderTextColor(theme) }]}
+        >
           No payments recorded for this job.
         </Text>
       )}
-    </ThemedView>
+    </Card>
   );
 }
 

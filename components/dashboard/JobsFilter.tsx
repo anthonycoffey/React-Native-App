@@ -71,7 +71,6 @@ export default function JobsFilter({
   return (
     <View style={styles.filtersContainer}>
       <View style={styles.filterItem}>
-        {/* <LabelText style={styles.filterLabel}>Filter by Status:</LabelText> */}
         <DropDownPicker
           open={scopeOpen}
           value={currentScope}
@@ -90,7 +89,6 @@ export default function JobsFilter({
         />
       </View>
       <View style={styles.filterItem}>
-        {/* <LabelText style={styles.filterLabel}>Sort by:</LabelText> */}
         <DropDownPicker
           open={sortOpen}
           value={currentSortBy}
@@ -116,17 +114,12 @@ const styles = StyleSheet.create({
   filtersContainer: {
     flexDirection: 'row',
     paddingHorizontal: 10,
-    marginTop: 5,
+    marginTop: 10,
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 5,
   },
   filterItem: {
     flex: 1,
-  },
-  filterLabel: {
-    marginBottom: 4,
-    fontSize: 12,
-    fontWeight: 'bold',
   },
 });

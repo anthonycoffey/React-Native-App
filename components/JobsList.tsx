@@ -139,23 +139,21 @@ export default function JobsList({
               <View style={{ backgroundColor: 'transparent' }}>
                 <View style={styles.row}>
                   <MaterialIcons
-                    name='schedule'
+                    name='directions-car'
                     size={18}
                     color='#687076'
                     style={styles.icon}
                   />
-                  <Text style={styles.label}>ETA:</Text>
                   <Text>{formatRelative(item.arrivalTime)}</Text>
                 </View>
 
                 <View style={styles.row}>
                   <MaterialIcons
-                    name='event'
+                    name='schedule'
                     size={18}
                     color='#687076'
                     style={styles.icon}
                   />
-                  <Text style={styles.label}>Arrival:</Text>
                   <Text>{formatDateTime(item.arrivalTime)}</Text>
                 </View>
 
@@ -166,10 +164,25 @@ export default function JobsList({
                     color='#687076'
                     style={styles.icon}
                   />
-                  <Text style={styles.label}>Address:</Text>
-                  <Text numberOfLines={2} style={styles.addressText}>
-                    {item.Address?.short}
-                  </Text>
+                    <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+                    <Text style={styles.addressText}>
+                      {item.Address?.address_1}
+                    </Text>
+                    {item.Address?.address_2 ? (
+                      <Text style={styles.addressText}>
+                      {item.Address.address_2}
+                      </Text>
+                    ) : null}
+                    <Text style={styles.addressText}>
+                      {[
+                      item.Address?.city,
+                      item.Address?.state,
+                      item.Address?.zipcode,
+                      ]
+                      .filter(Boolean)
+                      .join(', ')}
+                    </Text>
+                    </View>
                 </View>
               </View>
 

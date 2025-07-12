@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  View,
   Image,
   StyleSheet,
   Alert,
@@ -10,10 +9,10 @@ import {
 import * as DocumentPicker from 'expo-document-picker';
 import { useAuth } from '@/contexts/AuthContext';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Text } from '@/components/Themed';
+import { Text, View } from '@/components/Themed';
 import { apiService } from '@/utils/ApiService';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { getBackgroundColor, useThemeColor } from '@/hooks/useThemeColor';
 // globalStyles import might become unused if this is the only usage.
 // Linter will handle if it's truly unused after the change.
 import globalStyles from '@/styles/globalStyles';
@@ -25,6 +24,7 @@ export default function ProfilePictureUploader() {
   const [deleting, setDeleting] = useState(false);
   const colorScheme = useColorScheme() ?? 'light';
   const iconColor = useThemeColor({}, 'icon');
+  const backgroundColor = getBackgroundColor(colorScheme);
   const errorColor = Colors[colorScheme].errorText;
 
   if (!authContext) {
@@ -107,7 +107,7 @@ export default function ProfilePictureUploader() {
   }
 
   return (
-    <View style={localStyles.container}>
+    <View style={[localStyles.container, { backgroundColor: backgroundColor }]}>
       {currentUser.avatar ? (
         <Image
           source={{ uri: currentUser.avatar }}
@@ -146,8 +146,6 @@ export default function ProfilePictureUploader() {
         </TouchableOpacity>
 
         {currentUser.avatar && (
-          <>
-            <View style={{ width: 10 }} />
             <TouchableOpacity
               onPress={deleteImage}
               disabled={isLoading}
@@ -162,7 +160,6 @@ export default function ProfilePictureUploader() {
                 <MaterialIcons name='delete' size={26} color={errorColor} />
               )}
             </TouchableOpacity>
-          </>
         )}
       </View>
     </View>
@@ -172,7 +169,8 @@ export default function ProfilePictureUploader() {
 const localStyles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginVertical: 0,
+    backgroundColor: 'transparent',
+    padding: 5,
   },
   avatar: {
     width: 100,
@@ -190,6 +188,7 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   iconButton: {
     padding: 8,

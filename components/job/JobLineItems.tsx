@@ -22,6 +22,7 @@ import {
   getInputBackgroundColor,
   getIconColor, // Added import
 } from '@/hooks/useThemeColor';
+import Card from '@/components/Card';
 
 type Props = {
   job: Job;
@@ -227,7 +228,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
   const colorScheme = useColorScheme() ?? 'light';
 
   return (
-    <View style={{ backgroundColor: 'transparent' }}>
+    <Card>
       <CardTitle>Services</CardTitle>
 
       {job.JobLineItems && job.JobLineItems.length > 0 ? (
@@ -441,7 +442,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
           </View>
         </View>
       </Modal>
-    </View>
+    </Card>
   );
 }
 

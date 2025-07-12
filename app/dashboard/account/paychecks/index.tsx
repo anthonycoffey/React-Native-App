@@ -193,7 +193,6 @@ const localStyles = StyleSheet.create({
   itemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
     backgroundColor: 'transparent',
   },
   itemLabel: {
@@ -204,6 +203,6 @@ const localStyles = StyleSheet.create({
     fontSize: 16,
   },
   listContent: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
   },
 });

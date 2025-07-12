@@ -126,51 +126,27 @@ export default function JobPage() {
           contentContainerStyle={styles.contentContainer}
           nestedScrollEnabled={true}
         >
-          <Card>
-            <JobStatus job={job} fetchJob={fetchJob} />
-          </Card>
-          <Card>
-            <JobProxy job={job} refetchJob={fetchJob} />
-          </Card>
-          <Card>
-            <JobDetailsAndMapButtons job={job} fetchJob={fetchJob} />
-          </Card>
-          <Card>
-            <ArrivalTime
-              timestamp={job.arrivalTime}
-              jobId={job.id}
-              fetchJob={fetchJob}
-            />
-          </Card>
-          <Card>
-            <JobLineItems job={job} fetchJob={fetchJob} />
-          </Card>
-          <Card>
-            <Discounts job={job} fetchJob={fetchJob} />
-          </Card>
-          <Card>
-            <JobReferralCode job={job} fetchJob={fetchJob} />
-          </Card>
-          <Card>
-            <Invoice job={job} fetchJob={fetchJob} />
-          </Card>
-          <Card>
-            <TakePayment job={job} fetchJob={fetchJob} />
-          </Card>
-          <Card>
-            <JobPaymentsList job={job} />
-          </Card>
-          <Card>
-            <JobFiles job={job} fetchJob={fetchJob} />
-          </Card>
-          <Card>
-            <JobComments
-              jobId={job.id}
-              jobComments={job.JobComments || []}
-              currentUserId={currentUserId}
-              fetchJob={fetchJob}
-            />
-          </Card>
+          <JobStatus job={job} fetchJob={fetchJob} />
+          <JobProxy job={job} refetchJob={fetchJob} />
+          <JobDetailsAndMapButtons job={job} fetchJob={fetchJob} />
+          <ArrivalTime
+            timestamp={job.arrivalTime}
+            jobId={job.id}
+            fetchJob={fetchJob}
+          />
+          <JobLineItems job={job} fetchJob={fetchJob} />
+          <Discounts job={job} fetchJob={fetchJob} />
+          <JobReferralCode job={job} fetchJob={fetchJob} />
+          <Invoice job={job} fetchJob={fetchJob} />
+          <TakePayment job={job} fetchJob={fetchJob} />
+          <JobPaymentsList job={job} />
+          <JobFiles job={job} fetchJob={fetchJob} />
+          <JobComments
+            jobId={job.id}
+            jobComments={job.JobComments || []}
+            currentUserId={currentUserId}
+            fetchJob={fetchJob}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </ThemedView>

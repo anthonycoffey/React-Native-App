@@ -177,6 +177,11 @@ This document tracks what works, what's left to build, the current status, known
   - Implemented state management to cycle through flash modes ('on', 'off', 'auto') for photos.
   - Implemented torch functionality for video recording.
   - The selected flash/torch mode is now applied to the `CameraView` using the `flash` and `enableTorch` props.
+- **Single Deposit Page Layout Standardization:**
+  - Refactored `app/dashboard/account/deposits/[id].tsx` to improve styling consistency.
+  - Replaced custom local styles with standardized `HeaderText` and `LabelText` typography components.
+  - Wrapped all content sections in `Card` components to align with the app's visual structure.
+  - Standardized page padding for a uniform look and feel.
 
 ## What's Left to Build
 

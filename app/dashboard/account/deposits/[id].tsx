@@ -8,13 +8,10 @@ import {
 } from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
-import {
-  getBackgroundColor,
-  getBorderColor,
-  getTextColor,
-} from '@/hooks/useThemeColor';
+import { getBackgroundColor, getBorderColor } from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
 import Card from '@/components/Card';
+import { HeaderText, LabelText } from '@/components/Typography';
 import globalStyles from '@/styles/globalStyles';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
@@ -158,24 +155,18 @@ export default function SingleDepositScreen() {
       ]}
       contentContainerStyle={{
         flexGrow: 1,
-        justifyContent: 'center',
-        padding: 10,
       }}
     >
-      <Text style={[globalStyles.title, { textAlign: 'left' }]}>#CD-{deposit.id}</Text>
+      <HeaderText style={{ marginVertical: 10, paddingHorizontal: 10 }}>
+        Deposit #CD-{deposit.id}
+      </HeaderText>
 
       <Card>
-        <Text style={[localStyles.label, { color: getTextColor(colorScheme) }]}>
-          Deposited Amount:
-        </Text>
-        <Text style={[localStyles.value, { color: getTextColor(colorScheme) }]}>
-          {centsToDollars(deposit.amount)}
-        </Text>
+        <LabelText>Deposited Amount:</LabelText>
+        <Text style={localStyles.value}>{centsToDollars(deposit.amount)}</Text>
 
-        <Text style={[localStyles.label, { color: getTextColor(colorScheme) }]}>
-          Date:
-        </Text>
-        <Text style={[localStyles.value, { color: getTextColor(colorScheme) }]}>
+        <LabelText>Date:</LabelText>
+        <Text style={localStyles.value}>
           {formatDateTime(deposit.createdAt)}
         </Text>
       </Card>
@@ -197,30 +188,27 @@ export default function SingleDepositScreen() {
       </Card>
 
       {deposit && deposit.id && (
-        <ThemedView style={{ marginTop: 15 }}>
+        <Card>
           <Text style={globalStyles.subtitle}>Proof of Deposit</Text>
           <DepositFiles
             depositId={deposit.id}
             files={deposit.CashDepositFiles || []}
             onFilesUpdate={loadDepositDetails}
           />
-        </ThemedView>
+        </Card>
       )}
     </ScrollView>
   );
 }
 
 const localStyles = StyleSheet.create({
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
   value: {
     fontSize: 16,
     marginBottom: 12,
+    marginLeft: 8,
   },
   intakeItemRow: {
+    backgroundColor: 'transparent',
     paddingVertical: 10,
     borderBottomWidth: 1,
   },

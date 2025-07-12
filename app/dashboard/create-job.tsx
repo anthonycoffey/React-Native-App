@@ -604,7 +604,6 @@ export default function CreateJobScreen() {
                 }}
                 style={styles.flexButton}
               />
-              <View style={{ width: 10 }} />
               <OutlinedButton
                 title='Existing'
                 onPress={() => {
@@ -657,7 +656,6 @@ export default function CreateJobScreen() {
                   onPress={() => setNewCustomerModalVisible(true)}
                   style={styles.flexButton}
                 />
-                <View style={{ width: 10 }} />
                 <OutlinedButton
                   title='Clear New Customer'
                   variant='error'
@@ -863,13 +861,13 @@ export default function CreateJobScreen() {
                 keyboardType='phone-pad'
                 editable={!loading}
               />
+
               <View style={styles.buttonRow}>
                 <OutlinedButton
                   title='Cancel'
                   onPress={handleCancelNewCustomerModal}
                   style={styles.flexButton}
                 />
-                <View style={{ width: 10 }} />
                 <PrimaryButton
                   title='Save Customer'
                   onPress={handleSaveNewCustomer}
@@ -1332,9 +1330,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonRow: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
+    gap: 10,
   },
   flexButton: {
     flex: 1,

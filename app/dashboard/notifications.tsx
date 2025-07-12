@@ -7,7 +7,8 @@ import Colors from '@/constants/Colors';
 import { formatDateTime } from '@/utils/dates';
 
 export default function NotificationsScreen() {
-  const { notifications, markAllAsRead, clearAll, refreshNotifications } = useNotificationsContext();
+  const { notifications, markAllAsRead, clearAll, refreshNotifications } =
+    useNotificationsContext();
   const colorScheme = useColorScheme() ?? 'light';
 
   useEffect(() => {
@@ -16,23 +17,49 @@ export default function NotificationsScreen() {
   }, []);
 
   const renderItem = ({ item }: { item: StoredNotification }) => (
-    <View style={[styles.notificationItem, { backgroundColor: Colors[colorScheme].card }]}>
-      <Text style={[styles.notificationTitle, { color: Colors[colorScheme].text }]}>{item.title}</Text>
+    <View
+      style={[
+        styles.notificationItem,
+        { backgroundColor: Colors[colorScheme].card },
+      ]}
+    >
+      <Text
+        style={[styles.notificationTitle, { color: Colors[colorScheme].text }]}
+      >
+        {item.title}
+      </Text>
       <Text style={{ color: Colors[colorScheme].text }}>{item.body}</Text>
-      <Text style={styles.notificationDate}>{formatDateTime(item.date) || 'Invalid Date'}</Text>
+      <Text style={styles.notificationDate}>
+        {formatDateTime(item.date) || 'Invalid Date'}
+      </Text>
     </View>
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: Colors[colorScheme].background }]}>
-      <Button title="Clear All" onPress={clearAll} />
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].background },
+      ]}
+    >
+      <Button title='Clear All' onPress={clearAll} />
       <FlatList
         data={notifications}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         onRefresh={refreshNotifications}
         refreshing={false}
-        ListEmptyComponent={<Text style={{ color: Colors[colorScheme].text, textAlign: 'center', marginTop: 20 }}>No notifications</Text>}
+        ListEmptyComponent={
+          <Text
+            style={{
+              color: Colors[colorScheme].text,
+              textAlign: 'center',
+              marginTop: 20,
+            }}
+          >
+            No notifications
+          </Text>
+        }
       />
     </View>
   );
@@ -45,8 +72,8 @@ const styles = StyleSheet.create({
   },
   notificationItem: {
     padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
+    borderRadius: 8,
+    marginVertical: 5,
   },
   notificationTitle: {
     fontSize: 16,

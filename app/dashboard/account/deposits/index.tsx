@@ -73,13 +73,17 @@ export default function DepositsListScreen() {
   };
 
   const renderDepositCard = ({ item }: { item: Deposit }) => (
-    <TouchableOpacity
-      onPress={() => router.push(`/dashboard/account/deposits/${item.id}`)}
-    >
-      <Card style={localStyles.card}>
+    <Card>
+      <TouchableOpacity
+        onPress={() => router.push(`/dashboard/account/deposits/${item.id}`)}
+      >
         <View style={localStyles.cardHeader}>
-   
-          <Text style={[localStyles.depositId, { color: getTextColor(colorScheme) }]}>
+          <Text
+            style={[
+              localStyles.depositId,
+              { color: getTextColor(colorScheme) },
+            ]}
+          >
             CD-{item.id}
           </Text>
         </View>
@@ -90,7 +94,12 @@ export default function DepositsListScreen() {
               size={20}
               color={getIconColor(colorScheme)}
             />
-            <Text style={[localStyles.infoText, { color: getTextColor(colorScheme) }]}>
+            <Text
+              style={[
+                localStyles.infoText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
               {formatDateTime(item.createdAt)}
             </Text>
           </View>
@@ -100,7 +109,12 @@ export default function DepositsListScreen() {
               size={20}
               color={getIconColor(colorScheme)}
             />
-            <Text style={[localStyles.infoText, { color: getTextColor(colorScheme) }]}>
+            <Text
+              style={[
+                localStyles.infoText,
+                { color: getTextColor(colorScheme) },
+              ]}
+            >
               {centsToDollars(item.amount)}
             </Text>
           </View>
@@ -111,15 +125,20 @@ export default function DepositsListScreen() {
                 size={20}
                 color={getIconColor(colorScheme)}
               />
-              <Text style={[localStyles.infoText, { color: getTextColor(colorScheme) }]}>
+              <Text
+                style={[
+                  localStyles.infoText,
+                  { color: getTextColor(colorScheme) },
+                ]}
+              >
                 {item.CashIntakes.length} cash intake
                 {item.CashIntakes.length === 1 ? '' : 's'}
               </Text>
             </View>
           )}
         </View>
-      </Card>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Card>
   );
 
   if (loading && deposits.length === 0) {
@@ -146,9 +165,13 @@ export default function DepositsListScreen() {
         data={deposits}
         renderItem={renderDepositCard}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={localStyles.listContainer}
         ListEmptyComponent={
-          <Text style={[localStyles.emptyText, { color: getTextColor(colorScheme) }]}>
+          <Text
+            style={[
+              localStyles.emptyText,
+              { color: getTextColor(colorScheme) },
+            ]}
+          >
             No deposits found.
           </Text>
         }
@@ -160,13 +183,6 @@ export default function DepositsListScreen() {
 }
 
 const localStyles = StyleSheet.create({
-  listContainer: {
-    // paddingHorizontal: 10,
-    // paddingTop: 10,
-  },
-  card: {
-    marginBottom: 10,
-  },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',

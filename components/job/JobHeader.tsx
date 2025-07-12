@@ -42,7 +42,6 @@ export default function JobHeader({ job, id }: Props) {
           color={iconColor}
           style={styles.icon}
         />
-        <LabelText>ETA</LabelText>
         <Text>{formatRelative(job.arrivalTime)}</Text>
       </View>
 
@@ -53,7 +52,6 @@ export default function JobHeader({ job, id }: Props) {
           color={iconColor}
           style={styles.icon}
         />
-        <LabelText>Arrival</LabelText>
         <Text>{formatDateTime(job.arrivalTime)}</Text>
       </View>
 
@@ -64,10 +62,25 @@ export default function JobHeader({ job, id }: Props) {
           color={iconColor}
           style={styles.icon}
         />
-        <LabelText>Address</LabelText>
-        <Text numberOfLines={2} style={styles.addressText}>
-          {job.Address?.short}
-        </Text>
+        <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+          <Text style={styles.addressText}>
+            {job.Address?.address_1}
+          </Text>
+          {job.Address?.address_2 ? (
+            <Text style={styles.addressText}>
+              {job.Address.address_2}
+            </Text>
+          ) : null}
+          <Text style={styles.addressText}>
+            {[
+              job.Address?.city,
+              job.Address?.state,
+              job.Address?.zipcode
+            ]
+              .filter(Boolean)
+              .join(', ')}
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -91,7 +104,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   icon: {
-    marginRight: 4,
+    marginRight: 10,
   },
   marginBottom: {
     marginBottom: 20,

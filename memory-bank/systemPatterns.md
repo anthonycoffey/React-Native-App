@@ -109,7 +109,7 @@ This document outlines the system architecture, key technical decisions, design 
     *   **Base UI (`components/`):**
         *   `Themed.tsx`: Provides theme-aware `Text` and `View` components.
         *   `Buttons.tsx`: Offers standardized `PrimaryButton`, `SecondaryButton`, `OutlinedButton`, `WarningButton`.
-        *   `Typography.tsx`: Collection of pre-styled text components (e.g., `LabelText`, `HeaderText`, `CardTitle`, `ErrorText`). `LabelText` now correctly uses themed text color.
+        *   `Typography.tsx`: Collection of pre-styled text components (e.g., `LabelText`, `HeaderText`, `CardTitle`, `ErrorText`). `CardTitle` is the standard for all section headers within cards. It can be used with style overrides for alignment (e.g., `style={{ textAlign: 'left' }}`). `LabelText` now correctly uses themed text color.
         *   `StyledText.tsx`: Provides `MonoText` for monospaced font rendering.
         *   `Card.tsx`: (Moved from `components/common/`) Provides a theme-aware card container. Uses page background, theme-aware border (`StyleSheet.hairlineWidth`), and theme-aware shadow for distinction. Standardized padding (15) and marginBottom (15).
         *   `Chip.tsx`: Displays small badge-like information (styling mostly hardcoded).
@@ -135,7 +135,7 @@ This document outlines the system architecture, key technical decisions, design 
     *   **Invoice-Specific UI (`components/job/invoice/`):**
         *   `CurrencyInput.tsx`: A themed version of currency input with formatting logic (potential redundancy with `components/CurrencyInput.tsx`).
     *   **Common Patterns:**
-        *   Many job-specific components are card-like, using `globalStyles.card` (this should be reviewed/updated to use the new `Card.tsx` where appropriate).
+        *   Job-specific components in `components/job/` are self-contained cards, each wrapping its content in the `<Card>` component.
         *   API interactions are common, typically followed by `fetchJob()` to refresh data.
         *   Modals are used for forms (add line item, cancel job) and confirmations.
         *   Extensive use of `useThemeColor` hooks for fine-grained theming of standard components.

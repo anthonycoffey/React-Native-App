@@ -26,6 +26,7 @@ import {
 import globalStyles from '@/styles/globalStyles';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
+import Card from '@/components/Card';
 
 interface JobProxyProps {
   job: Job;
@@ -153,7 +154,7 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
   };
 
   return (
-    <ThemedView style={{ backgroundColor: 'transparent' }}>
+    <Card>
       {job.proxy ? (
         <>
           <View style={[styles.titleRow, { backgroundColor: 'transparent' }]}>
@@ -297,7 +298,7 @@ export function JobProxy({ job, refetchJob }: JobProxyProps) {
           </View>
         </View>
       </Modal>
-    </ThemedView>
+    </Card>
   );
 }
 

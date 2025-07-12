@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import CommentItem from './CommentItem';
 import { JobComment } from '@/types';
-import { SecondaryButton } from '@/components/Buttons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useColorScheme } from '@/components/useColorScheme';
+import Colors, { ui } from '@/constants/Colors';
 
 const ITEMS_PER_PAGE = 3;
 
@@ -21,6 +23,7 @@ const CommentsList: React.FC<CommentsListProps> = ({
   onDeleteRequest,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const colorScheme = useColorScheme() ?? 'light';
 
   useEffect(() => {
     setCurrentPage(1);
@@ -64,21 +67,39 @@ const CommentsList: React.FC<CommentsListProps> = ({
       ))}
       {totalPages > 1 && (
         <View style={styles.paginationContainer}>
-          <SecondaryButton
-            title='Previous'
+          <TouchableOpacity
             onPress={goToPreviousPage}
             disabled={currentPage === 1}
             style={styles.paginationButton}
-          />
+          >
+            <MaterialIcons
+              name='keyboard-arrow-left'
+              size={24}
+              color={
+                currentPage === 1
+                  ? ui.disabled.text
+                  : Colors[colorScheme].text
+              }
+            />
+          </TouchableOpacity>
           <Text style={styles.pageInfoText}>
             Page {currentPage} of {totalPages}
           </Text>
-          <SecondaryButton
-            title='Next'
+          <TouchableOpacity
             onPress={goToNextPage}
             disabled={currentPage === totalPages}
             style={styles.paginationButton}
-          />
+          >
+            <MaterialIcons
+              name='keyboard-arrow-right'
+              size={24}
+              color={
+                currentPage === totalPages
+                  ? ui.disabled.text
+                  : Colors[colorScheme].text
+              }
+            />
+          </TouchableOpacity>
         </View>
       )}
     </ThemedView>
@@ -106,7 +127,6 @@ const styles = StyleSheet.create({
   paginationButton: {
     paddingHorizontal: 12,
     paddingVertical: 8,
-    minWidth: 80,
   },
   pageInfoText: {
     fontSize: 14,
