@@ -13,7 +13,7 @@ import Colors from '@/constants/Colors';
 import Card from '@/components/Card';
 import { CardTitle, LabelText } from '@/components/Typography';
 import globalStyles from '@/styles/globalStyles';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import DepositFiles from '@/components/deposit/DepositFiles';
 import { apiService } from '@/utils/ApiService';
 import { centsToDollars } from '@/utils/money';
@@ -51,7 +51,6 @@ interface SingleDeposit {
 
 export default function SingleDepositScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
   const themedActivityIndicatorColor =
     colorScheme === 'dark' ? Colors.dark.text : Colors.light.tint;

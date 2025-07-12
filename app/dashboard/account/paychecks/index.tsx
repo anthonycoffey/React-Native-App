@@ -14,7 +14,6 @@ import { Paycheck, PaginatedResponse, PaginationMeta } from '@/types';
 import { formatDateTime } from '@/utils/dates';
 import { centsToDollars } from '@/utils/money';
 import Card from '@/components/Card';
-import { router } from 'expo-router';
 
 export default function PaychecksScreen() {
   const auth = useAuth();
