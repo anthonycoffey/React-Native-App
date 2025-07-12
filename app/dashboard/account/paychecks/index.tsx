@@ -15,7 +15,6 @@ import { formatDateTime } from '@/utils/dates';
 import { centsToDollars } from '@/utils/money';
 import Card from '@/components/Card';
 import { router } from 'expo-router';
-import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
 
 export default function PaychecksScreen() {
   const auth = useAuth();
@@ -29,11 +28,6 @@ export default function PaychecksScreen() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useAndroidBackHandler(() => {
-    router.replace('/dashboard/account');
-    return true;
-  });
 
   const fetchPaychecks = useCallback(
     async (page = 1) => {

@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Tabs, useRouter, Redirect, Link } from 'expo-router';
+import { Tabs, useRouter, Redirect, Link, usePathname } from 'expo-router';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { ActivityIndicator, View, Pressable } from 'react-native';
+import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
 import NotificationBell from '@/components/dashboard/NotificationBell';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -20,6 +21,24 @@ export default function TabLayout() {
   const colorScheme = useColorScheme() ?? 'light';
   const auth = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+
+  useAndroidBackHandler(() => {
+    if (pathname.startsWith('/dashboard/job/')) {
+      router.replace('/dashboard');
+      return true;
+    }
+
+    if (
+      pathname.startsWith('/dashboard/account/') &&
+      pathname !== '/dashboard/account'
+    ) {
+      router.replace('/dashboard/account');
+      return true;
+    }
+
+    return false;
+  });
 
   useEffect(() => {
     if (auth && !auth.isLoading && !auth.session) {
