@@ -10,6 +10,7 @@ import { centsToDollars } from '@/utils/money';
 import { View, Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getBackgroundColor } from '@/hooks/useThemeColor';
+import Card from '@/components/Card';
 
 interface Props {
   job: Job;
@@ -19,7 +20,7 @@ interface Props {
 export default function TakePayment({
   job,
   fetchJob,
-}: Props): React.JSX.Element {
+}: Props): React.JSX.Element | null {
   const [payWithCash, setPayWithCash] = useState<boolean>(false);
   const [paymentType, setPaymentType] = useState<'cash' | 'card'>('card');
   const [amountToPay, setAmountToPay] = useState<string>('');
@@ -29,6 +30,10 @@ export default function TakePayment({
   const hasActiveInvoice = job.Invoices?.some((invoice: Invoice) =>
     ['pending', 'partially-paid', 'sent'].includes(invoice.status)
   );
+
+  if (job.status === 'paid' || !hasActiveInvoice) {
+    return null;
+  }
 
   useEffect(() => {
     const pendingInvoice = job.Invoices?.find(
@@ -61,32 +66,28 @@ export default function TakePayment({
   const colorScheme = useColorScheme() ?? 'light';
 
   return (
-    <View style={{ backgroundColor: 'transparent' }}>
-      {job.status !== 'paid' && hasActiveInvoice ? (
-        <>
-          <CardTitle>Take Payment</CardTitle>
-          <View style={styles.inputsRow}>
-            <View style={styles.inputContainer}>
-              <CurrencyInput
-                label={'Amount'}
-                value={amountToPay}
-                readOnly={true}
-                editable={false}
-                onChangeText={(value: string) => setAmountToPay(value)}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <CurrencyInput
-                label={'Tip'}
-                value={tipAmount}
-                onChangeText={(value: string) => setTipAmount(value)}
-              />
-            </View>
-          </View>
-        </>
-      ) : null}
+    <Card>
+      <CardTitle>Take Payment</CardTitle>
+      <View style={styles.inputsRow}>
+        <View style={styles.inputContainer}>
+          <CurrencyInput
+            label={'Amount'}
+            value={amountToPay}
+            readOnly={true}
+            editable={false}
+            onChangeText={(value: string) => setAmountToPay(value)}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <CurrencyInput
+            label={'Tip'}
+            value={tipAmount}
+            onChangeText={(value: string) => setTipAmount(value)}
+          />
+        </View>
+      </View>
 
-      {job.status !== 'paid' && hasActiveInvoice && amountToPay && (
+      {amountToPay && (
         <View style={styles.buttonsRow}>
           <TouchableOpacity
             style={[styles.paymentButton, styles.cashButton]}
@@ -149,7 +150,9 @@ export default function TakePayment({
           </View>
         </View>
       </Modal>
-    </View>
+
+      
+    </Card>
   );
 }
 

@@ -8,6 +8,14 @@ Standardizing the app's visual theme and layout.
 
 ## Recent Changes
 
+- **Standardized Section Titles:**
+  - Refactored all section titles in `components/job/` to use the standardized `CardTitle` component from `components/Typography.tsx`.
+  - Removed local title styles from `components/job/JobComments.tsx` and `components/job/JobFiles.tsx`.
+  - Applied style overrides to `CardTitle` where necessary to handle different alignments (e.g., left-aligned titles next to icons).
+- **Encapsulated Job Components in Cards:**
+  - Refactored all components on the job details page (`app/job/[id].tsx`) to be self-contained cards.
+  - Each component now wraps its content in the `<Card>` component, making them more modular and reusable.
+  - Cleaned up `app/job/[id].tsx` by removing the redundant `<Card>` wrappers.
 - **Modernized Job Page Layout:**
   - Refactored the `app/job/[id].tsx` page to use the standardized `Card` component for all sections, creating a consistent and modern layout.
   - Removed old card styles from child components (`JobStatus`, `JobProxy`, etc.) to prevent style conflicts and improve code maintainability.
@@ -226,6 +234,11 @@ Standardizing the app's visual theme and layout.
   - Updated `components/job/CameraCaptureModal.tsx` to include a flash control button.
   - Added state to manage the flash mode ('on', 'off', 'auto') for photos and the torch mode for videos.
   - The flash setting is now passed to the `CameraView` component using the `flash` and `enableTorch` props.
+- **Standardized Single Deposit Page Layout:**
+  - Refactored `app/dashboard/account/deposits/[id].tsx` to align with the project's styling patterns.
+  - Replaced local text styles with standardized `HeaderText` and `LabelText` from `components/Typography.tsx`.
+  - Encapsulated all content sections within `Card` components for a consistent look and feel.
+  - Adjusted page padding to be consistent with other screens.
 
 ## Next Steps
 

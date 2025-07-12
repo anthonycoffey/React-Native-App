@@ -168,20 +168,22 @@ export default function CustomerInfo({
         <View style={styles.labelContainer}>
           <LabelText>Address</LabelText>
           <TouchableOpacity
-            onPress={() => setIsEditAddressModalVisible(true)}
-            style={styles.editIcon}
+        onPress={() => setIsEditAddressModalVisible(true)}
+        style={styles.editIcon}
           >
-            <MaterialIcons name='edit' size={20} color={iconColor} />
+        <MaterialIcons name='edit' size={20} color={iconColor} />
           </TouchableOpacity>
         </View>
-
         <TextInput
           editable={false}
-          value={
-            serviceAddress
-              ? `${serviceAddress.address_1 || ''}\n${serviceAddress.address_2 || ''}\n${serviceAddress.city || ''}, ${serviceAddress.state || ''}\n${serviceAddress.zipcode || ''}`
-              : ''
-          }
+          value={[
+        serviceAddress?.address_1,
+        serviceAddress?.address_2,
+        [serviceAddress?.city, serviceAddress?.state].filter(Boolean).join(', '),
+        serviceAddress?.zipcode,
+          ]
+        .filter(Boolean)
+        .join('\n')}
           style={[inputStyles, styles.addressInput]}
           multiline
         />

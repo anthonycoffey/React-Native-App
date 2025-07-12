@@ -9,12 +9,14 @@ import { ErrorText, HeaderText } from '@/components/Typography';
 import { View } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
+import Card from '@/components/Card';
 
 import {
   OutlinedButton,
   PrimaryButton,
   WarningButton,
 } from '@/components/Buttons';
+import { getBackgroundColor } from '@/hooks/useThemeColor';
 
 type Props = {
   job: Job;
@@ -27,6 +29,8 @@ export default function JobStatus({ job, fetchJob }: Props) {
   const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false);
   const [cannotCancel, setCannotCancel] = useState<boolean>(false);
   const [isFinishDisabled, setIsFinishDisabled] = useState<boolean>(false);
+
+    const backgroundColor = getBackgroundColor(colorScheme);
 
   React.useEffect(() => {
     const finishDisabled =
@@ -126,12 +130,12 @@ export default function JobStatus({ job, fetchJob }: Props) {
   };
 
   return (
-    <View style={{ backgroundColor: 'transparent' }}>
+    <Card>
       <JobHeader job={job} id={job.id} />
 
       {job.status === 'in-progress' &&
         (!job.Invoices || job.Invoices.length === 0) && (
-          <View style={styles.marginTop}>
+          <View style={[styles.marginTop, { backgroundColor: backgroundColor }]}>
             <ErrorText>
               You must generate an invoice before finishing a job.
             </ErrorText>
@@ -141,7 +145,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
       {job.status === 'in-progress' &&
         (job.Invoices ?? []).length > 0 &&
         job.paymentStatus !== 'paid' && (
-          <View style={styles.marginTop}>
+          <View style={[styles.marginTop, { backgroundColor: backgroundColor }]}>
             <ErrorText>
               You must accept payment before finishing a job.
             </ErrorText>
@@ -264,7 +268,7 @@ export default function JobStatus({ job, fetchJob }: Props) {
           </View>
         </View>
       </Modal>
-    </View>
+    </Card>
   );
 }
 
@@ -274,6 +278,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   marginTop: {
+    
     marginTop: 10,
   },
   modalBackground: {

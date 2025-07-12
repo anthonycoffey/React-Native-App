@@ -9,6 +9,7 @@ import { PrimaryButton } from '@/components/Buttons';
 import { apiService } from '@/utils/ApiService';
 import DiscountList from './DiscountList';
 import DiscountFormModal from './modals/DiscountFormModal';
+import Card from '@/components/Card';
 
 type Props = {
   job: Job;
@@ -71,9 +72,13 @@ export default function Discounts({ job, fetchJob }: Props) {
   };
 
   return (
-    <View style={{ backgroundColor: 'transparent' }}>
+    <Card>
       <View style={styles.headerContainer}>
-        <CardTitle style={{ color: getTextColor(theme) }}>Discounts</CardTitle>
+        <CardTitle
+          style={{ color: getTextColor(theme), textAlign: 'left', flex: 1 }}
+        >
+          Discounts
+        </CardTitle>
         <Text style={[styles.totalText, { color: getTextColor(theme) }]}>
           {centsToDollars(discountsTotal)}
         </Text>
@@ -110,7 +115,7 @@ export default function Discounts({ job, fetchJob }: Props) {
         isLoading={isLoading}
         jobId={job.id}
       />
-    </View>
+    </Card>
   );
 }
 

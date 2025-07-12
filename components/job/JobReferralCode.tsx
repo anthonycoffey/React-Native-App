@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  View,
   Text,
   StyleSheet,
   TextInput,
@@ -10,10 +9,9 @@ import {
 import { Job } from '@/types';
 import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
-import { View as ThemedView } from '@/components/Themed';
+import { View  } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
-  getBackgroundColor,
   getTextColor,
   getBorderColor,
   getInputBackgroundColor,
@@ -21,6 +19,7 @@ import {
 } from '@/hooks/useThemeColor';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import { apiService } from '@/utils/ApiService';
+import Card from '@/components/Card';
 
 type Props = {
   job: Job;
@@ -91,7 +90,7 @@ export default function JobReferralCode({ job, fetchJob }: Props) {
   };
 
   return (
-    <ThemedView style={{ backgroundColor: 'transparent' }}>
+    <Card>
       <CardTitle style={{ color: getTextColor(theme), marginBottom: 10 }}>
         Referral Code
       </CardTitle>
@@ -138,7 +137,7 @@ export default function JobReferralCode({ job, fetchJob }: Props) {
           />
         </View>
       ) : null}
-    </ThemedView>
+    </Card>
   );
 }
 
@@ -148,12 +147,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
+    backgroundColor: 'transparent',
   },
   referralCodeText: {
     fontSize: 16,
     fontWeight: 'bold',
   },
   inputContainer: {
+    backgroundColor: 'transparent',
     marginTop: 8,
   },
   input: {

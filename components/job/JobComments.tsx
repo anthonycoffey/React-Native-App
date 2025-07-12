@@ -10,10 +10,12 @@ import { JobComment } from '@/types';
 import CommentsList from '@/components/job/CommentsList';
 import CommentModal from '@/components/job/CommentModal';
 import { PrimaryButton } from '@/components/Buttons';
-import { View as ThemedView, Text } from '@/components/Themed';
+import { View as ThemedView } from '@/components/Themed';
+import { CardTitle } from '@/components/Typography';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { MaterialIcons } from '@expo/vector-icons';
+import Card from '@/components/Card';
 
 interface JobCommentsProps {
   jobId: number;
@@ -150,7 +152,7 @@ const JobComments: React.FC<JobCommentsProps> = ({
     colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint;
 
   return (
-    <>
+    <Card>
       {loading && (
         <ThemedView style={styles.loadingOverlay}>
           <ActivityIndicator size='large' color={spinnerColor} />
@@ -161,9 +163,9 @@ const JobComments: React.FC<JobCommentsProps> = ({
           onPress={() => setIsCommentsCollapsed(!isCommentsCollapsed)}
           style={styles.collapsibleHeader}
         >
-          <Text style={styles.sectionTitle}>
+          <CardTitle style={{ textAlign: 'left', marginBottom: 0 }}>
             Comments ({jobComments?.length || 0})
-          </Text>
+          </CardTitle>
           <MaterialIcons
             name={
               isCommentsCollapsed ? 'keyboard-arrow-down' : 'keyboard-arrow-up'
@@ -201,7 +203,7 @@ const JobComments: React.FC<JobCommentsProps> = ({
         initialText={selectedComment?.text || ''}
         title={commentModalMode === 'add' ? 'Add New Comment' : 'Edit Comment'}
       />
-    </>
+    </Card>
   );
 };
 
@@ -212,10 +214,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   addCommentButton: {
     marginTop: 15,

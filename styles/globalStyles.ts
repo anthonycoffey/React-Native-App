@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
+    textAlign: 'center',
     marginBottom: 4,
     fontSize: 16,
     lineHeight: 24,

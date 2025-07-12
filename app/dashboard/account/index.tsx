@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  ActivityIndicator,
-  Alert,
-  View as RNView,
-} from 'react-native';
+import { ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import DeleteAccountModal from '@/components/account/DeleteAccountModal';
 import EditEmailModal from '@/components/account/EditEmailModal';
 import EditNameModal from '@/components/account/EditNameModal';
 import EditPhoneModal from '@/components/account/EditPhoneModal';
 import { IconButton } from '@/components/Buttons';
-import { Text, View as ThemedView } from '@/components/Themed';
+import { Text, View } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getBackgroundColor } from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
@@ -26,6 +20,7 @@ import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotificationsContext } from '@/contexts/NotificationsContext';
 import { formatPhoneNumber } from '@/utils/strings';
+import { CardTitle } from '@/components/Typography';
 
 interface AccountDetails {
   owedCash: number;
@@ -108,14 +103,14 @@ export default function AccountScreen() {
 
   if (isLoading) {
     return (
-      <ThemedView
+      <View
         style={[
           globalStyles.container,
           { justifyContent: 'center', alignItems: 'center', flex: 1 },
         ]}
       >
         <ActivityIndicator size='large' color={themedActivityIndicatorColor} />
-      </ThemedView>
+      </View>
     );
   }
 
@@ -126,15 +121,9 @@ export default function AccountScreen() {
         flexGrow: 1,
       }}
     >
-      <ThemedView style={[localStyles.sectionContainer, { paddingTop: 10 }]}>
-        <ProfilePictureUploader />
-      </ThemedView>
-
       <Card>
-        <Text style={[globalStyles.subtitle, { textAlign: 'center' }]}>
-          Account Info
-        </Text>
-        <RNView style={localStyles.infoRow}>
+      <ProfilePictureUploader />
+        <View style={localStyles.infoRow}>
           <Text style={localStyles.infoLabel}>Name</Text>
           <Text style={localStyles.infoValue}>
             {auth?.currentUser?.firstName} {auth?.currentUser?.lastName}
@@ -143,16 +132,16 @@ export default function AccountScreen() {
             iconName='edit'
             onPress={() => setIsEditNameModalVisible(true)}
           />
-        </RNView>
-        <RNView style={localStyles.infoRow}>
+        </View>
+        <View style={localStyles.infoRow}>
           <Text style={localStyles.infoLabel}>Email</Text>
           <Text style={localStyles.infoValue}>{auth?.currentUser?.email}</Text>
           <IconButton
             iconName='edit'
             onPress={() => setIsEditEmailModalVisible(true)}
           />
-        </RNView>
-        <RNView style={localStyles.infoRow}>
+        </View>
+        <View style={localStyles.infoRow}>
           <Text style={localStyles.infoLabel}>Phone</Text>
           <Text style={localStyles.infoValue}>
             {formatPhoneNumber(auth?.currentUser?.phone || '')}
@@ -161,36 +150,30 @@ export default function AccountScreen() {
             iconName='edit'
             onPress={() => setIsEditPhoneModalVisible(true)}
           />
-        </RNView>
+        </View>
       </Card>
 
       <Card>
-        <Text style={[globalStyles.subtitle, { textAlign: 'center' }]}>
-          Account Balance
-        </Text>
         <Text style={localStyles.balanceText}>
           Owed cash:{' '}
           {accountDetails ? centsToDollars(accountDetails.owedCash) : '$0.00'}
         </Text>
-        <ThemedView style={localStyles.buttonRow}>
+        <View style={localStyles.buttonRow}>
           <PrimaryButton
             title='View Deposits'
             onPress={() => router.push('/dashboard/account/deposits')}
             style={localStyles.flexButton}
           />
-          <ThemedView style={{ width: 10 }} />
           <OutlinedButton
             title='View Owed Cash'
             onPress={() => router.push('/dashboard/account/cash')}
             style={localStyles.flexButton}
           />
-        </ThemedView>
+        </View>
       </Card>
 
       <Card>
-        <Text style={[globalStyles.subtitle, { textAlign: 'center' }]}>
-          Owed Payouts
-        </Text>
+        <CardTitle>Owed Payouts</CardTitle>
         {accountDetails?.owedPayouts &&
         typeof accountDetails.owedPayouts.total === 'number' ? (
           <>
@@ -216,9 +199,7 @@ export default function AccountScreen() {
       </Card>
 
       <Card>
-        <Text style={[globalStyles.subtitle, { textAlign: 'center' }]}>
-          Paychecks
-        </Text>
+        <CardTitle>Paychecks</CardTitle>
         <PrimaryButton
           title='View Paychecks'
           onPress={() => router.push('/dashboard/account/paychecks')}
@@ -226,21 +207,27 @@ export default function AccountScreen() {
         />
       </Card>
 
-      <ThemedView style={[localStyles.sectionContainer, { marginBottom: 8 }]}>
+      <Card>
+        <CardTitle>Sign Out</CardTitle>
         <OutlinedButton
           title='Delete Account'
           variant='warning'
           onPress={handleDeleteAccountRequest}
-          style={{ marginBottom: 8 }}
+        />
+        <PrimaryButton
+          title='Log Out'
+          variant='error'
+          onPress={handleLogout}
+          style={{ marginTop: 8 }}
         />
         {/* <TestNotificationButton />
-        <PrimaryButton
-          title='Clear Notifications'
-          onPress={clearAllNotifications}
-          style={{ marginTop: 8 }}
-        /> */}
-        <PrimaryButton title='Log Out' variant='error' onPress={handleLogout} style={{ marginTop: 8 }}/>
-      </ThemedView>
+          <PrimaryButton
+            title='Clear Notifications'
+            onPress={clearAllNotifications}
+            style={{ marginTop: 8 }}
+          /> */}
+      </Card>
+
       <DeleteAccountModal
         visible={isDeleteModalVisible}
         onClose={() => setIsDeleteModalVisible(false)}
@@ -267,12 +254,13 @@ export default function AccountScreen() {
 
 const localStyles = StyleSheet.create({
   infoRow: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.light.tint,
+    borderBottomColor: Colors.light.borderColor,
   },
   infoLabel: {
     fontSize: 16,
@@ -304,6 +292,8 @@ const localStyles = StyleSheet.create({
     marginVertical: 5,
   },
   buttonRow: {
+    backgroundColor: 'transparent',
+    gap: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 15,

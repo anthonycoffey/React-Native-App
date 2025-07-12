@@ -214,7 +214,6 @@ export default function CashManagementScreen() {
           { borderBottomColor: getBorderColor(colorScheme) },
         ]}
       >
-        <Text style={globalStyles.title}>Cash Management</Text>
         <PrimaryButton
           title='Deposit'
           onPress={promptNewDeposit}
@@ -289,8 +288,9 @@ export default function CashManagementScreen() {
 
 const localStyles = StyleSheet.create({
   headerContainer: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 15,

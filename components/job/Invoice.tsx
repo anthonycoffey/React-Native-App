@@ -21,6 +21,7 @@ import {
   getBorderColor,
   getTextColor,
 } from '@/hooks/useThemeColor';
+import Card from '../Card';
 
 interface Props {
   job: Job;
@@ -122,7 +123,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
     (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4';
 
   return (
-    <View style={{ backgroundColor: 'transparent' }}>
+    <Card>
       <CardTitle>Invoices</CardTitle>
 
       {job.Invoices?.filter(
@@ -238,7 +239,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
           </View>
         </View>
       </Modal>
-    </View>
+    </Card>
   );
 }
 const styles = StyleSheet.create({

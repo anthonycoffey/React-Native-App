@@ -12,6 +12,7 @@ import globalStyles from '@/styles/globalStyles';
 import geocodeAddress from '@/utils/geocode';
 import { location, Job, availableAppsProps } from '@/types';
 import { View, Text } from '@/components/Themed';
+import Card from '@/components/Card';
 
 type Props = {
   job: Job;
@@ -69,9 +70,8 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
     })();
   }, [location]);
 
-
   return (
-    <View style={{ backgroundColor: 'transparent' }}>
+    <Card>
       <CardTitle>Job Details</CardTitle>
       <CustomerInfo job={job} location={location} fetchJob={fetchJob} />
 
@@ -83,7 +83,7 @@ export default function JobDetailsAndMapButtons({ job, fetchJob }: Props) {
           </Pressable>
         ))}
       </View>
-    </View>
+    </Card>
   );
 }
 

@@ -15,10 +15,12 @@ import { Job, JobFile } from '@/types';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Text as ThemedText, View as ThemedView } from '@/components/Themed';
+import { CardTitle } from '@/components/Typography';
 import { PrimaryButton } from '@/components/Buttons';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import CameraCaptureModal from './CameraCaptureModal';
+import Card from '@/components/Card';
 
 interface FormDataFile {
   uri: string;
@@ -159,9 +161,6 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
   const colorScheme = useColorScheme() ?? 'light';
 
   const styles = StyleSheet.create({
-    title: {
-      marginBottom: 10,
-    },
     galleryContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -367,10 +366,10 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
   };
 
   return (
-    <ThemedView style={{ backgroundColor: 'transparent' }}>
-      <ThemedText type='subtitle' style={styles.title}>
+    <Card>
+      <CardTitle style={{ textAlign: 'left', marginBottom: 10 }}>
         Files ({job.JobFiles?.length || 0})
-      </ThemedText>
+      </CardTitle>
 
       {job.JobFiles && job.JobFiles.length > 0 ? (
         <View style={styles.galleryContainer}>
@@ -496,6 +495,6 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
         onClose={() => setIsCameraModalVisible(false)}
         onPictureTaken={handlePictureTaken}
       />
-    </ThemedView>
+    </Card>
   );
 }

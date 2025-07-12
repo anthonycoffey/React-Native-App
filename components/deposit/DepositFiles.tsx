@@ -387,8 +387,8 @@ export default function DepositFiles({
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type='subtitle' style={styles.title}>
+    <>
+      <ThemedText type='defaultSemiBold' style={styles.title}>
         Files ({files?.length || 0})
       </ThemedText>
 
@@ -516,6 +516,6 @@ export default function DepositFiles({
         onClose={() => setIsCameraModalVisible(false)}
         onPictureTaken={handlePictureTaken}
       />
-    </ThemedView>
+    </>
   );
 }
