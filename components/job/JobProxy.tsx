@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  View,
   Modal,
   TextInput,
   Linking,
@@ -23,8 +22,7 @@ import {
   getInputBackgroundColor,
   getPlaceholderTextColor,
 } from '@/hooks/useThemeColor';
-import globalStyles from '@/styles/globalStyles';
-import { Text, View as ThemedView } from '@/components/Themed';
+import { Text, View } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import Card from '@/components/Card';
 

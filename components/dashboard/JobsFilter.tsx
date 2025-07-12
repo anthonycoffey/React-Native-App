@@ -1,7 +1,6 @@
 import React, { useState, useCallback, Dispatch, SetStateAction } from 'react';
 import { StyleSheet, Platform, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { LabelText } from '@/components/Typography';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
   getBorderColor,

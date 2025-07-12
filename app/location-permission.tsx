@@ -1,94 +1,120 @@
-import React, { useState } from 'react';
-import { View, ActivityIndicator, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ActivityIndicator, Linking } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Text } from '@/components/Themed';
+import { Text, View } from '@/components/Themed';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
 import * as Location from 'expo-location';
 import globalStyles from '@/styles/globalStyles';
 
 export default function LocationPermissionScreen() {
   const [loading, setLoading] = useState(false);
-  const [denied, setDenied] = useState(false);
+  const [status, setStatus] = useState<Location.LocationPermissionResponse | null>(null);
+
+  useEffect(() => {
+    const checkInitialStatus = async () => {
+      const initialStatus = await Location.getForegroundPermissionsAsync();
+      setStatus(initialStatus);
+    };
+    checkInitialStatus();
+  }, []);
 
   const requestPermission = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      let { status: foreground } =
-        await Location.requestForegroundPermissionsAsync();
+      const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
 
-      if (Platform.OS === 'ios') {
-        let { status: background } =
-          await Location.requestBackgroundPermissionsAsync();
-
-        if (foreground !== 'granted' || background !== 'granted') {
-          setDenied(true);
-          setLoading(false);
-          return;
-        }
-      } else {
-        if (foreground !== 'granted') {
-          setDenied(true);
-          setLoading(false);
-          return;
-        }
+      if (foregroundStatus !== 'granted') {
+        const finalStatus = await Location.getForegroundPermissionsAsync();
+        setStatus(finalStatus);
+        setLoading(false);
+        return;
       }
 
-      router.replace('/dashboard');
+      const { status: backgroundStatus } = await Location.requestBackgroundPermissionsAsync();
+      
+      if (backgroundStatus === 'granted') {
+        router.back();
+      } else {
+        const finalStatus = await Location.getBackgroundPermissionsAsync();
+        setStatus(finalStatus);
+      }
     } catch (error) {
       console.log('Error requesting location permission:', error);
-      setDenied(true);
+      const finalStatus = await Location.getForegroundPermissionsAsync();
+      setStatus(finalStatus);
+    } finally {
       setLoading(false);
     }
   };
 
-  const skipPermissions = () => {
-    router.replace('/dashboard');
+  const openSettings = () => {
+    Linking.openSettings();
   };
 
-  return (
-    <View style={globalStyles.container}>
-      <View style={globalStyles.centeredContent}>
+  const renderContent = () => {
+    if (!status) {
+      return <ActivityIndicator size="large" />;
+    }
+
+    const canAskAgain = status.canAskAgain;
+
+    return (
+      <>
         <View style={globalStyles.iconContainer}>
           <MaterialIcons name='location-pin' size={60} color='#0a7ea4' />
         </View>
 
         <Text type='title' style={globalStyles.title}>
-          Use Your Location
+          Enable Location
         </Text>
 
-        {denied ? (
-          <Text style={[globalStyles.subtitle, globalStyles.errorText]}>
-            Location permissions are required for full functionality. Please
-            enable location services in your device settings.
-          </Text>
-        ) : (
-          <Text style={[globalStyles.subtitle,{textAlign: 'center', fontWeight: 'normal'}]}>
-            This app collects location data to provide you with real-time
-            updates about nearby jobs even when the app is closed or not in use.
+        <Text style={[globalStyles.subtitle, { textAlign: 'center', fontWeight: 'normal' }]}>
+          This app requires background location access (&quot;Allow all the time&quot;) to notify you of nearby jobs, even when the app is closed.
+        </Text>
+
+        {!canAskAgain && (
+          <Text style={[globalStyles.subtitle, globalStyles.errorText, { marginTop: 15 }]}>
+            You&apos;ve denied permissions. To enable location tracking, you need to go to your device settings.
           </Text>
         )}
 
         <View style={globalStyles.separator} />
 
         <Text style={globalStyles.privacyText}>
-          We do not share your location data with third parties.
+          Your location data is used only for job notifications and is not shared.
         </Text>
 
-        <PrimaryButton
-          title={loading ? '' : 'Enable Location Services'}
-          onPress={requestPermission}
-          disabled={loading}
-          style={globalStyles.button}
-        >
-          {loading && <ActivityIndicator color='#fff' />}
-        </PrimaryButton>
+        {canAskAgain ? (
+          <PrimaryButton
+            title={loading ? '' : 'Enable Location Services'}
+            onPress={requestPermission}
+            disabled={loading}
+            style={globalStyles.button}
+          >
+            {loading && <ActivityIndicator color='#fff' />}
+          </PrimaryButton>
+        ) : (
+          <PrimaryButton
+            title="Open Settings"
+            onPress={openSettings}
+            style={globalStyles.button}
+          />
+        )}
 
         <OutlinedButton
-          title='Skip for Now'
-          onPress={skipPermissions}
+          title="Go Back"
+          onPress={() => router.back()}
           style={globalStyles.button}
         />
+      </>
+    );
+  };
+
+  return (
+    <View style={globalStyles.container}>
+      <View style={globalStyles.centeredContent}>
+        {renderContent()}
       </View>
     </View>
   );

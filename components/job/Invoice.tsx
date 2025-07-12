@@ -9,7 +9,6 @@ import {
 import { centsToDollars } from '@/utils/money';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { Invoice, Job } from '@/types';
-import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
 import Chip from '@/components/Chip';
 import { PrimaryButton } from '@/components/Buttons';

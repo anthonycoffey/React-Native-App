@@ -4,7 +4,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { centsToDollars } from '@/utils/money';
 import { apiService, HttpError } from '@/utils/ApiService';
-import globalStyles from '@/styles/globalStyles';
 import { CardTitle, LabelText } from '@/components/Typography';
 import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 import {
@@ -53,7 +52,7 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
         setValuePrice(centsToDollars(selectedService.price, 'numeric'));
       }
     }
-  }, [selectedServiceId, services]);
+  }, [selectedServiceId, services, editingLineItem]);
 
   useEffect(() => {
     const fetchServices = async () => {

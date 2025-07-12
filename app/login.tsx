@@ -250,7 +250,7 @@ export default function LoginScreen() {
               style={loginStyles.signUpLink}
             >
               <Text style={{ color: linkColor }}>
-                Don't have an account? Sign Up
+                Don&apos;t have an account? Sign Up
               </Text>
             </TouchableOpacity>
 

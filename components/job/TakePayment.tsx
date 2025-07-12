@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import CurrencyInput from '@/components/job/invoice/CurrencyInput';
-import globalStyles from '@/styles/globalStyles';
 import { CardTitle } from '@/components/Typography';
 import PaymentDialog from '@/components/job/PaymentDialog';
 import { Invoice, Job } from '@/types';
