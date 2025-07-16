@@ -243,6 +243,11 @@ Standardizing the app's visual theme and layout.
   - Modified `components/job/modals/EditNameModal.tsx` to have separate input fields for "First Name" and "Last Name".
   - Updated the modal to parse the full name into first and last names on opening and to save them as a `{ firstName, lastName }` object.
   - Adjusted `components/job/CustomerInfo.tsx` to handle the new object structure from the modal and send the correct data (`firstName`, `lastName`) to the backend API, resolving the update failure.
+- **Fixed Notifications Screen Crash:**
+  - Resolved a "Maximum update depth exceeded" error on the notifications screen after a second attempt.
+  - The initial fix using `useCallback` was insufficient due to a circular dependency.
+  - The final, robust fix involved refactoring the `markAsRead` and `markAllAsRead` functions in `NotificationsContext.tsx` to use the functional update form of `setState`.
+  - This removed the `notifications` state dependency from the `useCallback` hooks, making the function references truly stable and definitively breaking the infinite re-render loop.
 
 ## Next Steps
 

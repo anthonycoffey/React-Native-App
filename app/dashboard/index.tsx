@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import { View } from '@/components/Themed';
 import JobsList from '@/components/JobsList';
+import JobsFilter from '@/components/dashboard/JobsFilter';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { Job } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -62,14 +63,16 @@ export default function JobsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <JobsList
-        jobs={jobs}
-        fetchJobs={fetchJobs}
-        loading={loading}
+      <JobsFilter
         currentScope={currentScope}
         setCurrentScope={setCurrentScope}
         currentSortBy={currentSortBy}
         setCurrentSortBy={setCurrentSortBy}
+      />
+      <JobsList
+        jobs={jobs}
+        fetchJobs={fetchJobs}
+        loading={loading}
       />
     </View>
   );

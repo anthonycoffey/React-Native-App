@@ -365,8 +365,6 @@ export default function JobLineItemsCard({ job, fetchJob }: Props) {
                 theme={colorScheme === 'dark' ? 'DARK' : 'LIGHT'}
               />
 
-              <View style={styles.spacer} />
-
               <CurrencyInput
                 label='Price '
                 value={valuePrice}
@@ -467,6 +465,7 @@ const styles = StyleSheet.create({
   },
   editButtons: {
     marginTop: 15,
+    backgroundColor: 'transparent',
   },
   addButton: {
     flexDirection: 'row',
@@ -506,21 +505,28 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: '100%',
+    backgroundColor: 'transparent',
+    gap: 10,
   },
   dropdown: {
     borderRadius: 5,
+    backgroundColor: 'transparent',
   },
-  dropdownContainer: {},
+  dropdownContainer: {
+    backgroundColor: 'transparent',
+  },
   spacer: {
     height: 15,
   },
   modalButtons: {
+    backgroundColor: 'transparent',
     marginTop: 20,
   },
   modalButton: {
     marginBottom: 10,
   },
   actionIconsContainer: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
   },
   actionButton: {

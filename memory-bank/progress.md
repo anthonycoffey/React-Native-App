@@ -186,6 +186,11 @@ This document tracks what works, what's left to build, the current status, known
   - Modified `components/job/modals/EditNameModal.tsx` to use separate "First Name" and "Last Name" input fields.
   - The modal now correctly parses the full name on open and passes a `{ firstName, lastName }` object to the `onSave` handler.
   - Updated `components/job/CustomerInfo.tsx` to send this object to the backend, resolving the API mismatch and fixing the bug.
+- **Fixed Notifications Screen Crash:**
+  - Resolved a "Maximum update depth exceeded" error on the notifications screen after a second attempt.
+  - The initial fix using `useCallback` was insufficient due to a circular dependency.
+  - The final, robust fix involved refactoring the `markAsRead` and `markAllAsRead` functions in `NotificationsContext.tsx` to use the functional update form of `setState`.
+  - This removed the `notifications` state dependency from the `useCallback` hooks, making the function references truly stable and definitively breaking the infinite re-render loop.
 
 ## What's Left to Build
 

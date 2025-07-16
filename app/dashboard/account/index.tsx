@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
+} from 'react-native';
 import DeleteAccountModal from '@/components/account/DeleteAccountModal';
 import EditEmailModal from '@/components/account/EditEmailModal';
 import EditNameModal from '@/components/account/EditNameModal';
@@ -40,31 +46,38 @@ export default function AccountScreen() {
     null
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isEditNameModalVisible, setIsEditNameModalVisible] = useState(false);
   const [isEditEmailModalVisible, setIsEditEmailModalVisible] = useState(false);
   const [isEditPhoneModalVisible, setIsEditPhoneModalVisible] = useState(false);
 
-  useEffect(() => {
-    const fetchAccountDetails = async () => {
-      if (!auth || !auth.currentUser) {
-        setIsLoading(false);
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const data = await apiService.get<AccountDetails>('/account');
-        setAccountDetails(data);
-      } catch (error) {
-        console.log('Failed to fetch account details:', error);
-        Alert.alert('Error', 'Could not load account details.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAccountDetails();
+  const fetchAccountDetails = useCallback(async () => {
+    if (!auth || !auth.currentUser) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const data = await apiService.get<AccountDetails>('/account');
+      setAccountDetails(data);
+    } catch (error) {
+      console.log('Failed to fetch account details:', error);
+      Alert.alert('Error', 'Could not load account details.');
+    } finally {
+      setIsLoading(false);
+    }
   }, [auth]);
+
+  useEffect(() => {
+    fetchAccountDetails();
+  }, [fetchAccountDetails]);
+
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await fetchAccountDetails();
+    setIsRefreshing(false);
+  }, [fetchAccountDetails]);
 
   const handleLogout = () => {
     try {
@@ -121,6 +134,9 @@ export default function AccountScreen() {
       contentContainerStyle={{
         flexGrow: 1,
       }}
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+      }
     >
       <Card>
         <ProfilePictureUploader />
