@@ -78,8 +78,6 @@ export default function JobsFilter({
           setValue={setCurrentScope}
           onOpen={onScopeOpen}
           placeholder='Select a status'
-          zIndex={2000}
-          zIndexInverse={1000}
           listMode={Platform.OS === 'ios' ? 'SCROLLVIEW' : 'MODAL'}
           dropDownDirection='BOTTOM'
           multiple={false}
@@ -96,8 +94,6 @@ export default function JobsFilter({
           setValue={setCurrentSortBy}
           onOpen={onSortOpen}
           placeholder='Select sort order'
-          zIndex={1000}
-          zIndexInverse={2000}
           listMode={Platform.OS === 'ios' ? 'SCROLLVIEW' : 'MODAL'}
           dropDownDirection='BOTTOM'
           multiple={false}
@@ -120,5 +116,6 @@ const styles = StyleSheet.create({
   },
   filterItem: {
     flex: 1,
+    zIndex: 1000,
   },
 });

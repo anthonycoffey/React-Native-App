@@ -149,7 +149,7 @@ export default function SingleDepositScreen() {
     >
       <Card>
         <CardTitle style={{ textAlign: 'center' }}>
-          Deposit #CD-{deposit.id}
+          #CD-{deposit.id}
         </CardTitle>
         <LabelText>Deposited Amount:</LabelText>
         <Text style={localStyles.value}>{centsToDollars(deposit.amount)}</Text>

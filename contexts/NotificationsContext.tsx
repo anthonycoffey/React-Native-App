@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import { StoredNotification } from '@/hooks/useNotifications';
@@ -32,7 +32,7 @@ export function NotificationsProvider({ children }: NotificationsProviderProps) 
   const [notifications, setNotifications] = useState<StoredNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     try {
       const storedNotifications = await AsyncStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
       if (storedNotifications) {
@@ -43,30 +43,32 @@ export function NotificationsProvider({ children }: NotificationsProviderProps) 
     } catch (e) {
       console.error('Failed to load notifications.', e);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadNotifications();
-  }, []);
+  }, [loadNotifications]);
 
-  const refreshNotifications = () => {
+  const refreshNotifications = useCallback(() => {
     loadNotifications();
-  };
+  }, [loadNotifications]);
 
-  const markAsRead = async (notificationId: string) => {
+  const markAsRead = useCallback(async (notificationId: string) => {
     try {
-      const updatedNotifications = notifications.map(n =>
-        n.id === notificationId ? { ...n, read: true } : n
-      );
-      setNotifications(updatedNotifications);
-      setUnreadCount(updatedNotifications.filter(n => !n.read).length);
-      await AsyncStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(updatedNotifications));
+      setNotifications(prevNotifications => {
+        const updatedNotifications = prevNotifications.map(n =>
+          n.id === notificationId ? { ...n, read: true } : n
+        );
+        setUnreadCount(updatedNotifications.filter(n => !n.read).length);
+        AsyncStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(updatedNotifications));
+        return updatedNotifications;
+      });
     } catch (e) {
       console.error('Failed to mark notification as read.', e);
     }
-  };
+  }, []);
 
-  const clearAll = async () => {
+  const clearAll = useCallback(async () => {
     try {
       await AsyncStorage.removeItem(NOTIFICATIONS_STORAGE_KEY);
       setNotifications([]);
@@ -74,34 +76,36 @@ export function NotificationsProvider({ children }: NotificationsProviderProps) 
     } catch (e) {
       console.error('Failed to clear notifications.', e);
     }
-  };
+  }, []);
 
-  const markAllAsRead = async () => {
+  const markAllAsRead = useCallback(async () => {
     try {
-      const updatedNotifications = notifications.map(n => ({ ...n, read: true }));
-      setNotifications(updatedNotifications);
+      setNotifications(prevNotifications => {
+        const updatedNotifications = prevNotifications.map(n => ({ ...n, read: true }));
+        AsyncStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(updatedNotifications));
+        return updatedNotifications;
+      });
       setUnreadCount(0);
-      await AsyncStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(updatedNotifications));
     } catch (e) {
       console.error('Failed to mark all notifications as read.', e);
     }
-  };
+  }, []);
   
   useEffect(() => {
     const subscription = Notifications.addNotificationReceivedListener(() => {
       refreshNotifications();
     });
     return () => subscription.remove();
-  }, []);
+  }, [refreshNotifications]);
 
-  const value = {
+  const value = useMemo(() => ({
     notifications,
     unreadCount,
     markAsRead,
     markAllAsRead,
     clearAll,
     refreshNotifications,
-  };
+  }), [notifications, unreadCount, markAsRead, markAllAsRead, clearAll, refreshNotifications]);
 
   return (
     <NotificationsContext.Provider value={value}>

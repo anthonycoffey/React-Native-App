@@ -10,7 +10,6 @@ import { router } from 'expo-router';
 import Chip from '@/components/Chip';
 import { formatDateTime, formatRelative } from '@/utils/dates';
 import { Job } from '@/types';
-import JobsFilter from '@/components/dashboard/JobsFilter';
 import { Text, View } from '@/components/Themed';
 import globalStyles from '@/styles/globalStyles';
 import Card from '@/components/Card';
@@ -30,10 +29,6 @@ type JobsListProps = {
     | [];
   fetchJobs: () => void;
   loading?: boolean;
-  currentScope: string;
-  setCurrentScope: Dispatch<SetStateAction<string>>;
-  currentSortBy: string;
-  setCurrentSortBy: Dispatch<SetStateAction<string>>;
 };
 
 const ListEmptyComponent = () => {
@@ -56,10 +51,6 @@ export default function JobsList({
   jobs,
   fetchJobs,
   loading = false,
-  currentScope,
-  setCurrentScope,
-  currentSortBy,
-  setCurrentSortBy,
 }: JobsListProps) {
   const [refreshing, setRefreshing] = useState(false);
 
@@ -70,8 +61,6 @@ export default function JobsList({
     if ('data' in jobs && Array.isArray(jobs.data)) return jobs.data;
     return [];
   }, [jobs]);
-
-  const isEmpty = jobsData.length === 0;
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -97,19 +86,8 @@ export default function JobsList({
       refreshing={refreshing}
       onRefresh={onRefresh}
       data={jobsData}
-      ListHeaderComponent={
-        <JobsFilter
-          currentScope={currentScope}
-          setCurrentScope={setCurrentScope}
-          currentSortBy={currentSortBy}
-          setCurrentSortBy={setCurrentSortBy}
-        />
-      }
-      ListEmptyComponent={isEmpty ? ListEmptyComponent : null}
-      contentContainerStyle={[
-        styles.listContainer,
-        isEmpty && styles.emptyListContainer,
-      ]}
+      ListEmptyComponent={ListEmptyComponent}
+      contentContainerStyle={styles.listContainer}
       renderItem={({ item }) => {
         return (
           <Card>
@@ -203,10 +181,6 @@ const styles = StyleSheet.create({
   listContainer: {
     flexGrow: 1,
     minHeight: 500,
-  },
-  emptyListContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   loadingContainer: {
     flex: 1,
