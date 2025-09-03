@@ -191,6 +191,10 @@ This document tracks what works, what's left to build, the current status, known
   - The initial fix using `useCallback` was insufficient due to a circular dependency.
   - The final, robust fix involved refactoring the `markAsRead` and `markAllAsRead` functions in `NotificationsContext.tsx` to use the functional update form of `setState`.
   - This removed the `notifications` state dependency from the `useCallback` hooks, making the function references truly stable and definitively breaking the infinite re-render loop.
+- **Implemented Pull-to-Refresh on Job Details Page:**
+  - Added `RefreshControl` to the `ScrollView` in `app/job/[id].tsx`.
+  - Implemented the `onRefresh` handler to refetch job data.
+  - Added `refreshing` state to manage the refresh indicator.
 
 ## What's Left to Build
 
