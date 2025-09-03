@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  RefreshControl,
 } from 'react-native';
 
 import { useLocalSearchParams } from 'expo-router';
@@ -52,6 +53,7 @@ export default function JobPage() {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [job, setJob] = useState<Job | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchJob = useCallback(async () => {
     if (!jobId) {
@@ -84,6 +86,12 @@ export default function JobPage() {
 
   useEffect(() => {
     fetchJob();
+  }, [fetchJob]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchJob();
+    setRefreshing(false);
   }, [fetchJob]);
 
   if (loading && !job) {
@@ -124,6 +132,9 @@ export default function JobPage() {
           style={styles.scrollContainer}
           contentContainerStyle={styles.contentContainer}
           nestedScrollEnabled={true}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           <JobStatus job={job} fetchJob={fetchJob} />
           <JobProxy job={job} refetchJob={fetchJob} />
