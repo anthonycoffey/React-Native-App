@@ -7,7 +7,7 @@
     "start": "expo start",
     "prod": "expo start --no-dev",
     "start:android": "npx expo start --dev-client --android",
-    "ios": "expo start --ios",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
@@ -16,7 +16,8 @@
     "build:android": "eas build --platform android",
     "build:simulator": "eas build --profile development-simulator --platform ios",
     "build:run": "eas build:run",
-    "update": "eas update"
+    "update": "eas update",
+    "android": "expo run:android"
   },
   "jest": {
     "preset": "jest-expo"

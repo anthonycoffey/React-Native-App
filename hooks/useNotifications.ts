@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { AppState, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiService } from '@/utils/ApiService';
+import { useAuth } from '@/contexts/AuthContext';
 
 const NOTIFICATIONS_STORAGE_KEY = 'notifications';
 
@@ -27,24 +29,28 @@ export interface StoredNotification {
   read: boolean;
 }
 
-async function registerForPushNotificationsAsync() {
+async function registerForPushNotificationsAsync(session: string | null) {
   let token;
   if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {
-      // We can handle the case where the user denies permissions here.
-      // For now, we'll just log it.
       console.log('Failed to get push token for push notification!');
       return;
     }
-    // This is where you would get the push token
-    // token = (await Notifications.getExpoPushTokenAsync()).data;
-    // console.log(token);
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    if (token && session) {
+      try {
+        await apiService.post('/notifications/expo/subscribe', { token });
+      } catch (error) {
+        console.error('Failed to subscribe to push notifications:', error);
+      }
+    }
   } else {
     // console.log('Must use physical device for Push Notifications');
   }
@@ -83,15 +89,19 @@ async function saveNotification(notification: Notifications.Notification) {
 
 
 export function useNotifications() {
+  const auth = useAuth();
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
 
   useEffect(() => {
-    registerForPushNotificationsAsync();
+    if (auth?.session) {
+      registerForPushNotificationsAsync(auth.session);
+    }
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      saveNotification(notification);
-    });
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        saveNotification(notification);
+      });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log(response);
