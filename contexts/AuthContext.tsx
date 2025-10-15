@@ -3,6 +3,7 @@ import { useStorageState } from '@/hooks/useStorageState';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { router } from 'expo-router';
 import { User } from '@/types';
+import * as Notifications from 'expo-notifications';
 
 interface UserApiResponse {
   user: User;
@@ -108,11 +109,20 @@ export function AuthProvider(props: React.PropsWithChildren) {
   };
 
   const signOutAndNavigate = async () => {
-    await apiService.setAuthToken(null);
-    setIsApiAuthReady(false);
-    setCurrentUser(null);
-    await setSession(null);
-    router.replace('/login');
+    try {
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      if (token) {
+        await apiService.post('/notifications/expo/unsubscribe', { token });
+      }
+    } catch (error) {
+      console.error('Failed to unsubscribe from push notifications:', error);
+    } finally {
+      await apiService.setAuthToken(null);
+      setIsApiAuthReady(false);
+      setCurrentUser(null);
+      await setSession(null);
+      router.replace('/login');
+    }
   };
 
   const signOut = async () => {
