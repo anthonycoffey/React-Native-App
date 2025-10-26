@@ -4,6 +4,7 @@ import { apiService, HttpError } from '@/utils/ApiService';
 import { router } from 'expo-router';
 import { User } from '@/types';
 import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
 
 interface UserApiResponse {
   user: User;
@@ -115,14 +116,17 @@ export function AuthProvider(props: React.PropsWithChildren) {
         await apiService.post('/notifications/expo/unsubscribe', { token });
       }
     } catch (error) {
-      console.error('Failed to unsubscribe from push notifications:', error);
-    } finally {
-      await apiService.setAuthToken(null);
-      setIsApiAuthReady(false);
-      setCurrentUser(null);
-      await setSession(null);
-      router.replace('/login');
+      console.error(
+        'Failed to unsubscribe from push notifications on sign out:',
+        error
+      );
     }
+
+    await apiService.setAuthToken(null);
+    setIsApiAuthReady(false);
+    setCurrentUser(null);
+    await setSession(null);
+    router.replace('/login');
   };
 
   const signOut = async () => {

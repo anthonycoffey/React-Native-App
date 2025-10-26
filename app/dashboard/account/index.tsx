@@ -79,11 +79,10 @@ export default function AccountScreen() {
     setIsRefreshing(false);
   }, [fetchAccountDetails]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      router.replace('/');
       if (auth) {
-        auth.signOut();
+        await auth.signOut();
       } else {
         router.replace('/login');
       }

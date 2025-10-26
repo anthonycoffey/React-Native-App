@@ -37,10 +37,13 @@ export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
+function NotificationsWrapper({ children }: React.PropsWithChildren) {
+  useNotifications();
+  return <>{children}</>;
+}
+
 export default Sentry.wrap(function RootLayout() {
   const colorScheme = useColorScheme() ?? 'light';
-
-  useNotifications();
 
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -81,9 +84,10 @@ export default Sentry.wrap(function RootLayout() {
 
   return (
     <AuthProvider>
-      <UserProvider>
-        <NotificationsProvider>
-          <SafeAreaProvider>
+      <NotificationsWrapper>
+        <UserProvider>
+          <NotificationsProvider>
+            <SafeAreaProvider>
             <ThemeProvider
               value={
                 colorScheme === 'dark' ? customDarkTheme : customDefaultTheme
@@ -116,9 +120,10 @@ export default Sentry.wrap(function RootLayout() {
                 />
               </Stack>
             </ThemeProvider>
-          </SafeAreaProvider>
-        </NotificationsProvider>
-      </UserProvider>
+            </SafeAreaProvider>
+          </NotificationsProvider>
+        </UserProvider>
+      </NotificationsWrapper>
     </AuthProvider>
   );
 });

@@ -195,6 +195,10 @@ This document tracks what works, what's left to build, the current status, known
   - Added `RefreshControl` to the `ScrollView` in `app/job/[id].tsx`.
   - Implemented the `onRefresh` handler to refetch job data.
   - Added `refreshing` state to manage the refresh indicator.
+- **Push Notification Subscription:**
+  - The app now correctly prompts users for notification permissions after they log in.
+  - The device's push token is successfully sent to and registered with the backend.
+  - The logout process was also fixed to prevent crashes on simulators and ensure smooth operation.
 
 ## What's Left to Build
 

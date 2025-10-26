@@ -30,30 +30,48 @@ export interface StoredNotification {
 }
 
 async function registerForPushNotificationsAsync(session: string | null) {
+  console.log('[Notifications] Starting registration process...');
   let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
+  // if (Device.isDevice) {
+  console.log('[Notifications] Device is a physical device.');
+  const { status: existingStatus } =
+    await Notifications.getPermissionsAsync();
+    console.log(`[Notifications] Existing permission status: ${existingStatus}`);
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
+      console.log('[Notifications] Permission not granted, requesting...');
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
+      console.log(`[Notifications] New permission status: ${finalStatus}`);
     }
     if (finalStatus !== 'granted') {
-      console.log('Failed to get push token for push notification!');
+      console.log(
+        '[Notifications] Failed to get push token for push notification!'
+      );
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(`[Notifications] Got Expo push token: ${token}`);
     if (token && session) {
       try {
-        await apiService.post('/notifications/expo/subscribe', { token });
+        console.log('[Notifications] Subscribing to backend...');
+        const response = await apiService.post('/notifications/expo/subscribe', {
+          token,
+        });
+        console.log(
+          '[Notifications] Successfully subscribed to backend. Response:',
+          response
+        );
       } catch (error) {
-        console.error('Failed to subscribe to push notifications:', error);
+        console.error(
+          '[Notifications] Failed to subscribe to push notifications:',
+          error
+        );
       }
     }
-  } else {
-    // console.log('Must use physical device for Push Notifications');
-  }
+  // } else {
+  //   // console.log('Must use physical device for Push Notifications');
+  // }
 
   if (Platform.OS === 'android') {
     Notifications.setNotificationChannelAsync('default', {
@@ -90,10 +108,13 @@ async function saveNotification(notification: Notifications.Notification) {
 
 export function useNotifications() {
   const auth = useAuth();
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
+  const notificationListener = useRef<Notifications.Subscription | null>(null);
+  const responseListener = useRef<Notifications.Subscription | null>(null);
 
   useEffect(() => {
+    console.log(
+      `[Notifications] useEffect triggered. Session: ${auth?.session}`
+    );
     if (auth?.session) {
       registerForPushNotificationsAsync(auth.session);
     }
@@ -103,9 +124,10 @@ export function useNotifications() {
         saveNotification(notification);
       });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
 
     return () => {
       if (notificationListener.current) {
@@ -115,5 +137,5 @@ export function useNotifications() {
         responseListener.current.remove();
       }
     };
-  }, []);
+  }, [auth?.session]);
 }

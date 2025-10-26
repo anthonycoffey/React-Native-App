@@ -35,7 +35,7 @@ This document outlines the system architecture, key technical decisions, design 
     *   **Local State:** Standard React component state (`useState`, `useEffect`) is used extensively within components for managing their internal data and lifecycle.
 3.  **Notifications:**
     *   **Engine:** The `expo-notifications` library is used to handle all aspects of local and push notifications.
-    *   **Permissions & Listeners:** The `hooks/useNotifications.ts` custom hook is responsible for requesting permissions, setting up notification handlers, and establishing listeners for incoming notifications. It is initialized once in the root layout (`app/_layout.tsx`).
+    *   **Permissions & Listeners:** The `hooks/useNotifications.ts` custom hook is responsible for requesting permissions, setting up notification handlers, and establishing listeners for incoming notifications. It is initialized once in the root layout (`app/_layout.tsx`). The hook's `useEffect` is tied to the `auth.session`, ensuring that the push notification registration and subscription to the backend API occurs automatically after a user logs in.
     *   **Storage:** Received notifications are saved to `AsyncStorage` to persist them across app sessions.
     *   **UI:**
         *   A `NotificationBell.tsx` component in the dashboard header displays the unread notification count.

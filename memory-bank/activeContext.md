@@ -252,6 +252,10 @@ Standardizing the app's visual theme and layout.
   - Added `RefreshControl` to the `ScrollView` in `app/job/[id].tsx`.
   - Implemented the `onRefresh` handler to refetch job data.
   - Added `refreshing` state to manage the refresh indicator.
+- **Fixed Push Notification Subscription Flow:**
+  - Corrected a bug in `hooks/useNotifications.ts` where the registration logic only ran on initial app load, not after user login. The `useEffect` dependency array was updated to include `auth.session`.
+  - Resolved a subsequent issue where the logout function in `contexts/AuthContext.tsx` was blocked on simulators by an attempt to unsubscribe from notifications. The logic was updated to ensure logout proceeds smoothly on all devices.
+  - Removed a faulty `Device.isDevice` check that was preventing the permission prompt from appearing in certain development environments.
 
 ## Next Steps
 
