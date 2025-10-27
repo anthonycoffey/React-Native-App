@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, FlatList, StyleSheet, Button } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { useNotificationsContext } from '@/contexts/NotificationsContext';
 import { StoredNotification } from '@/hooks/useNotifications';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -11,10 +12,11 @@ export default function NotificationsScreen() {
     useNotificationsContext();
   const colorScheme = useColorScheme() ?? 'light';
 
-  useEffect(() => {
-    // Mark all as read when the screen is viewed
-    markAllAsRead();
-  }, [markAllAsRead]);
+  useFocusEffect(
+    React.useCallback(() => {
+      markAllAsRead();
+    }, [markAllAsRead])
+  );
 
   const renderItem = ({ item }: { item: StoredNotification }) => (
     <View

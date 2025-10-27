@@ -33,8 +33,8 @@ export default function LoginScreen() {
   const auth = useAuth();
   const signIn = auth?.signIn;
   const { email: registeredEmail } = useLocalSearchParams<{ email?: string }>();
-  const [email, setEmail] = useState(registeredEmail || '');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(registeredEmail || 'coffey.j.anthony@gmail.com');
+  const [password, setPassword] = useState('dank1234');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

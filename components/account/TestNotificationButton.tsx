@@ -1,17 +1,25 @@
 import React from 'react';
-import * as Notifications from 'expo-notifications';
 import { PrimaryButton } from '@/components/Buttons';
+import { apiService } from '@/utils/ApiService';
+import { useAuth } from '@/contexts/AuthContext';
 
 const TestNotificationButton = () => {
+  const { session } = useAuth();
   const sendTestNotification = async () => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Test Notification",
-        body: "This is a test in-app notification.",
-        data: { test: 'data' },
-      },
-      trigger: null, // send immediately
-    });
+    if (!session) {
+      console.error('No session found, cannot send test notification');
+      return;
+    }
+    try {
+      console.log('Sending test notification to backend...');
+      const response = await apiService.post('/notifications/expo/test', {
+        title: 'Test Notification',
+        body: 'This is a test push notification from the app.',
+      });
+      console.log('Test notification response:', response);
+    } catch (error) {
+      console.error('Failed to send test notification', error);
+    }
   };
 
   return (

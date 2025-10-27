@@ -8,6 +8,7 @@ const NOTIFICATIONS_STORAGE_KEY = 'notifications';
 interface NotificationsContextData {
   notifications: StoredNotification[];
   unreadCount: number;
+  addNotification: (notification: StoredNotification) => void;
   markAsRead: (notificationId: string) => void;
   markAllAsRead: () => void;
   clearAll: () => void;
@@ -91,21 +92,28 @@ export function NotificationsProvider({ children }: NotificationsProviderProps) 
     }
   }, []);
   
-  useEffect(() => {
-    const subscription = Notifications.addNotificationReceivedListener(() => {
-      refreshNotifications();
-    });
-    return () => subscription.remove();
-  }, [refreshNotifications]);
+  const addNotification = useCallback(async (notification: StoredNotification) => {
+    try {
+      setNotifications(prevNotifications => {
+        const updatedNotifications = [notification, ...prevNotifications];
+        AsyncStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(updatedNotifications));
+        return updatedNotifications;
+      });
+      setUnreadCount(prev => prev + 1);
+    } catch (e) {
+      console.error('Failed to add notification.', e);
+    }
+  }, []);
 
   const value = useMemo(() => ({
     notifications,
     unreadCount,
+    addNotification,
     markAsRead,
     markAllAsRead,
     clearAll,
     refreshNotifications,
-  }), [notifications, unreadCount, markAsRead, markAllAsRead, clearAll, refreshNotifications]);
+  }), [notifications, unreadCount, addNotification, markAsRead, markAllAsRead, clearAll, refreshNotifications]);
 
   return (
     <NotificationsContext.Provider value={value}>

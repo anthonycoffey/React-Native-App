@@ -110,18 +110,6 @@ export function AuthProvider(props: React.PropsWithChildren) {
   };
 
   const signOutAndNavigate = async () => {
-    try {
-      const token = (await Notifications.getExpoPushTokenAsync()).data;
-      if (token) {
-        await apiService.post('/notifications/expo/unsubscribe', { token });
-      }
-    } catch (error) {
-      console.error(
-        'Failed to unsubscribe from push notifications on sign out:',
-        error
-      );
-    }
-
     await apiService.setAuthToken(null);
     setIsApiAuthReady(false);
     setCurrentUser(null);

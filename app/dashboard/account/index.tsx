@@ -25,9 +25,10 @@ import {
 } from '@/components/Buttons';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-// import { useNotificationsContext } from '@/contexts/NotificationsContext';
+import { useNotificationsContext } from '@/contexts/NotificationsContext';
 import { formatPhoneNumber } from '@/utils/strings';
 import { CardTitle } from '@/components/Typography';
+
 
 interface AccountDetails {
   owedCash: number;
@@ -40,7 +41,7 @@ interface AccountDetails {
 
 export default function AccountScreen() {
   const auth = useAuth();
-  // const { clearAll: clearAllNotifications } = useNotificationsContext();
+  const { clearAll: clearAllNotifications } = useNotificationsContext();
   const colorScheme = useColorScheme() ?? 'light';
   const [accountDetails, setAccountDetails] = useState<AccountDetails | null>(
     null
@@ -236,12 +237,6 @@ export default function AccountScreen() {
           onPress={handleLogout}
           style={{ marginTop: 8 }}
         />
-        {/* <TestNotificationButton />
-          <PrimaryButton
-            title='Clear Notifications'
-            onPress={clearAllNotifications}
-            style={{ marginTop: 8 }}
-          /> */}
       </Card>
 
       <DeleteAccountModal

@@ -84,46 +84,46 @@ export default Sentry.wrap(function RootLayout() {
 
   return (
     <AuthProvider>
-      <NotificationsWrapper>
+      <NotificationsProvider>
         <UserProvider>
-          <NotificationsProvider>
+          <NotificationsWrapper>
             <SafeAreaProvider>
-            <ThemeProvider
-              value={
-                colorScheme === 'dark' ? customDarkTheme : customDefaultTheme
-              }
-            >
-              <Stack>
-                <Stack.Screen
-                  name='dashboard'
-                  options={{ headerShown: false, title: 'Dashboard' }}
-                />
-                <Stack.Screen
-                  name='job/[id]'
-                  options={({ route }) => ({
-                    title: `J-${(route.params as JobScreenParams)?.id}`,
-                    headerBackVisible: true,
-                  })}
-                />
-                <Stack.Screen name='login' options={{ headerShown: false }} />
-                <Stack.Screen
-                  name='register'
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name='lost-password'
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name='location-permission'
-                  options={{ headerShown: false }}
-                />
-              </Stack>
-            </ThemeProvider>
+              <ThemeProvider
+                value={
+                  colorScheme === 'dark' ? customDarkTheme : customDefaultTheme
+                }
+              >
+                <Stack>
+                  <Stack.Screen
+                    name="dashboard"
+                    options={{ headerShown: false, title: 'Dashboard' }}
+                  />
+                  <Stack.Screen
+                    name="job/[id]"
+                    options={({ route }) => ({
+                      title: `J-${(route.params as JobScreenParams)?.id}`,
+                      headerBackVisible: true,
+                    })}
+                  />
+                  <Stack.Screen name="login" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="register"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="lost-password"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="location-permission"
+                    options={{ headerShown: false }}
+                  />
+                </Stack>
+              </ThemeProvider>
             </SafeAreaProvider>
-          </NotificationsProvider>
+          </NotificationsWrapper>
         </UserProvider>
-      </NotificationsWrapper>
+      </NotificationsProvider>
     </AuthProvider>
   );
 });

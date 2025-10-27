@@ -2,23 +2,17 @@ import { useEffect, useRef } from 'react';
 import { AppState, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiService } from '@/utils/ApiService';
 import { useAuth } from '@/contexts/AuthContext';
-
-const NOTIFICATIONS_STORAGE_KEY = 'notifications';
+import { useNotificationsContext } from '@/contexts/NotificationsContext';
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => {
-    const isAppActive = AppState.currentState === 'active';
-    return {
-      shouldShowAlert: !isAppActive,
-      shouldPlaySound: !isAppActive,
-      shouldSetBadge: false,
-      shouldShowBanner: false, // for android
-      shouldShowList: false, // for ios
-    };
-  },
+  handleNotification: async () => ({
+    shouldShowBanner: AppState.currentState !== 'active',
+    shouldShowList: AppState.currentState !== 'active',
+    shouldPlaySound: AppState.currentState !== 'active',
+    shouldSetBadge: true,
+  }),
 });
 
 export interface StoredNotification {
@@ -32,10 +26,10 @@ export interface StoredNotification {
 async function registerForPushNotificationsAsync(session: string | null) {
   console.log('[Notifications] Starting registration process...');
   let token;
-  // if (Device.isDevice) {
-  console.log('[Notifications] Device is a physical device.');
-  const { status: existingStatus } =
-    await Notifications.getPermissionsAsync();
+  if (Device.isDevice) {
+    console.log('[Notifications] Device is a physical device.');
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     console.log(`[Notifications] Existing permission status: ${existingStatus}`);
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
@@ -50,8 +44,16 @@ async function registerForPushNotificationsAsync(session: string | null) {
       );
       return;
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(`[Notifications] Got Expo push token: ${token}`);
+    try {
+      console.log('[Notifications] Getting push token...');
+      token = (await Notifications.getExpoPushTokenAsync({
+        projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+      })).data;
+      console.log(`[Notifications] Got Expo push token: ${token}`);
+    } catch (error) {
+      console.error('[Notifications] Failed to get push token:', error);
+      return;
+    }
     if (token && session) {
       try {
         console.log('[Notifications] Subscribing to backend...');
@@ -69,9 +71,9 @@ async function registerForPushNotificationsAsync(session: string | null) {
         );
       }
     }
-  // } else {
-  //   // console.log('Must use physical device for Push Notifications');
-  // }
+  } else {
+    console.log('Must use physical device for Push Notifications');
+  }
 
   if (Platform.OS === 'android') {
     Notifications.setNotificationChannelAsync('default', {
@@ -85,29 +87,9 @@ async function registerForPushNotificationsAsync(session: string | null) {
   return token;
 }
 
-async function saveNotification(notification: Notifications.Notification) {
-  try {
-    const existingNotifications = await AsyncStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
-    const notifications: StoredNotification[] = existingNotifications ? JSON.parse(existingNotifications) : [];
-
-    const newNotification: StoredNotification = {
-      id: notification.request.identifier,
-      date: new Date().toISOString(),
-      title: notification.request.content.title,
-      body: notification.request.content.body,
-      read: false,
-    };
-
-    notifications.unshift(newNotification);
-    await AsyncStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(notifications));
-  } catch (e) {
-    console.error('Failed to save notification.', e);
-  }
-}
-
-
 export function useNotifications() {
   const auth = useAuth();
+  const { addNotification } = useNotificationsContext();
   const notificationListener = useRef<Notifications.Subscription | null>(null);
   const responseListener = useRef<Notifications.Subscription | null>(null);
 
@@ -121,7 +103,16 @@ export function useNotifications() {
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
-        saveNotification(notification);
+        if (AppState.currentState === 'active') {
+          const newNotification: StoredNotification = {
+            id: notification.request.identifier,
+            date: new Date().toISOString(),
+            title: notification.request.content.title,
+            body: notification.request.content.body,
+            read: false,
+          };
+          addNotification(newNotification);
+        }
       });
 
     responseListener.current =
