@@ -8,6 +8,12 @@ Standardizing the app's visual theme and layout.
 
 ## Recent Changes
 
+- **Implemented Push Notification Deep Linking:**
+  - Added logic to `hooks/useNotifications.ts` to handle deep linking when a user taps a push notification.
+  - The `addNotificationResponseReceivedListener` now extracts a `link` property from the notification's data payload.
+  - If a `link` is present, it uses `router.push(link as any)` to navigate the user to the specified screen (e.g., a job details page).
+  - The link format is `phoenix-mobile:///job/[JOB_ID]`.
+  - This functionality is now documented in `memory-bank/systemPatterns.md`.
 - **Standardized Section Titles:**
   - Refactored all section titles in `components/job/` to use the standardized `CardTitle` component from `components/Typography.tsx`.
   - Removed local title styles from `components/job/JobComments.tsx` and `components/job/JobFiles.tsx`.
@@ -259,8 +265,8 @@ Standardizing the app's visual theme and layout.
 
 ## Next Steps
 
-- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the loading spinner addition.
-- **Testing:** Thoroughly test the new camera upload functionality and existing file picker functionality on both iOS and Android.
+- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the push notification deep linking implementation.
+- **Testing:** Thoroughly test the new deep linking functionality on both iOS and Android.
 - **Identify and document any `Known Issues`** that arise during testing or further development.
 - **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md` once Memory Bank is up-to-date and current features are stable.
 - Continuously update all Memory Bank files as new information is gathered or decisions are made.

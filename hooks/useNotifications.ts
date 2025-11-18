@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { AppState, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
@@ -117,7 +118,10 @@ export function useNotifications() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
+        const link = response.notification.request.content.data?.link;
+        if (typeof link === 'string' && link) {
+          router.push(link as any);
+        }
       });
 
     return () => {

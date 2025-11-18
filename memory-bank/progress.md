@@ -199,6 +199,17 @@ This document tracks what works, what's left to build, the current status, known
   - The app now correctly prompts users for notification permissions after they log in.
   - The device's push token is successfully sent to and registered with the backend.
   - The logout process was also fixed to prevent crashes on simulators and ensure smooth operation.
+- **Push Notification Deep Linking:**
+  - Implemented functionality to navigate users to a specific screen when they tap a push notification.
+  - The `hooks/useNotifications.ts` file now contains logic to parse a `link` from the notification's data payload and use `expo-router` to navigate to it.
+  - The deep link format is `phoenix-mobile:///job/[JOB_ID]`.
+- **Job Acceptance Screen:**
+  - Created a new screen at `app/actions/accept-job/[jobId].tsx` to allow technicians to accept or decline dispatched jobs.
+  - The screen fetches job details and displays information conditionally based on the job's status.
+  - Implemented API calls to accept (`POST /jobs/:id/accept`) and decline (`POST /jobs/:id/decline`) jobs.
+  - On acceptance, the user is navigated to the job details page.
+  - On decline, the user is redirected to the main dashboard.
+  - The screen is fully theme-aware and uses the project's standard component library.
 
 ## What's Left to Build
 

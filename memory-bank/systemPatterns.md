@@ -40,6 +40,11 @@ This document outlines the system architecture, key technical decisions, design 
     *   **UI:**
         *   A `NotificationBell.tsx` component in the dashboard header displays the unread notification count.
         *   A dedicated screen at `app/dashboard/notifications.tsx` displays a history of all received notifications.
+    *   **Deep Linking:**
+        *   Push notifications can be used to navigate the user to a specific screen within the app.
+        *   **Payload Format:** The backend should include a `link` property within the `data` object of the push notification payload. The link should be a valid deep link string.
+        *   **Link Structure:** The deep link is constructed using the app's custom URL scheme (`phoenix-mobile` as defined in `app.json`) and the target route path. For example, to navigate to a job with ID `123`, the link would be `phoenix-mobile:///job/123`.
+        *   **Client-Side Handling:** The `hooks/useNotifications.ts` file contains a listener (`addNotificationResponseReceivedListener`) that triggers when a user taps a notification. This listener extracts the `link` from the payload and uses `router.push(link as any)` to navigate. The `as any` cast is necessary to bypass TypeScript's strict type checking for typed routes, as the link is a dynamic string.
 4.  **Styling & Theming:**
     *   Styling is primarily managed using React Native's `StyleSheet` API.
     *   A comprehensive theming system is in place to support light and dark modes consistently across the application. This is the standard approach and **must be followed for all new and existing components**:
@@ -102,8 +107,9 @@ This document outlines the system architecture, key technical decisions, design 
     *   `app/dashboard/_layout.tsx`: Protected layout for dashboard screens.
         *   `app/dashboard/index.tsx`: Main dashboard screen.
         *   `app/dashboard/go-online.tsx`: Screen for clock-in/out and location tracking.
-        *   `app/dashboard/settings.tsx`: User settings.
+    *   `app/dashboard/settings.tsx`: User settings.
     *   `app/job/[id].tsx`: Detailed view for a specific job.
+    *   `app/actions/accept-job/[jobId].tsx`: Screen for technicians to accept or decline a dispatched job.
     *   A screen for listing jobs is implemented in `JobsList.tsx` which is likely used within a dashboard screen.
 2.  **Reusable Components Overview:**
     *   **Base UI (`components/`):**
