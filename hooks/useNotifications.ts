@@ -22,6 +22,7 @@ export interface StoredNotification {
   title: string | null;
   body: string | null;
   read: boolean;
+  link?: string;
 }
 
 async function registerForPushNotificationsAsync(session: string | null) {
@@ -111,6 +112,7 @@ export function useNotifications() {
             title: notification.request.content.title,
             body: notification.request.content.body,
             read: false,
+            link: notification.request.content.data?.link as string | undefined,
           };
           addNotification(newNotification);
         }

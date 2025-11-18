@@ -8,6 +8,10 @@ Standardizing the app's visual theme and layout.
 
 ## Recent Changes
 
+- **Implemented Tappable In-App Notifications:**
+  - Extended the deep linking functionality to the in-app notifications screen (`app/dashboard/notifications.tsx`).
+  - Updated `hooks/useNotifications.ts` to store the `link` from the notification payload along with other notification data.
+  - Modified `app/dashboard/notifications.tsx` to make each notification item tappable, navigating to the stored `link` if it exists.
 - **Implemented Push Notification Deep Linking:**
   - Added logic to `hooks/useNotifications.ts` to handle deep linking when a user taps a push notification.
   - The `addNotificationResponseReceivedListener` now extracts a `link` property from the notification's data payload.
@@ -265,8 +269,8 @@ Standardizing the app's visual theme and layout.
 
 ## Next Steps
 
-- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the push notification deep linking implementation.
-- **Testing:** Thoroughly test the new deep linking functionality on both iOS and Android.
+- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the in-app notification linking implementation.
+- **Testing:** Thoroughly test the new deep linking functionality for both push notifications and in-app notifications on both iOS and Android.
 - **Identify and document any `Known Issues`** that arise during testing or further development.
 - **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md` once Memory Bank is up-to-date and current features are stable.
 - Continuously update all Memory Bank files as new information is gathered or decisions are made.

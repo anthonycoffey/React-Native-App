@@ -1,6 +1,13 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, Button } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
+import { useFocusEffect, router } from 'expo-router';
 import { useNotificationsContext } from '@/contexts/NotificationsContext';
 import { StoredNotification } from '@/hooks/useNotifications';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -18,24 +25,38 @@ export default function NotificationsScreen() {
     }, [markAllAsRead])
   );
 
-  const renderItem = ({ item }: { item: StoredNotification }) => (
-    <View
-      style={[
-        styles.notificationItem,
-        { backgroundColor: Colors[colorScheme].card },
-      ]}
-    >
-      <Text
-        style={[styles.notificationTitle, { color: Colors[colorScheme].text }]}
+  const renderItem = ({ item }: { item: StoredNotification }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          if (item.link) {
+            router.push(item.link as any);
+          }
+        }}
+        disabled={!item.link}
       >
-        {item.title}
-      </Text>
-      <Text style={{ color: Colors[colorScheme].text }}>{item.body}</Text>
-      <Text style={styles.notificationDate}>
-        {formatDateTime(item.date) || 'Invalid Date'}
-      </Text>
-    </View>
-  );
+        <View
+          style={[
+            styles.notificationItem,
+            { backgroundColor: Colors[colorScheme].card },
+          ]}
+        >
+          <Text
+            style={[
+              styles.notificationTitle,
+              { color: Colors[colorScheme].text },
+            ]}
+          >
+            {item.title}
+          </Text>
+          <Text style={{ color: Colors[colorScheme].text }}>{item.body}</Text>
+          <Text style={styles.notificationDate}>
+            {formatDateTime(item.date) || 'Invalid Date'}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View

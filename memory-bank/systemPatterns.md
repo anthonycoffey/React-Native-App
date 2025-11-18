@@ -39,12 +39,14 @@ This document outlines the system architecture, key technical decisions, design 
     *   **Storage:** Received notifications are saved to `AsyncStorage` to persist them across app sessions.
     *   **UI:**
         *   A `NotificationBell.tsx` component in the dashboard header displays the unread notification count.
-        *   A dedicated screen at `app/dashboard/notifications.tsx` displays a history of all received notifications.
+        *   A dedicated screen at `app/dashboard/notifications.tsx` displays a history of all received notifications. The items in this list are tappable and will navigate to a linked screen if a `link` is present in the notification data.
     *   **Deep Linking:**
-        *   Push notifications can be used to navigate the user to a specific screen within the app.
+        *   Push notifications and in-app notifications can be used to navigate the user to a specific screen within the app.
         *   **Payload Format:** The backend should include a `link` property within the `data` object of the push notification payload. The link should be a valid deep link string.
         *   **Link Structure:** The deep link is constructed using the app's custom URL scheme (`phoenix-mobile` as defined in `app.json`) and the target route path. For example, to navigate to a job with ID `123`, the link would be `phoenix-mobile:///job/123`.
-        *   **Client-Side Handling:** The `hooks/useNotifications.ts` file contains a listener (`addNotificationResponseReceivedListener`) that triggers when a user taps a notification. This listener extracts the `link` from the payload and uses `router.push(link as any)` to navigate. The `as any` cast is necessary to bypass TypeScript's strict type checking for typed routes, as the link is a dynamic string.
+        *   **Client-Side Handling (Push Notifications):** The `hooks/useNotifications.ts` file contains a listener (`addNotificationResponseReceivedListener`) that triggers when a user taps a notification from outside the app. This listener extracts the `link` from the payload and uses `router.push(link as any)` to navigate.
+        *   **Client-Side Handling (In-App Notifications):** The `hooks/useNotifications.ts` file also contains a listener (`addNotificationReceivedListener`) that saves incoming notifications for in-app display. The `link` from the payload is now stored as part of the `StoredNotification` object. The `app/dashboard/notifications.tsx` screen renders these stored notifications, making them tappable and using `router.push(link as any)` to navigate when pressed.
+        *   The `as any` cast is necessary in both cases to bypass TypeScript's strict type checking for typed routes, as the link is a dynamic string.
 4.  **Styling & Theming:**
     *   Styling is primarily managed using React Native's `StyleSheet` API.
     *   A comprehensive theming system is in place to support light and dark modes consistently across the application. This is the standard approach and **must be followed for all new and existing components**:

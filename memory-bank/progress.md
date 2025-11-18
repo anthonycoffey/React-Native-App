@@ -203,6 +203,9 @@ This document tracks what works, what's left to build, the current status, known
   - Implemented functionality to navigate users to a specific screen when they tap a push notification.
   - The `hooks/useNotifications.ts` file now contains logic to parse a `link` from the notification's data payload and use `expo-router` to navigate to it.
   - The deep link format is `phoenix-mobile:///job/[JOB_ID]`.
+- **In-App Notification Deep Linking:**
+  - Extended deep linking to the in-app notification list on the `app/dashboard/notifications.tsx` screen.
+  - Notifications in the list are now tappable and will navigate to the associated link, providing a consistent experience with push notifications.
 - **Job Acceptance Screen:**
   - Created a new screen at `app/actions/accept-job/[jobId].tsx` to allow technicians to accept or decline dispatched jobs.
   - The screen fetches job details and displays information conditionally based on the job's status.
