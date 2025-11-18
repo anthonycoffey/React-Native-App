@@ -3,7 +3,7 @@
     "name": "24HR CAR UNLOCKING",
     "description": "Full Service App for Roadside Technicians at 24Hr Car Unlocking Emergency Roadside Services",
     "slug": "24hr-car-unlocking",
-    "version": "2.0.11",
+    "version": "2.0.12",
     "owner": "phoenix-crm",
     "scheme": "phoenix-mobile",
     "orientation": "portrait",
@@ -67,6 +67,12 @@
     },
     "updates": {
       "url": "https://u.expo.dev/2677fe67-4a13-4c97-ad83-2378c282be14"
+    },
+    "ios": {
+      "bundleIdentifier": "com.phoenix-mobile",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     }
   }
 }
