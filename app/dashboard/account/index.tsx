@@ -10,6 +10,8 @@ import DeleteAccountModal from '@/components/account/DeleteAccountModal';
 import EditEmailModal from '@/components/account/EditEmailModal';
 import EditNameModal from '@/components/account/EditNameModal';
 import EditPhoneModal from '@/components/account/EditPhoneModal';
+import EditVehicleDescriptionModal from '@/components/account/EditVehicleDescriptionModal';
+import EditVehiclePlateModal from '@/components/account/EditVehiclePlateModal';
 import { Text, View } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
@@ -52,6 +54,8 @@ export default function AccountScreen() {
   const [isEditNameModalVisible, setIsEditNameModalVisible] = useState(false);
   const [isEditEmailModalVisible, setIsEditEmailModalVisible] = useState(false);
   const [isEditPhoneModalVisible, setIsEditPhoneModalVisible] = useState(false);
+  const [isEditVehicleDescriptionModalVisible, setIsEditVehicleDescriptionModalVisible] = useState(false);
+  const [isEditVehiclePlateModalVisible, setIsEditVehiclePlateModalVisible] = useState(false);
 
   const fetchAccountDetails = useCallback(async () => {
     if (!auth || !auth.currentUser) {
@@ -168,6 +172,26 @@ export default function AccountScreen() {
             onPress={() => setIsEditPhoneModalVisible(true)}
           />
         </View>
+        <View style={localStyles.infoRow}>
+          <Text style={localStyles.infoLabel}>Vehicle Description</Text>
+          <Text style={localStyles.infoValue}>
+            {auth?.currentUser?.vehicleDescription}
+          </Text>
+          <IconButton
+            iconName='edit'
+            onPress={() => setIsEditVehicleDescriptionModalVisible(true)}
+          />
+        </View>
+        <View style={localStyles.infoRow}>
+          <Text style={localStyles.infoLabel}>Vehicle Plate</Text>
+          <Text style={localStyles.infoValue}>
+            {auth?.currentUser?.vehiclePlate}
+          </Text>
+          <IconButton
+            iconName='edit'
+            onPress={() => setIsEditVehiclePlateModalVisible(true)}
+          />
+        </View>
       </Card>
 
       <Card>
@@ -257,6 +281,16 @@ export default function AccountScreen() {
       <EditPhoneModal
         visible={isEditPhoneModalVisible}
         onClose={() => setIsEditPhoneModalVisible(false)}
+        user={auth?.currentUser || null}
+      />
+      <EditVehicleDescriptionModal
+        visible={isEditVehicleDescriptionModalVisible}
+        onClose={() => setIsEditVehicleDescriptionModalVisible(false)}
+        user={auth?.currentUser || null}
+      />
+      <EditVehiclePlateModal
+        visible={isEditVehiclePlateModalVisible}
+        onClose={() => setIsEditVehiclePlateModalVisible(false)}
         user={auth?.currentUser || null}
       />
     </ScrollView>

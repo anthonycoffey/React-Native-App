@@ -232,6 +232,8 @@ export interface User extends BaseEntity {
   } | null;
   referralCode?: string | null;
   referralCodeUsed?: number | null;
+  vehicleDescription?: string;
+  vehiclePlate?: string;
 }
 
 export interface ProxyNumber extends BaseEntity {
