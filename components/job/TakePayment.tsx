@@ -71,8 +71,6 @@ export default function TakePayment({
           <CurrencyInput
             label={'Amount'}
             value={amountToPay}
-            readOnly={true}
-            editable={false}
             onChangeText={(value: string) => setAmountToPay(value)}
           />
         </View>
