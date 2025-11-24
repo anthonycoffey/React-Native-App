@@ -264,8 +264,12 @@ Standardizing the app's visual theme and layout.
   - Added `refreshing` state to manage the refresh indicator.
 - **Fixed Push Notification Subscription Flow:**
   - Corrected a bug in `hooks/useNotifications.ts` where the registration logic only ran on initial app load, not after user login. The `useEffect` dependency array was updated to include `auth.session`.
-  - Resolved a subsequent issue where the logout function in `contexts/AuthContext.tsx` was blocked on simulators by an attempt to unsubscribe from notifications. The logic was updated to ensure logout proceeds smoothly on all devices.
+  - Resolved a subsequent issue where the logout function in `contexts/Auth-Context.tsx` was blocked on simulators by an attempt to unsubscribe from notifications. The logic was updated to ensure logout proceeds smoothly on all devices.
   - Removed a faulty `Device.isDevice` check that was preventing the permission prompt from appearing in certain development environments.
+- **Implemented Email Paycheck Feature:**
+  - Added an email icon button to each paycheck item on the `app/dashboard/account/paychecks/index.tsx` screen.
+  - Implemented the `handleEmailPaycheck` function to call the `POST /paychecks/:paycheckId/email` endpoint.
+  - Added loading and feedback (success/error alerts) to the user interface.
 
 ## Next Steps
 

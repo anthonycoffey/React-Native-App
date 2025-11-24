@@ -213,6 +213,10 @@ This document tracks what works, what's left to build, the current status, known
   - On acceptance, the user is navigated to the job details page.
   - On decline, the user is redirected to the main dashboard.
   - The screen is fully theme-aware and uses the project's standard component library.
+- **Email Paycheck Feature:**
+  - Added an email icon button to each paycheck item on the `app/dashboard/account/paychecks/index.tsx` screen.
+  - Implemented the `handleEmailPaycheck` function to call the `POST /paychecks/:paycheckId/email` endpoint.
+  - Added loading and feedback (success/error alerts) to the user interface.
 
 ## What's Left to Build
 

@@ -1,12 +1,20 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, FlatList, ActivityIndicator, Alert } from 'react-native';
+import {
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
   getBackgroundColor,
   getTextColor,
   getBorderColor,
+  getIconColor,
 } from '@/hooks/useThemeColor';
+import { MaterialIcons } from '@expo/vector-icons';
 import globalStyles from '@/styles/globalStyles';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiService } from '@/utils/ApiService';
@@ -27,6 +35,9 @@ export default function PaychecksScreen() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSendingEmailFor, setIsSendingEmailFor] = useState<number | null>(
+    null
+  );
 
   const fetchPaychecks = useCallback(
     async (page = 1) => {
@@ -67,6 +78,22 @@ export default function PaychecksScreen() {
     fetchPaychecks();
   }, [fetchPaychecks]);
 
+  const handleEmailPaycheck = async (paycheckId: number) => {
+    setIsSendingEmailFor(paycheckId);
+    try {
+      await apiService.post(`/paychecks/${paycheckId}/email`, {});
+      Alert.alert(
+        'Success',
+        'Paycheck has been sent successfully to your email.'
+      );
+    } catch (err) {
+      console.error('Error sending paycheck email:', err);
+      Alert.alert('Error', 'Failed to send  email. Please try again.');
+    } finally {
+      setIsSendingEmailFor(null);
+    }
+  };
+
   const renderPaycheckItem = ({ item }: { item: Paycheck }) => (
     <Card
       style={[
@@ -91,6 +118,22 @@ export default function PaychecksScreen() {
         <Text style={localStyles.itemValue}>
           {formatDateTime(item.createdAt)}
         </Text>
+      </ThemedView>
+      <ThemedView style={localStyles.actionsRow}>
+        <TouchableOpacity
+          onPress={() => handleEmailPaycheck(item.id)}
+          disabled={isSendingEmailFor === item.id}
+        >
+          {isSendingEmailFor === item.id ? (
+            <ActivityIndicator size='small' color={getTextColor(colorScheme)} />
+          ) : (
+            <MaterialIcons
+              name='print'
+              size={32}
+              color={getIconColor(colorScheme)}
+            />
+          )}
+        </TouchableOpacity>
       </ThemedView>
     </Card>
   );
@@ -123,10 +166,7 @@ export default function PaychecksScreen() {
 
   return (
     <ThemedView
-      style={[
-        globalStyles.container,
-        { backgroundColor: 'transparent' },
-      ]}
+      style={[globalStyles.container, { backgroundColor: 'transparent' }]}
     >
       {loading && paychecks.length === 0 ? (
         <ActivityIndicator
@@ -194,6 +234,12 @@ const localStyles = StyleSheet.create({
   },
   itemValue: {
     fontSize: 16,
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    backgroundColor: 'transparent',
+    marginTop: 10,
   },
   listContent: {
     paddingHorizontal: 0,
