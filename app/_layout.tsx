@@ -95,9 +95,14 @@ export default Sentry.wrap(function RootLayout() {
               >
                 <Stack>
                   <Stack.Screen
+                    name="actions/accept-job/[jobId]"
+                    options={{ title: 'Accept Job?', headerBackVisible: true }}
+                  />
+                  <Stack.Screen
                     name="dashboard"
                     options={{ headerShown: false, title: 'Dashboard' }}
                   />
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
                   <Stack.Screen
                     name="job/[id]"
                     options={({ route }) => ({
@@ -105,17 +110,17 @@ export default Sentry.wrap(function RootLayout() {
                       headerBackVisible: true,
                     })}
                   />
-                  <Stack.Screen name="login" options={{ headerShown: false }} />
                   <Stack.Screen
-                    name="register"
+                    name="location-permission"
                     options={{ headerShown: false }}
                   />
+                  <Stack.Screen name="login" options={{ headerShown: false }} />
                   <Stack.Screen
                     name="lost-password"
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen
-                    name="location-permission"
+                    name="register"
                     options={{ headerShown: false }}
                   />
                 </Stack>
