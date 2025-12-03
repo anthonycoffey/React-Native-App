@@ -9,7 +9,8 @@ import globalStyles from '@/styles/globalStyles';
 
 export default function LocationPermissionScreen() {
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<Location.LocationPermissionResponse | null>(null);
+  const [status, setStatus] =
+    useState<Location.LocationPermissionResponse | null>(null);
 
   useEffect(() => {
     const checkInitialStatus = async () => {
@@ -22,7 +23,8 @@ export default function LocationPermissionScreen() {
   const requestPermission = async () => {
     setLoading(true);
     try {
-      const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
+      const { status: foregroundStatus } =
+        await Location.requestForegroundPermissionsAsync();
 
       if (foregroundStatus !== 'granted') {
         const finalStatus = await Location.getForegroundPermissionsAsync();
@@ -31,8 +33,9 @@ export default function LocationPermissionScreen() {
         return;
       }
 
-      const { status: backgroundStatus } = await Location.requestBackgroundPermissionsAsync();
-      
+      const { status: backgroundStatus } =
+        await Location.requestBackgroundPermissionsAsync();
+
       if (backgroundStatus === 'granted') {
         router.back();
       } else {
@@ -54,7 +57,7 @@ export default function LocationPermissionScreen() {
 
   const renderContent = () => {
     if (!status) {
-      return <ActivityIndicator size="large" />;
+      return <ActivityIndicator size='large' />;
     }
 
     const canAskAgain = status.canAskAgain;
@@ -66,23 +69,40 @@ export default function LocationPermissionScreen() {
         </View>
 
         <Text type='title' style={globalStyles.title}>
-          Enable Location
+          Location Access Required
         </Text>
 
-        <Text style={[globalStyles.subtitle, { textAlign: 'center', fontWeight: 'normal' }]}>
-          This app requires background location access (&quot;Allow all the time&quot;) to notify you of nearby jobs, even when the app is closed.
+        <Text
+          style={[
+            globalStyles.subtitle,
+            { textAlign: 'center', fontWeight: 'normal' },
+          ]}
+        >
+          For critical job notifications and tracking, location access must be
+          set to <Text style={{ fontWeight: 'bold' }}>Allow all the time</Text>.
         </Text>
 
         {!canAskAgain && (
-          <Text style={[globalStyles.subtitle, globalStyles.errorText, { marginTop: 15 }]}>
-            You&apos;ve denied permissions. To enable location tracking, you need to go to your device settings.
+          <Text
+            style={[
+              globalStyles.subtitle,
+              globalStyles.errorText,
+              { marginTop: 15, textAlign: 'center', fontWeight: 'normal' },
+            ]}
+          >
+            To enable location tracking, please go to your device settings for
+            this app and set location access to
+            <Text style={{ fontWeight: 'bold', color: '#d32f2f' }}>
+              Allow all the time
+            </Text>
+            .
           </Text>
         )}
 
         <View style={globalStyles.separator} />
 
         <Text style={globalStyles.privacyText}>
-          Your location data is used only for job notifications and is not shared.
+          Your location data is not shared with third parties.
         </Text>
 
         {canAskAgain ? (
@@ -96,14 +116,14 @@ export default function LocationPermissionScreen() {
           </PrimaryButton>
         ) : (
           <PrimaryButton
-            title="Open Settings"
+            title='Open Settings'
             onPress={openSettings}
             style={globalStyles.button}
           />
         )}
 
         <OutlinedButton
-          title="Go Back"
+          title='Go Back'
           onPress={() => router.back()}
           style={globalStyles.button}
         />
@@ -113,9 +133,7 @@ export default function LocationPermissionScreen() {
 
   return (
     <View style={globalStyles.container}>
-      <View style={globalStyles.centeredContent}>
-        {renderContent()}
-      </View>
+      <View style={globalStyles.centeredContent}>{renderContent()}</View>
     </View>
   );
 }

@@ -1,20 +1,34 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { AppState } from 'react-native';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { LocationObject } from 'expo-location';
-import { router } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import { apiService } from '@/utils/ApiService';
 import { useUser } from '@/contexts/UserContext';
 
 const LOCATION_TASK_NAME = 'background-location-task';
+const SECURE_STORE_KEY = 'session';
 
 TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   if (error) {
+    console.log('Background Location Task Error:', error);
     return;
   }
 
   if (data) {
     const { locations } = data as { locations: Location.LocationObject[] };
+
+    const token = await SecureStore.getItemAsync(SECURE_STORE_KEY);
+    if (!token) {
+      console.log(
+        'Background Location Task: No auth token found, skipping API call.'
+      );
+      return;
+    }
+
+    apiService.setAuthToken(token);
+
     if (locations && locations.length > 0) {
       for (const loc of locations) {
         try {
@@ -44,8 +58,9 @@ export default function useLocation() {
   } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { isClockedIn } = useUser();
+  const appState = useRef(AppState.currentState);
 
-  const UPDATE_INTERVAL = 1000 * 60 * 5;
+  const UPDATE_INTERVAL = 1000 * 60 * 5; // 5 minutes
 
   const checkPermissions = useCallback(async () => {
     setIsLoading(true);
@@ -63,7 +78,7 @@ export default function useLocation() {
 
       if (!permissions.background) {
         setErrorMsg(
-          'Background location permission is required for continuous tracking.'
+          'Background location is not enabled. Please go to your device settings and set location access to `Allow all the time`.'
         );
       } else if (!permissions.foreground) {
         setErrorMsg('Foreground location permission is required.');
@@ -123,7 +138,7 @@ export default function useLocation() {
 
     try {
       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-        accuracy: Location.Accuracy.Balanced,
+        accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: UPDATE_INTERVAL,
         distanceInterval: 1609.34, // 1 mile
         showsBackgroundLocationIndicator: true,
@@ -139,6 +154,23 @@ export default function useLocation() {
 
   useEffect(() => {
     checkPermissions();
+
+    const subscription = AppState.addEventListener(
+      'change',
+      async (nextAppState) => {
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextAppState === 'active'
+        ) {
+          await checkPermissions();
+        }
+        appState.current = nextAppState;
+      }
+    );
+
+    return () => {
+      subscription.remove();
+    };
   }, [checkPermissions]);
 
   useEffect(() => {
@@ -153,7 +185,7 @@ export default function useLocation() {
     manageUpdates();
   }, [
     isClockedIn,
-    permissionStatus,
+    permissionStatus?.background, // Depend on the specific value, not the object
     startLocationUpdates,
     stopLocationUpdates,
   ]);
