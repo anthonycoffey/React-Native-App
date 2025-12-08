@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { AppState } from 'react-native';
+import { AppState, AppStateStatus } from 'react-native';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { LocationObject } from 'expo-location';
@@ -12,7 +12,6 @@ const SECURE_STORE_KEY = 'session';
 
 TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   if (error) {
-    console.log('Background Location Task Error:', error);
     return;
   }
 
@@ -21,9 +20,6 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
 
     const token = await SecureStore.getItemAsync(SECURE_STORE_KEY);
     if (!token) {
-      console.log(
-        'Background Location Task: No auth token found, skipping API call.'
-      );
       return;
     }
 
@@ -39,10 +35,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
             timestamp: loc.timestamp,
           });
         } catch (apiError) {
-          console.log(
-            'Background Location Task: Failed to send location to server.',
-            apiError
-          );
+          // silently fail
         }
       }
     }
@@ -58,9 +51,13 @@ export default function useLocation() {
   } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { isClockedIn } = useUser();
-  const appState = useRef(AppState.currentState);
+  
+  // Use state for AppState to trigger effects, and ref for listener logic to avoid re-renders
+  const [appState, setAppState] = useState<AppStateStatus>(AppState.currentState);
+  const appStateRef = useRef(AppState.currentState);
+  const foregroundSubscriber = useRef<Location.LocationSubscription | null>(null);
 
-  const UPDATE_INTERVAL = 1000 * 60 * 5; // 5 minutes
+  const UPDATE_INTERVAL = 60000; // 60 seconds
 
   const checkPermissions = useCallback(async () => {
     setIsLoading(true);
@@ -87,7 +84,6 @@ export default function useLocation() {
       }
       return permissions;
     } catch (error) {
-      console.log('useLocation: Error checking permissions:', error);
       setErrorMsg('Failed to check location permissions');
       setPermissionStatus({ foreground: false, background: false });
       return { foreground: false, background: false };
@@ -109,7 +105,7 @@ export default function useLocation() {
           timestamp: locationData.timestamp,
         });
       } catch (error) {
-        console.log('useLocation: Error API POST /user/geolocation:', error);
+        // silently fail
       }
     },
     [isClockedIn]
@@ -123,10 +119,7 @@ export default function useLocation() {
         await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
       }
     } catch (error) {
-      console.log(
-        'useLocation: Error stopping background location updates:',
-        error
-      );
+       // silently fail
     }
   }, []);
 
@@ -140,14 +133,16 @@ export default function useLocation() {
       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
         accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: UPDATE_INTERVAL,
-        distanceInterval: 1609.34, // 1 mile
+        distanceInterval: 100, // 100 meters
         showsBackgroundLocationIndicator: true,
+        activityType: Location.ActivityType.AutomotiveNavigation,
+        pausesUpdatesAutomatically: false,
+        foregroundService: {
+          notificationTitle: "Location Tracking Enabled",
+          notificationBody: "Tracking your location to provide better service.",
+        },
       });
     } catch (error) {
-      console.log(
-        'useLocation: Error starting background location updates:',
-        error
-      );
       setErrorMsg('Failed to start background location updates.');
     }
   }, [permissionStatus, isClockedIn, stopLocationUpdates]);
@@ -159,12 +154,13 @@ export default function useLocation() {
       'change',
       async (nextAppState) => {
         if (
-          appState.current.match(/inactive|background/) &&
+          appStateRef.current.match(/inactive|background/) &&
           nextAppState === 'active'
         ) {
           await checkPermissions();
         }
-        appState.current = nextAppState;
+        appStateRef.current = nextAppState;
+        setAppState(nextAppState);
       }
     );
 
@@ -172,6 +168,45 @@ export default function useLocation() {
       subscription.remove();
     };
   }, [checkPermissions]);
+
+  // Foreground Watcher Effect
+  useEffect(() => {
+    const manageForegroundWatcher = async () => {
+       if (appState === 'active' && isClockedIn && permissionStatus?.foreground) {
+           if (!foregroundSubscriber.current) {
+               try {
+                   foregroundSubscriber.current = await Location.watchPositionAsync(
+                       {
+                           accuracy: Location.Accuracy.BestForNavigation,
+                           timeInterval: 60000, // 60 seconds
+                           distanceInterval: 100, // 100 meters
+                       },
+                       (newLocation) => {
+                           setLocation(newLocation);
+                           // Ensure foreground updates hit the server as requested
+                           updateServerLocation(newLocation);
+                       }
+                   );
+               } catch (error) {
+                   // silently fail
+               }
+           }
+       } else {
+           if (foregroundSubscriber.current) {
+               foregroundSubscriber.current.remove();
+               foregroundSubscriber.current = null;
+           }
+       }
+    };
+    manageForegroundWatcher();
+
+    return () => {
+        if (foregroundSubscriber.current) {
+             foregroundSubscriber.current.remove();
+             foregroundSubscriber.current = null;
+        }
+    };
+  }, [appState, isClockedIn, permissionStatus?.foreground, updateServerLocation]);
 
   useEffect(() => {
     const manageUpdates = async () => {
@@ -215,7 +250,6 @@ export default function useLocation() {
       await updateServerLocation(currentLocation);
       return currentLocation;
     } catch (error) {
-      console.log('useLocation: Error during manual refreshLocation:', error);
       setErrorMsg('Failed to get location on refresh');
       return null;
     } finally {
