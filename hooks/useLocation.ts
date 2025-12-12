@@ -10,6 +10,8 @@ import { useUser } from '@/contexts/UserContext';
 const LOCATION_TASK_NAME = 'background-location-task';
 const SECURE_STORE_KEY = 'session';
 
+let lastBackgroundRequest = 0;
+
 TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   if (error) {
     return;
@@ -18,6 +20,17 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   if (data) {
     const { locations } = data as { locations: Location.LocationObject[] };
 
+    if (!locations || locations.length === 0) {
+      return;
+    }
+
+    // Throttle: Prevent flooding (Max 1 request per 15 seconds)
+    const now = Date.now();
+    if (now - lastBackgroundRequest < 15000) {
+      return;
+    }
+    lastBackgroundRequest = now;
+
     const token = await SecureStore.getItemAsync(SECURE_STORE_KEY);
     if (!token) {
       return;
@@ -25,19 +38,18 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
 
     apiService.setAuthToken(token);
 
-    if (locations && locations.length > 0) {
-      for (const loc of locations) {
-        try {
-          await apiService.post('/user/geolocation', {
-            latitude: loc.coords.latitude,
-            longitude: loc.coords.longitude,
-            accuracy: loc.coords.accuracy,
-            timestamp: loc.timestamp,
-          });
-        } catch (apiError) {
-          // silently fail
-        }
-      }
+    // Only process the most recent location to prevent "flurry" of requests
+    const loc = locations[locations.length - 1];
+
+    try {
+      await apiService.post('/user/geolocation', {
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+        accuracy: loc.coords.accuracy,
+        timestamp: loc.timestamp,
+      });
+    } catch (apiError) {
+      // silently fail
     }
   }
 });
@@ -56,6 +68,10 @@ export default function useLocation() {
   const [appState, setAppState] = useState<AppStateStatus>(AppState.currentState);
   const appStateRef = useRef(AppState.currentState);
   const foregroundSubscriber = useRef<Location.LocationSubscription | null>(null);
+  const lastServerUpdateRef = useRef<number>(0);
+  
+  // Keep latest updateServerLocation in a ref to avoid recreating the watcher
+  const updateServerLocationRef = useRef<(loc: LocationObject) => Promise<void>>(async () => {});
 
   const UPDATE_INTERVAL = 60000; // 60 seconds
 
@@ -97,6 +113,15 @@ export default function useLocation() {
       if (!isClockedIn) {
         return;
       }
+
+      // Hard Throttle: Prevent flooding (Max 1 request per 15 seconds)
+      // This protects the backend even if the location provider misbehaves
+      const now = Date.now();
+      if (now - lastServerUpdateRef.current < 15000) {
+        return;
+      }
+      lastServerUpdateRef.current = now;
+
       try {
         await apiService.post('/user/geolocation', {
           latitude: locationData.coords.latitude,
@@ -110,6 +135,11 @@ export default function useLocation() {
     },
     [isClockedIn]
   );
+  
+  // Update ref whenever the function changes
+  useEffect(() => {
+    updateServerLocationRef.current = updateServerLocation;
+  }, [updateServerLocation]);
 
   const stopLocationUpdates = useCallback(async () => {
     try {
@@ -170,6 +200,7 @@ export default function useLocation() {
   }, [checkPermissions]);
 
   // Foreground Watcher Effect
+  // Optimized to use ref for updateServerLocation to prevent re-subscriptions
   useEffect(() => {
     const manageForegroundWatcher = async () => {
        if (appState === 'active' && isClockedIn && permissionStatus?.foreground) {
@@ -184,7 +215,8 @@ export default function useLocation() {
                        (newLocation) => {
                            setLocation(newLocation);
                            // Ensure foreground updates hit the server as requested
-                           updateServerLocation(newLocation);
+                           // Use ref to avoid dependency cycle
+                           updateServerLocationRef.current(newLocation);
                        }
                    );
                } catch (error) {
@@ -206,7 +238,7 @@ export default function useLocation() {
              foregroundSubscriber.current = null;
         }
     };
-  }, [appState, isClockedIn, permissionStatus?.foreground, updateServerLocation]);
+  }, [appState, isClockedIn, permissionStatus?.foreground]); // Removed updateServerLocation dependency
 
   useEffect(() => {
     const manageUpdates = async () => {

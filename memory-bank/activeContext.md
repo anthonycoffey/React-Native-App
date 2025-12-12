@@ -270,6 +270,10 @@ Standardizing the app's visual theme and layout.
   - Added an email icon button to each paycheck item on the `app/dashboard/account/paychecks/index.tsx` screen.
   - Implemented the `handleEmailPaycheck` function to call the `POST /paychecks/:paycheckId/email` endpoint.
   - Added loading and feedback (success/error alerts) to the user interface.
+- **Optimized Background Location Tracking:**
+  - Addressed a potential flooding issue where the background location task could send a "flurry" of requests if the OS batched multiple location updates.
+  - Modified `hooks/useLocation.ts` to process only the single most recent location update from the batch provided by `expo-task-manager`, instead of iterating through all of them.
+  - Implemented a lightweight in-memory throttle (`lastBackgroundRequest` variable) to limit background location updates to a maximum of one request every 15 seconds, preventing server overload even if the OS triggers the task frequently.
 
 ## Next Steps
 
