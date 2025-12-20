@@ -4,9 +4,31 @@ This document details the current work focus, recent changes, next steps, active
 
 ## Current Work Focus
 
-Standardizing the app's visual theme and layout.
+Enhancing background location tracking reliability for fleet monitoring.
 
 ## Recent Changes
+
+- **Architectural Refactor: Global Location Tracking:**
+  - Migrated location tracking logic from `hooks/useLocation.ts` to a new `LocationContext` (`contexts/LocationContext.tsx`).
+  - Wrapped the entire application (within `app/_layout.tsx`) with `LocationProvider`.
+  - **Impact:** This ensures that location tracking (both background and foreground) is active and managed whenever the user is logged in and the app is running, regardless of which screen they are viewing (e.g., "My Jobs" vs "Go Online"). Previously, tracking was only active when the `useLocation` hook was explicitly mounted, which primarily happened on the "Go Online" screen.
+  - Updated `hooks/useLocation.ts` to serve as a wrapper around `useLocationContext`, preserving the existing API for components like `GoOnlineScreen`.
+- **Extensive Logging for Location Service:**
+  - Added detailed logging to `contexts/LocationContext.tsx` to track the lifecycle of the location service:
+    - `[LocationProvider] Initialized`
+    - `[LocationProvider] AppState changed: ...`
+    - `[BackgroundLocation] Task triggered`
+    - `[BackgroundLocation] Sending POST request to /user/geolocation at [TIMESTAMP]`
+    - `[BackgroundLocation] API update success/failed`
+  - These logs provide visibility into when the app enters the background and precisely when API requests are fired, aiding in debugging and verification of fleet monitoring features.
+- **Hardened Background Auth Token Retrieval:**
+  - Updated `hooks/useStorageState.ts` to set `keychainAccessible: SecureStore.ALWAYS_THIS_DEVICE_ONLY` when saving the session token. This ensures the token remains accessible to the background task even when the device is locked (screen off).
+  - Added error handling (try-catch) around `SecureStore.getItemAsync` in the background task to prevent crashes.
+- **Redesigned Background Location Tracking:**
+  - **Unified Logic:** The background task is now the *only* source of server updates, preventing "split brain" issues with the foreground watcher.
+  - **Fleet Monitoring Config:** Tuned parameters (`distanceInterval: 50m`, `timeInterval: 30s`) for better responsiveness.
+  - **Robustness:** Added persistence checks for clock-in status and smart throttling to preventing server flooding.
+  - **Removed Throttling:** Completely removed the 15-second throttle from the background task to ensure all valid updates are processed and sent to the server, prioritizing tracking accuracy over bandwidth conservation during this debugging phase.
 
 - **Implemented Tappable In-App Notifications:**
   - Extended the deep linking functionality to the in-app notifications screen (`app/dashboard/notifications.tsx`).
@@ -274,10 +296,23 @@ Standardizing the app's visual theme and layout.
   - Addressed a potential flooding issue where the background location task could send a "flurry" of requests if the OS batched multiple location updates.
   - Modified `hooks/useLocation.ts` to process only the single most recent location update from the batch provided by `expo-task-manager`, instead of iterating through all of them.
   - Implemented a lightweight in-memory throttle (`lastBackgroundRequest` variable) to limit background location updates to a maximum of one request every 15 seconds, preventing server overload even if the OS triggers the task frequently.
+- **Implemented Background Fetch Heartbeat:**
+  - Integrated `expo-background-fetch` to run a periodic (15-minute) background task (`BACKGROUND_FETCH_TASK`) in `contexts/LocationContext.tsx`.
+  - This "heartbeat" task acts as a watchdog:
+    - It checks if the user is clocked in (using `AsyncStorage` persistence).
+    - It verifies if the primary location service (`LOCATION_TASK_NAME`) is running.
+    - If the user is clocked in but the service has stopped (e.g., due to OS suspension), it automatically restarts the location updates.
+  - This adds a critical layer of redundancy for fleet monitoring, ensuring that location tracking remains active even in adverse OS conditions.
+  - Refactored `UPDATE_CONFIG` in `contexts/LocationContext.tsx` to be accessible by both the component and the background tasks.
+  - Updated `startLocationUpdates` and `stopLocationUpdates` to register/unregister the background fetch task alongside the location service.
+- **Fixed Android Crash in Location Service:**
+  - Added a defensive check in `startLocationUpdates` to detect if the location task is registered but not tracking.
+  - If this stale state is detected, the task is explicitly unregistered using `TaskManager.unregisterTaskAsync(LOCATION_TASK_NAME)` before attempting to restart it.
+  - This resolves a `java.lang.NullPointerException` related to `SharedPreferences` on Android, ensuring the task starts with a clean state.
 
 ## Next Steps
 
-- **Finalize Memory Bank Update:** Complete updates to `progress.md` to reflect the in-app notification linking implementation.
+- **Verification:** Monitor the "heartbeat" logs in development to confirm the background fetch task triggers as expected (approx. every 15 mins).
 - **Testing:** Thoroughly test the new deep linking functionality for both push notifications and in-app notifications on both iOS and Android.
 - **Identify and document any `Known Issues`** that arise during testing or further development.
 - **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md` once Memory Bank is up-to-date and current features are stable.

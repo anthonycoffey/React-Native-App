@@ -217,6 +217,14 @@ This document tracks what works, what's left to build, the current status, known
   - Added an email icon button to each paycheck item on the `app/dashboard/account/paychecks/index.tsx` screen.
   - Implemented the `handleEmailPaycheck` function to call the `POST /paychecks/:paycheckId/email` endpoint.
   - Added loading and feedback (success/error alerts) to the user interface.
+- **Background Fetch Heartbeat:**
+  - Implemented a resilient "heartbeat" mechanism for location tracking using `expo-background-fetch`.
+  - A background task runs approximately every 15 minutes to check the system state.
+  - If the user is clocked in but location services have stopped (e.g., due to OS suspension), the task automatically restarts the location updates.
+  - This ensures consistent fleet monitoring even if the app is killed or suspended by the operating system.
+- **Fixed Android Crash in Location Service:**
+  - Implemented a robust fix for a `NullPointerException` on Android that occurred when starting location updates.
+  - The `startLocationUpdates` function now explicitly unregisters any stale tasks before attempting to start a new one, preventing native state corruption.
 
 ## What's Left to Build
 

@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { UserProvider } from '@/contexts/UserContext';
 import { NotificationsProvider } from '@/contexts/NotificationsContext';
+import { LocationProvider } from '@/contexts/LocationContext';
 import { useNotifications } from '@/hooks/useNotifications';
 import { JobScreenParams } from '../types';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -93,37 +94,39 @@ export default Sentry.wrap(function RootLayout() {
                   colorScheme === 'dark' ? customDarkTheme : customDefaultTheme
                 }
               >
-                <Stack>
-                  <Stack.Screen
-                    name="actions/accept-job/[jobId]"
-                    options={{ title: 'Accept Job?', headerBackVisible: true }}
-                  />
-                  <Stack.Screen
-                    name="dashboard"
-                    options={{ headerShown: false, title: 'Dashboard' }}
-                  />
-                  <Stack.Screen name="index" options={{ headerShown: false }} />
-                  <Stack.Screen
-                    name="job/[id]"
-                    options={({ route }) => ({
-                      title: `J-${(route.params as JobScreenParams)?.id}`,
-                      headerBackVisible: true,
-                    })}
-                  />
-                  <Stack.Screen
-                    name="location-permission"
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen name="login" options={{ headerShown: false }} />
-                  <Stack.Screen
-                    name="lost-password"
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="register"
-                    options={{ headerShown: false }}
-                  />
-                </Stack>
+                <LocationProvider>
+                  <Stack>
+                    <Stack.Screen
+                      name="actions/accept-job/[jobId]"
+                      options={{ title: 'Accept Job?', headerBackVisible: true }}
+                    />
+                    <Stack.Screen
+                      name="dashboard"
+                      options={{ headerShown: false, title: 'Dashboard' }}
+                    />
+                    <Stack.Screen name="index" options={{ headerShown: false }} />
+                    <Stack.Screen
+                      name="job/[id]"
+                      options={({ route }) => ({
+                        title: `J-${(route.params as JobScreenParams)?.id}`,
+                        headerBackVisible: true,
+                      })}
+                    />
+                    <Stack.Screen
+                      name="location-permission"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen name="login" options={{ headerShown: false }} />
+                    <Stack.Screen
+                      name="lost-password"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="register"
+                      options={{ headerShown: false }}
+                    />
+                  </Stack>
+                </LocationProvider>
               </ThemeProvider>
             </SafeAreaProvider>
           </NotificationsWrapper>

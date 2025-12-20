@@ -10,6 +10,7 @@ module.exports = ({ config }) => {
       bundleIdentifier: 'com.phoenix-mobile',
       ...config.ios,
       googleServicesFile: process.env.GOOGLE_SERVICES_PLIST,
+      supportsTablet: true,
     },
   };
 };

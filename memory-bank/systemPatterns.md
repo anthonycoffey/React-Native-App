@@ -32,6 +32,7 @@ This document outlines the system architecture, key technical decisions, design 
         *   `contexts/AuthContext.tsx`: Manages the user's `session` (authentication token) and the authenticated user's data (`currentUser`). It fetches user data upon successful establishment of a `session` (which also involves setting the token in `apiService`). The presence of a non-null `session` indicates that the API client is configured with an auth token.
         *   `contexts/UserContext.tsx`: Manages other user-specific states not directly tied to authentication, such as `isClockedIn`.
         *   `contexts/NotificationsContext.tsx`: Manages the state of in-app notifications, including the list of notifications and the unread count. It also handles loading notifications from and saving them to `AsyncStorage`.
+        *   `contexts/LocationContext.tsx`: Manages location tracking state (current location, permissions, errors) and the lifecycle of background and foreground location updates. It acts as a singleton to ensure consistent tracking across the app.
     *   **Local State:** Standard React component state (`useState`, `useEffect`) is used extensively within components for managing their internal data and lifecycle.
 3.  **Notifications:**
     *   **Engine:** The `expo-notifications` library is used to handle all aspects of local and push notifications.

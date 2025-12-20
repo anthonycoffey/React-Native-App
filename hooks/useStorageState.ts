@@ -31,7 +31,9 @@ export async function setStorageItemAsync(key: string, value: string | null) {
     if (value == null) {
       await SecureStore.deleteItemAsync(key);
     } else {
-      await SecureStore.setItemAsync(key, value);
+      await SecureStore.setItemAsync(key, value, {
+        keychainAccessible: SecureStore.ALWAYS_THIS_DEVICE_ONLY,
+      });
     }
   }
 }
