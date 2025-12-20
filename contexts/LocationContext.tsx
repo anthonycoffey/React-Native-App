@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiService } from '@/utils/ApiService';
 import { useUser } from '@/contexts/UserContext';
 
-const LOCATION_TASK_NAME = 'background-location-task';
+const LOCATION_TASK_NAME = 'background-location-task-v2';
 const BACKGROUND_FETCH_TASK = 'background-fetch-task';
 const SECURE_STORE_KEY = 'session';
 const CLOCKED_IN_KEY = 'user_clocked_in';
@@ -17,16 +17,15 @@ const CLOCKED_IN_KEY = 'user_clocked_in';
 // Configuration for "Fleet Monitoring"
 const UPDATE_CONFIG = {
   accuracy: Location.Accuracy.BestForNavigation,
-  timeInterval: 5000, // 5 seconds (Debug)
-  distanceInterval: 1, // 1 meter (Debug)
-  deferredUpdatesInterval: 0, // 0 (Immediate)
-  deferredUpdatesDistance: 0, // 0 (Immediate)
+  timeInterval: 5000, // 5 seconds
+  distanceInterval: 10, // 10 meters
   showsBackgroundLocationIndicator: true,
-  activityType: Location.ActivityType.Other, // Changed from AutomotiveNavigation to allow all movement types
+  activityType: Location.ActivityType.AutomotiveNavigation,
   pausesUpdatesAutomatically: false,
   foregroundService: {
-    notificationTitle: "Location Tracking Enabled",
-    notificationBody: "Tracking your location to provide better service.",
+    notificationTitle: "Technician App",
+    notificationBody: "Tracking location for active jobs",
+    notificationColor: "#252c3a", // App theme color
   },
 };
 
@@ -248,12 +247,19 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // 1. Start Location Task
+      // 1. Register Background Fetch (Heartbeat) - PRIORITIZED
+      console.log('[LocationProvider] startLocationUpdates: Registering background fetch heartbeat');
+      await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+          minimumInterval: 60 * 15, // 15 minutes
+          stopOnTerminate: false, 
+          startOnBoot: true,
+      });
+
+      // 2. Start Location Task
       const isTracking = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
       
       if (!isTracking) {
         // Defensive check: If not tracking, ensure it's not registered in a stale state
-        // This helps prevent Android SharedPreferences crashes if the task data is corrupted
         const isRegistered = await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
         if (isRegistered) {
             console.log('[LocationProvider] startLocationUpdates: Task registered but not tracking. Unregistering to clean state.');
@@ -266,14 +272,6 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
 
       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, UPDATE_CONFIG);
       
-      // 2. Register Background Fetch (Heartbeat)
-      console.log('[LocationProvider] startLocationUpdates: Registering background fetch heartbeat');
-      await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-          minimumInterval: 60 * 15, // 15 minutes
-          stopOnTerminate: false, 
-          startOnBoot: true,
-      });
-
       console.log('[LocationProvider] startLocationUpdates: Services started successfully');
     } catch (error) {
       console.error('[LocationProvider] startLocationUpdates: Failed to start task', error);

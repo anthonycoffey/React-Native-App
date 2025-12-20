@@ -8,6 +8,14 @@ Enhancing background location tracking reliability for fleet monitoring.
 
 ## Recent Changes
 
+- **Implemented "Uber-like" Background Location Tracking:**
+  - **Re-enabled Android Foreground Service:** Updated `contexts/LocationContext.tsx` to enable the `foregroundService` configuration. This creates a persistent notification ("Technician App: Tracking location for active jobs") that keeps the app alive in the background on Android 8+, significantly improving tracking reliability.
+  - **Optimized Tracking Parameters:** Tuned `UPDATE_CONFIG` for high-frequency updates suitable for live fleet monitoring:
+    - `timeInterval`: 5 seconds (was 5s, kept).
+    - `distanceInterval`: 10 meters (increased from 1m to reduce noise).
+    - `activityType`: `Location.ActivityType.AutomotiveNavigation` (changed from `Other` to signal navigation intent to the OS).
+  - **Robustness:** The implementation continues to use the dedicated `background-location-task-v2` and includes the 15-minute "heartbeat" safety net (`BACKGROUND_FETCH_TASK`).
+
 - **Architectural Refactor: Global Location Tracking:**
   - Migrated location tracking logic from `hooks/useLocation.ts` to a new `LocationContext` (`contexts/LocationContext.tsx`).
   - Wrapped the entire application (within `app/_layout.tsx`) with `LocationProvider`.
@@ -26,7 +34,7 @@ Enhancing background location tracking reliability for fleet monitoring.
   - Added error handling (try-catch) around `SecureStore.getItemAsync` in the background task to prevent crashes.
 - **Redesigned Background Location Tracking:**
   - **Unified Logic:** The background task is now the *only* source of server updates, preventing "split brain" issues with the foreground watcher.
-  - **Fleet Monitoring Config:** Tuned parameters (`distanceInterval: 50m`, `timeInterval: 30s`) for better responsiveness.
+  - **Fleet Monitoring Config:** Tuned parameters (`distanceInterval: 10m`, `timeInterval: 5s`) for better responsiveness.
   - **Robustness:** Added persistence checks for clock-in status and smart throttling to preventing server flooding.
   - **Removed Throttling:** Completely removed the 15-second throttle from the background task to ensure all valid updates are processed and sent to the server, prioritizing tracking accuracy over bandwidth conservation during this debugging phase.
 
@@ -307,12 +315,16 @@ Enhancing background location tracking reliability for fleet monitoring.
   - Updated `startLocationUpdates` and `stopLocationUpdates` to register/unregister the background fetch task alongside the location service.
 - **Fixed Android Crash in Location Service:**
   - Added a defensive check in `startLocationUpdates` to detect if the location task is registered but not tracking.
-  - If this stale state is detected, the task is explicitly unregistered using `TaskManager.unregisterTaskAsync(LOCATION_TASK_NAME)` before attempting to restart it.
+  - If this stale state is detected, the task is explicitly unregistered using `TaskManager.unregisterTaskAsync(LOCATION_TASK_NAME)` before attempting to start it.
   - This resolves a `java.lang.NullPointerException` related to `SharedPreferences` on Android, ensuring the task starts with a clean state.
+  - **Cache Busting:** Renamed `LOCATION_TASK_NAME` to `'background-location-task-v2'` to bypass potentially corrupted SharedPreferences storage from previous versions.
+  - **Config Simplification:** Removed `deferredUpdatesInterval` and `deferredUpdatesDistance` from `UPDATE_CONFIG` to minimize potential compatibility issues on Android.
+  - **Debugging Android NPE:** Temporarily removed `foregroundService` from `UPDATE_CONFIG` and prioritized `BackgroundFetch` registration to isolate the cause of a persistent `NullPointerException` on Android during location service startup.
 
 ## Next Steps
 
-- **Verification:** Monitor the "heartbeat" logs in development to confirm the background fetch task triggers as expected (approx. every 15 mins).
+- **Verification:** Monitor the server logs to confirm high-frequency updates (approx. every 5-10s) are received from the "Technician App".
+- **Verification:** Confirm the "Technician App" notification appears on Android when the user goes online.
 - **Testing:** Thoroughly test the new deep linking functionality for both push notifications and in-app notifications on both iOS and Android.
 - **Identify and document any `Known Issues`** that arise during testing or further development.
 - **Continue Project Work:** Proceed with the next development task based on the priorities outlined in `projectbrief.md` and `progress.md` once Memory Bank is up-to-date and current features are stable.

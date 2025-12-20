@@ -4,6 +4,13 @@ This document tracks what works, what's left to build, the current status, known
 
 ## What Works
 
+- **High-Frequency Background Location Tracking:**
+  - Implemented a robust, "Uber-like" tracking solution using `expo-location` and `expo-task-manager`.
+  - **Android Foreground Service:** Enabled to ensure persistent background operation (Android 8+).
+  - **Optimized Configuration:** Tuned for fleet monitoring (5s interval, 10m distance, `AutomotiveNavigation` activity type).
+  - **Redundancy:** Includes a 15-minute background fetch heartbeat to restart services if killed by the OS.
+  - **API Integration:** Reliably posts location updates to `/user/geolocation`.
+  - **State Management:** Centralized logic in `LocationContext` (`contexts/LocationContext.tsx`) managing both foreground UI updates and background server syncing.
 - **Modernized Job Page Layout:**
   - Refactored the `app/job/[id].tsx` page to use the standardized `Card` component for all sections, creating a consistent and modern layout.
   - Removed old card styles from child components (`JobStatus`, `JobProxy`, etc.) to prevent style conflicts and improve code maintainability.
@@ -222,9 +229,6 @@ This document tracks what works, what's left to build, the current status, known
   - A background task runs approximately every 15 minutes to check the system state.
   - If the user is clocked in but location services have stopped (e.g., due to OS suspension), the task automatically restarts the location updates.
   - This ensures consistent fleet monitoring even if the app is killed or suspended by the operating system.
-- **Fixed Android Crash in Location Service:**
-  - Implemented a robust fix for a `NullPointerException` on Android that occurred when starting location updates.
-  - The `startLocationUpdates` function now explicitly unregisters any stale tasks before attempting to start a new one, preventing native state corruption.
 
 ## What's Left to Build
 
@@ -251,8 +255,8 @@ This document tracks what works, what's left to build, the current status, known
 
 ## Known Issues
 
-_(To be filled in)_
+- **High Battery Usage:** The "Uber-like" tracking frequency (5s intervals) will consume significantly more battery than standard tracking. This is an expected trade-off for fleet monitoring functionality.
 
 ## Evolution of Project Decisions
 
-_(To be filled in)_
+- **Android Foreground Service:** Initially disabled due to crashes, we have re-enabled it as a critical requirement for persistent background tracking on modern Android versions. We addressed the stability issues by ensuring proper cleanup of stale tasks before restarting services.
