@@ -17,13 +17,13 @@ const CLOCKED_IN_KEY = 'user_clocked_in';
 // Configuration for "Fleet Monitoring"
 const UPDATE_CONFIG = {
   accuracy: Location.Accuracy.BestForNavigation,
-  timeInterval: 5000, // 5 seconds
-  distanceInterval: 10, // 10 meters
+  timeInterval: 30000, // 30 seconds
+  distanceInterval: 25, // 25 meters
   showsBackgroundLocationIndicator: true,
   activityType: Location.ActivityType.AutomotiveNavigation,
   pausesUpdatesAutomatically: false,
   foregroundService: {
-    notificationTitle: "Technician App",
+    notificationTitle: "Location Tracking Enabled",
     notificationBody: "Tracking location for active jobs",
     notificationColor: "#252c3a", // App theme color
   },
