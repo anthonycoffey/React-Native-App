@@ -8,12 +8,16 @@ Enhancing background location tracking reliability for fleet monitoring.
 
 ## Recent Changes
 
-- **Implemented "Uber-like" Background Location Tracking:**
+- **Optimized Location Tracking for Enterprise Scale:**
+  - **Tuned Configuration:** Adjusted tracking parameters to balance "live" visibility with backend server load.
+    - `timeInterval`: **10 seconds** (previously 5s).
+    - `distanceInterval`: **20 meters** (previously 10m).
+  - **Rationale:** While 3-5s updates provide smoother map animations ("Uber-like"), the associated HTTP POST traffic was deemed too heavy for the current backend infrastructure with 20+ technicians. The 10s/20m profile provides a robust "High-Frequency Fleet" standard that is sufficient for dispatch decisions without overwhelming the server.
+  - **Activity Type:** Retained `AutomotiveNavigation` to ensure high priority background execution on iOS/Android.
+  - **Android Foreground Service:** Remains enabled to ensure persistent background operation.
+
+- **Implemented "Uber-like" Background Location Tracking (Foundation):**
   - **Re-enabled Android Foreground Service:** Updated `contexts/LocationContext.tsx` to enable the `foregroundService` configuration. This creates a persistent notification ("Technician App: Tracking location for active jobs") that keeps the app alive in the background on Android 8+, significantly improving tracking reliability.
-  - **Optimized Tracking Parameters:** Tuned `UPDATE_CONFIG` for high-frequency updates suitable for live fleet monitoring:
-    - `timeInterval`: 5 seconds (was 5s, kept).
-    - `distanceInterval`: 10 meters (increased from 1m to reduce noise).
-    - `activityType`: `Location.ActivityType.AutomotiveNavigation` (changed from `Other` to signal navigation intent to the OS).
   - **Robustness:** The implementation continues to use the dedicated `background-location-task-v2` and includes the 15-minute "heartbeat" safety net (`BACKGROUND_FETCH_TASK`).
 
 - **Architectural Refactor: Global Location Tracking:**
@@ -34,9 +38,8 @@ Enhancing background location tracking reliability for fleet monitoring.
   - Added error handling (try-catch) around `SecureStore.getItemAsync` in the background task to prevent crashes.
 - **Redesigned Background Location Tracking:**
   - **Unified Logic:** The background task is now the *only* source of server updates, preventing "split brain" issues with the foreground watcher.
-  - **Fleet Monitoring Config:** Tuned parameters (`distanceInterval: 10m`, `timeInterval: 5s`) for better responsiveness.
   - **Robustness:** Added persistence checks for clock-in status and smart throttling to preventing server flooding.
-  - **Removed Throttling:** Completely removed the 15-second throttle from the background task to ensure all valid updates are processed and sent to the server, prioritizing tracking accuracy over bandwidth conservation during this debugging phase.
+  - **Removed Throttling:** Completely removed the 15-second throttle from the background task to ensure all valid updates are processed and sent to the server.
 
 - **Implemented Tappable In-App Notifications:**
   - Extended the deep linking functionality to the in-app notifications screen (`app/dashboard/notifications.tsx`).
