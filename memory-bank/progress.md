@@ -5,9 +5,12 @@ This document tracks what works, what's left to build, the current status, known
 ## What Works
 
 - **High-Frequency Background Location Tracking:**
-  - Implemented a robust, "Uber-like" tracking solution using `expo-location` and `expo-task-manager`.
+  - Implemented a robust, "High-Frequency Fleet" tracking solution using `expo-location` and `expo-task-manager`.
   - **Android Foreground Service:** Enabled to ensure persistent background operation (Android 8+).
-  - **Optimized Configuration:** Tuned for fleet monitoring (5s interval, 10m distance, `AutomotiveNavigation` activity type).
+  - **Optimized Configuration:** Tuned for fleet monitoring stability:
+    - **Interval:** 10 seconds (Balance between live visibility and server load).
+    - **Distance:** 20 meters (Filters noise while capturing meaningful movement).
+    - **Activity:** `AutomotiveNavigation` (Prioritizes GPS for driving).
   - **Redundancy:** Includes a 15-minute background fetch heartbeat to restart services if killed by the OS.
   - **API Integration:** Reliably posts location updates to `/user/geolocation`.
   - **State Management:** Centralized logic in `LocationContext` (`contexts/LocationContext.tsx`) managing both foreground UI updates and background server syncing.
@@ -255,8 +258,9 @@ This document tracks what works, what's left to build, the current status, known
 
 ## Known Issues
 
-- **High Battery Usage:** The "Uber-like" tracking frequency (5s intervals) will consume significantly more battery than standard tracking. This is an expected trade-off for fleet monitoring functionality.
+- **High Battery Usage:** Even with the "Enterprise Fleet" profile (10s intervals), battery usage will be higher than standard apps. This is an expected trade-off for fleet monitoring functionality.
 
 ## Evolution of Project Decisions
 
 - **Android Foreground Service:** Initially disabled due to crashes, we have re-enabled it as a critical requirement for persistent background tracking on modern Android versions. We addressed the stability issues by ensuring proper cleanup of stale tasks before restarting services.
+- **Tracking Frequency:** We initially targeted a 3-5 second "Uber-like" update frequency. However, due to backend performance constraints with 20+ concurrent technicians, we settled on a **10s / 20m** configuration. This provides a "High-Frequency Fleet" standard that balances live visibility with server load.
