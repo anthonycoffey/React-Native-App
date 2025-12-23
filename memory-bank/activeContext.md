@@ -40,6 +40,9 @@ Enhancing background location tracking reliability for fleet monitoring.
   - **Unified Logic:** The background task is now the *only* source of server updates, preventing "split brain" issues with the foreground watcher.
   - **Robustness:** Added persistence checks for clock-in status and smart throttling to preventing server flooding.
   - **Removed Throttling:** Completely removed the 15-second throttle from the background task to ensure all valid updates are processed and sent to the server.
+  - **Auth Error Handling:** Implemented 401 Unauthorized handling in the background task. If the server returns a 401 during a location update, the task emits a global `AUTH_FORCE_SIGNOUT` event using `DeviceEventEmitter`.
+    - **Integration:** Updated `contexts/AuthContext.tsx` to listen for this event and trigger the standard `signOutAndNavigate` flow, ensuring React state remains synchronized.
+    - **Fallback:** As a safety measure (e.g., for headless tasks where the UI component might not be mounted), the background task also performs a direct cleanup of the secure session storage and API token.
 
 - **Implemented Tappable In-App Notifications:**
   - Extended the deep linking functionality to the in-app notifications screen (`app/dashboard/notifications.tsx`).

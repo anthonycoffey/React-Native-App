@@ -13,6 +13,7 @@ This document tracks what works, what's left to build, the current status, known
     - **Activity:** `AutomotiveNavigation` (Prioritizes GPS for driving).
   - **Redundancy:** Includes a 15-minute background fetch heartbeat to restart services if killed by the OS.
   - **API Integration:** Reliably posts location updates to `/user/geolocation`.
+  - **Auth Safety:** Background task handles 401 Unauthorized errors by emitting a global `AUTH_FORCE_SIGNOUT` event (caught by `AuthContext`) and falling back to direct session clearing if necessary. This ensures React state and persistent storage stay in sync.
   - **State Management:** Centralized logic in `LocationContext` (`contexts/LocationContext.tsx`) managing both foreground UI updates and background server syncing.
 - **Modernized Job Page Layout:**
   - Refactored the `app/job/[id].tsx` page to use the standardized `Card` component for all sections, creating a consistent and modern layout.

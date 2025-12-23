@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { AppState, AppStateStatus } from 'react-native';
+import { AppState, AppStateStatus, DeviceEventEmitter } from 'react-native';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import * as BackgroundFetch from 'expo-background-fetch';
 import { LocationObject } from 'expo-location';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { apiService } from '@/utils/ApiService';
+import { apiService, HttpError } from '@/utils/ApiService';
 import { useUser } from '@/contexts/UserContext';
+import { router } from 'expo-router';
 
 const LOCATION_TASK_NAME = 'background-location-task-v2';
 const BACKGROUND_FETCH_TASK = 'background-fetch-task';
@@ -131,6 +132,22 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
       console.log(`[BackgroundLocation] API update success at ${new Date().toISOString()}`);
     } catch (apiError) {
       console.error(`[BackgroundLocation] API update failed at ${new Date().toISOString()}:`, apiError);
+
+      if (apiError instanceof HttpError && apiError.status === 401) {
+        console.warn('[BackgroundLocation] Received 401, signing out.');
+        
+        // 1. Emit event for AuthContext to handle UI/State updates
+        DeviceEventEmitter.emit('AUTH_FORCE_SIGNOUT');
+
+        // 2. Fallback/Safety: Ensure session is cleared even if UI is not listening (e.g. headless)
+        try {
+          await SecureStore.deleteItemAsync(SECURE_STORE_KEY);
+          await apiService.setAuthToken(null);
+          router.replace('/login');
+        } catch (signOutError) {
+          console.error('[BackgroundLocation] Error during forced sign out:', signOutError);
+        }
+      }
     }
   }
 });

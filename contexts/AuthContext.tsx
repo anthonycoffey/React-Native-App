@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { DeviceEventEmitter } from 'react-native';
 import { useStorageState } from '@/hooks/useStorageState';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { router } from 'expo-router';
@@ -87,6 +88,17 @@ export function AuthProvider(props: React.PropsWithChildren) {
       setIsUserLoading(false);
     }
   }, [session]);
+
+  useEffect(() => {
+    const subscription = DeviceEventEmitter.addListener('AUTH_FORCE_SIGNOUT', () => {
+      console.warn('[AuthContext] Received AUTH_FORCE_SIGNOUT event. Signing out.');
+      signOutAndNavigate();
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const signIn = async (token: string) => {
     setIsUserLoading(true);
