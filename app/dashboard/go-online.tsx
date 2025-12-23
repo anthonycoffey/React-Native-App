@@ -29,13 +29,8 @@ export default function GoOnlineScreen() {
     'background'
   );
 
-  const {
-    location,
-    errorMsg,
-    permissionStatus,
-    isLoading,
-    checkPermissions,
-  } = useLocation();
+  const { location, errorMsg, permissionStatus, isLoading, checkPermissions } =
+    useLocation();
   const { isClockedIn, clockIn, clockOut } = useUser();
 
   useFocusEffect(
@@ -79,15 +74,24 @@ export default function GoOnlineScreen() {
             color={tintColor}
             style={{ marginBottom: 10 }}
           />
-          <Text type='subtitle' style={{ textAlign: 'center', marginBottom: 20 }}>Background Location Required</Text>
+          <Text
+            type='subtitle'
+            style={{ textAlign: 'center', marginBottom: 20 }}
+          >
+            Background Location Required
+          </Text>
           <Text
             style={[
               globalStyles.subtitle,
-              { textAlign: 'center', fontWeight: 'normal', paddingHorizontal: 20},
+              {
+                textAlign: 'center',
+                fontWeight: 'normal',
+                paddingHorizontal: 20,
+              },
             ]}
           >
-            This app requires &quot;Allow all the time&quot; location access to track
-            your position for job assignments, even when the app is in the
+            This app requires &quot;Allow all the time&quot; location access to
+            track your position for job assignments, even when the app is in the
             background.
           </Text>
           {errorMsg && (
@@ -123,18 +127,22 @@ export default function GoOnlineScreen() {
         />
 
         <Text type='subtitle'>
-          {isClockedIn ? "You're Online!" : "Offline"}
+          {isClockedIn ? "You're Online!" : 'Offline'}
         </Text>
 
         <Text
           style={[
             globalStyles.subtitle,
-            { textAlign: 'center', paddingHorizontal: 20, fontWeight: 'normal' },
+            {
+              textAlign: 'center',
+              paddingHorizontal: 20,
+              fontWeight: 'normal',
+            },
           ]}
         >
           {isClockedIn
             ? "You're online and your location is being tracked."
-            : 'Go online to start your shift and enable location tracking.'}
+            : 'Go online to receive service requests and enable location-based matching.'}
         </Text>
 
         {location && isClockedIn && (
