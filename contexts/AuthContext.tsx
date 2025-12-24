@@ -64,7 +64,7 @@ export function AuthProvider(props: React.PropsWithChildren) {
         console.log(
           `  Status: ${error.status}, Body: ${JSON.stringify(error.body)}`
         );
-        if (error.status === 401) {
+        if (error.status === 401 || error.status === 403) {
           console.warn('[AuthContext] Received 401, signing out.');
           await signOutAndNavigate();
         }
@@ -90,10 +90,15 @@ export function AuthProvider(props: React.PropsWithChildren) {
   }, [session]);
 
   useEffect(() => {
-    const subscription = DeviceEventEmitter.addListener('AUTH_FORCE_SIGNOUT', () => {
-      console.warn('[AuthContext] Received AUTH_FORCE_SIGNOUT event. Signing out.');
-      signOutAndNavigate();
-    });
+    const subscription = DeviceEventEmitter.addListener(
+      'AUTH_FORCE_SIGNOUT',
+      () => {
+        console.warn(
+          '[AuthContext] Received AUTH_FORCE_SIGNOUT event. Signing out.'
+        );
+        signOutAndNavigate();
+      }
+    );
 
     return () => {
       subscription.remove();

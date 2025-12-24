@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from 'react';
 import { AppState, AppStateStatus, DeviceEventEmitter } from 'react-native';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
@@ -24,9 +31,9 @@ const UPDATE_CONFIG = {
   activityType: Location.ActivityType.AutomotiveNavigation,
   pausesUpdatesAutomatically: false,
   foregroundService: {
-    notificationTitle: "Location Tracking Enabled",
-    notificationBody: "Tracking location for active jobs",
-    notificationColor: "#252c3a", // App theme color
+    notificationTitle: 'Location Tracking Enabled',
+    notificationBody: 'Tracking location for active jobs',
+    notificationColor: '#252c3a', // App theme color
   },
 };
 
@@ -44,15 +51,23 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
     }
 
     // 2. Check if Location Service is Running
-    const isTracking = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
-    console.log(`[BackgroundFetch] Clocked in. Location Service Running: ${isTracking}`);
+    const isTracking =
+      await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
+    console.log(
+      `[BackgroundFetch] Clocked in. Location Service Running: ${isTracking}`
+    );
 
     if (!isTracking) {
-        console.warn('[BackgroundFetch] Location service stopped while clocked in! Restarting...');
-        // 3. Restart Service
-        await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, UPDATE_CONFIG);
-        console.log('[BackgroundFetch] Location service restarted successfully');
-        return BackgroundFetch.BackgroundFetchResult.NewData;
+      console.warn(
+        '[BackgroundFetch] Location service stopped while clocked in! Restarting...'
+      );
+      // 3. Restart Service
+      await Location.startLocationUpdatesAsync(
+        LOCATION_TASK_NAME,
+        UPDATE_CONFIG
+      );
+      console.log('[BackgroundFetch] Location service restarted successfully');
+      return BackgroundFetch.BackgroundFetchResult.NewData;
     }
 
     // Optional: Could verify permissions here too if needed, but startLocationUpdatesAsync handles it implicitly by failing
@@ -75,7 +90,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
 
   if (data) {
     const { locations } = data as { locations: Location.LocationObject[] };
-    
+
     if (!locations || locations.length === 0) {
       console.log('[BackgroundLocation] No locations in data');
       return;
@@ -87,12 +102,17 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
     try {
       const clockedIn = await AsyncStorage.getItem(CLOCKED_IN_KEY);
       if (clockedIn !== 'true') {
-        console.log('[BackgroundLocation] User not clocked in (AsyncStorage), skipping update');
+        console.log(
+          '[BackgroundLocation] User not clocked in (AsyncStorage), skipping update'
+        );
         return;
       }
     } catch (err) {
-      console.error('[BackgroundLocation] Error checking clocked in status:', err);
-      return; 
+      console.error(
+        '[BackgroundLocation] Error checking clocked in status:',
+        err
+      );
+      return;
     }
 
     // 3. Get Auth Token
@@ -113,29 +133,42 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
 
     // 4. Process Locations
     const loc = locations[locations.length - 1];
-    
-    console.log('[BackgroundLocation] Processing location:', JSON.stringify({
-      lat: loc.coords.latitude,
-      lng: loc.coords.longitude,
-      acc: loc.coords.accuracy,
-      time: loc.timestamp
-    }));
+
+    console.log(
+      '[BackgroundLocation] Processing location:',
+      JSON.stringify({
+        lat: loc.coords.latitude,
+        lng: loc.coords.longitude,
+        acc: loc.coords.accuracy,
+        time: loc.timestamp,
+      })
+    );
 
     try {
-      console.log(`[BackgroundLocation] Sending POST request to /user/geolocation at ${new Date().toISOString()}`);
+      console.log(
+        `[BackgroundLocation] Sending POST request to /user/geolocation at ${new Date().toISOString()}`
+      );
       await apiService.post('/user/geolocation', {
         latitude: loc.coords.latitude,
         longitude: loc.coords.longitude,
         accuracy: loc.coords.accuracy,
         timestamp: loc.timestamp,
       });
-      console.log(`[BackgroundLocation] API update success at ${new Date().toISOString()}`);
+      console.log(
+        `[BackgroundLocation] API update success at ${new Date().toISOString()}`
+      );
     } catch (apiError) {
-      console.error(`[BackgroundLocation] API update failed at ${new Date().toISOString()}:`, apiError);
+      console.error(
+        `[BackgroundLocation] API update failed at ${new Date().toISOString()}:`,
+        apiError
+      );
 
-      if (apiError instanceof HttpError && apiError.status === 401) {
+      if (
+        apiError instanceof HttpError &&
+        (apiError.status === 401 || apiError.status === 403)
+      ) {
         console.warn('[BackgroundLocation] Received 401, signing out.');
-        
+
         // 1. Emit event for AuthContext to handle UI/State updates
         DeviceEventEmitter.emit('AUTH_FORCE_SIGNOUT');
 
@@ -145,7 +178,10 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
           await apiService.setAuthToken(null);
           router.replace('/login');
         } catch (signOutError) {
-          console.error('[BackgroundLocation] Error during forced sign out:', signOutError);
+          console.error(
+            '[BackgroundLocation] Error during forced sign out:',
+            signOutError
+          );
         }
       }
     }
@@ -161,7 +197,7 @@ interface LocationContextType {
   } | null;
   isLoading: boolean;
   refreshLocation: () => Promise<LocationObject | null>;
-  checkPermissions: () => Promise<{ foreground: boolean; background: boolean; }>;
+  checkPermissions: () => Promise<{ foreground: boolean; background: boolean }>;
 }
 
 const LocationContext = createContext<LocationContextType | null>(null);
@@ -175,13 +211,17 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     background: boolean;
   } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+
   const { isClockedIn } = useUser();
-  
+
   // State for AppState
-  const [appState, setAppState] = useState<AppStateStatus>(AppState.currentState);
+  const [appState, setAppState] = useState<AppStateStatus>(
+    AppState.currentState
+  );
   const appStateRef = useRef(AppState.currentState);
-  const foregroundSubscriber = useRef<Location.LocationSubscription | null>(null);
+  const foregroundSubscriber = useRef<Location.LocationSubscription | null>(
+    null
+  );
   const isClockedInRef = useRef(isClockedIn);
 
   useEffect(() => {
@@ -205,19 +245,26 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
       setPermissionStatus(permissions);
 
       if (!permissions.background) {
-        console.warn('[LocationProvider] checkPermissions: Background permission missing');
+        console.warn(
+          '[LocationProvider] checkPermissions: Background permission missing'
+        );
         setErrorMsg(
           'Background location is not enabled. Please go to your device settings and set location access to `Allow all the time`.'
         );
       } else if (!permissions.foreground) {
-        console.warn('[LocationProvider] checkPermissions: Foreground permission missing');
+        console.warn(
+          '[LocationProvider] checkPermissions: Foreground permission missing'
+        );
         setErrorMsg('Foreground location permission is required.');
       } else {
         setErrorMsg(null);
       }
       return permissions;
     } catch (error) {
-      console.error('[LocationProvider] checkPermissions: Error checking permissions', error);
+      console.error(
+        '[LocationProvider] checkPermissions: Error checking permissions',
+        error
+      );
       setErrorMsg('Failed to check location permissions');
       setPermissionStatus({ foreground: false, background: false });
       return { foreground: false, background: false };
@@ -230,21 +277,29 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     console.log('[LocationProvider] stopLocationUpdates: Called');
     try {
       // Stop Location Task
-      const isTracking = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
+      const isTracking =
+        await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
       if (isTracking) {
-        console.log('[LocationProvider] stopLocationUpdates: Stopping location task');
+        console.log(
+          '[LocationProvider] stopLocationUpdates: Stopping location task'
+        );
         await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
       } else {
-        console.log('[LocationProvider] stopLocationUpdates: Location task not running');
+        console.log(
+          '[LocationProvider] stopLocationUpdates: Location task not running'
+        );
       }
 
       // Stop Background Fetch Task
-      const isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK);
+      const isRegistered = await TaskManager.isTaskRegisteredAsync(
+        BACKGROUND_FETCH_TASK
+      );
       if (isRegistered) {
-          console.log('[LocationProvider] stopLocationUpdates: Unregistering background fetch');
-          await BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+        console.log(
+          '[LocationProvider] stopLocationUpdates: Unregistering background fetch'
+        );
+        await BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
       }
-
     } catch (error) {
       console.error('[LocationProvider] stopLocationUpdates: Error', error);
     }
@@ -253,45 +308,67 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   const startLocationUpdates = useCallback(async () => {
     console.log('[LocationProvider] startLocationUpdates: Called');
     if (!isClockedIn) {
-        console.log('[LocationProvider] startLocationUpdates: Skipped (Not clocked in)');
-        await stopLocationUpdates();
-        return;
+      console.log(
+        '[LocationProvider] startLocationUpdates: Skipped (Not clocked in)'
+      );
+      await stopLocationUpdates();
+      return;
     }
     if (!permissionStatus?.background) {
-        console.log('[LocationProvider] startLocationUpdates: Skipped (No background permission)');
-        await stopLocationUpdates();
-        return;
+      console.log(
+        '[LocationProvider] startLocationUpdates: Skipped (No background permission)'
+      );
+      await stopLocationUpdates();
+      return;
     }
 
     try {
       // 1. Register Background Fetch (Heartbeat) - PRIORITIZED
-      console.log('[LocationProvider] startLocationUpdates: Registering background fetch heartbeat');
+      console.log(
+        '[LocationProvider] startLocationUpdates: Registering background fetch heartbeat'
+      );
       await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-          minimumInterval: 60 * 15, // 15 minutes
-          stopOnTerminate: false, 
-          startOnBoot: true,
+        minimumInterval: 60 * 15, // 15 minutes
+        stopOnTerminate: false,
+        startOnBoot: true,
       });
 
       // 2. Start Location Task
-      const isTracking = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
-      
+      const isTracking =
+        await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
+
       if (!isTracking) {
         // Defensive check: If not tracking, ensure it's not registered in a stale state
-        const isRegistered = await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
+        const isRegistered =
+          await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
         if (isRegistered) {
-            console.log('[LocationProvider] startLocationUpdates: Task registered but not tracking. Unregistering to clean state.');
-            await TaskManager.unregisterTaskAsync(LOCATION_TASK_NAME);
+          console.log(
+            '[LocationProvider] startLocationUpdates: Task registered but not tracking. Unregistering to clean state.'
+          );
+          await TaskManager.unregisterTaskAsync(LOCATION_TASK_NAME);
         }
-        console.log('[LocationProvider] startLocationUpdates: Starting location task');
+        console.log(
+          '[LocationProvider] startLocationUpdates: Starting location task'
+        );
       } else {
-        console.log('[LocationProvider] startLocationUpdates: Location task already running, updating options');
+        console.log(
+          '[LocationProvider] startLocationUpdates: Location task already running, updating options'
+        );
       }
 
-      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, UPDATE_CONFIG);
-      
-      console.log('[LocationProvider] startLocationUpdates: Services started successfully');
+      await Location.startLocationUpdatesAsync(
+        LOCATION_TASK_NAME,
+        UPDATE_CONFIG
+      );
+
+      console.log(
+        '[LocationProvider] startLocationUpdates: Services started successfully'
+      );
     } catch (error) {
-      console.error('[LocationProvider] startLocationUpdates: Failed to start task', error);
+      console.error(
+        '[LocationProvider] startLocationUpdates: Failed to start task',
+        error
+      );
       setErrorMsg('Failed to start background location updates.');
     }
   }, [permissionStatus, isClockedIn, stopLocationUpdates]);
@@ -302,27 +379,39 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     const subscription = AppState.addEventListener(
       'change',
       async (nextAppState) => {
-        console.log(`[LocationProvider] AppState changed: ${appStateRef.current} -> ${nextAppState}`);
-        
+        console.log(
+          `[LocationProvider] AppState changed: ${appStateRef.current} -> ${nextAppState}`
+        );
+
         if (nextAppState === 'background') {
-            try {
-                const isRegistered = await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
-                const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
-                console.log('[LocationProvider] Going to background. Diagnostics:', {
-                    isTaskRegistered: isRegistered,
-                    hasStartedUpdates: hasStarted,
-                    isClockedIn: isClockedInRef.current
-                });
-            } catch (e) {
-                console.error('[LocationProvider] Error checking background status:', e);
-            }
+          try {
+            const isRegistered =
+              await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
+            const hasStarted =
+              await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
+            console.log(
+              '[LocationProvider] Going to background. Diagnostics:',
+              {
+                isTaskRegistered: isRegistered,
+                hasStartedUpdates: hasStarted,
+                isClockedIn: isClockedInRef.current,
+              }
+            );
+          } catch (e) {
+            console.error(
+              '[LocationProvider] Error checking background status:',
+              e
+            );
+          }
         }
 
         if (
           appStateRef.current.match(/inactive|background/) &&
           nextAppState === 'active'
         ) {
-          console.log('[LocationProvider] App returned to foreground, checking permissions');
+          console.log(
+            '[LocationProvider] App returned to foreground, checking permissions'
+          );
           await checkPermissions();
         }
         appStateRef.current = nextAppState;
@@ -337,43 +426,63 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
 
   // Foreground Watcher Effect - UI ONLY
   useEffect(() => {
-    console.log('[LocationProvider] Foreground Watcher Effect: Running', { appState, isClockedIn, hasForegroundPerm: permissionStatus?.foreground });
+    console.log('[LocationProvider] Foreground Watcher Effect: Running', {
+      appState,
+      isClockedIn,
+      hasForegroundPerm: permissionStatus?.foreground,
+    });
     const manageForegroundWatcher = async () => {
-       if (appState === 'active' && isClockedIn && permissionStatus?.foreground) {
-           if (!foregroundSubscriber.current) {
-               console.log('[LocationProvider] Foreground Watcher: Starting watchPositionAsync');
-               try {
-                   foregroundSubscriber.current = await Location.watchPositionAsync(
-                       {
-                           accuracy: Location.Accuracy.BestForNavigation,
-                           timeInterval: 3000, 
-                           distanceInterval: 1,
-                       },
-                       (newLocation) => {
-                           console.log('[LocationProvider] Foreground Watcher: Location update received', newLocation.coords);
-                           setLocation(newLocation);
-                       }
-                   );
-               } catch (error) {
-                   console.error('[LocationProvider] Foreground Watcher: Error starting watch', error);
-               }
-           }
-       } else {
-           if (foregroundSubscriber.current) {
-               console.log('[LocationProvider] Foreground Watcher: Removing subscriber');
-               foregroundSubscriber.current.remove();
-               foregroundSubscriber.current = null;
-           }
-       }
+      if (
+        appState === 'active' &&
+        isClockedIn &&
+        permissionStatus?.foreground
+      ) {
+        if (!foregroundSubscriber.current) {
+          console.log(
+            '[LocationProvider] Foreground Watcher: Starting watchPositionAsync'
+          );
+          try {
+            foregroundSubscriber.current = await Location.watchPositionAsync(
+              {
+                accuracy: Location.Accuracy.BestForNavigation,
+                timeInterval: 3000,
+                distanceInterval: 1,
+              },
+              (newLocation) => {
+                console.log(
+                  '[LocationProvider] Foreground Watcher: Location update received',
+                  newLocation.coords
+                );
+                setLocation(newLocation);
+              }
+            );
+          } catch (error) {
+            console.error(
+              '[LocationProvider] Foreground Watcher: Error starting watch',
+              error
+            );
+          }
+        }
+      } else {
+        if (foregroundSubscriber.current) {
+          console.log(
+            '[LocationProvider] Foreground Watcher: Removing subscriber'
+          );
+          foregroundSubscriber.current.remove();
+          foregroundSubscriber.current = null;
+        }
+      }
     };
     manageForegroundWatcher();
 
     return () => {
-        if (foregroundSubscriber.current) {
-             console.log('[LocationProvider] Foreground Watcher: Cleanup - Removing subscriber');
-             foregroundSubscriber.current.remove();
-             foregroundSubscriber.current = null;
-        }
+      if (foregroundSubscriber.current) {
+        console.log(
+          '[LocationProvider] Foreground Watcher: Cleanup - Removing subscriber'
+        );
+        foregroundSubscriber.current.remove();
+        foregroundSubscriber.current = null;
+      }
     };
   }, [appState, isClockedIn, permissionStatus?.foreground]);
 
@@ -382,17 +491,21 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     console.log('[LocationProvider] Manage Updates Effect: Running');
     const manageUpdates = async () => {
       if (isClockedIn && permissionStatus?.background) {
-        console.log('[LocationProvider] Manage Updates: Starting/Ensuring background updates');
+        console.log(
+          '[LocationProvider] Manage Updates: Starting/Ensuring background updates'
+        );
         await startLocationUpdates();
       } else {
-        console.log('[LocationProvider] Manage Updates: Stopping background updates');
+        console.log(
+          '[LocationProvider] Manage Updates: Stopping background updates'
+        );
         await stopLocationUpdates();
       }
     };
     manageUpdates();
   }, [
     isClockedIn,
-    permissionStatus?.background, 
+    permissionStatus?.background,
     startLocationUpdates,
     stopLocationUpdates,
   ]);
@@ -400,7 +513,9 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   const refreshLocation = useCallback(async () => {
     console.log('[LocationProvider] refreshLocation: Called');
     if (!isClockedIn || !permissionStatus?.background) {
-      console.log('[LocationProvider] refreshLocation: Skipped (Not clocked in or no permission)');
+      console.log(
+        '[LocationProvider] refreshLocation: Skipped (Not clocked in or no permission)'
+      );
       return null;
     }
     setIsLoading(true);
@@ -408,7 +523,10 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
       const currentLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
-      console.log('[LocationProvider] refreshLocation: Got location', currentLocation.coords);
+      console.log(
+        '[LocationProvider] refreshLocation: Got location',
+        currentLocation.coords
+      );
       setLocation(currentLocation);
       return currentLocation;
     } catch (error) {
@@ -429,13 +547,19 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
     checkPermissions,
   };
 
-  return <LocationContext.Provider value={value}>{children}</LocationContext.Provider>;
+  return (
+    <LocationContext.Provider value={value}>
+      {children}
+    </LocationContext.Provider>
+  );
 }
 
 export function useLocationContext() {
   const context = useContext(LocationContext);
   if (context === null) {
-    throw new Error('useLocationContext must be used within a LocationProvider');
+    throw new Error(
+      'useLocationContext must be used within a LocationProvider'
+    );
   }
   return context;
 }
