@@ -15,6 +15,7 @@ import { apiService } from '@/utils/ApiService';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import Colors from '@/constants/Colors';
+import { randomUUID } from 'expo-crypto';
 
 export default function ProfilePictureUploader() {
   const authContext = useAuth();
@@ -37,7 +38,7 @@ export default function ProfilePictureUploader() {
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
@@ -45,7 +46,7 @@ export default function ProfilePictureUploader() {
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const asset = result.assets[0];
-        await uploadImage(asset.uri, asset.fileName, asset.mimeType);
+        await uploadImage(asset.uri, asset.fileName || randomUUID(), asset.mimeType);
       }
     } catch (error) {
       console.log('Image picker error:', error);

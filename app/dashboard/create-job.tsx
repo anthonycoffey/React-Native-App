@@ -13,10 +13,9 @@ import {
   Modal,
   TouchableOpacity,
   Platform,
-  FlatList,
   ActivityIndicator,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text } from '@/components/Themed';
 import Card from '@/components/Card';
 import { PrimaryButton, OutlinedButton } from '@/components/Buttons';
@@ -106,7 +105,9 @@ export default function CreateJobScreen() {
   const [isNewCustomer, setIsNewCustomer] = useState(false);
   const [newCustomerModalVisible, setNewCustomerModalVisible] = useState(false);
   const [isSearchingCustomers, setIsSearchingCustomers] = useState(false);
-  const [duplicateCustomer, setDuplicateCustomer] = useState<Customer | null>(null);
+  const [duplicateCustomer, setDuplicateCustomer] = useState<Customer | null>(
+    null
+  );
   const [checkingDuplicate, setCheckingDuplicate] = useState(false);
 
   const [arrivalTime, setArrivalTime] = useState<Date>(
@@ -548,13 +549,13 @@ export default function CreateJobScreen() {
       setDuplicateCustomer(null);
       return;
     }
-    
+
     setCheckingDuplicate(true);
     try {
       const response = await apiService.get<{ data: Customer[] }>(
         `/customers?search=${encodeURIComponent(phone)}&searchBy=phone&limit=1`
       );
-      
+
       if (response.data && response.data.length > 0) {
         setDuplicateCustomer(response.data[0]);
       } else {
@@ -615,10 +616,7 @@ export default function CreateJobScreen() {
 
   return (
     <SafeAreaView
-      style={[
-        styles.container,
-        { backgroundColor: 'transparent' },
-      ]}
+      style={[styles.container, { backgroundColor: 'transparent' }]}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContentContainer}
@@ -628,7 +626,7 @@ export default function CreateJobScreen() {
         <Card>
           <CardTitle>Customer</CardTitle>
           {!selectedCustomer && !isNewCustomer && (
-            <View>
+            <>
               <TextInput
                 style={themedInputStyle}
                 placeholder='Search Customer (Name, Phone, Email)'
@@ -719,11 +717,11 @@ export default function CreateJobScreen() {
                       { color: Colors[colorScheme ?? 'light'].tint },
                     ]}
                   >
-                    Create New Customer
+                    ADD NEW
                   </Text>
                 </TouchableOpacity>
               </View>
-            </View>
+            </>
           )}
 
           {isNewCustomer && !selectedCustomer && customerForm.firstName && (
@@ -780,7 +778,7 @@ export default function CreateJobScreen() {
           )}
 
           {selectedCustomer && (
-            <View>
+            <>
               <Text
                 style={[
                   styles.customerDetailText,
@@ -824,7 +822,7 @@ export default function CreateJobScreen() {
                   style={styles.flexButton}
                 />
               </View>
-            </View>
+            </>
           )}
         </Card>
 
@@ -904,8 +902,11 @@ export default function CreateJobScreen() {
                   style={[
                     styles.duplicateWarning,
                     {
-                      backgroundColor: Colors[colorScheme ?? 'light'].errorBackground || '#FFF3CD',
-                      borderColor: Colors[colorScheme ?? 'light'].errorText || '#856404',
+                      backgroundColor:
+                        Colors[colorScheme ?? 'light'].errorBackground ||
+                        '#FFF3CD',
+                      borderColor:
+                        Colors[colorScheme ?? 'light'].errorText || '#856404',
                     },
                   ]}
                 >
@@ -913,7 +914,11 @@ export default function CreateJobScreen() {
                     <Text
                       style={[
                         styles.duplicateWarningTitle,
-                        { color: Colors[colorScheme ?? 'light'].errorText || '#856404' },
+                        {
+                          color:
+                            Colors[colorScheme ?? 'light'].errorText ||
+                            '#856404',
+                        },
                       ]}
                     >
                       Existing Customer Found
@@ -921,13 +926,19 @@ export default function CreateJobScreen() {
                     <Text
                       style={[
                         styles.duplicateWarningText,
-                        { color: Colors[colorScheme ?? 'light'].errorText || '#856404' },
+                        {
+                          color:
+                            Colors[colorScheme ?? 'light'].errorText ||
+                            '#856404',
+                        },
                       ]}
                     >
-                      {duplicateCustomer.firstName} {duplicateCustomer.lastName} (
+                      {duplicateCustomer.firstName} {duplicateCustomer.lastName}{' '}
+                      (
                       {duplicateCustomer.defaultPhone?.number ||
                         duplicateCustomer.phone ||
-                        'No Phone'})
+                        'No Phone'}
+                      )
                     </Text>
                   </View>
                   <PrimaryButton
@@ -982,15 +993,15 @@ export default function CreateJobScreen() {
               Please select or create a customer first.
             </Text>
           ) : selectedCar ? (
-            <View>
+            <>
               <Text
                 style={[
                   styles.customerDetailText,
                   { color: getTextColor(colorScheme) },
                 ]}
               >
-                {selectedCar.year} {selectedCar.make} {selectedCar.model} (
-                {selectedCar.color})
+                {selectedCar.color} {selectedCar.make} {selectedCar.model}{' '}
+                {selectedCar.year}
               </Text>
               <Text
                 style={[
@@ -998,18 +1009,18 @@ export default function CreateJobScreen() {
                   { color: getTextColor(colorScheme) },
                 ]}
               >
-                Plate: {selectedCar.plate}{' '}
+                {selectedCar.plate && `Plate: ${selectedCar.plate} `}
                 {selectedCar.vin && `VIN: ${selectedCar.vin}`}
               </Text>
               <OutlinedButton
-                title='Change Car / Add New'
+                title='EDIT'
                 onPress={() => {
                   setSelectedCar(null);
                   setCarForm({});
                   setIsNewCar(false);
                 }}
               />
-            </View>
+            </>
           ) : isNewCar ? (
             <View>
               <LabelText>Make</LabelText>
@@ -1102,7 +1113,10 @@ export default function CreateJobScreen() {
               <Text
                 style={[
                   styles.noResultsText,
-                  { color: getPlaceholderTextColor(colorScheme), marginBottom: 10 },
+                  {
+                    color: getPlaceholderTextColor(colorScheme),
+                    marginBottom: 10,
+                  },
                 ]}
               >
                 No vehicles found for this customer.
@@ -1117,7 +1131,7 @@ export default function CreateJobScreen() {
               />
             </View>
           ) : (
-            <View>
+            <>
               <Text
                 style={[
                   styles.subText,
@@ -1143,7 +1157,7 @@ export default function CreateJobScreen() {
                           { color: getTextColor(colorScheme) },
                         ]}
                       >
-                        {car.make} {car.model}, {car.color} {car.year}
+                        {car.make} {car.model} {car.color} {car.year}
                       </Text>
                       <Text
                         style={[
@@ -1155,13 +1169,13 @@ export default function CreateJobScreen() {
                       </Text>
                     </View>
                     <PrimaryButton
-                      title='Select'
+                      title='SELECT'
                       onPress={() => {
                         setSelectedCar(car);
                         setIsNewCar(false);
                         setCarForm({});
                       }}
-                      style={{ paddingHorizontal: 20 }}
+                      style={{ paddingHorizontal: 10 }}
                     />
                   </View>
                 );
@@ -1175,7 +1189,7 @@ export default function CreateJobScreen() {
                 }}
                 style={{ marginTop: 15 }}
               />
-            </View>
+            </>
           )}
         </Card>
 
@@ -1512,6 +1526,7 @@ const styles = StyleSheet.create({
   createNewButtonText: {
     fontSize: 14,
     fontWeight: '600',
+    margin: 5,
   },
   duplicateWarning: {
     flexDirection: 'row',

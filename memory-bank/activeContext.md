@@ -37,7 +37,7 @@ Enhancing background location tracking reliability for fleet monitoring.
   - Updated `hooks/useStorageState.ts` to set `keychainAccessible: SecureStore.ALWAYS_THIS_DEVICE_ONLY` when saving the session token. This ensures the token remains accessible to the background task even when the device is locked (screen off).
   - Added error handling (try-catch) around `SecureStore.getItemAsync` in the background task to prevent crashes.
 - **Redesigned Background Location Tracking:**
-  - **Unified Logic:** The background task is now the *only* source of server updates, preventing "split brain" issues with the foreground watcher.
+  - **Unified Logic:** The background task is now the _only_ source of server updates, preventing "split brain" issues with the foreground watcher.
   - **Robustness:** Added persistence checks for clock-in status and smart throttling to preventing server flooding.
   - **Removed Throttling:** Completely removed the 15-second throttle from the background task to ensure all valid updates are processed and sent to the server.
   - **Auth Error Handling:** Implemented 401 Unauthorized handling in the background task. If the server returns a 401 during a location update, the task emits a global `AUTH_FORCE_SIGNOUT` event using `DeviceEventEmitter`.
@@ -220,7 +220,7 @@ Enhancing background location tracking reliability for fleet monitoring.
   - Installed `expo-camera` dependency.
   - Created `components/job/CameraCaptureModal.tsx` to provide a dedicated camera interface for taking photos. This modal handles camera permissions, displays a preview, and allows capturing a single image.
   - Modified `components/job/JobFiles.tsx`:
-    - Replaced the single "Upload File(s)" button with two icon buttons: a "camera" icon to launch `CameraCaptureModal.tsx` and a "folder" icon to use the existing `expo-document-picker` functionality.
+    - Replaced the single "Upload File(s)" button with two icon buttons: a "camera" icon to launch `CameraCaptureModal.tsx` and a "folder" icon to use the existing `expo-image-picker` functionality.
     - Integrated the `CameraCaptureModal` and its callback to handle uploading the captured image.
     - The document picker is now configured to primarily suggest images (`type: ['image/*']`).
   - Removed all code comments from `components/job/CameraCaptureModal.tsx` and `components/job/JobFiles.tsx` as per user request.
@@ -243,10 +243,10 @@ Enhancing background location tracking reliability for fleet monitoring.
 - **Updated Account Deletion Endpoint:**
   - Changed the API call in `app/dashboard/account/index.tsx` from `apiService.post('/account/delete')` to `apiService.delete('/account/delete')` to match the API documentation.
 - **Enhanced Account Deletion with Confirmation Modal:**
-    - Created a new `DeleteAccountModal.tsx` component in `components/account/`.
-    - This modal requires the user to type "delete" to confirm the action.
-    - Replaced the standard `Alert.alert` with the new custom modal in `app/dashboard/account/index.tsx`.
-    - The user is now logged out and redirected to the login screen after a 1-second delay for a smoother user experience.
+  - Created a new `DeleteAccountModal.tsx` component in `components/account/`.
+  - This modal requires the user to type "delete" to confirm the action.
+  - Replaced the standard `Alert.alert` with the new custom modal in `app/dashboard/account/index.tsx`.
+  - The user is now logged out and redirected to the login screen after a 1-second delay for a smoother user experience.
 - **Refactored `app/dashboard/index.tsx` for Improved Layout and Production Readiness:**
   - Created a dedicated `JobsFilter.tsx` component in `components/dashboard/` to encapsulate the filtering and sorting dropdowns.
   - Moved all related state, styles, and logic for the filters into the new `JobsFilter` component, making it self-contained and reusable.

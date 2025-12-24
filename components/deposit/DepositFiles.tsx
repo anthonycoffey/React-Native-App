@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   TouchableWithoutFeedback,
 } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
 import { VideoView as Video, useVideoPlayer } from 'expo-video';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -259,38 +259,52 @@ export default function DepositFiles({
     name: string
   ) => {
     setIsCameraModalVisible(false);
-    const singleAsset: DocumentPicker.DocumentPickerAsset = {
+    const singleAsset: ImagePicker.ImagePickerAsset = {
       uri,
       mimeType: type,
-      name,
-      size: 0,
+      fileName: name,
+      width: 0,
+      height: 0,
+      fileSize: 0,
+      assetId: null,
+      base64: null,
+      duration: null,
+      exif: null,
+      type: type.startsWith('video/') ? 'video' : 'image',
     };
     await handleFileUploadInternal([singleAsset]);
   };
 
-  const pickDocument = async () => {
+  const pickMedia = async () => {
     if (loadingFiles) return;
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        multiple: true,
-        type: ['image/*', 'video/*'],
+      // Request permissions
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission Required',
+          'Please grant media library permissions to upload files.'
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsMultipleSelection: true,
+        quality: 1,
       });
 
-      if (
-        result.canceled === false &&
-        result.assets &&
-        result.assets.length > 0
-      ) {
+      if (!result.canceled && result.assets && result.assets.length > 0) {
         await handleFileUploadInternal(result.assets);
       }
     } catch (err) {
-      console.log('Error picking document:', err);
-      Alert.alert('Error', 'Could not open document picker.');
+      console.log('Error picking media:', err);
+      Alert.alert('Error', 'Could not open media picker.');
     }
   };
 
   const handleFileUploadInternal = async (
-    assetsToUpload: DocumentPicker.DocumentPickerAsset[]
+    assetsToUpload: ImagePicker.ImagePickerAsset[]
   ) => {
     if (!assetsToUpload || assetsToUpload.length === 0) {
       return;
@@ -298,11 +312,11 @@ export default function DepositFiles({
 
     setLoadingFiles(true);
     const formData = new FormData();
-    assetsToUpload.forEach((fileAsset) => {
+    assetsToUpload.forEach((fileAsset, index) => {
       const fileToAppend: FormDataFile = {
         uri: fileAsset.uri,
-        name: fileAsset.name || `file_${Date.now()}`,
-        type: fileAsset.mimeType || 'application/octet-stream',
+        name: fileAsset.fileName || `file_${Date.now()}_${index}.${fileAsset.type === 'video' ? 'mp4' : 'jpg'}`,
+        type: fileAsset.mimeType || (fileAsset.type === 'video' ? 'video/mp4' : 'image/jpeg'),
       };
       formData.append('files[]', fileToAppend as any);
     });
@@ -488,15 +502,15 @@ export default function DepositFiles({
 
         <TouchableOpacity
           style={styles.iconButton}
-          onPress={pickDocument}
+          onPress={pickMedia}
           disabled={loadingFiles}
         >
           <MaterialIcons
-            name='folder-open'
+            name='photo-library'
             size={32}
             color={Colors[colorScheme].text}
           />
-          <Text style={styles.iconButtonText}>Files</Text>
+          <Text style={styles.iconButtonText}>Gallery</Text>
         </TouchableOpacity>
       </View>
 

@@ -255,7 +255,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ['videos', 'images'],
         allowsMultipleSelection: true,
         quality: 1,
       });
