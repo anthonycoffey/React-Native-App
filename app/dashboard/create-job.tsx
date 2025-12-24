@@ -104,9 +104,10 @@ export default function CreateJobScreen() {
   );
   const [customerForm, setCustomerForm] = useState<CustomerFormData>({});
   const [isNewCustomer, setIsNewCustomer] = useState(false);
-  const [customerModalVisible, setCustomerModalVisible] = useState(false);
   const [newCustomerModalVisible, setNewCustomerModalVisible] = useState(false);
   const [isSearchingCustomers, setIsSearchingCustomers] = useState(false);
+  const [duplicateCustomer, setDuplicateCustomer] = useState<Customer | null>(null);
+  const [checkingDuplicate, setCheckingDuplicate] = useState(false);
 
   const [arrivalTime, setArrivalTime] = useState<Date>(
     addMinutes(new Date(), 30)
@@ -206,20 +207,25 @@ export default function CreateJobScreen() {
 
   const handleCustomerSearch = (query: string) => {
     setCustomerSearchQuery(query);
-    debouncedSearch(query);
+    if (query.trim().length >= 2) {
+      debouncedSearch(query);
+    } else {
+      setSearchedCustomers([]);
+    }
   };
 
   const handleSelectSearchedCustomer = async (customer: Customer) => {
     setSelectedCustomer(customer);
     setCustomerForm({});
     setIsNewCustomer(false);
-    setCustomerModalVisible(false);
     setCustomerSearchQuery('');
     setSearchedCustomers([]);
 
+    // Reset vehicle selection
     setSelectedCar(null);
     setCarForm({});
     setCustomerCars([]);
+    setIsNewCar(false);
 
     if (customer.id) {
       await fetchCustomerCars(customer.id);
@@ -228,24 +234,7 @@ export default function CreateJobScreen() {
     }
   };
 
-  useEffect(() => {
-    if (
-      selectedCustomer &&
-      !isNewCustomer &&
-      customerCars.length > 0 &&
-      !selectedCar
-    ) {
-      setSelectedCar(customerCars[0]);
-      setIsNewCar(false);
-    } else if (
-      selectedCustomer &&
-      !isNewCustomer &&
-      customerCars.length === 0
-    ) {
-      setIsNewCar(true);
-      setSelectedCar(null);
-    }
-  }, [customerCars, selectedCustomer, isNewCustomer, selectedCar]);
+  // Removed auto-selection of first vehicle - user must explicitly select
 
   const fetchCustomerCars = async (customerId: number) => {
     try {
@@ -253,15 +242,12 @@ export default function CreateJobScreen() {
         `/customers/${customerId}`
       );
       setCustomerCars(detailedCustomer.Cars || []);
-      if ((detailedCustomer.Cars || []).length === 0) {
-        setIsNewCar(true);
-      } else {
-        setIsNewCar(false);
-      }
+      // Don't auto-set isNewCar - let user choose
+      setIsNewCar(false);
     } catch (error) {
       console.log('Failed to fetch customer cars:', error);
       setCustomerCars([]);
-      setIsNewCar(true);
+      setIsNewCar(false);
     }
   };
 
@@ -556,11 +542,63 @@ export default function CreateJobScreen() {
 
   const customerSectionActive = selectedCustomer || isNewCustomer;
 
+  // Duplicate phone check logic
+  const checkDuplicatePhoneLogic = useCallback(async (phone: string) => {
+    if (!phone || phone.length < 7) {
+      setDuplicateCustomer(null);
+      return;
+    }
+    
+    setCheckingDuplicate(true);
+    try {
+      const response = await apiService.get<{ data: Customer[] }>(
+        `/customers?search=${encodeURIComponent(phone)}&searchBy=phone&limit=1`
+      );
+      
+      if (response.data && response.data.length > 0) {
+        setDuplicateCustomer(response.data[0]);
+      } else {
+        setDuplicateCustomer(null);
+      }
+    } catch (error) {
+      console.log('Failed to check duplicate phone:', error);
+      setDuplicateCustomer(null);
+    } finally {
+      setCheckingDuplicate(false);
+    }
+  }, []);
+
+  const debouncedCheckDuplicate = useDebounce(checkDuplicatePhoneLogic, 500);
+
+  useEffect(() => {
+    if (customerForm.phone) {
+      debouncedCheckDuplicate(customerForm.phone);
+    } else {
+      setDuplicateCustomer(null);
+    }
+  }, [customerForm.phone, debouncedCheckDuplicate]);
+
+  const handleSelectDuplicateCustomer = async () => {
+    if (duplicateCustomer) {
+      await handleSelectSearchedCustomer(duplicateCustomer);
+      setNewCustomerModalVisible(false);
+      setCustomerForm({});
+      setDuplicateCustomer(null);
+    }
+  };
+
   const handleSaveNewCustomer = () => {
     if (!customerForm.firstName || !customerForm.phone) {
       Alert.alert(
         'Validation Error',
         'First name and phone number are required for a new customer.'
+      );
+      return;
+    }
+    if (duplicateCustomer) {
+      Alert.alert(
+        'Duplicate Customer',
+        'A customer with this phone number already exists. Please use the existing customer or change the phone number.'
       );
       return;
     }
@@ -571,6 +609,7 @@ export default function CreateJobScreen() {
 
   const handleCancelNewCustomerModal = () => {
     setCustomerForm({});
+    setDuplicateCustomer(null);
     setNewCustomerModalVisible(false);
   };
 
@@ -589,30 +628,101 @@ export default function CreateJobScreen() {
         <Card>
           <CardTitle>Customer</CardTitle>
           {!selectedCustomer && !isNewCustomer && (
-            <View style={styles.buttonRow}>
-              <PrimaryButton
-                title='New'
-                onPress={() => {
-                  setCustomerForm({});
-                  setSelectedCustomer(null);
-                  setIsNewCustomer(false);
-                  setCustomerCars([]);
-                  setSelectedCar(null);
-                  setCarForm({});
-                  setIsNewCar(true);
-                  setNewCustomerModalVisible(true);
-                }}
-                style={styles.flexButton}
+            <View>
+              <TextInput
+                style={themedInputStyle}
+                placeholder='Search Customer (Name, Phone, Email)'
+                placeholderTextColor={placeholderTextColor}
+                value={customerSearchQuery}
+                onChangeText={handleCustomerSearch}
               />
-              <OutlinedButton
-                title='Existing'
-                onPress={() => {
-                  setCustomerModalVisible(true);
-                  setCustomerSearchQuery('');
-                  setSearchedCustomers([]);
-                }}
-                style={styles.flexButton}
-              />
+              {isSearchingCustomers && (
+                <ActivityIndicator
+                  style={{ marginVertical: 10 }}
+                  color={
+                    colorScheme === 'dark'
+                      ? Colors.dark.text
+                      : Colors.light.text
+                  }
+                />
+              )}
+              {searchedCustomers.length > 0 && (
+                <View
+                  style={[
+                    styles.searchResultsContainer,
+                    {
+                      backgroundColor: getInputBackgroundColor(colorScheme),
+                      borderColor: getBorderColor(colorScheme),
+                    },
+                  ]}
+                >
+                  {searchedCustomers.map((customer) => (
+                    <TouchableOpacity
+                      key={customer.id}
+                      style={[
+                        styles.searchResultItem,
+                        { borderBottomColor: getBorderColor(colorScheme) },
+                      ]}
+                      onPress={() => handleSelectSearchedCustomer(customer)}
+                    >
+                      <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+                        <Text
+                          style={[
+                            styles.searchResultName,
+                            { color: getTextColor(colorScheme) },
+                          ]}
+                        >
+                          {customer.firstName} {customer.lastName}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.searchResultDetails,
+                            { color: getPlaceholderTextColor(colorScheme) },
+                          ]}
+                        >
+                          {customer.defaultPhone?.number || customer.phone}
+                          {customer.email && ` • ${customer.email}`}
+                        </Text>
+                      </View>
+                      <MaterialIcons
+                        name='chevron-right'
+                        size={24}
+                        color={getTextColor(colorScheme)}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+              {customerSearchQuery &&
+                !isSearchingCustomers &&
+                searchedCustomers.length === 0 && (
+                  <Text
+                    style={[
+                      styles.noResultsText,
+                      { color: getPlaceholderTextColor(colorScheme) },
+                    ]}
+                  >
+                    No customers found matching "{customerSearchQuery}"
+                  </Text>
+                )}
+              <View style={styles.createNewButtonContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setCustomerForm({});
+                    setDuplicateCustomer(null);
+                    setNewCustomerModalVisible(true);
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.createNewButtonText,
+                      { color: Colors[colorScheme ?? 'light'].tint },
+                    ]}
+                  >
+                    Create New Customer
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
 
@@ -721,79 +831,6 @@ export default function CreateJobScreen() {
         <Modal
           animationType='slide'
           transparent={true}
-          visible={customerModalVisible}
-          onRequestClose={() => setCustomerModalVisible(false)}
-        >
-          <View style={styles.modalCenteredView}>
-            <View
-              style={[
-                styles.modalView,
-                { backgroundColor: getBackgroundColor(colorScheme) },
-              ]}
-            >
-              <CardTitle>Search Existing Customer</CardTitle>
-              <TextInput
-                style={themedInputStyle}
-                placeholder='Search by name or phone (min 2 chars)'
-                placeholderTextColor={placeholderTextColor}
-                value={customerSearchQuery}
-                onChangeText={handleCustomerSearch}
-                autoFocus
-              />
-              {isSearchingCustomers && (
-                <ActivityIndicator
-                  style={{ marginVertical: 10 }}
-                  color={
-                    colorScheme === 'dark'
-                      ? Colors.dark.text
-                      : Colors.light.text
-                  }
-                />
-              )}
-              <FlatList
-                data={searchedCustomers}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={[
-                      styles.searchResultItem,
-                      { borderBottomColor: getBorderColor(colorScheme) },
-                    ]}
-                    onPress={() => handleSelectSearchedCustomer(item)}
-                  >
-                    <Text style={{ color: getTextColor(colorScheme) }}>
-                      {item.firstName} {item.lastName} (
-                      {item.defaultPhone?.number || item.phone || 'No phone'})
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                ListEmptyComponent={
-                  !isSearchingCustomers && customerSearchQuery.length > 1 ? (
-                    <Text
-                      style={{
-                        color: getTextColor(colorScheme),
-                        textAlign: 'center',
-                        marginVertical: 10,
-                      }}
-                    >
-                      No customers found.
-                    </Text>
-                  ) : null
-                }
-                style={{ maxHeight: 200 }}
-              />
-              <PrimaryButton
-                title='Close'
-                onPress={() => setCustomerModalVisible(false)}
-                style={{ marginTop: 15 }}
-              />
-            </View>
-          </View>
-        </Modal>
-
-        <Modal
-          animationType='slide'
-          transparent={true}
           visible={newCustomerModalVisible}
           onRequestClose={handleCancelNewCustomerModal}
         >
@@ -862,6 +899,45 @@ export default function CreateJobScreen() {
                 editable={!loading}
               />
 
+              {duplicateCustomer && (
+                <View
+                  style={[
+                    styles.duplicateWarning,
+                    {
+                      backgroundColor: Colors[colorScheme ?? 'light'].errorBackground || '#FFF3CD',
+                      borderColor: Colors[colorScheme ?? 'light'].errorText || '#856404',
+                    },
+                  ]}
+                >
+                  <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+                    <Text
+                      style={[
+                        styles.duplicateWarningTitle,
+                        { color: Colors[colorScheme ?? 'light'].errorText || '#856404' },
+                      ]}
+                    >
+                      Existing Customer Found
+                    </Text>
+                    <Text
+                      style={[
+                        styles.duplicateWarningText,
+                        { color: Colors[colorScheme ?? 'light'].errorText || '#856404' },
+                      ]}
+                    >
+                      {duplicateCustomer.firstName} {duplicateCustomer.lastName} (
+                      {duplicateCustomer.defaultPhone?.number ||
+                        duplicateCustomer.phone ||
+                        'No Phone'})
+                    </Text>
+                  </View>
+                  <PrimaryButton
+                    title='Use Existing'
+                    onPress={handleSelectDuplicateCustomer}
+                    style={{ marginLeft: 10, paddingVertical: 6 }}
+                  />
+                </View>
+              )}
+
               <View style={styles.buttonRow}>
                 <OutlinedButton
                   title='Cancel'
@@ -872,6 +948,7 @@ export default function CreateJobScreen() {
                   title='Save Customer'
                   onPress={handleSaveNewCustomer}
                   style={styles.flexButton}
+                  disabled={!!duplicateCustomer || loading}
                 />
               </View>
             </View>
@@ -898,9 +975,9 @@ export default function CreateJobScreen() {
           )}
         </Card>
 
-        <Card style={[!customerSectionActive && styles.disabledCard]}>
+        <Card style={[!selectedCustomer && styles.disabledCard]}>
           <CardTitle>Car Details</CardTitle>
-          {!customerSectionActive ? (
+          {!selectedCustomer ? (
             <Text style={{ color: getTextColor(colorScheme) }}>
               Please select or create a customer first.
             </Text>
@@ -933,7 +1010,7 @@ export default function CreateJobScreen() {
                 }}
               />
             </View>
-          ) : isNewCar || customerCars.length === 0 ? (
+          ) : isNewCar ? (
             <View>
               <LabelText>Make</LabelText>
               <TextInput
@@ -1020,6 +1097,25 @@ export default function CreateJobScreen() {
                 />
               )}
             </View>
+          ) : customerCars.length === 0 ? (
+            <View>
+              <Text
+                style={[
+                  styles.noResultsText,
+                  { color: getPlaceholderTextColor(colorScheme), marginBottom: 10 },
+                ]}
+              >
+                No vehicles found for this customer.
+              </Text>
+              <PrimaryButton
+                title='Add New Vehicle'
+                onPress={() => {
+                  setIsNewCar(true);
+                  setSelectedCar(null);
+                  setCarForm({});
+                }}
+              />
+            </View>
           ) : (
             <View>
               <Text
@@ -1033,29 +1129,45 @@ export default function CreateJobScreen() {
               {customerCars.filter(Boolean).map((car: Car) => {
                 const carId = car.id;
                 return (
-                  <TouchableOpacity
+                  <View
                     key={carId}
                     style={[
-                      styles.listItem,
+                      styles.vehicleListItem,
                       { borderBottomColor: getBorderColor(colorScheme) },
-                      (selectedCar as Car | null)?.id === car.id && {
-                        backgroundColor: getInputBackgroundColor(colorScheme),
-                      },
                     ]}
-                    onPress={() => {
-                      setSelectedCar(car);
-                      setIsNewCar(false);
-                      setCarForm({});
-                    }}
                   >
-                    <Text style={{ color: getTextColor(colorScheme) }}>
-                      {car.year} {car.make} {car.model} - {car.plate}
-                    </Text>
-                  </TouchableOpacity>
+                    <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+                      <Text
+                        style={[
+                          styles.vehicleListItemTitle,
+                          { color: getTextColor(colorScheme) },
+                        ]}
+                      >
+                        {car.make} {car.model}, {car.color} {car.year}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.vehicleListItemSubtitle,
+                          { color: getPlaceholderTextColor(colorScheme) },
+                        ]}
+                      >
+                        {car.plate}
+                      </Text>
+                    </View>
+                    <PrimaryButton
+                      title='Select'
+                      onPress={() => {
+                        setSelectedCar(car);
+                        setIsNewCar(false);
+                        setCarForm({});
+                      }}
+                      style={{ paddingHorizontal: 20 }}
+                    />
+                  </View>
                 );
               })}
-              <OutlinedButton
-                title='Add New Vehicle'
+              <PrimaryButton
+                title='New Vehicle'
                 onPress={() => {
                   setIsNewCar(true);
                   setSelectedCar(null);
@@ -1364,9 +1476,73 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: '90%',
   },
+  searchResultsContainer: {
+    borderWidth: 1,
+    borderRadius: 4,
+    marginTop: 8,
+    marginBottom: 8,
+    maxHeight: 300,
+  },
   searchResultItem: {
-    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
     borderBottomWidth: 1,
+  },
+  searchResultName: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  searchResultDetails: {
+    fontSize: 14,
+  },
+  noResultsText: {
+    textAlign: 'center',
+    marginTop: 16,
+    marginBottom: 8,
+    fontSize: 14,
+  },
+  createNewButtonContainer: {
+    marginTop: 8,
+    alignItems: 'flex-end',
+    backgroundColor: 'transparent',
+  },
+  createNewButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  duplicateWarning: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 4,
+    borderWidth: 1,
+    marginBottom: 15,
+  },
+  duplicateWarningTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  duplicateWarningText: {
+    fontSize: 12,
+  },
+  vehicleListItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    backgroundColor: 'transparent',
+  },
+  vehicleListItemTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  vehicleListItemSubtitle: {
+    fontSize: 14,
   },
   listItem: {
     paddingVertical: 12,
