@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { VideoView as Video, useVideoPlayer } from 'expo-video';
 import { apiService, HttpError } from '@/utils/ApiService';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -312,16 +313,52 @@ export default function DepositFiles({
 
     setLoadingFiles(true);
     const formData = new FormData();
-    assetsToUpload.forEach((fileAsset, index) => {
-      const fileToAppend: FormDataFile = {
-        uri: fileAsset.uri,
-        name: fileAsset.fileName || `file_${Date.now()}_${index}.${fileAsset.type === 'video' ? 'mp4' : 'jpg'}`,
-        type: fileAsset.mimeType || (fileAsset.type === 'video' ? 'video/mp4' : 'image/jpeg'),
-      };
-      formData.append('files[]', fileToAppend as any);
-    });
 
     try {
+      // Process each asset (convert HEIC if needed)
+      for (let index = 0; index < assetsToUpload.length; index++) {
+        const fileAsset = assetsToUpload[index];
+        let processedUri = fileAsset.uri;
+        let processedMimeType = fileAsset.mimeType || (fileAsset.type === 'video' ? 'video/mp4' : 'image/jpeg');
+        let processedName = fileAsset.fileName || `file_${Date.now()}_${index}.${fileAsset.type === 'video' ? 'mp4' : 'jpg'}`;
+
+        // Only convert images (not videos)
+        if (fileAsset.type === 'image') {
+          const isHEIC = processedMimeType?.toLowerCase().includes('heic') || 
+                         processedMimeType?.toLowerCase().includes('heif') ||
+                         processedUri.toLowerCase().endsWith('.heic') ||
+                         processedUri.toLowerCase().endsWith('.heif');
+
+          if (isHEIC) {
+            console.log(`Converting HEIC file ${index + 1} to JPEG...`);
+            try {
+              const manipulatedImage = await ImageManipulator.manipulateAsync(
+                processedUri,
+                [], // No resize/crop, just format conversion
+                {
+                  compress: 0.9,
+                  format: ImageManipulator.SaveFormat.JPEG,
+                }
+              );
+              processedUri = manipulatedImage.uri;
+              processedMimeType = 'image/jpeg';
+              processedName = processedName.replace(/\.(heic|heif)$/i, '.jpg');
+              console.log('HEIC conversion successful');
+            } catch (conversionError) {
+              console.log('HEIC conversion failed:', conversionError);
+              // Continue with original file if conversion fails
+            }
+          }
+        }
+
+        const fileToAppend: FormDataFile = {
+          uri: processedUri,
+          name: processedName,
+          type: processedMimeType,
+        };
+        formData.append('files[]', fileToAppend as any);
+      }
+
       await apiService.post(`/cash/deposits/${depositId}/files`, formData);
       Alert.alert('Success', 'Files uploaded successfully.');
       onFilesUpdate();

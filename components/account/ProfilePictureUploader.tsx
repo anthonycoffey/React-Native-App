@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { getCameraPermission, getMediaLibraryPermission } from '@/utils/permissions';
 import { useAuth } from '@/contexts/AuthContext';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -78,11 +79,47 @@ export default function ProfilePictureUploader() {
   const uploadImage = async (uri: string, name?: string, mimeType?: string) => {
     setUploading(true);
     try {
+      let processedUri = uri;
+      let processedMimeType = mimeType;
+      let processedName = name;
+
+      // Check if image is HEIC/HEIF and convert to JPEG
+      const isHEIC = mimeType?.toLowerCase().includes('heic') || 
+                     mimeType?.toLowerCase().includes('heif') ||
+                     uri.toLowerCase().endsWith('.heic') ||
+                     uri.toLowerCase().endsWith('.heif');
+
+      if (isHEIC) {
+        console.log('Converting HEIC to JPEG...');
+        try {
+          const manipulatedImage = await ImageManipulator.manipulateAsync(
+            uri,
+            [], // No resize/crop, just format conversion
+            {
+              compress: 0.9,
+              format: ImageManipulator.SaveFormat.JPEG,
+            }
+          );
+          processedUri = manipulatedImage.uri;
+          processedMimeType = 'image/jpeg';
+          processedName = name ? name.replace(/\.(heic|heif)$/i, '.jpg') : 'photo.jpg';
+          console.log('HEIC conversion successful');
+        } catch (conversionError) {
+          console.log('HEIC conversion failed:', conversionError);
+          Alert.alert(
+            'Conversion Error',
+            'Failed to convert HEIC image. Please try another image.'
+          );
+          setUploading(false);
+          return;
+        }
+      }
+
       const formData = new FormData();
       formData.append('file', {
-        uri,
-        name: name || `photo.${uri.split('.').pop()}`,
-        type: mimeType || `image/${uri.split('.').pop()}`,
+        uri: processedUri,
+        name: processedName || `photo.${processedUri.split('.').pop()}`,
+        type: processedMimeType || `image/${processedUri.split('.').pop()}`,
       } as any);
 
       await apiService.post('/account/avatar', formData, {
