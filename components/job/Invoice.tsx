@@ -311,24 +311,30 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
               </TouchableOpacity>
             </View>
 
-            {/* Email Section */}
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: getTextColor(colorScheme ?? 'light') }]}>
-                Send via Email
-              </Text>
-              
-              <TouchableOpacity
-                style={[styles.actionButton, styles.emailButton]}
-                onPress={sendEmail}
-                disabled={sendingInvoice || sendingEmail || !job.Customer?.email}
-              >
-                {sendingEmail ? (
-                  <ActivityIndicator size='small' color='#fff' />
-                ) : (
-                  <Text style={styles.actionButtonText}>Send Email</Text>
-                )}
-              </TouchableOpacity>
-            </View>
+            {/* Email Section - Only show if customer has email */}
+            {job.Customer?.email && (
+              <View style={styles.section}>
+                <Text style={[styles.sectionTitle, { color: getTextColor(colorScheme ?? 'light') }]}>
+                  Send via Email
+                </Text>
+                
+                <Text style={[styles.infoText, { color: getTextColor(colorScheme ?? 'light') }]}>
+                  Send to: {job.Customer.email}
+                </Text>
+                
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.emailButton]}
+                  onPress={sendEmail}
+                  disabled={sendingInvoice || sendingEmail}
+                >
+                  {sendingEmail ? (
+                    <ActivityIndicator size='small' color='#fff' />
+                  ) : (
+                    <Text style={styles.actionButtonText}>Send Email</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
 
             {/* Cancel Button */}
             <TouchableOpacity
@@ -415,12 +421,14 @@ const styles = StyleSheet.create({
   section: {
     marginVertical: 10,
     paddingBottom: 10,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
+    backgroundColor: 'transparent',
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 10,
+    textAlign: 'center',
   },
   infoText: {
     fontSize: 14,
