@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   TouchableWithoutFeedback,
 } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
+import { getMediaLibraryPermission } from '@/utils/permissions';
 import { VideoView as Video, useVideoPlayer } from 'expo-video';
 import { Job, JobFile } from '@/types';
 import { apiService, HttpError } from '@/utils/ApiService';
@@ -238,7 +239,7 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
     name: string
   ) => {
     setIsCameraModalVisible(false);
-    const singleAsset: DocumentPicker.DocumentPickerAsset = {
+    const singleAsset = {
       uri,
       mimeType: type,
       name,
@@ -249,18 +250,24 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
 
   const pickDocument = async () => {
     if (loadingFiles) return;
+    const hasPermission = await getMediaLibraryPermission();
+    if (!hasPermission) return;
+
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        multiple: true,
-        type: ['image/*', 'video/*'],
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsMultipleSelection: true,
+        quality: 1,
       });
 
-      if (
-        result.canceled === false &&
-        result.assets &&
-        result.assets.length > 0
-      ) {
-        await handleFileUploadInternal(result.assets);
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const assetsToUpload = result.assets.map((asset) => ({
+          uri: asset.uri,
+          mimeType: asset.mimeType,
+          name: asset.fileName,
+          size: asset.fileSize,
+        }));
+        await handleFileUploadInternal(assetsToUpload);
       }
     } catch (err) {
       console.log('Error picking document:', err);
@@ -269,7 +276,12 @@ export default function JobFiles({ job, fetchJob }: JobFilesProps) {
   };
 
   const handleFileUploadInternal = async (
-    assetsToUpload: DocumentPicker.DocumentPickerAsset[]
+    assetsToUpload: {
+      uri: string;
+      mimeType?: string | null;
+      name?: string | null;
+      size?: number | null;
+    }[]
   ) => {
     if (!assetsToUpload || assetsToUpload.length === 0) {
       return;

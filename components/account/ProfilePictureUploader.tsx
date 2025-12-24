@@ -6,7 +6,8 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
+import { getCameraPermission, getMediaLibraryPermission } from '@/utils/permissions';
 import { useAuth } from '@/contexts/AuthContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Text, View } from '@/components/Themed';
@@ -30,20 +31,46 @@ export default function ProfilePictureUploader() {
 
   const { currentUser, isUserLoading: isAuthUserLoading } = authContext;
 
-  const pickImage = async () => {
+  const pickImageFromLibrary = async () => {
+    const hasPermission = await getMediaLibraryPermission();
+    if (!hasPermission) return;
+
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: 'image/*',
-        copyToCacheDirectory: true,
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const asset = result.assets[0];
-        await uploadImage(asset.uri, asset.name, asset.mimeType);
+        await uploadImage(asset.uri, asset.fileName, asset.mimeType);
       }
     } catch (error) {
-      console.log('Document picker error:', error);
+      console.log('Image picker error:', error);
       Alert.alert('Error', 'Could not open image picker.');
+    }
+  };
+
+  const takePhoto = async () => {
+    const hasPermission = await getCameraPermission();
+    if (!hasPermission) return;
+
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        await uploadImage(asset.uri, asset.fileName, asset.mimeType);
+      }
+    } catch (error) {
+      console.log('Camera error:', error);
+      Alert.alert('Error', 'Could not open camera.');
     }
   };
 
@@ -124,7 +151,7 @@ export default function ProfilePictureUploader() {
       )}
       <View style={localStyles.buttonRow}>
         <TouchableOpacity
-          onPress={pickImage}
+          onPress={pickImageFromLibrary}
           disabled={isLoading}
           style={[
             localStyles.iconButton,
@@ -135,7 +162,26 @@ export default function ProfilePictureUploader() {
             <ActivityIndicator size='small' color={iconColor} />
           ) : (
             <MaterialIcons
-              name={currentUser.avatar ? 'edit' : 'add-a-photo'}
+              name='photo-library'
+              size={26}
+              color={iconColor}
+            />
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={takePhoto}
+          disabled={isLoading}
+          style={[
+            localStyles.iconButton,
+            isLoading && localStyles.disabledButton,
+          ]}
+        >
+          {uploading ? (
+            <ActivityIndicator size='small' color={iconColor} />
+          ) : (
+            <MaterialIcons
+              name='photo-camera'
               size={26}
               color={iconColor}
             />
