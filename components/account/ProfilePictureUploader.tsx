@@ -67,7 +67,7 @@ export default function ProfilePictureUploader() {
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const asset = result.assets[0];
-        await uploadImage(asset.uri, asset.fileName, asset.mimeType);
+        await uploadImage(asset.uri, asset.fileName || randomUUID(), asset.mimeType);
       }
     } catch (error) {
       console.log('Camera error:', error);
