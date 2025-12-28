@@ -39,10 +39,12 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [sendingInvoice, setSendingInvoice] = useState<boolean>(false);
   const [sendingEmail, setSendingEmail] = useState<boolean>(false);
-  const [showSendDialog, setShowSendDialog] = useState<boolean>(false);
+  const [sendMode, setSendMode] = useState<'sms' | 'email' | null>(null);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [useCustomPhone, setUseCustomPhone] = useState<boolean>(false);
   const [customPhone, setCustomPhone] = useState<string>('');
+  const [useCustomEmail, setUseCustomEmail] = useState<boolean>(false);
+  const [customEmail, setCustomEmail] = useState<string>('');
 
   const generateInvoice = async () => {
     setLoading(true);
@@ -85,11 +87,18 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
     );
   };
 
-  const openSendDialog = (invoice: Invoice) => {
+  const openSendDialog = (invoice: Invoice, mode: 'sms' | 'email') => {
     setSelectedInvoice(invoice);
-    setUseCustomPhone(false);
-    setCustomPhone('');
-    setShowSendDialog(true);
+    setSendMode(mode);
+    
+    if (mode === 'sms') {
+      setUseCustomPhone(false);
+      setCustomPhone('');
+    } else {
+      const hasEmail = !!job.Customer?.email;
+      setUseCustomEmail(!hasEmail);
+      setCustomEmail('');
+    }
   };
 
   const sendInvoice = async () => {
@@ -114,7 +123,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       await apiService.post(`/invoices/${selectedInvoice.id}/send`, {
         phone: phoneToUse,
       });
-      setShowSendDialog(false);
+      setSendMode(null);
       fetchJob();
       Alert.alert('Success', 'Invoice sent via SMS successfully');
     } catch (error) {
@@ -142,17 +151,19 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
   const sendEmail = async () => {
     if (!selectedInvoice) return;
 
-    if (!job.Customer?.email) {
-      Alert.alert('Error', 'No email address available for this customer');
+    const emailToUse = useCustomEmail ? customEmail : job.Customer?.email || '';
+
+    if (!emailToUse) {
+      Alert.alert('Error', 'Please enter an email address');
       return;
     }
 
     setSendingEmail(true);
     try {
       await apiService.post(`/invoices/${selectedInvoice.id}/send`, {
-        email: job.Customer.email,
+        email: emailToUse,
       });
-      setShowSendDialog(false);
+      setSendMode(null);
       fetchJob();
       Alert.alert('Success', 'Invoice sent via email successfully');
     } catch (error) {
@@ -202,15 +213,26 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
           </Text>
           <View style={styles.actionsContainer}>
             {invoice.status !== 'void' && (
-              <TouchableOpacity onPress={() => openSendDialog(invoice)}>
-                <MaterialIcons
-                  name='send'
-                  color={
-                    (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'
-                  }
-                  size={28}
-                />
-              </TouchableOpacity>
+              <>
+                <TouchableOpacity onPress={() => openSendDialog(invoice, 'sms')}>
+                  <MaterialIcons
+                    name='message'
+                    color={
+                      (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'
+                    }
+                    size={28}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => openSendDialog(invoice, 'email')}>
+                  <MaterialIcons
+                    name='email'
+                    color={
+                      (colorScheme ?? 'light') === 'dark' ? '#65b9d6' : '#0a7ea4'
+                    }
+                    size={28}
+                  />
+                </TouchableOpacity>
+              </>
             )}
           </View>
         </View>
@@ -241,10 +263,10 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
       )}
 
       <Modal
-        visible={showSendDialog}
+        visible={sendMode !== null}
         transparent={true}
         animationType='fade'
-        onRequestClose={() => setShowSendDialog(false)}
+        onRequestClose={() => setSendMode(null)}
       >
         <View style={styles.modalOverlay}>
           <View
@@ -253,75 +275,105 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
               { backgroundColor: getBackgroundColor(colorScheme ?? 'light') },
             ]}
           >
-            <Text style={styles.modalTitle}>Send Invoice</Text>
+            <Text style={styles.modalTitle}>
+              {sendMode === 'sms' ? 'Send via SMS' : 'Send via Email'}
+            </Text>
 
             {/* SMS Section */}
-            <View style={[styles.section, { borderBottomColor: getBorderColor(colorScheme ?? 'light') }]}>
-              <Text style={[styles.sectionTitle, { color: getTextColor(colorScheme ?? 'light') }]}>
-                Send via SMS
-              </Text>
-              
-              {!useCustomPhone && job.Customer?.defaultPhone?.number && (
-                <Text style={[styles.infoText, { color: getTextColor(colorScheme ?? 'light') }]}>
-                  Send to: {maskPhoneNumber(job.Customer.defaultPhone.number)}
-                </Text>
-              )}
-
-              <View style={[styles.toggleRow, { backgroundColor: 'transparent' }]}>
-                <Text style={{ color: getTextColor(colorScheme ?? 'light') }}>
-                  Send to different number?
-                </Text>
-                <Switch
-                  value={useCustomPhone}
-                  onValueChange={setUseCustomPhone}
-                  trackColor={{ false: '#767577', true: '#81b0ff' }}
-                  thumbColor={useCustomPhone ? '#0a7ea4' : '#f4f3f4'}
-                />
-              </View>
-
-              {useCustomPhone && (
-                <TextInput
-                  placeholder='Phone Number (XXX-XXX-XXXX)'
-                  value={customPhone}
-                  onChangeText={(text) => setCustomPhone(formatPhoneNumber(text))}
-                  keyboardType='phone-pad'
-                  maxLength={12}
-                  style={[
-                    styles.input,
-                    {
-                      color: getTextColor(colorScheme ?? 'light'),
-                      borderColor: getBorderColor(colorScheme ?? 'light'),
-                      backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'),
-                    },
-                  ]}
-                  placeholderTextColor={getPlaceholderTextColor(colorScheme ?? 'light')}
-                />
-              )}
-
-              <TouchableOpacity
-                style={[styles.actionButton, styles.smsButton]}
-                onPress={sendInvoice}
-                disabled={sendingInvoice || sendingEmail}
-              >
-                {sendingInvoice ? (
-                  <ActivityIndicator size='small' color='#fff' />
-                ) : (
-                  <Text style={styles.actionButtonText}>Send Text</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-
-            {/* Email Section - Only show if customer has email */}
-            {job.Customer?.email && (
+            {sendMode === 'sms' && (
               <View style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: getTextColor(colorScheme ?? 'light') }]}>
-                  Send via Email
-                </Text>
-                
-                <Text style={[styles.infoText, { color: getTextColor(colorScheme ?? 'light') }]}>
-                  Send to: {job.Customer.email}
-                </Text>
-                
+                {!useCustomPhone && job.Customer?.defaultPhone?.number && (
+                  <Text style={[styles.infoText, { color: getTextColor(colorScheme ?? 'light') }]}>
+                    Send to: {maskPhoneNumber(job.Customer.defaultPhone.number)}
+                  </Text>
+                )}
+
+                <View style={[styles.toggleRow, { backgroundColor: 'transparent' }]}>
+                  <Text style={{ color: getTextColor(colorScheme ?? 'light') }}>
+                    Send to different number?
+                  </Text>
+                  <Switch
+                    value={useCustomPhone}
+                    onValueChange={setUseCustomPhone}
+                    trackColor={{ false: '#767577', true: '#81b0ff' }}
+                    thumbColor={useCustomPhone ? '#0a7ea4' : '#f4f3f4'}
+                  />
+                </View>
+
+                {useCustomPhone && (
+                  <TextInput
+                    placeholder='Phone Number (XXX-XXX-XXXX)'
+                    value={customPhone}
+                    onChangeText={(text) => setCustomPhone(formatPhoneNumber(text))}
+                    keyboardType='phone-pad'
+                    maxLength={12}
+                    style={[
+                      styles.input,
+                      {
+                        color: getTextColor(colorScheme ?? 'light'),
+                        borderColor: getBorderColor(colorScheme ?? 'light'),
+                        backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'),
+                      },
+                    ]}
+                    placeholderTextColor={getPlaceholderTextColor(colorScheme ?? 'light')}
+                  />
+                )}
+
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.smsButton]}
+                  onPress={sendInvoice}
+                  disabled={sendingInvoice || sendingEmail}
+                >
+                  {sendingInvoice ? (
+                    <ActivityIndicator size='small' color='#fff' />
+                  ) : (
+                    <Text style={styles.actionButtonText}>Send SMS</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* Email Section */}
+            {sendMode === 'email' && (
+              <View style={styles.section}>
+                {!useCustomEmail && job.Customer?.email && (
+                  <Text style={[styles.infoText, { color: getTextColor(colorScheme ?? 'light') }]}>
+                    Send to: {job.Customer.email}
+                  </Text>
+                )}
+
+                <View style={[styles.toggleRow, { backgroundColor: 'transparent' }]}>
+                  <Text style={{ color: getTextColor(colorScheme ?? 'light') }}>
+                    Send to different email?
+                  </Text>
+                  <Switch
+                    value={useCustomEmail}
+                    onValueChange={setUseCustomEmail}
+                    trackColor={{ false: '#767577', true: '#81b0ff' }}
+                    thumbColor={useCustomEmail ? '#0a7ea4' : '#f4f3f4'}
+                    disabled={!job.Customer?.email}
+                  />
+                </View>
+
+                {useCustomEmail && (
+                  <TextInput
+                    placeholder='Email Address'
+                    value={customEmail}
+                    onChangeText={setCustomEmail}
+                    keyboardType='email-address'
+                    autoCapitalize='none'
+                    style={[
+                      styles.input,
+                      {
+                        color: getTextColor(colorScheme ?? 'light'),
+                        borderColor: getBorderColor(colorScheme ?? 'light'),
+                        backgroundColor: getInputBackgroundColor(colorScheme ?? 'light'),
+                      },
+                    ]}
+                    placeholderTextColor={getPlaceholderTextColor(colorScheme ?? 'light')}
+                  />
+                )}
+
                 <TouchableOpacity
                   style={[styles.actionButton, styles.emailButton]}
                   onPress={sendEmail}
@@ -348,7 +400,7 @@ export default function InvoiceComponent({ job, fetchJob }: Props) {
                   borderColor: getBorderColor(colorScheme ?? 'light'),
                 },
               ]}
-              onPress={() => setShowSendDialog(false)}
+              onPress={() => setSendMode(null)}
               disabled={sendingInvoice || sendingEmail}
             >
               <Text
