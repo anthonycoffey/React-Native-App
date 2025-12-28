@@ -499,33 +499,40 @@ export default function CreateJobScreen() {
 
     setLoading(true);
 
-    const jobPayload: any = {
-      assignedTechnicianId: currentUser.id,
-      Address: { ...addressForm },
-      JobLineItems: lineItems.map((li) => ({
-        ServiceId: li.ServiceId,
-        price: li.price,
-      })),
-      arrivalTime: arrivalTime.toISOString(),
-      notes: notes,
-    };
-
-    if (selectedCustomer) {
-      jobPayload.CustomerId = selectedCustomer.id;
-    } else if (isNewCustomer) {
-      jobPayload.NewCustomer = customerForm;
-    }
-
-    if (selectedCar) {
-      jobPayload.CarId = selectedCar.id;
-    } else if (isNewCar) {
-      jobPayload.NewCar = carForm;
-      if (selectedCustomer) {
-        jobPayload.NewCar.CustomerId = selectedCustomer.id;
-      }
-    }
-
     try {
+      let carIdToUse: number | undefined;
+
+      // Create new car if needed
+      if (isNewCar) {
+        if (!selectedCustomer) {
+          throw new Error('Customer must be selected to add a new vehicle.');
+        }
+        if (!carForm.make || !carForm.model) {
+          throw new Error('Vehicle Make and Model are required.');
+        }
+
+        const newCar = await apiService.post<Car>(
+          `/customers/${selectedCustomer.id}/cars`,
+          carForm
+        );
+        carIdToUse = newCar.id;
+      } else if (selectedCar) {
+        carIdToUse = selectedCar.id;
+      }
+
+      const jobPayload: any = {
+        assignedTechnicianId: currentUser.id,
+        Address: { ...addressForm },
+        JobLineItems: lineItems.map((li) => ({
+          ServiceId: li.ServiceId,
+          price: li.price,
+        })),
+        arrivalTime: arrivalTime.toISOString(),
+        notes: notes,
+        CustomerId: selectedCustomer?.id,
+        CarId: carIdToUse,
+      };
+
       const newJob = await apiService.post<Job>('/jobs', jobPayload);
       Alert.alert('Success', `Job #${newJob.id} created successfully!`);
       router.replace(`/job/${newJob.id}`);
@@ -534,6 +541,8 @@ export default function CreateJobScreen() {
       const errorMessage =
         error instanceof HttpError
           ? error.body?.message || error.message
+          : error instanceof Error
+          ? error.message
           : 'An unexpected error occurred.';
       Alert.alert('Error', `Failed to create job: ${errorMessage}`);
     } finally {
@@ -588,7 +597,7 @@ export default function CreateJobScreen() {
     }
   };
 
-  const handleSaveNewCustomer = () => {
+  const handleSaveNewCustomer = async () => {
     if (!customerForm.firstName || !customerForm.phone) {
       Alert.alert(
         'Validation Error',
@@ -603,9 +612,30 @@ export default function CreateJobScreen() {
       );
       return;
     }
-    setIsNewCustomer(true);
-    setSelectedCustomer(null);
-    setNewCustomerModalVisible(false);
+
+    setLoading(true);
+    try {
+      const newCustomer = await apiService.post<Customer>(
+        '/customers',
+        customerForm
+      );
+      setSelectedCustomer(newCustomer);
+      setIsNewCustomer(false);
+      setNewCustomerModalVisible(false);
+      setCustomerForm({});
+      setCustomerCars([]);
+      setCustomerSearchQuery('');
+      setSearchedCustomers([]);
+    } catch (error) {
+      console.log('Failed to create customer:', error);
+      const errorMessage =
+        error instanceof HttpError
+          ? error.body?.message || error.message
+          : 'An unexpected error occurred.';
+      Alert.alert('Error', `Failed to create customer: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancelNewCustomerModal = () => {
