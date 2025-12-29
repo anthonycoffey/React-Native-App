@@ -326,6 +326,14 @@ Enhancing background location tracking reliability for fleet monitoring.
   - **Cache Busting:** Renamed `LOCATION_TASK_NAME` to `'background-location-task-v2'` to bypass potentially corrupted SharedPreferences storage from previous versions.
   - **Config Simplification:** Removed `deferredUpdatesInterval` and `deferredUpdatesDistance` from `UPDATE_CONFIG` to minimize potential compatibility issues on Android.
   - **Debugging Android NPE:** Temporarily removed `foregroundService` from `UPDATE_CONFIG` and prioritized `BackgroundFetch` registration to isolate the cause of a persistent `NullPointerException` on Android during location service startup.
+- **Implemented Native Password Reset:**
+  - Replaced the WebView in `app/lost-password.tsx` with a fully native implementation mirroring the Vue web app's logic.
+  - Implemented a 3-step state machine:
+    1.  **Email Request:** Calls `POST /users/otp/request`.
+    2.  **OTP Verification:** Calls `POST /users/otp/verify` (validates 6-digit code).
+    3.  **Password Update:** Calls `POST /users/otp/update` and automatically logs the user in via `POST /users/login`.
+  - Utilized existing themed components (`ThemedView`, `PrimaryButton`, `TextInput`) for a consistent native look and feel.
+  - Added robust error handling using `HttpError` to display API messages.
 
 ## Next Steps
 
