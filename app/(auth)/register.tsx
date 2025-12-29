@@ -161,7 +161,7 @@ export default function RegisterScreen() {
             >
               <Image
                 style={styles.logo}
-                source={require('../assets/icon.png')}
+                source={require('../../assets/icon.png')}
               />
             </View>
 

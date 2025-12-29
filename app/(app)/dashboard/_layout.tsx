@@ -1,14 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Tabs, useRouter, Redirect, Link, usePathname } from 'expo-router';
+import { Tabs, useRouter, Link, usePathname } from 'expo-router';
 import { HeaderBackButton } from '@react-navigation/elements';
-import { ActivityIndicator, View, Pressable } from 'react-native';
+import { Pressable } from 'react-native';
 import useAndroidBackHandler from '@/hooks/useAndroidBackHandler';
 import NotificationBell from '@/components/dashboard/NotificationBell';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useAuth } from '@/contexts/AuthContext';
-import globalStyles from '@/styles/globalStyles';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof MaterialIcons>['name'];
@@ -19,7 +17,6 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme() ?? 'light';
-  const auth = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -39,30 +36,6 @@ export default function TabLayout() {
 
     return false;
   });
-
-  useEffect(() => {
-    if (auth && !auth.isLoading && !auth.session) {
-      const redirectTimeout = setTimeout(() => {
-        router.replace('/login');
-      }, 0);
-      return () => clearTimeout(redirectTimeout);
-    }
-  }, [auth, router]);
-
-  if (!auth || auth.isLoading) {
-    return (
-      <View style={globalStyles.loadingContainer}>
-        <ActivityIndicator
-          size='large'
-          color={Colors[colorScheme ?? 'light'].tint}
-        />
-      </View>
-    );
-  }
-
-  if (!auth.session && !auth.isLoading) {
-    return <Redirect href='/login' />;
-  }
 
   return (
     <Tabs

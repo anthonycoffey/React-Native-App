@@ -1,7 +1,7 @@
 import { Theme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import Colors from '@/constants/Colors';
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -11,7 +11,6 @@ import { UserProvider } from '@/contexts/UserContext';
 import { NotificationsProvider } from '@/contexts/NotificationsContext';
 import { LocationProvider } from '@/contexts/LocationContext';
 import { useNotifications } from '@/hooks/useNotifications';
-import { JobScreenParams } from '../types';
 import { useColorScheme } from '@/components/useColorScheme';
 import * as Sentry from '@sentry/react-native';
 
@@ -95,37 +94,7 @@ export default Sentry.wrap(function RootLayout() {
                 }
               >
                 <LocationProvider>
-                  <Stack>
-                    <Stack.Screen
-                      name="actions/accept-job/[jobId]"
-                      options={{ title: 'Accept Job?', headerBackVisible: true }}
-                    />
-                    <Stack.Screen
-                      name="dashboard"
-                      options={{ headerShown: false, title: 'Dashboard' }}
-                    />
-                    <Stack.Screen name="index" options={{ headerShown: false }} />
-                    <Stack.Screen
-                      name="job/[id]"
-                      options={({ route }) => ({
-                        title: `J-${(route.params as JobScreenParams)?.id}`,
-                        headerBackVisible: true,
-                      })}
-                    />
-                    <Stack.Screen
-                      name="location-permission"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen name="login" options={{ headerShown: false }} />
-                    <Stack.Screen
-                      name="lost-password"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="register"
-                      options={{ headerShown: false }}
-                    />
-                  </Stack>
+                  <Slot />
                 </LocationProvider>
               </ThemeProvider>
             </SafeAreaProvider>

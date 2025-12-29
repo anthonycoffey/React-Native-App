@@ -150,7 +150,7 @@ export default function LoginScreen() {
             >
               <Image
                 style={loginStyles.logo}
-                source={require('../assets/icon.png')}
+                source={require('../../assets/icon.png')}
               />
             </View>
 
