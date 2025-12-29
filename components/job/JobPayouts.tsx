@@ -51,14 +51,6 @@ export default function JobPayouts({ job, fetchJob }: Props) {
     >
       <View style={styles.row}>
         <Text style={[styles.label, { color: getTextColor(theme) }]}>
-          Date:
-        </Text>
-        <Text style={[styles.value, { color: getTextColor(theme) }]}>
-          {formatDateTime(item.createdAt)}
-        </Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={[styles.label, { color: getTextColor(theme) }]}>
           Type:
         </Text>
         <Text style={[styles.value, { color: getTextColor(theme) }]}>
@@ -75,17 +67,15 @@ export default function JobPayouts({ job, fetchJob }: Props) {
       </View>
       <View style={styles.row}>
         <Text style={[styles.label, { color: getTextColor(theme) }]}>
-          User:
-        </Text>
-        <Text style={[styles.value, { color: getTextColor(theme) }]}>
-          {item.User?.fullName || 'Unknown'}
-        </Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={[styles.label, { color: getTextColor(theme) }]}>
           Status:
         </Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: 'transparent' }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            backgroundColor: 'transparent',
+          }}
+        >
           {item.PaycheckId ? (
             <Chip
               style={{
