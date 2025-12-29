@@ -22,6 +22,7 @@ import JobReferralCode from '@/components/job/JobReferralCode';
 import ArrivalTime from '@/components/job/ArrivalTime';
 import TakePayment from '@/components/job/TakePayment';
 import JobPaymentsList from '@/components/job/JobPaymentsList';
+import JobPayouts from '@/components/job/JobPayouts';
 import JobFiles from '@/components/job/JobFiles';
 import JobComments from '@/components/job/JobComments';
 import { View as ThemedView } from '@/components/Themed';
@@ -150,6 +151,7 @@ export default function JobPage() {
           <Invoice job={job} fetchJob={fetchJob} />
           <TakePayment job={job} fetchJob={fetchJob} />
           <JobPaymentsList job={job} />
+          <JobPayouts job={job} fetchJob={fetchJob} />
           <JobFiles job={job} fetchJob={fetchJob} />
           <JobComments
             jobId={job.id}

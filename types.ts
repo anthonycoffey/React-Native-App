@@ -79,12 +79,14 @@ export interface Job extends BaseEntity {
   JobComments?: JobComment[];
   referralCode?: string | null;
   Payments?: Payment[];
+  Payouts?: Payout[];
 }
 
 export interface Payment extends BaseEntity {
   JobId: number;
   type: 'cash' | 'card' | string;
   amount: number;
+  received?: number;
   tip?: number;
   status?: string;
   transactionId?: string | null;
@@ -261,12 +263,41 @@ export type JobScreenParams = {
   id: string;
 };
 
+export interface PayoutLineItem extends BaseEntity {
+  description: string;
+  amountCharged: number;
+  payoutRate: number;
+  payoutAmount: number;
+  payoutMinimum: number;
+  PayoutId: number;
+}
+
+export interface Payout extends BaseEntity {
+  type: 'job' | 'hourly' | 'tip' | 'stripe_payout' | string;
+  amount: number;
+  JobId?: number;
+  Job?: Job;
+  PayoutLineItems?: PayoutLineItem[];
+  PaycheckId: number;
+  UserId?: number;
+  User?: User;
+}
+
+export interface Payroll extends BaseEntity {
+  startDate: string;
+  endDate: string;
+}
+
 export interface Paycheck extends BaseEntity {
   amount: number;
   status: string;
   UserId: number;
   PayrollId: number;
   User?: User;
+  jobsCompleted?: number;
+  jobsCancelled?: number;
+  type?: string;
+  Payouts?: Payout[];
 }
 
 export interface PaginationMeta {

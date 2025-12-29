@@ -5,7 +5,9 @@ import {
   ActivityIndicator,
   Alert,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
 import {
@@ -25,6 +27,7 @@ import Card from '@/components/Card';
 
 export default function PaychecksScreen() {
   const auth = useAuth();
+  const router = useRouter();
   const currentUser = auth?.currentUser;
   const userId = currentUser?.id;
   const colorScheme = useColorScheme() ?? 'light';
@@ -34,6 +37,7 @@ export default function PaychecksScreen() {
     null
   );
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSendingEmailFor, setIsSendingEmailFor] = useState<number | null>(
     null
@@ -78,6 +82,12 @@ export default function PaychecksScreen() {
     fetchPaychecks();
   }, [fetchPaychecks]);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchPaychecks(1);
+    setRefreshing(false);
+  }, [fetchPaychecks]);
+
   const handleEmailPaycheck = async (paycheckId: number) => {
     setIsSendingEmailFor(paycheckId);
     try {
@@ -101,40 +111,50 @@ export default function PaychecksScreen() {
         { borderColor: getBorderColor(colorScheme) },
       ]}
     >
-      <ThemedView style={localStyles.itemRow}>
-        <Text style={localStyles.itemLabel}>Paycheck ID:</Text>
-        <Text style={localStyles.itemValue}>PC-{item.id}</Text>
-      </ThemedView>
-      <ThemedView style={localStyles.itemRow}>
-        <Text style={localStyles.itemLabel}>Status:</Text>
-        <Text style={localStyles.itemValue}>{item.status}</Text>
-      </ThemedView>
-      <ThemedView style={localStyles.itemRow}>
-        <Text style={localStyles.itemLabel}>Amount:</Text>
-        <Text style={localStyles.itemValue}>{centsToDollars(item.amount)}</Text>
-      </ThemedView>
-      <ThemedView style={localStyles.itemRow}>
-        <Text style={localStyles.itemLabel}>Date:</Text>
-        <Text style={localStyles.itemValue}>
-          {formatDateTime(item.createdAt)}
-        </Text>
-      </ThemedView>
-      <ThemedView style={localStyles.actionsRow}>
-        <TouchableOpacity
-          onPress={() => handleEmailPaycheck(item.id)}
-          disabled={isSendingEmailFor === item.id}
-        >
-          {isSendingEmailFor === item.id ? (
-            <ActivityIndicator size='small' color={getTextColor(colorScheme)} />
-          ) : (
-            <MaterialIcons
-              name='print'
-              size={32}
-              color={getIconColor(colorScheme)}
-            />
-          )}
-        </TouchableOpacity>
-      </ThemedView>
+      <TouchableOpacity
+        onPress={() => router.push(`/dashboard/account/paychecks/${item.id}`)}
+        activeOpacity={0.7}
+      >
+        <ThemedView style={localStyles.itemRow}>
+          <Text style={localStyles.itemLabel}>Paycheck ID:</Text>
+          <Text style={localStyles.itemValue}>PC-{item.id}</Text>
+        </ThemedView>
+        <ThemedView style={localStyles.itemRow}>
+          <Text style={localStyles.itemLabel}>Status:</Text>
+          <Text style={localStyles.itemValue}>{item.status}</Text>
+        </ThemedView>
+        <ThemedView style={localStyles.itemRow}>
+          <Text style={localStyles.itemLabel}>Amount:</Text>
+          <Text style={localStyles.itemValue}>
+            {centsToDollars(item.amount)}
+          </Text>
+        </ThemedView>
+        <ThemedView style={localStyles.itemRow}>
+          <Text style={localStyles.itemLabel}>Date:</Text>
+          <Text style={localStyles.itemValue}>
+            {formatDateTime(item.createdAt)}
+          </Text>
+        </ThemedView>
+        <ThemedView style={localStyles.actionsRow}>
+          <TouchableOpacity
+            onPress={() => handleEmailPaycheck(item.id)}
+            disabled={isSendingEmailFor === item.id}
+          >
+            {isSendingEmailFor === item.id ? (
+              <ActivityIndicator
+                size='small'
+                color={getTextColor(colorScheme)}
+              />
+            ) : (
+              <MaterialIcons
+                name='print'
+                size={32}
+                color={getIconColor(colorScheme)}
+              />
+            )}
+          </TouchableOpacity>
+        </ThemedView>
+      </TouchableOpacity>
     </Card>
   );
 
@@ -168,39 +188,51 @@ export default function PaychecksScreen() {
     <ThemedView
       style={[globalStyles.container, { backgroundColor: 'transparent' }]}
     >
-      {loading && paychecks.length === 0 ? (
-        <ActivityIndicator
-          size='large'
-          color={getTextColor(colorScheme)}
-          style={styles.centered}
-        />
-      ) : error ? (
-        <Text style={[styles.centeredText, { color: 'red' }]}>{error}</Text>
-      ) : paychecks.length === 0 ? (
-        <Text
-          style={[styles.centeredText, { color: getTextColor(colorScheme) }]}
-        >
-          No paychecks found.
-        </Text>
-      ) : (
-        <FlatList
-          data={paychecks}
-          renderItem={renderPaycheckItem}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={localStyles.listContent}
-          onEndReached={loadMorePaychecks}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            loading && paychecks.length > 0 ? (
-              <ActivityIndicator
-                size='small'
-                color={getTextColor(colorScheme)}
-                style={{ marginVertical: 20 }}
-              />
-            ) : null
-          }
-        />
-      )}
+      <FlatList
+        data={paychecks}
+        renderItem={renderPaycheckItem}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={[
+          localStyles.listContent,
+          paychecks.length === 0 ? styles.centered : null,
+          { flexGrow: 1 },
+        ]}
+        onEndReached={loadMorePaychecks}
+        onEndReachedThreshold={0.5}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={getTextColor(colorScheme)}
+          />
+        }
+        ListEmptyComponent={
+          loading && !refreshing ? (
+            <ActivityIndicator
+              size='large'
+              color={getTextColor(colorScheme)}
+              style={styles.centered}
+            />
+          ) : error ? (
+            <Text style={[styles.centeredText, { color: 'red' }]}>{error}</Text>
+          ) : (
+            <Text
+              style={[styles.centeredText, { color: getTextColor(colorScheme) }]}
+            >
+              No paychecks found.
+            </Text>
+          )
+        }
+        ListFooterComponent={
+          loading && paychecks.length > 0 && !refreshing ? (
+            <ActivityIndicator
+              size='small'
+              color={getTextColor(colorScheme)}
+              style={{ marginVertical: 20 }}
+            />
+          ) : null
+        }
+      />
     </ThemedView>
   );
 }

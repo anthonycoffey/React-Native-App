@@ -334,6 +334,21 @@ Enhancing background location tracking reliability for fleet monitoring.
     3.  **Password Update:** Calls `POST /users/otp/update` and automatically logs the user in via `POST /users/login`.
   - Utilized existing themed components (`ThemedView`, `PrimaryButton`, `TextInput`) for a consistent native look and feel.
   - Added robust error handling using `HttpError` to display API messages.
+- **Implemented Pull-to-Refresh on Paychecks Screen:**
+  - Added `RefreshControl` to the `FlatList` in `app/dashboard/account/paychecks/index.tsx`.
+  - Implemented `onRefresh` handler to re-fetch the first page of paychecks.
+  - Refactored the component's rendering logic to always display the `FlatList`, using `ListEmptyComponent` to handle loading, error, and empty states.
+  - This ensures that users can pull-to-refresh even if the list is initially empty or fails to load.
+- **Implemented Paycheck Details Screen:**
+  - Created `app/dashboard/account/paychecks/[id].tsx` to display detailed information about a specific paycheck.
+  - Included cards for Summary, Stats, Payouts, and Cash Received.
+  - Implemented computation logic for Total Sales, Tips, and Cash Payments, replicating the Vue web app's logic (handling Stripe vs. non-Stripe differences).
+  - Updated `app/dashboard/account/paychecks/index.tsx` to allow navigation to the details screen by tapping on a paycheck item.
+  - Updated `types.ts` to include `Payroll`, `Payout`, and `PayoutLineItem` interfaces.
+  - **Refined Paycheck Details UI**: Combined Summary and Stats cards, used Chip for status, and ensured the screen is hidden from the bottom tab bar.
+  - **Refined Paychecks List Item UI**: Adjusted the `TouchableOpacity` placement to be *inside* the `Card` component (wrapping the content) rather than wrapping the `Card` itself. This aligns with the pattern used in `JobsList.tsx` and prevents issues with touch areas extending into margins.
+- **Fixed Paycheck Details Navigation:**
+  - Modified `app/dashboard/_layout.tsx` to ensure the back button on the Paycheck Details screen (`app/dashboard/account/paychecks/[id].tsx`) explicitly navigates to the Paychecks list (`/dashboard/account/paychecks`) instead of falling back to the main dashboard index.
 
 ## Next Steps
 

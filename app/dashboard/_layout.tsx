@@ -181,6 +181,20 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name='account/paychecks/[id]'
+        options={{
+          title: 'Paycheck Details',
+          href: null,
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => router.replace('/dashboard/account/paychecks')}
+              tintColor={Colors[colorScheme].text}
+            />
+          ),
+          headerRight: () => <NotificationBell />,
+        }}
+      />
+      <Tabs.Screen
         name='create-job'
         options={{
           title: 'Create Job',
