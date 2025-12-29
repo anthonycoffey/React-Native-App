@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -15,20 +15,12 @@ import globalStyles from '@/styles/globalStyles';
 import Card from '@/components/Card';
 
 type JobsListProps = {
-  jobs:
-    | {
-        data: Job[];
-        meta?: {
-          currentPage: number;
-          lastPage: number;
-          limit: number;
-          total: number;
-        };
-      }
-    | Job[]
-    | [];
+  jobs: Job[];
   fetchJobs: () => void;
   loading?: boolean;
+  onLoadMore?: () => void;
+  isLoadingMore?: boolean;
+  total?: number;
 };
 
 const ListEmptyComponent = () => {
@@ -51,16 +43,11 @@ export default function JobsList({
   jobs,
   fetchJobs,
   loading = false,
+  onLoadMore,
+  isLoadingMore = false,
+  total,
 }: JobsListProps) {
   const [refreshing, setRefreshing] = useState(false);
-
-  // Process jobs data to handle different formats
-  const jobsData = React.useMemo(() => {
-    if (!jobs) return [];
-    if (Array.isArray(jobs)) return jobs;
-    if ('data' in jobs && Array.isArray(jobs.data)) return jobs.data;
-    return [];
-  }, [jobs]);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -73,7 +60,22 @@ export default function JobsList({
     }
   }, [fetchJobs]);
 
-  if (loading) {
+  const FooterComponent = () => {
+    return (
+      <View style={styles.footerContainer}>
+        {isLoadingMore && (
+          <ActivityIndicator size="small" color="#0a7ea4" style={{ marginBottom: 8 }} />
+        )}
+        {typeof total === 'number' && total > 0 && (
+          <Text style={styles.footerText}>
+            Showing {jobs.length} of {total} jobs
+          </Text>
+        )}
+      </View>
+    );
+  };
+
+  if (loading && !refreshing && jobs.length === 0) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size='large' color='#0a7ea4' />
@@ -85,7 +87,7 @@ export default function JobsList({
     <FlatList
       refreshing={refreshing}
       onRefresh={onRefresh}
-      data={jobsData}
+      data={jobs}
       ListEmptyComponent={ListEmptyComponent}
       contentContainerStyle={styles.listContainer}
       renderItem={({ item }) => {
@@ -173,6 +175,9 @@ export default function JobsList({
         );
       }}
       keyExtractor={(item) => item.id.toString()}
+      onEndReached={onLoadMore}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={FooterComponent}
     />
   );
 }
@@ -245,5 +250,14 @@ const styles = StyleSheet.create({
   },
   addressText: {
     flex: 1,
+  },
+  footerContainer: {
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  footerText: {
+    color: '#687076',
+    fontSize: 14,
   },
 });
