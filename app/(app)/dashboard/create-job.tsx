@@ -52,6 +52,7 @@ import CurrencyInput from '@/components/job/invoice/CurrencyInput';
 import { centsToDollars, dollarsToCents } from '@/utils/money';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Crypto from 'expo-crypto';
+import { formatPhoneNumber } from '@/utils/strings';
 
 const GEOCODING_API_KEY = process.env.EXPO_PUBLIC_GEOCODING_API_KEY;
 
@@ -920,10 +921,11 @@ export default function CreateJobScreen() {
                 onChangeText={(text) =>
                   setCustomerForm((prev) => ({
                     ...prev,
-                    phone: text.replace(/[^0-9]/g, ''),
+                    phone: formatPhoneNumber(text),
                   }))
                 }
                 keyboardType='phone-pad'
+                maxLength={12}
                 editable={!loading}
               />
 
@@ -1139,7 +1141,7 @@ export default function CreateJobScreen() {
               )}
             </View>
           ) : customerCars.length === 0 ? (
-            <View>
+            <>
               <Text
                 style={[
                   styles.noResultsText,
@@ -1159,7 +1161,7 @@ export default function CreateJobScreen() {
                   setCarForm({});
                 }}
               />
-            </View>
+            </>
           ) : (
             <>
               <Text

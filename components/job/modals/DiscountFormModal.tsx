@@ -306,6 +306,7 @@ const DiscountFormModal: React.FC<DiscountFormModalProps> = ({
                   if (val) setDiscountType(val as DiscountType);
                 }}
                 disabled={isFormDisabled}
+                listMode='MODAL'
                 style={[
                   styles.dropdown,
                   {

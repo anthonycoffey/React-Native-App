@@ -8,6 +8,18 @@ Enhancing background location tracking reliability for fleet monitoring.
 
 ## Recent Changes
 
+- **Implemented Phone Number Formatting in Create Job Screen:**
+  - Updated `app/(app)/dashboard/create-job.tsx` to format the phone number field in the "New Customer" dialog as the user types.
+  - Used the existing `formatPhoneNumber` utility from `@/utils/strings` to ensure consistency with other parts of the app (e.g., `RegisterScreen`).
+  - Added `maxLength={12}` to the phone number input to restrict input to the standard US format (`XXX-XXX-XXXX`).
+  - Confirmed that sending formatted phone numbers to the API aligns with existing patterns in the application.
+
+- **Fixed "VirtualizedLists should never be nested" Error in Discounts:**
+  - **Identified Issue:** The "Discount Type" `DropDownPicker` in `DiscountFormModal.tsx` was defaulting to a `FlatList` implementation inside a `ScrollView`, causing a React Native warning. Additionally, `DiscountList.tsx` was using a nested `FlatList`.
+  - **Resolved:**
+    - Updated `components/job/modals/DiscountFormModal.tsx` to explicitly set `listMode="MODAL"` for the "Discount Type" dropdown, consistent with other dropdowns in the app.
+    - Refactored `components/job/DiscountList.tsx` to use `.map()` instead of `FlatList` for rendering the list of discounts, eliminating unnecessary virtualization overhead and potential nesting warnings.
+
 - **Optimized Location Tracking for Enterprise Scale:**
   - **Tuned Configuration:** Adjusted tracking parameters to balance "live" visibility with backend server load.
     - `timeInterval`: **10 seconds** (previously 5s).
@@ -223,7 +235,7 @@ Enhancing background location tracking reliability for fleet monitoring.
     - Replaced the single "Upload File(s)" button with two icon buttons: a "camera" icon to launch `CameraCaptureModal.tsx` and a "folder" icon to use the existing `expo-image-picker` functionality.
     - Integrated the `CameraCaptureModal` and its callback to handle uploading the captured image.
     - The document picker is now configured to primarily suggest images (`type: ['image/*']`).
-  - Removed all code comments from `components/job/CameraCaptureModal.tsx` and `components/job/JobFiles.tsx` as per user request.
+    - Removed all code comments from `components/job/CameraCaptureModal.tsx` and `components/job/JobFiles.tsx` as per user request.
   - Updated `app.json` by adding the `expo-camera` plugin to ensure correct camera permissions are configured for iOS and Android. The plugin includes a usage description: "Allow $(PRODUCT_NAME) to access your camera to take photos for job documentation."
 - **Implemented Lost Password Page:**
   - Installed `react-native-webview` dependency.
@@ -382,4 +394,4 @@ Enhancing background location tracking reliability for fleet monitoring.
   - Job-specific components in `components/job/` are generally well-structured and handle significant pieces of functionality.
   - Some older components or specific style instances are not fully theme-aware and could be refactored for better consistency.
   - Minor redundancies in functionality were noted (e.g., two `CurrencyInput` components, overlapping map button logic), offering future consolidation opportunities.
-- The primary mechanism for resolving potential 401 errors during initial user data fetching (`/users/me`) is the migration of user fetching logic directly into `AuthContext.tsx`. This ensures that `apiService` is correctly configured with the session token (derived from the `session` state) by `AuthContext` itself before it attempts to fetch user data. The presence of a valid `session` is the key condition for proceeding with user data fetching.
+- The primary mechanism for resolving potential 401 errors during initial user data fetching (`/users/me`) is the migration of user fetching logic directly into `AuthContext.tsx`. This ensures that `apiService` is correctly configured with the session token (derived from the `session` state) by `AuthContext.tsx` itself before it attempts to fetch user data. The presence of a valid `session` is the key condition for proceeding with user data fetching.

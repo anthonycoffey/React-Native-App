@@ -54,6 +54,16 @@ export default function TabLayout() {
       <Tabs.Screen
         name='index'
         options={{
+          title: 'Dashboard',
+          tabBarIcon: ({ color }) => <TabBarIcon name='dashboard' color={color} />,
+          headerRight: () => (
+            <NotificationBell />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='jobs'
+        options={{
           title: 'My Jobs',
           tabBarIcon: ({ color }) => <TabBarIcon name='list' color={color} />,
           headerLeft: () => (

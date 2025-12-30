@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Discount } from '@/types';
 import { centsToDollars } from '@/utils/money';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -35,36 +35,12 @@ const DiscountList: React.FC<DiscountListProps> = ({
     );
   };
 
-  const renderItem = ({ item }: { item: Discount }) => (
-    <View
-      style={[
-        styles.discountItemContainer,
-        { borderBottomColor: getBorderColor(theme) },
-      ]}
-    >
-      <View style={styles.discountInfo}>
-        <Text style={[styles.discountReason, { color: getTextColor(theme) }]}>
-          {item.reason || 'Discount'}
-        </Text>
-      </View>
-      <View style={styles.amountAndActionContainer}>
-        <Text style={[styles.discountAmount, { color: getTextColor(theme) }]}>
-          -{centsToDollars(item.amount)}
-        </Text>
-        <IconButton
-          iconName="delete"
-          onPress={() => handleRemovePress(item)}
-          disabled={isLoading}
-          style={styles.removeButton}
-        />
-      </View>
-    </View>
-  );
-
   if (!discounts || discounts.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={[styles.emptyText, { color: getPlaceholderTextColor(theme) }]}>
+        <Text
+          style={[styles.emptyText, { color: getPlaceholderTextColor(theme) }]}
+        >
           No discounts applied.
         </Text>
       </View>
@@ -72,13 +48,38 @@ const DiscountList: React.FC<DiscountListProps> = ({
   }
 
   return (
-    <FlatList
-      data={discounts}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id.toString()}
-      style={styles.list}
-      scrollEnabled={false}
-    />
+    <View style={styles.list}>
+      {discounts.map((item) => (
+        <View
+          key={item.id}
+          style={[
+            styles.discountItemContainer,
+            { borderBottomColor: getBorderColor(theme) },
+          ]}
+        >
+          <View style={styles.discountInfo}>
+            <Text
+              style={[styles.discountReason, { color: getTextColor(theme) }]}
+            >
+              {item.reason || 'Discount'}
+            </Text>
+          </View>
+          <View style={styles.amountAndActionContainer}>
+            <Text
+              style={[styles.discountAmount, { color: getTextColor(theme) }]}
+            >
+              -{centsToDollars(item.amount)}
+            </Text>
+            <IconButton
+              iconName='delete'
+              onPress={() => handleRemovePress(item)}
+              disabled={isLoading}
+              style={styles.removeButton}
+            />
+          </View>
+        </View>
+      ))}
+    </View>
   );
 };
 
