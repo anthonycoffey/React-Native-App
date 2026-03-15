@@ -1,27 +1,31 @@
-# GPTNative - Commands and Conventions
+# Technician App (Phoenix Mobile)
 
-## Commands
-- Start: `npm start` or `yarn start`
-- Development: `npm run ios`, `npm run android`, `npm run web`
-- Production: `npm run prod` (starts Expo with --no-dev flag)
-- Testing: 
-  - All tests: `npm test` (runs Jest with --watchAll)
-  - Single test: `npx jest -t "test name"` or `npx jest path/to/test-file.js`
-- Linting: `npm run lint` (uses expo lint)
-- Building:
-  - iOS: `npm run build:ios`
-  - Android: `npm run build:android`
-  - iOS Simulator: `npm run build:simulator`
-  - Run build: `npm run build:run`
-- Update: `npm run update` (runs eas update)
+Native mobile application for field technicians, built with React Native and Expo.
 
-## Code Style
-- **Formatting**: 2-space indentation, semicolons required, Prettier enforced
-- **Imports**: Order: React first, external libraries, project imports via `@/` aliases
-- **Types**: TypeScript strict mode, explicit interfaces for props/responses
-- **Naming**: PascalCase for components/interfaces, camelCase for variables/functions
-- **Components**: Suggested one component per file, filename matches export name
-- **Error Handling**: Try/catch for async ops, check error.response details
-- **State Management**: React Context for global state (AuthContext, UserContext)
-- **Testing**: Jest with react-test-renderer, use snapshot testing
-- **Styling**: Mix of React Native StyleSheet and inline styles
+## 🚀 Spec-Driven Development — ALWAYS FOLLOW
+IMPORTANT: Never start coding without a spec.
+1. Read the Agent Brief: `../phoenix-docs/documentation/agents/technician-app.md`
+2. Find the active spec in `../phoenix-docs/specs/active/` for your current task.
+3. Follow the design and tasks defined in the spec exactly.
+4. Update the spec's task list in `phoenix-docs` as you complete work.
+
+## 🛠 Commands
+- `npm start`: Start Expo development server
+- `npm run ios`: Run on iOS simulator
+- `npm run android`: Run on Android emulator
+- `npm run test`: Run Jest tests
+- `npm run lint`: Run ESLint
+- `npx expo install`: Install dependencies with version matching
+
+## 🏗 Architecture
+- Framework: Expo (Managed Workflow)
+- Routing: Expo Router (File-based)
+- Components: `src/components/`
+- Screens: `src/screens/`
+- State: Custom hooks and React Context
+
+## ✅ Boundaries
+- **TDD is Mandatory:** Write unit tests for logic and components before implementation.
+- **Clean Code:** PascalCase for components, camelCase for props/functions.
+- **Performance:** Optimize FlatLists and use memoization where appropriate.
+- **Commits:** Use [Conventional Commits](https://www.conventionalcommits.org/).
